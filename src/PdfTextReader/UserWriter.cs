@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace PdfTextReader
 {
@@ -38,12 +39,13 @@ namespace PdfTextReader
             }
         }
 
-        public void ProcessMarker(string srcpath, string dstpath)
+        public void ProcessBlock(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
             {
                 var page = pdf.GetPage(1);
                 var canvas = new PdfCanvas(page);
+                var blockList = new List<BlockSet>();
                 var blockSet = new BlockSet();
                 Block last = null;
 
@@ -53,13 +55,9 @@ namespace PdfTextReader
                     
                     if( last != null )
                     {
-                        string txt1 = last.Text;
-                        string txt2 = b.Text;
-
+                        // expect: previous >~ next
                         float previous = last.H;
                         float next = b.H;
-
-                        // expect: previous >~ next
 
                         // previous >> next
                         if( previous > next + 100)
@@ -76,9 +74,7 @@ namespace PdfTextReader
 
                     if(shouldBreak)
                     {
-                        canvas.SetStrokeColor(ColorConstants.YELLOW);
-                        canvas.Rectangle(blockSet.GetX(), blockSet.GetH(), blockSet.GetWidth(), blockSet.GetHeight());
-                        canvas.Stroke();
+                        blockList.Add(blockSet);
 
                         // reset
                         blockSet = new BlockSet();
@@ -91,13 +87,47 @@ namespace PdfTextReader
                 
                 parser.ProcessPageContent(page);
 
-                if (blockSet != null)
-                {
-                    canvas.SetStrokeColor(ColorConstants.YELLOW);
-                    canvas.Rectangle(blockSet.GetX(), blockSet.GetH(), blockSet.GetWidth(), blockSet.GetHeight());
-                    canvas.Stroke();
-                }
+                blockList.Add(blockSet);
+
+                var footer = FindFooter(blockList);
+                var header = FindHeader(blockList);
+
+                // post-processing
+                DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+                DrawRectangle(canvas, footer, ColorConstants.BLUE);
+                DrawRectangle(canvas, header, ColorConstants.BLUE);
+
             }
+        }
+
+        void DrawRectangle(PdfCanvas canvas, IEnumerable<BlockSet> blockList, Color color)
+        {
+            foreach (var bset in blockList)
+            {
+                canvas.SetStrokeColor(color);
+                canvas.Rectangle(bset.GetX(), bset.GetH(), bset.GetWidth(), bset.GetHeight());
+                canvas.Stroke();
+            }
+        }
+
+        IEnumerable<BlockSet> FindHeader(List<BlockSet> blockList)
+        {
+            float err = 1f;
+            float maxH = blockList.Max(b => b.GetH()) - err;
+
+            var blocksAtHeader = blockList.Where(b => b.GetH() >= maxH);
+
+            return blocksAtHeader.ToArray();
+        }
+
+        IEnumerable<BlockSet> FindFooter(List<BlockSet> blockList)
+        {
+            float err = 1f;
+            float minH = blockList.Min(b => b.GetH()) + err;
+
+            var blocksAtFooter = blockList.Where(b => b.GetH() <= minH);
+
+            return blocksAtFooter.ToArray();
         }
 
         public void ExampleMarker(Block b, PdfCanvas canvas)

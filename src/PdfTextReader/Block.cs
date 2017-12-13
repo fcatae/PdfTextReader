@@ -4,7 +4,16 @@ using System.Text;
 
 namespace PdfTextReader
 {
-    class Block
+    interface IBlock
+    {
+        string GetText();
+        float GetX();
+        float GetH();
+        float GetWidth();
+        float GetHeight();
+    }
+
+    class Block : IBlock
     {
         public string Text { get; set; }
         public float X { get; set; }
@@ -15,5 +24,11 @@ namespace PdfTextReader
         public float Lower { get; set; }
         public string FontName { get; set; }
         public float FontSize { get; set; }
+
+        public string GetText() => Text;
+        public float GetX() => X;
+        public float GetH() => H;
+        public float GetWidth() => Width;
+        public float GetHeight() => Height;
     }
 }
