@@ -10,7 +10,8 @@ namespace PdfTextReader
 
             var user = new UserWriter();
 
-            user.ProcessBlock("bin/p40.pdf", "bin/output.pdf");
+            string basename = "p40";
+            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
 
             //user.Process("bin/p40.pdf", b =>
             //{
