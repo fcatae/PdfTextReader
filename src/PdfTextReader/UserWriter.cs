@@ -44,37 +44,59 @@ namespace PdfTextReader
             {
                 var page = pdf.GetPage(1);
                 var canvas = new PdfCanvas(page);
-                var tmp = new BlockSet();
-                int count = 0;
+                var blockSet = new BlockSet();
+                Block last = null;
 
                 var parser = new PdfCanvasProcessor(new UserListener( b => {
 
-                    count++;
-
-                    tmp.Add(b);
-
-                    if(count > 20)
+                    bool shouldBreak = false;
+                    
+                    if( last != null )
                     {
-                        var ttmp = new
-                        {
-                            a = tmp.GetX(),
-                            b = tmp.GetH(),
-                            c = tmp.GetWidth(),
-                            d = tmp.GetHeight()
-                        };
+                        string txt1 = last.Text;
+                        string txt2 = b.Text;
 
+                        float previous = last.H;
+                        float next = b.H;
+
+                        // expect: previous >~ next
+
+                        // previous >> next
+                        if( previous > next + 100)
+                        {
+                            shouldBreak = true;
+                        }
+
+                        // previous < next
+                        if( previous < next - 5 )
+                        {
+                            shouldBreak = true;
+                        }
+                    }
+
+                    if(shouldBreak)
+                    {
                         canvas.SetStrokeColor(ColorConstants.YELLOW);
-                        canvas.Rectangle(tmp.GetX(), tmp.GetH(), tmp.GetWidth(), tmp.GetHeight());
+                        canvas.Rectangle(blockSet.GetX(), blockSet.GetH(), blockSet.GetWidth(), blockSet.GetHeight());
                         canvas.Stroke();
 
                         // reset
-                        tmp = new BlockSet();
-                        count = 0;
+                        blockSet = new BlockSet();
                     }
 
-                }));
+                    blockSet.Add(b);
 
+                    last = b;
+                }));
+                
                 parser.ProcessPageContent(page);
+
+                if (blockSet != null)
+                {
+                    canvas.SetStrokeColor(ColorConstants.YELLOW);
+                    canvas.Rectangle(blockSet.GetX(), blockSet.GetH(), blockSet.GetWidth(), blockSet.GetHeight());
+                    canvas.Stroke();
+                }
             }
         }
 
