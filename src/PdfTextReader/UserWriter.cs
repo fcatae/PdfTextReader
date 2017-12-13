@@ -89,14 +89,32 @@ namespace PdfTextReader
 
                 blockList.Add(blockSet);
 
-                var footer = FindFooter(blockList);
                 var header = FindHeader(blockList);
+                var footer = FindFooter(blockList);
+
+                RemoveList(blockList, header);
+                RemoveList(blockList, footer);
 
                 // post-processing
-                DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
                 DrawRectangle(canvas, footer, ColorConstants.BLUE);
                 DrawRectangle(canvas, header, ColorConstants.BLUE);
 
+                DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+
+                PrintText(blockList);
+            }
+        }
+
+        void PrintText(List<BlockSet> blockList)
+        {
+
+        }
+
+        void RemoveList(List<BlockSet> blockList, IEnumerable<BlockSet> blocksToBeRemoved)
+        {
+            foreach(var b in blocksToBeRemoved)
+            {
+                blockList.Remove(b);
             }
         }
 
