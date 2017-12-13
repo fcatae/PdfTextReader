@@ -13,5 +13,7 @@ namespace PdfTextReader
         public float Width { get; set; }
         public float Height { get; set; }
         public float Lower { get; set; }
+        public string FontName { get; set; }
+        public float FontSize { get; set; }
     }
 }

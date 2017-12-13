@@ -46,11 +46,28 @@ namespace PdfTextReader
                 var canvas = new PdfCanvas(page);
 
                 var parser = new PdfCanvasProcessor(new UserListener( b => {
-                    
+
+                    // letra maiuscula: if(b.Text.Length > 0 &&  (b.Text.ToUpper()[0] == b.Text[0]) )
                     canvas.SetStrokeColor(ColorConstants.YELLOW);
                     canvas.Rectangle(b.X, b.B, b.Width, b.Height - b.Lower);
                     canvas.Stroke();
 
+                }));
+
+                parser.ProcessPageContent(page);
+            }
+        }
+        public void ProcessMarker2(string srcpath, string dstpath)
+        {
+            using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
+            {
+                var page = pdf.GetPage(1);
+                var canvas = new PdfCanvas(page);
+
+                var parser = new PdfCanvasProcessor(new UserListener(b => {
+                    canvas.SetStrokeColor(ColorConstants.YELLOW);
+                    canvas.Rectangle(b.X, b.B, b.Width, b.Height - b.Lower);
+                    canvas.Stroke();
                 }));
 
                 parser.ProcessPageContent(page);

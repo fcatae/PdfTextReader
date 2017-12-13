@@ -30,6 +30,8 @@ namespace PdfTextReader
                 var descent = textInfo.GetDescentLine().GetStartPoint();
                 var ascent = textInfo.GetAscentLine().GetEndPoint();
 
+                var font = textInfo.GetFont().GetFontProgram();
+
                 var block = new Block()
                 {
                     Text = textInfo.GetText(),
@@ -38,7 +40,9 @@ namespace PdfTextReader
                     B = baseline.Get(1),
                     Width = ascent.Get(0) - descent.Get(0),
                     Height = ascent.Get(1) - descent.Get(1),
-                    Lower = baseline.Get(1) - descent.Get(1)
+                    Lower = baseline.Get(1) - descent.Get(1),
+                    FontName = font.ToString(),
+                    FontSize = textInfo.GetFontSize()
                 };
 
                 string text = textInfo.GetText();
