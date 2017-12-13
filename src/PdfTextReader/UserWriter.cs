@@ -48,7 +48,7 @@ namespace PdfTextReader
                 var parser = new PdfCanvasProcessor(new UserListener( b => {
                     
                     canvas.SetStrokeColor(ColorConstants.YELLOW);
-                    canvas.Rectangle(b.X, b.H, b.Width, b.Height);
+                    canvas.Rectangle(b.X, b.B, b.Width, b.Height - b.Lower);
                     canvas.Stroke();
 
                 }));

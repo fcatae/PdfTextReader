@@ -26,6 +26,7 @@ namespace PdfTextReader
 
             if ( textInfo != null )
             {
+                var baseline = textInfo.GetBaseline().GetStartPoint();
                 var descent = textInfo.GetDescentLine().GetStartPoint();
                 var ascent = textInfo.GetAscentLine().GetEndPoint();
 
@@ -34,8 +35,10 @@ namespace PdfTextReader
                     Text = textInfo.GetText(),
                     X = descent.Get(0),
                     H = descent.Get(1),
+                    B = baseline.Get(1),
                     Width = ascent.Get(0) - descent.Get(0),
-                    Height = ascent.Get(1) - descent.Get(1)
+                    Height = ascent.Get(1) - descent.Get(1),
+                    Lower = baseline.Get(1) - descent.Get(1)
                 };
 
                 string text = textInfo.GetText();
