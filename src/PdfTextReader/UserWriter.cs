@@ -46,12 +46,14 @@ namespace PdfTextReader
                 var canvas = new PdfCanvas(page);
 
                 var parser = new PdfCanvasProcessor(new UserListener( b => {
-
+                    
                     canvas.SetStrokeColor(ColorConstants.YELLOW);
                     canvas.Rectangle(b.X, b.H, b.Width, b.Height);
                     canvas.Stroke();
 
                 }));
+
+                parser.ProcessPageContent(page);
             }
         }
 
