@@ -1,4 +1,5 @@
-﻿using iText.Kernel.Pdf;
+﻿using iText.Kernel.Colors;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Layout;
@@ -25,9 +26,9 @@ namespace PdfTextReader
             }
         }
 
-        public void Process(string srcpath)
+        public void Process(string srcpath, Action<Block> func)
         {
-            var parser = new PdfCanvasProcessor(new UserListener());
+            var parser = new PdfCanvasProcessor(new UserListener(func));
 
             using (var pdf = new PdfDocument(new PdfReader(srcpath)))
             {
@@ -36,5 +37,23 @@ namespace PdfTextReader
                 parser.ProcessPageContent(page);
             }
         }
+
+        public void ProcessMarker(string srcpath, string dstpath)
+        {
+            using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
+            {
+                var page = pdf.GetPage(1);
+                var canvas = new PdfCanvas(page);
+
+                var parser = new PdfCanvasProcessor(new UserListener( b => {
+
+                    canvas.SetStrokeColor(ColorConstants.YELLOW);
+                    canvas.Rectangle(b.X, b.H, b.Width, b.Height);
+                    canvas.Stroke();
+
+                }));
+            }
+        }
+
     }
 }

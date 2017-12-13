@@ -9,7 +9,9 @@ namespace PdfTextReader
             Console.WriteLine("Hello World!");
 
             var user = new UserWriter();
-            user.Process("bin/p40.pdf");
+            user.Process("bin/p40.pdf", b => {
+                System.Diagnostics.Debug.WriteLine(b.Text);
+            });            
         }
     }
 }

@@ -9,7 +9,16 @@ namespace PdfTextReader
 {
     class UserListener : IEventListener
     {
-        readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_TEXT };
+        private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_TEXT };
+        private readonly Action<Block> _callback;
+
+        public UserListener(Action<Block> callback)
+        {
+            if (callback == null)
+                throw new ArgumentNullException(nameof(callback));
+
+            this._callback = callback;
+        }
 
         public void EventOccurred(IEventData data, EventType type)
         {
@@ -17,8 +26,21 @@ namespace PdfTextReader
 
             if ( textInfo != null )
             {
+                var descent = textInfo.GetDescentLine().GetStartPoint();
+                var ascent = textInfo.GetAscentLine().GetEndPoint();
+
+                var block = new Block()
+                {
+                    Text = textInfo.GetText(),
+                    X = descent.Get(0),
+                    H = descent.Get(1),
+                    Width = ascent.Get(0) - descent.Get(0),
+                    Height = ascent.Get(1) - descent.Get(1)
+                };
+
                 string text = textInfo.GetText();
-                System.Diagnostics.Debug.WriteLine(text);
+
+                _callback(block);
             }
         }
 
