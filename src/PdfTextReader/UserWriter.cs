@@ -107,8 +107,13 @@ namespace PdfTextReader
 
         void PrintText(List<BlockSet> blockList)
         {
-
-        }
+            foreach(var b in blockList)
+            {
+                string text = b.GetText();
+                System.Diagnostics.Debug.WriteLine(text);
+                System.Diagnostics.Debug.WriteLine("=============================");
+            }
+        }        
 
         void RemoveList(List<BlockSet> blockList, IEnumerable<BlockSet> blocksToBeRemoved)
         {
