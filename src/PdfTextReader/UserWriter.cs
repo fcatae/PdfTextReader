@@ -1,5 +1,6 @@
 ﻿using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Layout;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,18 @@ namespace PdfTextReader
 
                 canvas.Rectangle(10, 10, 100, 100);
                 canvas.Stroke();
+            }
+        }
+
+        public void Process(string srcpath)
+        {
+            var parser = new PdfCanvasProcessor(new UserListener());
+
+            using (var pdf = new PdfDocument(new PdfReader(srcpath)))
+            {
+                var page = pdf.GetPage(1);
+
+                parser.ProcessPageContent(page);
             }
         }
     }
