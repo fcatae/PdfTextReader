@@ -106,6 +106,13 @@ namespace PdfTextReader
             b1.Add(list1);
             b2.Add(list2);
 
+            int c1 = b1._list.Count();
+            int c2 = b2._list.Count();
+
+            // sometimes it cannot be broken
+            if (c1 == 0 || c2 == 0)
+                return null;
+
             return new BlockSet[] { b1, b2 }; 
 
             //// setup

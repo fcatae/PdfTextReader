@@ -175,6 +175,8 @@ namespace PdfTextReader
 
                             if ( hasOverlapR0 || hasOverlapR1 )
                             {
+                                smaller.Tag = "gray";
+
                                 // not so good
                                 continue;
                             }
@@ -200,7 +202,7 @@ namespace PdfTextReader
                             i--; break;
                         }
 
-                        //smaller.Tag = "gray";
+                        smaller.Tag = "gray";
                     }
                 }
             }
