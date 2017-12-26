@@ -124,6 +124,7 @@ namespace PdfTextReader
             DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
 
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
+            DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
 
             PrintText(blockList);
         }
@@ -176,6 +177,7 @@ namespace PdfTextReader
                             if ( hasOverlapR0 || hasOverlapR1 )
                             {
                                 smaller.Tag = "gray";
+                                larger.Tag = "orange";
 
                                 // not so good
                                 continue;
@@ -210,26 +212,52 @@ namespace PdfTextReader
 
         float CalculateCenterBreak(BlockSet larger, BlockSet smaller)
         {
-            float cx = larger.GetX() + larger.GetWidth() / 2.0f;
-            float cy = larger.GetH() + larger.GetHeight() / 2.0f;
+            float a_y1 = larger.GetH();
+            float a_y2 = larger.GetH() + larger.GetHeight();
 
-            float a_x1 = smaller.GetX();
-            float a_x2 = smaller.GetX() + smaller.GetWidth();
-            float a_y1 = smaller.GetH();
-            float a_y2 = smaller.GetH() + smaller.GetHeight();
+            float b_x1 = smaller.GetX();
+            float b_x2 = smaller.GetX() + smaller.GetWidth();
+            float b_y1 = smaller.GetH();
+            float b_y2 = smaller.GetH() + smaller.GetHeight();
 
-            float dx1 = Math.Abs(a_x1 - cx);
-            float dx2 = Math.Abs(a_x2 - cx);
-            float dy1 = Math.Abs(a_y1 - cy);
-            float dy2 = Math.Abs(a_y2 - cy);
+            float x = float.NaN;
+            float y = float.NaN;
 
-            float x = (dx1 < dx2) ? a_x1 : a_x2;
-            float y = (dy1 < dy2) ? a_y1 : a_y2;
+            // larger contains smaller?
+            if ((a_y1 < b_y1) && (a_y2 > b_y2))
+            {
+                // calculate the center
+                float cx = larger.GetX() + larger.GetWidth() / 2.0f;
+                float cy = larger.GetH() + larger.GetHeight() / 2.0f;
+
+                float dx1 = Math.Abs(b_x1 - cx);
+                float dx2 = Math.Abs(b_x2 - cx);
+                float dy1 = Math.Abs(b_y1 - cy);
+                float dy2 = Math.Abs(b_y2 - cy);
+
+                x = (dx1 < dx2) ? b_x1 : b_x2;
+                y = (dy1 < dy2) ? b_y1 : b_y2;
+            }
+            else
+            {
+                // use the point inside the larger block
+                if(( b_y1 > a_y1 ) && ( b_y1 < a_y2))
+                {
+                    y = b_y1;
+                }
+                if ((b_y2 > a_y1) && (b_y2 < a_y2))
+                {
+                    y = b_y2;
+                }
+            }
+
+            if (float.IsNaN(y))
+                throw new InvalidOperationException();
 
             // use force
             float force = 3f;
-            float fx = (x == a_x2) ? force : -force;
-            float fy = (y == a_y2) ? force : -force;
+            float fx = (x == b_x2) ? force : -force;
+            float fy = (y == b_y2) ? force : -force;
 
             // ignore x
             return y + fy;
