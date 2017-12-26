@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace PdfTextReader
 {
@@ -8,15 +9,29 @@ namespace PdfTextReader
         {
             Console.WriteLine("Hello World!");
 
+            ProcessFiles();
+
+            //var user = new UserWriter();
+
+            //string basename = "p40";
+            //user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");            
+        }
+
+        static void ProcessFiles()
+        {
+            var dir = new DirectoryInfo("bin");
             var user = new UserWriter();
 
-            string basename = "p40";
-            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+            foreach (var f in dir.EnumerateFiles("*.pdf"))
+            {
+                string filename = f.Name;
 
-            //user.Process("bin/p40.pdf", b =>
-            //{
-            //    System.Diagnostics.Debug.WriteLine(b.Text);
-            //});
+                string basename = Path.GetFileNameWithoutExtension(filename);
+
+                user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+            }
+
+            
         }
     }
 }
