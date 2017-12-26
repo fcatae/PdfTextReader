@@ -9,12 +9,14 @@ namespace PdfTextReader
         {
             Console.WriteLine("Hello World!");
 
-            ProcessFiles();
+            ProcessFile("p40");
+        }
 
-            //var user = new UserWriter();
-
-            //string basename = "p40";
-            //user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");            
+        static void ProcessFile(string basename)
+        {
+            var user = new UserWriter();
+            
+            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
         }
 
         static void ProcessFiles()
@@ -25,8 +27,11 @@ namespace PdfTextReader
             foreach (var f in dir.EnumerateFiles("*.pdf"))
             {
                 string filename = f.Name;
-
+                
                 string basename = Path.GetFileNameWithoutExtension(filename);
+
+                if (basename.EndsWith("-output"))
+                    continue;
 
                 user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
             }
