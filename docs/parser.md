@@ -1,3 +1,6 @@
+TODO: 
+- Problemas com tabela
+
 Assumir:
 
 - Capa
@@ -44,3 +47,7 @@ Apenas textos justificados direita podem ter variacao de espaçamento.
 
 Cabeçalho padrão
 Rodapé padrão
+
+# Quebrar blockset longos
+
+Implementacao usando o centro do overlap

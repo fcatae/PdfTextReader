@@ -16,6 +16,10 @@ namespace PdfTextReader
         {
             _list.Add(block);
         }
+        public void Add(IEnumerable<IBlock> blocks)
+        {
+            _list.AddRange(blocks);
+        }
 
         public string GetText() => GetTextInternal();
 
@@ -90,5 +94,58 @@ namespace PdfTextReader
 
             this._cachedBlock = block;
         }
+
+        public BlockSet[] BreakBlock(float centery)
+        {
+            var list1 = _list.Where(b => b.GetH() < centery);
+            var list2 = _list.Where(b => b.GetH() > centery);
+
+            var b1 = new BlockSet();
+            var b2 = new BlockSet();
+
+            b1.Add(list1);
+            b2.Add(list2);
+
+            return new BlockSet[] { b1, b2 }; 
+
+            //// setup
+            //float minx = _list.Min(b => b.GetX());
+            //float maxx = _list.Max(b => b.GetX() + b.GetWidth());
+
+            //int position;
+            //float curx1 = float.MaxValue;
+            //float curx2 = float.MinValue;
+
+            //// scan down until find the maximum margin
+            //for(position = 0; position<_list.Count; position++)
+            //{
+            //    var block = _list[position];
+            //    float x1 = block.GetX();
+            //    float x2 = block.GetX() + block.GetWidth();
+
+            //    curx1 = (x1 < curx1) ? x1 : curx1;
+            //    curx2 = (x2 > curx2) ? x2 : curx2;
+
+            //    if (curx1 == minx && curx2 == maxx)
+            //    {
+            //        int potential_checkpoint1 = position;
+
+            //        // there should be no other max 
+
+            //        break;
+            //    }
+            //}
+
+            //if( position == _list.Count )
+            //{
+            //    // should not reach this point
+            //    throw new InvalidOperationException();
+            //}
+
+            //int checkpoint1 = position;
+
+            return null;
+        }
+
     }
 }

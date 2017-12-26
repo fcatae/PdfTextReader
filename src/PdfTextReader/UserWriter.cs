@@ -128,14 +128,22 @@ namespace PdfTextReader
             PrintText(blockList);
         }
 
-        void BreakBlockSets(List<BlockSet> list)
+        void BreakBlockSets(List<BlockSet> blockList)
         {
+            List<BlockSet> list = new List<BlockSet>(blockList);
+
             int total = list.Count;
 
             for(int i=0; i<total; i++)
             {
+                if (list[i] == null) continue;
+
                 for(int j=i+1; j<total; j++)
                 {
+                    if (list[i] == null) throw new InvalidOperationException();
+
+                    if (list[j] == null) continue;
+
                     bool hasOverlap = HasAreaOverlap(list[i], list[j]);
 
                     if( hasOverlap )
@@ -146,17 +154,83 @@ namespace PdfTextReader
                         // check is table?
 
                         // break block 
+                        float center = CalculateCenterBreak(larger, smaller);
 
-                        BreakBlock(larger);
-                        smaller.Tag = "gray";
+                        var result = larger.BreakBlock(center);
+
+                        if( result != null )
+                        {
+                            // get results
+                            if (result.Length != 2)
+                                throw new InvalidOperationException();
+                            
+                            var r0 = (result[0]);
+                            var r1 = (result[1]);
+
+                            // check: was good decision?
+                            bool hasOverlapR0 = HasAreaOverlap(r0, smaller);
+                            bool hasOverlapR1 = HasAreaOverlap(r1, smaller);
+
+                            bool badDecision = hasOverlapR0 || hasOverlapR1;
+
+                            if ( hasOverlapR0 || hasOverlapR1 )
+                            {
+                                // not so good
+                                continue;
+                            }
+
+                            // replace old item: 
+                            // 1. remove
+                            if (list[i] == larger)
+                                list[i] = null;
+
+                            if (list[j] == larger)
+                                list[j] = null;
+
+                            // 2. add new items
+                            list.Add(r0);
+                            list.Add(r1);
+
+                            // 3. update the original blocklist
+                            blockList.Remove(larger);
+                            blockList.Add(r0);
+                            blockList.Add(r1);
+
+                            // 4. reset the counter
+                            i--; break;
+                        }
+
+                        //smaller.Tag = "gray";
                     }
                 }
             }
         }
 
-        BlockSet[] BreakBlock(BlockSet large)
+        float CalculateCenterBreak(BlockSet larger, BlockSet smaller)
         {
-            return null;
+            float cx = larger.GetX() + larger.GetWidth() / 2.0f;
+            float cy = larger.GetH() + larger.GetHeight() / 2.0f;
+
+            float a_x1 = smaller.GetX();
+            float a_x2 = smaller.GetX() + smaller.GetWidth();
+            float a_y1 = smaller.GetH();
+            float a_y2 = smaller.GetH() + smaller.GetHeight();
+
+            float dx1 = Math.Abs(a_x1 - cx);
+            float dx2 = Math.Abs(a_x2 - cx);
+            float dy1 = Math.Abs(a_y1 - cy);
+            float dy2 = Math.Abs(a_y2 - cy);
+
+            float x = (dx1 < dx2) ? a_x1 : a_x2;
+            float y = (dy1 < dy2) ? a_y1 : a_y2;
+
+            // use force
+            float force = 3f;
+            float fx = (x == a_x2) ? force : -force;
+            float fy = (y == a_y2) ? force : -force;
+
+            // ignore x
+            return y + fy;
         }
 
         BlockSet GetBlockWithLargerWidth(BlockSet a, BlockSet b)
