@@ -89,20 +89,123 @@ namespace PdfTextReader
 
                 blockList.Add(blockSet);
 
-                var header = FindHeader(blockList);
-                var footer = FindFooter(blockList);
+                FinalProcess(canvas, blockList);
 
-                RemoveList(blockList, header);
-                RemoveList(blockList, footer);
+                //var header = FindHeader(blockList);
+                //var footer = FindFooter(blockList);
 
-                // post-processing
-                DrawRectangle(canvas, footer, ColorConstants.BLUE);
-                DrawRectangle(canvas, header, ColorConstants.BLUE);
+                //RemoveList(blockList, header);
+                //RemoveList(blockList, footer);
 
-                DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+                //// post-processing
+                //DrawRectangle(canvas, footer, ColorConstants.BLUE);
+                //DrawRectangle(canvas, header, ColorConstants.BLUE);
 
-                PrintText(blockList);
+                //DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+
+                //PrintText(blockList);
             }
+        }
+
+        void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList)
+        {
+            BreakBlockSets(blockList);
+
+            var header = FindHeader(blockList);
+            var footer = FindFooter(blockList);
+
+            RemoveList(blockList, header);
+            RemoveList(blockList, footer);
+
+            // post-processing
+            DrawRectangle(canvas, footer, ColorConstants.BLUE);
+            DrawRectangle(canvas, header, ColorConstants.BLUE);
+
+            DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+
+            DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
+
+            PrintText(blockList);
+        }
+
+        void BreakBlockSets(List<BlockSet> list)
+        {
+            int total = list.Count;
+
+            for(int i=0; i<total; i++)
+            {
+                for(int j=i+1; j<total; j++)
+                {
+                    bool hasOverlap = HasAreaOverlap(list[i], list[j]);
+
+                    if( hasOverlap )
+                    {
+                        var larger = GetBlockWithLargerWidth(list[i], list[j]);
+                        var smaller = GetBlockWithSmallerWidth(list[i], list[j]);
+
+                        // check is table?
+
+                        // break block 
+
+                        BreakBlock(larger);
+                        smaller.Tag = "gray";
+                    }
+                }
+            }
+        }
+
+        BlockSet[] BreakBlock(BlockSet large)
+        {
+            return null;
+        }
+
+        BlockSet GetBlockWithLargerWidth(BlockSet a, BlockSet b)
+        {
+            float a_width = a.GetWidth();
+            float b_width = b.GetWidth();
+
+            return (a_width > b_width) ? a : b;
+        }
+
+        BlockSet GetBlockWithSmallerWidth(BlockSet a, BlockSet b)
+        {
+            float a_width = a.GetWidth();
+            float b_width = b.GetWidth();
+
+            return (a_width > b_width) ? b : a;
+        }
+
+        bool HasAreaOverlap(BlockSet b1, BlockSet b2)
+        {
+            float a_x1 = b1.GetX();
+            float a_x2 = b1.GetX() + b1.GetWidth();
+            float a_y1 = b1.GetH();
+            float a_y2 = b1.GetH() + b1.GetHeight();
+            float b_x1 = b2.GetX();
+            float b_x2 = b2.GetX() + b2.GetWidth();
+            float b_y1 = b2.GetH();
+            float b_y2 = b2.GetH() + b2.GetHeight();
+
+            bool overlapsX = HasOverlap(a_x1, a_x2, b_x1, b_x2);
+            bool overlapsY = HasOverlap(a_y1, a_y2, b_y1, b_y2);
+
+            return (overlapsX && overlapsY);
+        }
+
+        bool HasOverlap(float a1, float a2, float b1, float b2)
+        {
+            if (a1 < b1)
+            {
+                return (a2 > b1);
+            }
+
+            if (a1 > b1)
+            {
+                return (b2 > a1);
+            }
+
+            // a1 == b1
+            return true;
         }
 
         void PrintText(List<BlockSet> blockList)

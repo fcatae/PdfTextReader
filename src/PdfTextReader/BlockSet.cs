@@ -10,6 +10,7 @@ namespace PdfTextReader
     {
         List<IBlock> _list = new List<IBlock>();
         Block _cachedBlock = null;
+        public string Tag = "";
 
         public void Add(Block block)
         {
