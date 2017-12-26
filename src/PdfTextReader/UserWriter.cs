@@ -60,7 +60,7 @@ namespace PdfTextReader
                 items.Sort();
                 List<Lucas_Testes.Helpers.Line> lines = Lucas_Testes.Helpers.Line.GetLines(items);
 
-                foreach (var item in items)
+                foreach (var item in lines)
                 {
                     canvas.SaveState();
                     canvas.SetStrokeColor(item.GetColor());

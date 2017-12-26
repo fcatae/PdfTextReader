@@ -33,13 +33,13 @@ namespace PdfTextReader.Lucas_Testes.Helpers
                 if (item.GetRectangle().GetLeft() < left)
                     left = item.GetRectangle().GetLeft();
                 if (item.GetRectangle().GetRight() > right)
-                    right = item.GetRectangle().GetRight() - item.GetRectangle().GetLeft();
+                    right = item.GetRectangle().GetRight();
                 if (item.GetRectangle().GetTop() > top)
-                    top = item.GetRectangle().GetTop() - item.GetRectangle().GetBottom();
+                    top = item.GetRectangle().GetTop();
                 if (item.GetRectangle().GetBottom() < bottom)
                     bottom = item.GetRectangle().GetBottom();
             }
-            return new Rectangle(left, bottom, right, top);
+            return new Rectangle(left, bottom, right - left, top - bottom);
         }
 
         public static List<Line> GetLines(List<MainItem> items)

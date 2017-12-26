@@ -11,6 +11,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
     {
         static Color artifactColor = ColorConstants.GRAY;
         float baseline;
+        public string text;
 
         public static Dictionary<TextStyle, Color> textStyles = new Dictionary<TextStyle, Color>()
         {
@@ -19,6 +20,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
 
         public TextItem(TextRenderInfo textRenderInfo, float top)
         {
+            text = textRenderInfo.GetText();
             baseline = textRenderInfo.GetBaseline().GetStartPoint().Get(1);
             rectangle = GetRectangle(textRenderInfo);
             color = GetColor(textRenderInfo, top);

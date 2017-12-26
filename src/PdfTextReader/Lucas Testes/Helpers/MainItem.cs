@@ -9,6 +9,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
     public abstract class MainItem : IComparable<MainItem>
     {
         public static float itemPositionTolerance = 3f;
+        public static float ColumnPositionTolerance = 10f;
 
         protected Rectangle rectangle;
 
