@@ -1,4 +1,5 @@
-﻿using System;
+﻿using iText.Kernel.Pdf;
+using System;
 
 namespace PdfTextReader
 {
@@ -11,7 +12,11 @@ namespace PdfTextReader
             var user = new UserWriter();
 
             string basename = "p40";
-            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+            //user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+
+
+            user.ProcessText($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+
 
             //user.Process("bin/p40.pdf", b =>
             //{

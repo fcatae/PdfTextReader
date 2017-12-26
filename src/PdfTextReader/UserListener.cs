@@ -12,25 +12,24 @@ namespace PdfTextReader
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_TEXT };
         private readonly Action<Block> _callback;
 
+        public UserListener() { }
+
         public UserListener(Action<Block> callback)
         {
-            if (callback == null)
-                throw new ArgumentNullException(nameof(callback));
-
-            this._callback = callback;
+            this._callback = callback ?? throw new ArgumentNullException(nameof(callback));
         }
 
         public void EventOccurred(IEventData data, EventType type)
         {
-            var textInfo = data as TextRenderInfo;
 
-            if ( textInfo != null )
+            if (data is TextRenderInfo textInfo)
             {
                 var baseline = textInfo.GetBaseline().GetStartPoint();
                 var descent = textInfo.GetDescentLine().GetStartPoint();
                 var ascent = textInfo.GetAscentLine().GetEndPoint();
 
                 var font = textInfo.GetFont().GetFontProgram();
+                var FamilyName = font.GetFontNames().GetFamilyName();
 
                 var block = new Block()
                 {
@@ -41,13 +40,41 @@ namespace PdfTextReader
                     Width = ascent.Get(0) - descent.Get(0),
                     Height = ascent.Get(1) - descent.Get(1),
                     Lower = baseline.Get(1) - descent.Get(1),
-                    FontName = font.ToString(),
-                    FontSize = textInfo.GetFontSize()
+                    FontFullName = font.GetFontNames().GetFontName(),
+                    FontName = FamilyName[0][3],
+                    FontStyle = TrimFontStyle(font.GetFontNames().GetFontName()),
+                    FontSize = textInfo.GetFontSize(),
+                    WordSpacing = textInfo.GetWordSpacing()
                 };
 
                 string text = textInfo.GetText();
 
                 _callback(block);
+            }
+        }
+
+
+       string TrimFontStyle(String name)
+        {
+            if (name == null)
+            {
+                return null;
+            }
+            if (name.EndsWith("Bold"))
+            {
+                return "Bold";
+            }
+            else if (name.EndsWith("Italic"))
+            {
+                return "Italic";
+            }
+            else if (name.EndsWith("BoldItalic"))
+            {
+                return "BoldItalic";
+            }
+            else
+            {
+                return "Regular";
             }
         }
 

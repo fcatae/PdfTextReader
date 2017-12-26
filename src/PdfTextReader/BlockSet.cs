@@ -22,6 +22,7 @@ namespace PdfTextReader
         public float GetH() => _list.Min(b => b.GetH());
         public float GetWidth() => _list.Max(b => b.GetX() + b.GetWidth()) - _list.Min(b => b.GetX());
         public float GetHeight() => _list.Max(b => b.GetH() + b.GetHeight()) - _list.Min(b => b.GetH());
+        public float GetWordSpacing() => _list.Max(b => b.GetWordSpacing());
 
         string GetTextInternal()
         {
