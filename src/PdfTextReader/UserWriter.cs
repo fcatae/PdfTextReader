@@ -45,12 +45,11 @@ namespace PdfTextReader
             {
                 var page = pdf.GetPage(1);
                 var canvas = new PdfCanvas(page);
-                var blockList = new List<BlockSet>();
-                var blockSet = new BlockSet();
-                TableCell last = null;
-
-                blockList.Add(blockSet);
-
+                //var blockList = new List<BlockSet>();
+                //var blockSet = new BlockSet();
+                //TableCell last = null;
+                List<TableCell> cellList = new List<TableCell>();
+                
                 var parser = new PdfCanvasProcessor(new UserListenerExtra(c => {
 
                     // notes:
@@ -61,20 +60,47 @@ namespace PdfTextReader
                     if (c.Op != 1)
                         return;
 
-                    if( last != null )
+                    cellList.Add(c);
+                }));
+
+                parser.ProcessPageContent(page);
+
+                var blockArray = new BlockSet[cellList.Count];
+
+                // iterate every line found
+                for(int i=0; i<cellList.Count; i++)
+                {
+                    var c = cellList[i];
+
+                    if (blockArray[i] == null)
                     {
+                        // create a fresh blockset
+                        blockArray[i] = new BlockSet();
+                        // add the current element to the blockset
+                        blockArray[i].Add(c);
+                    }
+
+                    BlockSet currentBlockset = blockArray[i];
+
+                    // assume that currentBlockset ALWAYS contains c
+                    // -- it was added during blockArray assignment
+
+                    // look for connected lines
+                    for (int j=i+1; j<cellList.Count; j++)
+                    {
+                        // skip if it already has block array assigned
+                        if (blockArray[j] != null)
+                            continue;
+
+                        var last = cellList[j];
+
                         // check if blockSet contains c (two rectangles)
-                        float b_x1 = c.GetX();
-                        float b_x2 = c.GetX() + c.GetWidth();
-                        float b_y1 = c.GetH();
-                        float b_y2 = c.GetH() + c.GetHeight();
-
-                        // debug_last
-                        float last_x1 = last.GetX() - b_x1;
-                        float last_x2 = last.GetX() + last.GetWidth() - b_x2;
-                        float last_y1 = last.GetH() - b_y1;
-                        float last_y2 = last.GetH() + last.GetHeight() - b_y2;
-
+                        float b_x1 = last.GetX();
+                        float b_x2 = last.GetX() + last.GetWidth();
+                        float b_y1 = last.GetH();
+                        float b_y2 = last.GetH() + last.GetHeight();
+                        
+                        var blockSet = currentBlockset;
                         bool b1 = HasOverlap(blockSet, b_x1, b_y1);
                         bool b2 = HasOverlap(blockSet, b_x1, b_y2);
                         bool b3 = HasOverlap(blockSet, b_x2, b_y2);
@@ -82,25 +108,26 @@ namespace PdfTextReader
 
                         bool hasOverlap = b1 || b2 || b3 || b4;
 
-                        // create a new blockset
-                        if( !hasOverlap )
+                        // FOUND A CONNECTED LINE!
+                        if (hasOverlap)
                         {
-                            blockSet = new BlockSet();
-                            blockList.Add(blockSet);
+                            // assign the blockarray
+                            blockArray[j] = currentBlockset;
+                            // and add the element
+                            blockArray[j].Add(last);
                         }
                         else
                         {
-
+                            // do nothing
                         }
                     }
-                    
-                    blockSet.Add(c);
-                    
-                    last = c;
-                }));
+                }
+                                
+                // transform blockArray into blockList
+                var blockList = blockArray.Distinct().ToList();
+                int count1 = blockArray.Length;
+                int count2 = blockList.Count;
 
-                parser.ProcessPageContent(page);
-                
                 DrawRectangle(canvas, blockList, ColorConstants.RED);
             }
         }
