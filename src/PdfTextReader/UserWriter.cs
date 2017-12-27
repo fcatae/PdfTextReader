@@ -156,8 +156,25 @@ namespace PdfTextReader
 
                         // break block 
                         float center = CalculateCenterBreak(larger, smaller);
-
                         var result = larger.BreakBlock(center);
+
+                        bool hackCenter = false;
+
+                        // hack is required because we assume only splitting into 2 block
+                        // the correct is to split into 3 - and then merge back
+
+retryResult: // EXTREME HACK
+
+                        if (hackCenter)
+                        {
+                            float y1 = smaller.GetH();
+                            float y2 = smaller.GetH() + smaller.GetHeight();
+
+                            float force = 3f;
+                            float newcenter = (center == y1) ? y2+force : y1-force;
+
+                            result = larger.BreakBlock(newcenter);
+                        }
 
                         if( result != null )
                         {
@@ -176,9 +193,15 @@ namespace PdfTextReader
 
                             if ( hasOverlapR0 || hasOverlapR1 )
                             {
+                                if(hackCenter == false)
+                                {
+                                    hackCenter = true;
+                                    goto retryResult;
+                                }
+
                                 smaller.Tag = "gray";
                                 larger.Tag = "orange";
-
+                                
                                 // not so good
                                 continue;
                             }
@@ -204,7 +227,14 @@ namespace PdfTextReader
                             i--; break;
                         }
 
+                        if(hackCenter == false)
+                        {
+                            hackCenter = true;
+                            goto retryResult;
+                        }
+
                         smaller.Tag = "gray";
+                        larger.Tag = "orange";
                     }
                 }
             }
