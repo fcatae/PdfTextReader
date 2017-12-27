@@ -108,6 +108,27 @@ namespace PdfTextReader
             }
         }
 
+        public void ProcessBlockExtra(string srcpath, string dstpath)
+        {
+            using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
+            {
+                var page = pdf.GetPage(1);
+                var canvas = new PdfCanvas(page);
+                var blockList = new List<BlockSet>();
+                var blockSet = new BlockSet();
+
+                var parser = new PdfCanvasProcessor(new UserListenerExtra(b => {
+                    Console.WriteLine("Test");
+                }));
+
+                parser.ProcessPageContent(page);
+
+                blockList.Add(blockSet);
+
+                FinalProcess(canvas, blockList, page, parser);
+            }
+        }
+
         public void ProcessBlock(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
@@ -167,36 +188,278 @@ namespace PdfTextReader
 
                 blockList.Add(blockSet);
 
-                var header = FindHeader(blockList);
-                var footer = FindFooter(blockList);
+                FinalProcess(canvas, blockList, page, parser);
 
-                RemoveList(blockList, header);
-                RemoveList(blockList, footer);
-
-                // post-processing
-                DrawRectangle(canvas, footer, ColorConstants.BLUE);
-                DrawRectangle(canvas, header, ColorConstants.BLUE);
-
-                DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
-
-                // Processing Lines
-                //CustomProcessor cp = new CustomProcessor(AllBlocks, page, canvas);
-                //cp.BuildLines();
-
-                //ProcessLine
-                CustomListener listener = new CustomListener(page.GetPageSize().GetHeight());
-                parser = new PdfCanvasProcessor(listener);
-                List<MainItem> items = listener.GetItems();
-                parser.ProcessPageContent(page);
-                items.Sort();
-                List<LineItem> lines = LineItem.GetLines(items, blockList);
-
-                List<StructureItem> structures = StructureItem.GetStructures(lines, blockList);
-
-                HighlightStructureItems(structures, canvas);
-
-                PrintText(blockList);
             }
+        }
+
+        void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList, PdfPage page, PdfCanvasProcessor parser)
+        {
+            BreakBlockSets(blockList);
+
+            var header = FindHeader(blockList);
+            var footer = FindFooter(blockList);
+
+            RemoveList(blockList, header);
+            RemoveList(blockList, footer);
+
+            // post-processing
+            DrawRectangle(canvas, footer, ColorConstants.BLUE);
+            DrawRectangle(canvas, header, ColorConstants.BLUE);
+
+            DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+
+            DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
+            DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
+
+            ProcessStructure(page, parser, blockList, canvas);
+
+            PrintText(blockList);
+        }
+
+        void BreakBlockSets(List<BlockSet> blockList)
+        {
+            List<BlockSet> list = new List<BlockSet>(blockList);
+
+            // this number increases
+            int initial_total = list.Count;
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i] == null) continue;
+
+                for (int j = i + 1; j < list.Count; j++)
+                {
+                    if (list[i] == null) throw new InvalidOperationException();
+
+                    if (list[j] == null) continue;
+
+                    bool hasOverlap = HasAreaOverlap(list[i], list[j]);
+
+                    if (hasOverlap)
+                    {
+                        var larger = GetBlockWithLargerWidth(list[i], list[j]);
+                        var smaller = GetBlockWithSmallerWidth(list[i], list[j]);
+
+                        // check is table?
+
+                        // break block 
+                        float center = CalculateCenterBreak(larger, smaller);
+                        var result = larger.BreakBlock(center);
+
+                        bool hackCenter = false;
+
+                        // hack is required because we assume only splitting into 2 block
+                        // the correct is to split into 3 - and then merge back
+
+                        retryResult: // EXTREME HACK
+
+                        if (hackCenter)
+                        {
+                            float y1 = smaller.GetH();
+                            float y2 = smaller.GetH() + smaller.GetHeight();
+
+                            float force = 3f;
+                            float newcenter = (center == y1) ? y2 + force : y1 - force;
+
+                            result = larger.BreakBlock(newcenter);
+                        }
+
+                        if (result != null)
+                        {
+                            // get results
+                            if (result.Length != 2)
+                                throw new InvalidOperationException();
+
+                            var r0 = (result[0]);
+                            var r1 = (result[1]);
+
+                            // check: was good decision?
+                            bool hasOverlapR0 = HasAreaOverlap(r0, smaller);
+                            bool hasOverlapR1 = HasAreaOverlap(r1, smaller);
+
+                            bool badDecision = hasOverlapR0 || hasOverlapR1;
+
+                            if (hasOverlapR0 || hasOverlapR1)
+                            {
+                                if (hackCenter == false)
+                                {
+                                    hackCenter = true;
+                                    goto retryResult;
+                                }
+
+                                smaller.Tag = "gray";
+                                larger.Tag = "orange";
+
+                                // not so good
+                                continue;
+                            }
+
+                            // replace old item: 
+                            // 1. remove
+                            if (list[i] == larger)
+                                list[i] = null;
+
+                            if (list[j] == larger)
+                                list[j] = null;
+
+                            // 2. add new items
+                            list.Add(r0);
+                            list.Add(r1);
+
+                            // 3. update the original blocklist
+                            blockList.Remove(larger);
+                            blockList.Add(r0);
+                            blockList.Add(r1);
+
+                            // 4. reset the counter
+                            i--; break;
+                        }
+
+                        if (hackCenter == false)
+                        {
+                            hackCenter = true;
+                            goto retryResult;
+                        }
+
+                        smaller.Tag = "gray";
+                        larger.Tag = "orange";
+                    }
+                }
+            }
+        }
+
+        float CalculateCenterBreak(BlockSet larger, BlockSet smaller)
+        {
+            float a_y1 = larger.GetH();
+            float a_y2 = larger.GetH() + larger.GetHeight();
+
+            float b_x1 = smaller.GetX();
+            float b_x2 = smaller.GetX() + smaller.GetWidth();
+            float b_y1 = smaller.GetH();
+            float b_y2 = smaller.GetH() + smaller.GetHeight();
+
+            float x = float.NaN;
+            float y = float.NaN;
+
+            // larger contains smaller?
+            if ((a_y1 <= b_y1) && (a_y2 >= b_y2))
+            {
+                // calculate the center
+                float cx = larger.GetX() + larger.GetWidth() / 2.0f;
+                float cy = larger.GetH() + larger.GetHeight() / 2.0f;
+
+                float dx1 = Math.Abs(b_x1 - cx);
+                float dx2 = Math.Abs(b_x2 - cx);
+                float dy1 = Math.Abs(b_y1 - cy);
+                float dy2 = Math.Abs(b_y2 - cy);
+
+                x = (dx1 < dx2) ? b_x1 : b_x2;
+                y = (dy1 < dy2) ? b_y1 : b_y2;
+            }
+            else
+            {
+                // use the point inside the larger block
+                if ((b_y1 >= a_y1) && (b_y1 <= a_y2))
+                {
+                    y = b_y1;
+                }
+                if ((b_y2 >= a_y1) && (b_y2 <= a_y2))
+                {
+                    y = b_y2;
+                }
+            }
+
+            // what??? smaller > larger ???
+            if ((a_y1 > b_y1) && (a_y2 < b_y2))
+            {
+                float w1 = larger.GetWidth();
+                float w2 = smaller.GetWidth();
+
+                // if width are both small
+                if (w1 < 50 && w2 < 50)
+                {
+                    // return any value
+                    y = b_y1;
+                }
+
+            }
+
+            if (float.IsNaN(y))
+                throw new InvalidOperationException();
+
+            // use force
+            float force = 3f;
+            float fx = (x == b_x2) ? force : -force;
+            float fy = (y == b_y2) ? force : -force;
+
+            // ignore x
+            return y + fy;
+        }
+
+        BlockSet GetBlockWithLargerWidth(BlockSet a, BlockSet b)
+        {
+            float a_width = a.GetWidth();
+            float b_width = b.GetWidth();
+
+            return (a_width > b_width) ? a : b;
+        }
+
+        BlockSet GetBlockWithSmallerWidth(BlockSet a, BlockSet b)
+        {
+            float a_width = a.GetWidth();
+            float b_width = b.GetWidth();
+
+            return (a_width > b_width) ? b : a;
+        }
+
+        bool HasAreaOverlap(BlockSet b1, BlockSet b2)
+        {
+            float a_x1 = b1.GetX();
+            float a_x2 = b1.GetX() + b1.GetWidth();
+            float a_y1 = b1.GetH();
+            float a_y2 = b1.GetH() + b1.GetHeight();
+            float b_x1 = b2.GetX();
+            float b_x2 = b2.GetX() + b2.GetWidth();
+            float b_y1 = b2.GetH();
+            float b_y2 = b2.GetH() + b2.GetHeight();
+
+            bool overlapsX = HasOverlap(a_x1, a_x2, b_x1, b_x2);
+            bool overlapsY = HasOverlap(a_y1, a_y2, b_y1, b_y2);
+
+            return (overlapsX && overlapsY);
+        }
+
+        bool HasOverlap(float a1, float a2, float b1, float b2)
+        {
+            if (a1 < b1)
+            {
+                return (a2 > b1);
+            }
+
+            if (a1 > b1)
+            {
+                return (b2 > a1);
+            }
+
+            // a1 == b1
+            return true;
+        }
+
+
+        void ProcessStructure(PdfPage page, PdfCanvasProcessor parser, List<BlockSet> blockList, PdfCanvas canvas)
+        {
+            //ProcessLine
+            CustomListener listener = new CustomListener(page.GetPageSize().GetHeight());
+            parser = new PdfCanvasProcessor(listener);
+            List<MainItem> items = listener.GetItems();
+            parser.ProcessPageContent(page);
+            items.Sort();
+            List<LineItem> lines = LineItem.GetLines(items, blockList);
+
+            List<StructureItem> structures = StructureItem.GetStructures(lines, blockList);
+
+            HighlightStructureItems(structures, canvas);
         }
 
         void PrintText(List<BlockSet> blockList)

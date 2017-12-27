@@ -29,7 +29,7 @@ namespace PdfTextReader
 
         static void ProcessFiles()
         {
-            string subfolder = "Samples";
+            string subfolder = "dz";
             var dir = new DirectoryInfo($"bin/{subfolder}");
             var user = new UserWriter();
 
