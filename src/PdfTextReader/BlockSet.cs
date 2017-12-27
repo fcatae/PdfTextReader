@@ -95,6 +95,18 @@ namespace PdfTextReader
             this._cachedBlock = block;
         }
 
+        public static BlockSet MergeBlocks(BlockSet a, BlockSet b)
+        {
+            var list1 = a._list;
+            var list2 = b._list;
+
+            var block = new BlockSet();
+            block.Add(list1);
+            block.Add(list2);
+
+            return block;
+        }
+
         public BlockSet[] BreakBlock(float centery)
         {
             var list1 = _list.Where(b => b.GetH() < centery);

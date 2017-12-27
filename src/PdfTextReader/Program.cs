@@ -9,7 +9,7 @@ namespace PdfTextReader
         {
             Console.WriteLine("Hello World!");
 
-            TestFile("p44");
+            ProcessFile("dz031");
         }
         static void TestFile(string basename)
         {
