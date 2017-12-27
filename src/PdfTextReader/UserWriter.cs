@@ -89,7 +89,7 @@ namespace PdfTextReader
                     for (int j=i+1; j<cellList.Count; j++)
                     {
                         // skip if it already has block array assigned
-                        if (blockArray[j] != null)
+                        if (blockArray[j] == currentBlockset)
                             continue;
 
                         var last = cellList[j];
