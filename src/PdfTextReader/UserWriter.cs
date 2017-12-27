@@ -118,10 +118,34 @@ namespace PdfTextReader
                             {
                                 hasModification = true;
 
-                                // assign the blockarray
-                                blockArray[j] = currentBlockset;
-                                // and add the element
-                                blockArray[j].Add(last);
+                                var nextBlockset = blockArray[j];
+
+
+                                if (nextBlockset == null )
+                                {
+                                    if (nextBlockset == currentBlockset)
+                                        throw new InvalidOperationException("infinite loop?");
+
+                                    // assign the blockarray
+                                    blockArray[j] = currentBlockset;
+                                    // and add the element
+                                    blockArray[j].Add(last);
+                                }
+                                else
+                                {
+                                    // has to merge changes
+                                    currentBlockset.MergeWith(nextBlockset);
+                                    // assign the blockarray
+                                    blockArray[j] = currentBlockset;
+                                    // assume nextBlockset already contains j
+
+                                    // remove all other references to nextBlockset
+                                    for(int k=0;k<blockArray.Length;k++)
+                                    {
+                                        if (blockArray[k] == nextBlockset)
+                                            blockArray[k] = currentBlockset;
+                                    }
+                                }
                             }
                             else
                             {
@@ -129,6 +153,8 @@ namespace PdfTextReader
                             }
                         }
                     }
+
+                    // infinite loop
                 }
                 
                 // transform blockArray into blockList

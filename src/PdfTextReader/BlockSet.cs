@@ -166,5 +166,9 @@ namespace PdfTextReader
             return null;
         }
 
+        public void MergeWith(BlockSet other)
+        {
+            this._list.AddRange(other._list);            
+        }
     }
 }
