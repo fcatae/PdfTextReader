@@ -11,14 +11,14 @@ namespace PdfTextReader
     class UserListenerExtra : IEventListener
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() {
-            EventType.CLIP_PATH_CHANGED,
-            EventType.RENDER_PATH,
-            EventType.BEGIN_TEXT
+            //EventType.CLIP_PATH_CHANGED,
+            EventType.RENDER_PATH
+            //EventType.BEGIN_TEXT
             //EventType.RENDER_IMAGE
         };
-        private readonly Action<Block> _callback;
+        private readonly Action<TableCell> _callback;
 
-        public UserListenerExtra(Action<Block> callback)
+        public UserListenerExtra(Action<TableCell> callback)
         {
             if (callback == null)
                 throw new ArgumentNullException(nameof(callback));
@@ -31,15 +31,15 @@ namespace PdfTextReader
             var clip = data as ClippingPathInfo;
             var line = data as PathRenderInfo;
 
-            if( clip != null)
-            {
-                var path = clip.GetClippingPath();
-                var ps = path.GetSubpaths().SelectMany(p => p.GetSegments())
-                    .SelectMany(s => s.GetBasePoints())
-                    .ToArray();
-                var ctm = clip.GetCtm();
-                var gs = clip.GetGraphicsState();
-            }
+            //if( clip != null)
+            //{
+            //    var path = clip.GetClippingPath();
+            //    var ps = path.GetSubpaths().SelectMany(p => p.GetSegments())
+            //        .SelectMany(s => s.GetBasePoints())
+            //        .ToArray();
+            //    var ctm = clip.GetCtm();
+            //    var gs = clip.GetGraphicsState();
+            //}
             if( line != null )
             {
                 var bgcolor = line.GetFillColor();
@@ -53,6 +53,8 @@ namespace PdfTextReader
                 var ctm = line.GetCtm();
                 var dx = ctm.Get(6);
                 var dy = ctm.Get(7);
+
+                System.Diagnostics.Debug.WriteLine("OP=" + op + "");
 
                 var segs = subpaths
                                 .SelectMany(p => p.GetSegments())
@@ -72,36 +74,32 @@ namespace PdfTextReader
                     }
                 }
 
-                
-            }
+                float minerr = .5f;
 
-            var textInfo = data as TextRenderInfo;
+                var sign_x = ctm.Get(0);
+                var sign_y = ctm.Get(4);
 
-            if ( textInfo != null )
-            {
-                var baseline = textInfo.GetBaseline().GetStartPoint();
-                var descent = textInfo.GetDescentLine().GetStartPoint();
-                var ascent = textInfo.GetAscentLine().GetEndPoint();
+                float x1 = (float)segs.Min(s => s.x) - minerr;
+                float x2 = (float)segs.Max(s => s.x) + minerr;
+                float y1 = (float)segs.Min(s => sign_y* s.y) - minerr;
+                float y2 = (float)segs.Max(s => sign_y* s.y) + minerr;
 
-                var font = textInfo.GetFont().GetFontProgram();
+                float translate_x = dx;
+                float translate_y = dy;
 
-                var block = new Block()
+                var tableCell = new TableCell()
                 {
-                    Text = textInfo.GetText(),
-                    X = descent.Get(0),
-                    H = descent.Get(1),
-                    B = baseline.Get(1),
-                    Width = ascent.Get(0) - descent.Get(0),
-                    Height = ascent.Get(1) - descent.Get(1),
-                    Lower = baseline.Get(1) - descent.Get(1),
-                    FontName = font.ToString(),
-                    FontSize = textInfo.GetFontSize()
+                    X = x1 + translate_x,
+                    H = y1 + translate_y,
+                    Width = x2 - x1,
+                    Height = y2 - y1
                 };
 
-                string text = textInfo.GetText();
+                if (tableCell.Width < 0 || tableCell.Height < 0)
+                    throw new InvalidOperationException();
 
-                _callback(block);
-            }
+                _callback(tableCell);
+            }            
         }
 
         public ICollection<EventType> GetSupportedEvents()
