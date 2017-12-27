@@ -254,7 +254,7 @@ retryResult: // EXTREME HACK
             float y = float.NaN;
 
             // larger contains smaller?
-            if ((a_y1 < b_y1) && (a_y2 > b_y2))
+            if ((a_y1 <= b_y1) && (a_y2 >= b_y2))
             {
                 // calculate the center
                 float cx = larger.GetX() + larger.GetWidth() / 2.0f;
@@ -271,14 +271,29 @@ retryResult: // EXTREME HACK
             else
             {
                 // use the point inside the larger block
-                if(( b_y1 > a_y1 ) && ( b_y1 < a_y2))
+                if(( b_y1 >= a_y1 ) && ( b_y1 <= a_y2))
                 {
                     y = b_y1;
                 }
-                if ((b_y2 > a_y1) && (b_y2 < a_y2))
+                if ((b_y2 >= a_y1) && (b_y2 <= a_y2))
                 {
                     y = b_y2;
                 }
+            }
+
+            // what??? smaller > larger ???
+            if ((a_y1 > b_y1) && (a_y2 < b_y2))
+            {
+                float w1 = larger.GetWidth();
+                float w2 = smaller.GetWidth();
+
+                // if width are both small
+                if( w1 < 50 && w2 < 50 )
+                {
+                    // return any value
+                    y = b_y1;
+                }
+
             }
 
             if (float.IsNaN(y))

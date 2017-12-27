@@ -1,6 +1,6 @@
 TODO: 
 - Problemas com tabela
-
+- Problemas com imagens (dz67, dz68)
 Assumir:
 
 - Capa
