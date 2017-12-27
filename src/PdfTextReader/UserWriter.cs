@@ -182,6 +182,33 @@ namespace PdfTextReader
             return hasOverlap;
         }
 
+        BlockSet IsInTable(float px, float py)
+        {
+            if (this.ActiveTables == null)
+                return null;
+
+            foreach (var table in this.ActiveTables)
+            {
+                float b_x1 = table.GetX();
+                float b_x2 = table.GetX() + table.GetWidth();
+                float b_y1 = table.GetH();
+                float b_y2 = table.GetH() + table.GetHeight();
+                
+                // this table contains the b block?
+                bool tableContainsX = ((b_x1 < px) && (b_x2 > px));
+                bool tableContainsY = ((b_y1 < py) && (b_y2 > py));
+
+                bool tableContains = tableContainsX && tableContainsY;
+
+                if (tableContains)
+                {
+                    return table;
+                }
+            }
+
+            return null;
+        }
+
         public void ProcessBlock(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
@@ -193,6 +220,11 @@ namespace PdfTextReader
                 Block last = null;
 
                 var parser = new PdfCanvasProcessor(new UserListener( b => {
+
+                    // check table
+                    var tab = IsInTable(b.GetX()+b.GetWidth()/2, b.GetH()+b.GetHeight()/2);
+                    if (tab != null)
+                        return;
 
                     bool shouldBreak = false;
                     
