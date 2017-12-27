@@ -13,6 +13,8 @@ namespace PdfTextReader
 {
     class UserWriter
     {
+        public List<BlockSet> ActiveTables = null;
+
         public void Process(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
@@ -162,6 +164,8 @@ namespace PdfTextReader
                 int count1 = blockArray.Length;
                 int count2 = blockList.Count;
 
+                ActiveTables = blockList;
+
                 DrawRectangle(canvas, blockList, ColorConstants.RED);
             }
         }
@@ -236,6 +240,59 @@ namespace PdfTextReader
                     //        mightBeTable = true;
                     //    }                        
                     //}
+
+                    bool mightBeTable = false;
+                    if( shouldBreak && (this.ActiveTables != null) )
+                    {
+                        string dbgtext = b.GetText();
+
+                        foreach(var table in this.ActiveTables )
+                        {
+                            float b_x1 = table.GetX();
+                            float b_x2 = table.GetX() + table.GetWidth();
+                            float b_y1 = table.GetH();
+                            float b_y2 = table.GetH() + table.GetHeight();
+
+                            // check if the table is inside the current block
+
+                            // assume blockset != null
+                            float a_x1 = blockSet.GetX();
+                            float a_x2 = blockSet.GetX() + blockSet.GetWidth();
+                            float a_y1 = blockSet.GetH();
+                            float a_y2 = blockSet.GetH() + blockSet.GetHeight();
+
+                            bool blockInsideLastBlockset = ((a_y1 < b_y2) && (a_y2 > b_y2));
+                            bool blockInsideWidth = ((a_x1 < b_x1) && (a_x2 > b_x1));
+
+                            bool isInside = blockInsideWidth && blockInsideLastBlockset;
+
+                            if( true )
+                            {
+                                float px = b.GetX();
+                                float py = b.GetH();
+
+                                // this table contains the b block?
+                                bool tableContainsX = ((b_x1 < px) && (b_x2 > px));
+                                bool tableContainsY = ((b_y1 < py) && (b_y2 > py));
+
+                                bool tableContains = tableContainsX && tableContainsY;
+
+                                if(tableContains)
+                                {
+                                    blockSet.Add(table);
+                                    mightBeTable = true;
+                                    break;
+                                }
+                            }   
+                        }
+                    }
+
+                    if( mightBeTable )
+                    {
+                        // if it is a table, then include it to the current set
+                        
+                        shouldBreak = false;
+                    }
 
                     // should break block
                     if(shouldBreak)

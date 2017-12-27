@@ -8,15 +8,26 @@ namespace PdfTextReader
         static void Main(string[] args)
         {
             Console.WriteLine("Hello World!");
-
-            // 88, 91, 118, 128
-            TabifyFile("dz053");
+            
+            ProcessFileWithTable("dz024");
         }
+
         static void TabifyFile(string basename)
         {
             var user = new UserWriter();
 
             user.ProcessBlockExtra($"bin/{basename}.pdf", $"bin/{basename}-table-output.pdf");
+        }
+
+        static void ProcessFileWithTable(string basename)
+        {
+            var user = new UserWriter();
+
+            user.ProcessBlockExtra($"bin/{basename}.pdf", $"bin/{basename}-table-output.pdf");
+
+            var tablesFound = user.ActiveTables;
+
+            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");            
         }
 
         static void ProcessFile(string basename)
