@@ -12,7 +12,7 @@ namespace PdfTextReader
         public float H { get; set; }
         public float Width { get; set; }
         public float Height { get; set; }
-
+        public int Op { get; set; }
         public string GetText() => throw new InvalidOperationException();
         public float GetX() => X;
         public float GetH() => H;

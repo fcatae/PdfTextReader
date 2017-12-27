@@ -46,19 +46,22 @@ namespace PdfTextReader
                 var page = pdf.GetPage(1);
                 var canvas = new PdfCanvas(page);
                 var blockList = new List<BlockSet>();
-                
+                var blockSet = new BlockSet();
+
                 var parser = new PdfCanvasProcessor(new UserListenerExtra(c => {
 
-                    var blockSet = new BlockSet();
+                    blockSet = new BlockSet();
                     blockSet.Add(c);
 
-                    blockList.Add(blockSet);
+                    if(c.Op == 1)
+                    {
+                        blockList.Add(blockSet);
+                    }
 
-                    Console.WriteLine("Test");
                 }));
 
                 parser.ProcessPageContent(page);
-
+                
                 DrawRectangle(canvas, blockList, ColorConstants.RED);
             }
         }

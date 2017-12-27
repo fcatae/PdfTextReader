@@ -89,6 +89,7 @@ namespace PdfTextReader
 
                 var tableCell = new TableCell()
                 {
+                    Op = op,
                     X = x1 + translate_x,
                     H = y1 + translate_y,
                     Width = x2 - x1,
