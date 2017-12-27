@@ -9,7 +9,8 @@ namespace PdfTextReader
         {
             Console.WriteLine("Hello World!");
 
-            TabifyFile("dz022");
+            // 88, 91, 118, 128
+            TabifyFile("dz091");
         }
         static void TabifyFile(string basename)
         {

@@ -67,62 +67,70 @@ namespace PdfTextReader
 
                 var blockArray = new BlockSet[cellList.Count];
 
-                // iterate every line found
-                for(int i=0; i<cellList.Count; i++)
+                bool hasModification = true;
+                while (hasModification)
                 {
-                    var c = cellList[i];
+                    hasModification = false;
 
-                    if (blockArray[i] == null)
+                    // iterate every line found
+                    for (int i = 0; i < cellList.Count; i++)
                     {
-                        // create a fresh blockset
-                        blockArray[i] = new BlockSet();
-                        // add the current element to the blockset
-                        blockArray[i].Add(c);
-                    }
+                        var c = cellList[i];
 
-                    BlockSet currentBlockset = blockArray[i];
-
-                    // assume that currentBlockset ALWAYS contains c
-                    // -- it was added during blockArray assignment
-
-                    // look for connected lines
-                    for (int j=i+1; j<cellList.Count; j++)
-                    {
-                        // skip if it already has block array assigned
-                        if (blockArray[j] == currentBlockset)
-                            continue;
-
-                        var last = cellList[j];
-
-                        // check if blockSet contains c (two rectangles)
-                        float b_x1 = last.GetX();
-                        float b_x2 = last.GetX() + last.GetWidth();
-                        float b_y1 = last.GetH();
-                        float b_y2 = last.GetH() + last.GetHeight();
-                        
-                        var blockSet = currentBlockset;
-                        bool b1 = HasOverlap(blockSet, b_x1, b_y1);
-                        bool b2 = HasOverlap(blockSet, b_x1, b_y2);
-                        bool b3 = HasOverlap(blockSet, b_x2, b_y2);
-                        bool b4 = HasOverlap(blockSet, b_x2, b_y1);
-
-                        bool hasOverlap = b1 || b2 || b3 || b4;
-
-                        // FOUND A CONNECTED LINE!
-                        if (hasOverlap)
+                        if (blockArray[i] == null)
                         {
-                            // assign the blockarray
-                            blockArray[j] = currentBlockset;
-                            // and add the element
-                            blockArray[j].Add(last);
+                            // create a fresh blockset
+                            blockArray[i] = new BlockSet();
+                            // add the current element to the blockset
+                            blockArray[i].Add(c);
                         }
-                        else
+
+                        BlockSet currentBlockset = blockArray[i];
+
+                        // assume that currentBlockset ALWAYS contains c
+                        // -- it was added during blockArray assignment
+
+                        // look for connected lines
+                        for (int j = i + 1; j < cellList.Count; j++)
                         {
-                            // do nothing
+                            // skip if it already has block array assigned
+                            if (blockArray[j] == currentBlockset)
+                                continue;
+
+                            var last = cellList[j];
+
+                            // check if blockSet contains c (two rectangles)
+                            float b_x1 = last.GetX();
+                            float b_x2 = last.GetX() + last.GetWidth();
+                            float b_y1 = last.GetH();
+                            float b_y2 = last.GetH() + last.GetHeight();
+
+                            var blockSet = currentBlockset;
+                            bool b1 = HasOverlap(blockSet, b_x1, b_y1);
+                            bool b2 = HasOverlap(blockSet, b_x1, b_y2);
+                            bool b3 = HasOverlap(blockSet, b_x2, b_y2);
+                            bool b4 = HasOverlap(blockSet, b_x2, b_y1);
+
+                            bool hasOverlap = b1 || b2 || b3 || b4;
+
+                            // FOUND A CONNECTED LINE!
+                            if (hasOverlap)
+                            {
+                                hasModification = true;
+
+                                // assign the blockarray
+                                blockArray[j] = currentBlockset;
+                                // and add the element
+                                blockArray[j].Add(last);
+                            }
+                            else
+                            {
+                                // do nothing
+                            }
                         }
                     }
                 }
-                                
+                
                 // transform blockArray into blockList
                 var blockList = blockArray.Distinct().ToList();
                 int count1 = blockArray.Length;
