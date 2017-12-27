@@ -9,7 +9,13 @@ namespace PdfTextReader
         {
             Console.WriteLine("Hello World!");
 
-            ProcessFile("dz128");
+            TestFile("p44");
+        }
+        static void TestFile(string basename)
+        {
+            var user = new UserWriter();
+
+            user.ProcessBlockExtra($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
         }
 
         static void ProcessFile(string basename)

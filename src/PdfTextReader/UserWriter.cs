@@ -39,6 +39,41 @@ namespace PdfTextReader
             }
         }
 
+        public void ProcessBlockExtra(string srcpath, string dstpath)
+        {
+            using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
+            {
+                var page = pdf.GetPage(1);
+                var canvas = new PdfCanvas(page);
+                var blockList = new List<BlockSet>();
+                var blockSet = new BlockSet();
+
+                var parser = new PdfCanvasProcessor(new UserListenerExtra(b => {
+                    Console.WriteLine("Test");                    
+                }));
+
+                parser.ProcessPageContent(page);
+
+                blockList.Add(blockSet);
+
+                FinalProcess(canvas, blockList);
+
+                //var header = FindHeader(blockList);
+                //var footer = FindFooter(blockList);
+
+                //RemoveList(blockList, header);
+                //RemoveList(blockList, footer);
+
+                //// post-processing
+                //DrawRectangle(canvas, footer, ColorConstants.BLUE);
+                //DrawRectangle(canvas, header, ColorConstants.BLUE);
+
+                //DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+
+                //PrintText(blockList);
+            }
+        }
+
         public void ProcessBlock(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
