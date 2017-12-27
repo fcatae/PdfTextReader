@@ -46,31 +46,39 @@ namespace PdfTextReader
             PdfReader reader = new PdfReader(srcpath);
             using (var pdf = new PdfDocument(reader, new PdfWriter(dstpath)))
             {
-                var page = pdf.GetPage(1);
-                var canvas = new PdfCanvas(page);
-                var blockList = new List<BlockSet>();
-                var blockSet = new BlockSet();
-                Block last = null;
-                List<Block> AllBlocks = new List<Block>();
-
-                CustomListener listener = new CustomListener(page.GetPageSize().GetHeight() - 90);
-                var parser = new PdfCanvasProcessor(listener);
-                List<MainItem> items = listener.GetItems();
-                parser.ProcessPageContent(page);
-                items.Sort();
-                List<Lucas_Testes.Helpers.Line> lines = Lucas_Testes.Helpers.Line.GetLines(items);
-
-                foreach (var item in lines)
+                int pages = pdf.GetNumberOfPages();
+                for (int i = 1; i <= pages; i++)
                 {
-                    canvas.SaveState();
-                    canvas.SetStrokeColor(item.GetColor());
-                    canvas.SetLineWidth(2);
-                    Rectangle r = item.GetRectangle();
-                    canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
-                    canvas.Stroke();
-                    canvas.RestoreState();
-                }
+                    var page = pdf.GetPage(i);
+                    var canvas = new PdfCanvas(page);
+                    var blockList = new List<BlockSet>();
+                    var blockSet = new BlockSet();
+                    Block last = null;
+                    List<Block> AllBlocks = new List<Block>();
 
+                    CustomListener listener = new CustomListener(page.GetPageSize().GetHeight());
+                    var parser = new PdfCanvasProcessor(listener);
+                    List<MainItem> items = listener.GetItems();
+                    parser.ProcessPageContent(page);
+                    items.Sort();
+                    List<Lucas_Testes.Helpers.Line> lines = Lucas_Testes.Helpers.Line.GetLines(items);
+
+                    HighlightItems(lines, canvas);
+                }
+            }
+        }
+
+        void HighlightItems(List<Lucas_Testes.Helpers.Line> listOfItems, PdfCanvas canvas)
+        {
+            foreach (var item in listOfItems)
+            {
+                canvas.SaveState();
+                canvas.SetStrokeColor(item.GetColor());
+                canvas.SetLineWidth(1);
+                Rectangle r = item.GetRectangle();
+                canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
+                canvas.Stroke();
+                canvas.RestoreState();
             }
         }
 
@@ -119,12 +127,12 @@ namespace PdfTextReader
 
                     blockSet.Add(b);
 
-                    if (b.Text.Contains("<!ID"))
-                    {
-                        canvas.SetStrokeColor(ColorConstants.RED);
-                        canvas.Rectangle(b.X, b.B, b.Width + 5, b.Height - b.Lower - 5);
-                        canvas.Stroke();
-                    }
+                    //if (b.Text.Contains("<!ID"))
+                    //{
+                    //    canvas.SetStrokeColor(ColorConstants.RED);
+                    //    canvas.Rectangle(b.X, b.B, b.Width + 5, b.Height - b.Lower - 5);
+                    //    canvas.Stroke();
+                    //}
 
                     last = b;
                 }));
@@ -146,8 +154,18 @@ namespace PdfTextReader
                 DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
 
                 // Processing Lines
-                CustomProcessor cp = new CustomProcessor(AllBlocks, page, canvas);
-                cp.BuildLines();
+                //CustomProcessor cp = new CustomProcessor(AllBlocks, page, canvas);
+                //cp.BuildLines();
+
+                //ProcessLine
+                CustomListener listener = new CustomListener(page.GetPageSize().GetHeight());
+                parser = new PdfCanvasProcessor(listener);
+                List<MainItem> items = listener.GetItems();
+                parser.ProcessPageContent(page);
+                items.Sort();
+                List<Lucas_Testes.Helpers.Line> lines = Lucas_Testes.Helpers.Line.GetLines(items, blockList);
+
+                HighlightItems(lines, canvas);
 
                 PrintText(blockList);
             }

@@ -42,38 +42,98 @@ namespace PdfTextReader.Lucas_Testes.Helpers
             return new Rectangle(left, bottom, right - left, top - bottom);
         }
 
-        public static List<Line> GetLines(List<MainItem> items)
+        static bool IsInsideBlock(MainItem p, BlockSet b)
+        {
+            if (p.GetRectangle().GetX() >= b.GetX())
+            {
+                if (p.GetRectangle().GetY() >= b.GetH())
+                {
+                    if (p.GetRectangle().GetWidth() < b.GetWidth())
+                    {
+                        if (p.GetRectangle().GetHeight() < b.GetHeight())
+                        {
+                            if (p.GetRectangle().GetX() <= b.GetWidth() + b.GetX())
+                            {
+                                if (p.GetRectangle().GetY() <= b.GetHeight() + b.GetH())
+                                {
+                                    return true;
+                                }
+                                return false;
+                            }
+                            return false;
+                        }
+                        return false;
+                    }
+                    return false;
+                }
+                return false;
+            }
+            return false;
+        }
+
+        public static List<Line> GetLines(List<MainItem> items, List<BlockSet> _list = null)
         {
             List<Line> lines = new List<Line>();
             List<MainItem> line = new List<MainItem>();
-            foreach (var item in items)
+
+
+            List<MainItem> ItemsInBlockSets;
+
+
+            foreach (var b in _list)
             {
-                if (line.Count == 0)
+                ItemsInBlockSets = new List<MainItem>();
+                foreach (var i in items)
                 {
-                    line.Add(item);
-                    continue;
+                    if (IsInsideBlock(i, b))
+                    {
+                        ItemsInBlockSets.Add(i);
+                    }
                 }
-                if (AreOnSameLine(line[line.Count - 1], item))
+
+                foreach (var item in ItemsInBlockSets)
                 {
-                    line.Add(item);
-                }
-                else
-                {
-                    lines.Add(new Line(line));
-                    line = new List<MainItem>
+                    if (line.Count == 0)
+                    {
+                        line.Add(item);
+                        continue;
+                    }
+                    if (AreOnSameLine(line[line.Count - 1], item))
+                    {
+                        line.Add(item);
+                        //if (AreOnSameColumn(line[line.Count - 1], item))
+                        //{
+                        //    line.Add(item);
+                        //}
+                        //else
+                        //{
+                        //    continue;
+                        //}
+                    }
+                    else
+                    {
+                        lines.Add(new Line(line));
+                        line = new List<MainItem>
                     {
                         item
                     };
+                    }
                 }
+                if (line.Count > 0)
+                    lines.Add(new Line(line));
             }
-            if (line.Count > 0)
-                lines.Add(new Line(line));
+
             return lines;
         }
 
         static bool AreOnSameLine(MainItem i1, MainItem i2)
         {
             return Math.Abs(i1.GetLL().GetY() - i2.GetLL().GetY()) <= MainItem.itemPositionTolerance;
+        }
+
+        static bool AreOnSameColumn(MainItem i1, MainItem i2)
+        {
+            return Math.Abs(i1.GetLL().GetX() - i2.GetLL().GetX()) <= MainItem.ColumnPositionTolerance;
         }
     }
 }

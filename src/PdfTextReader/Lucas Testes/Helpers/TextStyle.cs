@@ -18,11 +18,37 @@ namespace PdfTextReader.Lucas_Testes.Helpers
 
         public TextStyle(TextRenderInfo textRenderInfo)
         {
-            string font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFullName()[0][3];
+            string font = String.Empty;
+            try
+            {
+                font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFullName()[0][3];
+            }
+            catch (Exception ex) { }
+            if (String.IsNullOrWhiteSpace(font))
+            {
+                try
+                {
+                    font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFamilyName()[0][3];
+                }
+                catch (Exception ex) { }
+            }
+            if (String.IsNullOrWhiteSpace(font))
+            {
+                try
+                {
+                    font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFontName();
+                }
+                catch (Exception ex) { }
+            }
             if (font.Contains("+"))
                 font = font.Substring(font.IndexOf("+") + 1, font.Length - font.IndexOf("+") - 1);
             if (font.Contains("-"))
-                font = font.Substring(0, font.IndexOf("-"));
+            {
+                if (font.IndexOf("-") == 6)
+                {
+                    font = font.Substring(0, font.IndexOf("-"));
+                }
+            }
             this.fontName = font;
             this.fontSize = textRenderInfo.GetAscentLine().GetStartPoint().Get(1) - textRenderInfo.GetDescentLine().GetStartPoint().Get(1);
         }

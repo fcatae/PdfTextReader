@@ -18,7 +18,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
             { new TextStyle("Times New Roman", 10.7357378f), ColorConstants.ORANGE }
         };
 
-        public TextItem(TextRenderInfo textRenderInfo, float top)
+        public TextItem(TextRenderInfo textRenderInfo, double top)
         {
             text = textRenderInfo.GetText();
             baseline = textRenderInfo.GetBaseline().GetStartPoint().Get(1);
@@ -31,32 +31,76 @@ namespace PdfTextReader.Lucas_Testes.Helpers
             return new Point(GetRectangle().GetLeft(), baseline);
         }
 
-        static Color GetColor(TextRenderInfo textRenderInfo, float top)
+        static Color GetColor(TextRenderInfo textRenderInfo, double top)
         {
+            var text = textRenderInfo.GetText();
+            if (text.ToLower().Contains("por"))
+            {
+
+            }
             if (textRenderInfo.GetBaseline().GetStartPoint().Get(1) > top)
                 return artifactColor;
             if (textRenderInfo.GetBaseline().GetStartPoint().Get(1) < 20)
                 return artifactColor;
+            text = text;
             TextStyle ts = new TextStyle(textRenderInfo);
             Color cc = ColorConstants.GRAY;
-            if (ts.fontSize > 12)
+            if (ts.fontName.ToLower().Contains("times"))
             {
-                textStyles.Add(ts, ColorConstants.ORANGE);
-            }
-            else if (ts.fontSize > 10)
-            {
-                if (ts.fontName.ToLower().Contains("bold"))
+                if (ts.fontSize > 13.6)
                 {
-                    textStyles.Add(ts, ColorConstants.GREEN);
+                    textStyles.Add(ts, ColorConstants.BLUE);
+                }
+                else if (ts.fontSize > 13)
+                {
+                    textStyles.Add(ts, ColorConstants.ORANGE);
+                }
+                else if (ts.fontSize > 11)
+                {
+                    textStyles.Add(ts, ColorConstants.YELLOW);
+                    
+                }
+                else if (ts.fontSize > 7.16)
+                {
+                    if (ts.fontName.ToLower().Contains("bold"))
+                    {
+                        textStyles.Add(ts, ColorConstants.GREEN);
+                    }
+                    else
+                    {
+                        textStyles.Add(ts, ColorConstants.RED);
+                    }
                 }
                 else
                 {
-                    textStyles.Add(ts, ColorConstants.RED);
+                    textStyles.Add(ts, ColorConstants.MAGENTA);
                 }
             }
-            else
+            else // OttawaV
             {
-                textStyles.Add(ts, ColorConstants.BLUE);
+                if (ts.fontSize > 14)
+                {
+                    textStyles.Add(ts, ColorConstants.BLACK);
+                }
+                else if (ts.fontSize > 12)
+                {
+                    textStyles.Add(ts, ColorConstants.BLACK);
+                }
+                else if (ts.fontSize > 10)
+                {
+                    if (ts.fontName.ToLower().Contains("bold"))
+                    {
+                        textStyles.Add(ts, ColorConstants.DARK_GRAY);
+                    }
+                    else
+                    {
+                        textStyles.Add(ts, ColorConstants.GRAY);
+                    }
+                }
+                else
+                {
+                    textStyles.Add(ts, ColorConstants.LIGHT_GRAY);
+                }
             }
 
             if (textStyles.TryGetValue(ts, out Color c))

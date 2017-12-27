@@ -6,7 +6,7 @@ using iText.Kernel.Geom;
 
 namespace PdfTextReader
 {
-    class BlockSet : IBlock
+    public class BlockSet : IBlock
     {
         List<IBlock> _list = new List<IBlock>();
         Block _cachedBlock = null;
