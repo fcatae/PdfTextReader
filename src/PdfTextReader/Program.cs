@@ -9,9 +9,9 @@ namespace PdfTextReader
         static void Main(string[] args)
         {
             Console.WriteLine("Testing in batch!");
-            //ProcessFiles();
+            ProcessFiles();
 
-            ProcessPage();
+            //ProcessPage();
         }
 
         static void ProcessPage()
@@ -22,9 +22,9 @@ namespace PdfTextReader
             var user = new UserWriter();
 
             string basename = "p44";
-            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+            //user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
             //user.ProcessText($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
-            //user.ProcessBlock($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
+            user.ProcessBlock($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
         }
 
         static void ProcessFiles()
@@ -42,7 +42,8 @@ namespace PdfTextReader
                 if (basename.EndsWith("-output"))
                     continue;
 
-                user.ProcessText($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
+                //user.ProcessText($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
+                user.ProcessBlock($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
             }
 
 

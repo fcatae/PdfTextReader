@@ -30,6 +30,15 @@ namespace PdfTextReader
 
                 var font = textInfo.GetFont().GetFontProgram();
                 var FamilyName = font.GetFontNames().GetFamilyName();
+                string FamilyNameString = String.Empty;
+                if (FamilyName == null)
+                {
+                    FamilyNameString = font.GetFontNames().GetFontName();
+                }
+                else
+                {
+                    FamilyNameString = font.GetFontNames().GetFamilyName()[0][3];
+                }
 
                 var block = new Block()
                 {
@@ -41,11 +50,11 @@ namespace PdfTextReader
                     Height = ascent.Get(1) - descent.Get(1),
                     Lower = baseline.Get(1) - descent.Get(1),
                     FontFullName = font.GetFontNames().GetFontName(),
-                    FontName = FamilyName[0][3],
                     FontStyle = TrimFontStyle(font.GetFontNames().GetFontName()),
                     FontSize = textInfo.GetFontSize(),
                     WordSpacing = textInfo.GetWordSpacing()
                 };
+                block.FontName = FamilyNameString;
 
                 string text = textInfo.GetText();
 
