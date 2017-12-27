@@ -133,13 +133,14 @@ namespace PdfTextReader
         {
             List<BlockSet> list = new List<BlockSet>(blockList);
 
-            int total = list.Count;
+            // this number increases
+            int initial_total = list.Count;
 
-            for(int i=0; i<total; i++)
+            for(int i=0; i< list.Count; i++)
             {
                 if (list[i] == null) continue;
 
-                for(int j=i+1; j<total; j++)
+                for(int j=i+1; j<list.Count; j++)
                 {
                     if (list[i] == null) throw new InvalidOperationException();
 
