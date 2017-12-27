@@ -47,23 +47,74 @@ namespace PdfTextReader
                 var canvas = new PdfCanvas(page);
                 var blockList = new List<BlockSet>();
                 var blockSet = new BlockSet();
+                TableCell last = null;
+
+                blockList.Add(blockSet);
 
                 var parser = new PdfCanvasProcessor(new UserListenerExtra(c => {
 
-                    blockSet = new BlockSet();
-                    blockSet.Add(c);
+                    // notes:
+                    // images (op ==0)
+                    // background (large stroke width, eg. stroke_width > 10 pt)
 
-                    if(c.Op == 1)
+                    // consider only strokes
+                    if (c.Op != 1)
+                        return;
+
+                    if( last != null )
                     {
-                        blockList.Add(blockSet);
-                    }
+                        // check if blockSet contains c (two rectangles)
+                        float b_x1 = c.GetX();
+                        float b_x2 = c.GetX() + c.GetWidth();
+                        float b_y1 = c.GetH();
+                        float b_y2 = c.GetH() + c.GetHeight();
 
+                        // debug_last
+                        float last_x1 = last.GetX() - b_x1;
+                        float last_x2 = last.GetX() + last.GetWidth() - b_x2;
+                        float last_y1 = last.GetH() - b_y1;
+                        float last_y2 = last.GetH() + last.GetHeight() - b_y2;
+
+                        bool b1 = HasOverlap(blockSet, b_x1, b_y1);
+                        bool b2 = HasOverlap(blockSet, b_x1, b_y2);
+                        bool b3 = HasOverlap(blockSet, b_x2, b_y2);
+                        bool b4 = HasOverlap(blockSet, b_x2, b_y1);
+
+                        bool hasOverlap = b1 || b2 || b3 || b4;
+
+                        // create a new blockset
+                        if( !hasOverlap )
+                        {
+                            blockSet = new BlockSet();
+                            blockList.Add(blockSet);
+                        }
+                        else
+                        {
+
+                        }
+                    }
+                    
+                    blockSet.Add(c);
+                    
+                    last = c;
                 }));
 
                 parser.ProcessPageContent(page);
                 
                 DrawRectangle(canvas, blockList, ColorConstants.RED);
             }
+        }
+
+        bool HasOverlap(BlockSet blockSet, float x, float h)
+        {
+            float a_x1 = blockSet.GetX();
+            float a_x2 = blockSet.GetX() + blockSet.GetWidth();
+            float a_y1 = blockSet.GetH();
+            float a_y2 = blockSet.GetH() + blockSet.GetHeight();
+
+            bool hasOverlap = ((a_x1 <= x) && (a_x2 >= x) && (a_y1 <= h) && (a_y2 >= h));
+
+            return hasOverlap;
         }
 
         public void ProcessBlock(string srcpath, string dstpath)
