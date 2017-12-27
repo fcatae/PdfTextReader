@@ -21,10 +21,10 @@ namespace PdfTextReader
 
             var user = new UserWriter();
 
-            string basename = "2017";
-            //user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
+            string basename = "p44";
+            user.ProcessBlock($"bin/{basename}.pdf", $"bin/{basename}-output.pdf");
             //user.ProcessText($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
-            user.ProcessBlock($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
+            //user.ProcessBlock($"bin/{subfolder}/{basename}.pdf", $"bin/{subfolder}/{basename}-output.pdf");
         }
 
         static void ProcessFiles()

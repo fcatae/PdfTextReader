@@ -61,14 +61,40 @@ namespace PdfTextReader
                     List<MainItem> items = listener.GetItems();
                     parser.ProcessPageContent(page);
                     items.Sort();
-                    List<Lucas_Testes.Helpers.Line> lines = Lucas_Testes.Helpers.Line.GetLines(items);
+                    List<LineItem> lines = LineItem.GetLines(items);
 
-                    HighlightItems(lines, canvas);
+                    //HighlightItems(lines, canvas);
                 }
             }
         }
 
-        void HighlightItems(List<Lucas_Testes.Helpers.Line> listOfItems, PdfCanvas canvas)
+        void HighlightItems(List<MainItem> listOfItems, PdfCanvas canvas)
+        {
+            foreach (var item in listOfItems)
+            {
+                canvas.SaveState();
+                canvas.SetStrokeColor(item.GetColor());
+                canvas.SetLineWidth(1);
+                Rectangle r = item.GetRectangle();
+                canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
+                canvas.Stroke();
+                canvas.RestoreState();
+            }
+        }
+        void HighlightLines(List<LineItem> listOfItems, PdfCanvas canvas)
+        {
+            foreach (var item in listOfItems)
+            {
+                canvas.SaveState();
+                canvas.SetStrokeColor(item.GetColor());
+                canvas.SetLineWidth(1);
+                Rectangle r = item.GetRectangle();
+                canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
+                canvas.Stroke();
+                canvas.RestoreState();
+            }
+        }
+        void HighlightStructureItems(List<StructureItem> listOfItems, PdfCanvas canvas)
         {
             foreach (var item in listOfItems)
             {
@@ -163,9 +189,11 @@ namespace PdfTextReader
                 List<MainItem> items = listener.GetItems();
                 parser.ProcessPageContent(page);
                 items.Sort();
-                List<Lucas_Testes.Helpers.Line> lines = Lucas_Testes.Helpers.Line.GetLines(items, blockList);
+                List<LineItem> lines = LineItem.GetLines(items, blockList);
 
-                HighlightItems(lines, canvas);
+                List<StructureItem> structures = StructureItem.GetStructures(lines, blockList);
+
+                HighlightStructureItems(structures, canvas);
 
                 PrintText(blockList);
             }

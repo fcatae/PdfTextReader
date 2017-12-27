@@ -5,9 +5,9 @@ using System.Text;
 
 namespace PdfTextReader.Lucas_Testes.Helpers
 {
-    public class Line : MainItem
+    public class LineItem : MainItem
     {
-        public Line(List<MainItem> items) : base()
+        public LineItem(List<MainItem> items) : base()
         {
             rectangle = GetItemsRect(items);
             color = items[0].GetColor();
@@ -42,7 +42,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
             return new Rectangle(left, bottom, right - left, top - bottom);
         }
 
-        static bool IsInsideBlock(MainItem p, BlockSet b)
+        public static bool IsInsideBlock(MainItem p, BlockSet b)
         {
             if (p.GetRectangle().GetX() >= b.GetX())
             {
@@ -71,9 +71,9 @@ namespace PdfTextReader.Lucas_Testes.Helpers
             return false;
         }
 
-        public static List<Line> GetLines(List<MainItem> items, List<BlockSet> _list = null)
+        public static List<LineItem> GetLines(List<MainItem> items, List<BlockSet> _list = null)
         {
-            List<Line> lines = new List<Line>();
+            List<LineItem> lines = new List<LineItem>();
             List<MainItem> line = new List<MainItem>();
 
 
@@ -112,7 +112,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
                     }
                     else
                     {
-                        lines.Add(new Line(line));
+                        lines.Add(new LineItem(line));
                         line = new List<MainItem>
                     {
                         item
@@ -120,7 +120,7 @@ namespace PdfTextReader.Lucas_Testes.Helpers
                     }
                 }
                 if (line.Count > 0)
-                    lines.Add(new Line(line));
+                    lines.Add(new LineItem(line));
             }
 
             return lines;
