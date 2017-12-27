@@ -107,6 +107,33 @@ namespace PdfTextReader
                         }
                     }
 
+                    // DOES NOT WORK - columns are considered table cells
+                    // check if it is an inline table
+                    //bool mightBeTable = false;
+                    //if(shouldBreak && last != null)
+                    //{
+                    //    // assume last is not null
+                    //    // assume blockset is not null
+                    //    float a_x1 = blockSet.GetX();
+                    //    float a_x2 = blockSet.GetX() + blockSet.GetWidth();
+                    //    float a_y1 = blockSet.GetH();
+                    //    float a_y2 = blockSet.GetH() + blockSet.GetHeight();
+
+                    //    float b_x1 = b.GetX();
+                    //    float b_x2 = b.GetX() + b.GetWidth();
+                    //    float b_y1 = b.GetH();
+                    //    float b_y2 = b.GetH() + b.GetHeight();
+
+                    //    bool blockInsideLastBlockset = ((a_y1 < b_y1) && (a_y2 > b_y2));
+                    //    bool blockInsideWidth = ((a_x1 < b_x1) && (a_x2 > b_x2));
+
+                    //    if(blockInsideLastBlockset && blockInsideWidth)
+                    //    {
+                    //        mightBeTable = true;
+                    //    }                        
+                    //}
+
+                    // should break block
                     if(shouldBreak)
                     {
                         blockList.Add(blockSet);
