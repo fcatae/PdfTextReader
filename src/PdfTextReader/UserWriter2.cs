@@ -16,22 +16,10 @@ namespace PdfTextReader
     // TODO: refactor UserWriter
     class UserWriter2
     {
+        #region MAIN_LOGIC
+
         public List<BlockSet> ActiveTables = null;
-        
-        void HighlightStructureItems(List<StructureItem> listOfItems, PdfCanvas canvas)
-        {
-            foreach (var item in listOfItems)
-            {
-                canvas.SaveState();
-                canvas.SetStrokeColor(item.GetColor());
-                canvas.SetLineWidth(1);
-                Rectangle r = item.GetRectangle();
-                canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
-                canvas.Stroke();
-                canvas.RestoreState();
-            }
-        }
-                
+         
         public void ProcessBlockExtra(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
@@ -42,7 +30,7 @@ namespace PdfTextReader
                 //var blockSet = new BlockSet();
                 //TableCell last = null;
                 List<TableCell> cellList = new List<TableCell>();
-                
+
                 var parser = new PdfCanvasProcessor(new UserListenerExtra(c => {
 
                     // notes:
@@ -114,7 +102,7 @@ namespace PdfTextReader
                                 var nextBlockset = blockArray[j];
 
 
-                                if (nextBlockset == null )
+                                if (nextBlockset == null)
                                 {
                                     if (nextBlockset == currentBlockset)
                                         throw new InvalidOperationException("infinite loop?");
@@ -133,7 +121,7 @@ namespace PdfTextReader
                                     // assume nextBlockset already contains j
 
                                     // remove all other references to nextBlockset
-                                    for(int k=0;k<blockArray.Length;k++)
+                                    for (int k = 0; k < blockArray.Length; k++)
                                     {
                                         if (blockArray[k] == nextBlockset)
                                             blockArray[k] = currentBlockset;
@@ -149,7 +137,7 @@ namespace PdfTextReader
 
                     // infinite loop
                 }
-                
+
                 // transform blockArray into blockList
                 var blockList = blockArray.Distinct().ToList();
                 int count1 = blockArray.Length;
@@ -159,45 +147,6 @@ namespace PdfTextReader
 
                 DrawRectangle(canvas, blockList, ColorConstants.RED);
             }
-        }
-
-        bool HasOverlap(BlockSet blockSet, float x, float h)
-        {
-            float a_x1 = blockSet.GetX();
-            float a_x2 = blockSet.GetX() + blockSet.GetWidth();
-            float a_y1 = blockSet.GetH();
-            float a_y2 = blockSet.GetH() + blockSet.GetHeight();
-
-            bool hasOverlap = ((a_x1 <= x) && (a_x2 >= x) && (a_y1 <= h) && (a_y2 >= h));
-
-            return hasOverlap;
-        }
-
-        BlockSet IsInTable(float px, float py)
-        {
-            if (this.ActiveTables == null)
-                return null;
-
-            foreach (var table in this.ActiveTables)
-            {
-                float b_x1 = table.GetX();
-                float b_x2 = table.GetX() + table.GetWidth();
-                float b_y1 = table.GetH();
-                float b_y2 = table.GetH() + table.GetHeight();
-                
-                // this table contains the b block?
-                bool tableContainsX = ((b_x1 < px) && (b_x2 > px));
-                bool tableContainsY = ((b_y1 < py) && (b_y2 > py));
-
-                bool tableContains = tableContainsX && tableContainsY;
-
-                if (tableContains)
-                {
-                    return table;
-                }
-            }
-
-            return null;
         }
 
         public void ProcessBlock(string srcpath, string dstpath)
@@ -387,6 +336,139 @@ namespace PdfTextReader
             PrintText(blockList);
         }
 
+        void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList)
+        {
+            //int count1 = blockList.Count;
+            //TryMergeBlockSets(blockList);
+            // merge does not work
+
+            int count2 = blockList.Count;
+            BreakBlockSets(blockList);
+
+            int count3 = blockList.Count;
+
+            var header = FindHeader(blockList);
+            var footer = FindFooter(blockList);
+
+            RemoveList(blockList, header);
+            RemoveList(blockList, footer);
+
+            // post-processing
+            DrawRectangle(canvas, footer, ColorConstants.BLUE);
+            DrawRectangle(canvas, header, ColorConstants.BLUE);
+
+            DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+
+            DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
+            DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
+
+            PrintText(blockList);
+        }
+
+        #endregion
+
+        #region BLOCK_LIST
+
+        // blocklist (structure) - complex
+        static void TryMergeBlockSets(List<BlockSet> blockList)
+        {
+            for(int i=0; i<blockList.Count-1; i++)
+            {
+                var curBlock = blockList[i];
+                var nextBlock = blockList[i + 1];
+
+                Console.WriteLine(curBlock.GetText());
+
+                float a_x1 = curBlock.GetX();
+                float a_x2 = curBlock.GetX() + curBlock.GetWidth();
+                float b_x1 = nextBlock.GetX();
+                float b_x2 = nextBlock.GetX() + nextBlock.GetWidth();
+
+                // a contains b
+                bool hasOverlapA = ((a_x1 <= b_x1) && (a_x2 >= b_x2));
+                bool hasOverlapB = ((b_x1 <= a_x1) && (b_x2 >= a_x2));
+                bool hasOverlap = hasOverlapA;// || hasOverlapB;
+
+                if (hasOverlap)
+                {
+                    float a_y2 = curBlock.GetH() + curBlock.GetHeight();
+                    float b_y2 = nextBlock.GetH() + nextBlock.GetHeight();
+
+                    if( a_y2 > b_y2 )
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+
+                    // Merge current and next blocks
+                    var newblock = BlockSet.MergeBlocks(curBlock, nextBlock);
+
+                    blockList[i] = null;
+                    blockList[i + 1] = newblock;
+                }
+            }
+
+            // remove nulled blocks
+            blockList.RemoveAll(b => b == null);
+        }
+
+        // blocklist (structure)
+        static void RemoveList(List<BlockSet> blockList, IEnumerable<BlockSet> blocksToBeRemoved)
+        {
+            foreach (var b in blocksToBeRemoved)
+            {
+                blockList.Remove(b);
+            }
+        }
+
+        // blocklist
+        static IEnumerable<BlockSet> FindHeader(List<BlockSet> blockList)
+        {
+            float err = 1f;
+            float maxH = blockList.Max(b => b.GetH()) - err;
+
+            var blocksAtHeader = blockList.Where(b => b.GetH() >= maxH);
+
+            return blocksAtHeader.ToArray();
+        }
+
+        static IEnumerable<BlockSet> FindFooter(List<BlockSet> blockList)
+        {
+            float err = 1f;
+            float minH = blockList.Min(b => b.GetH()) + err;
+
+            var blocksAtFooter = blockList.Where(b => b.GetH() <= minH);
+
+            return blocksAtFooter.ToArray();
+        }
+
+        // blocklist (visual)
+        static void PrintText(List<BlockSet> blockList)
+        {
+            foreach (var b in blockList)
+            {
+                string text = b.GetText();
+                System.Diagnostics.Debug.WriteLine(text);
+                System.Diagnostics.Debug.WriteLine("=============================");
+            }
+        }
+
+        // blocklist (visual)
+        static void DrawRectangle(PdfCanvas canvas, IEnumerable<BlockSet> blockList, Color color)
+        {
+            foreach (var bset in blockList)
+            {
+                canvas.SetStrokeColor(color);
+                canvas.Rectangle(bset.GetX(), bset.GetH(), bset.GetWidth(), bset.GetHeight());
+                canvas.Stroke();
+            }
+        }
+
+        // complex break BlockList
+        // TODO: BreakBlockSets needs rewriting
         void BreakBlockSets(List<BlockSet> blockList)
         {
             List<BlockSet> list = new List<BlockSet>(blockList);
@@ -567,6 +649,10 @@ namespace PdfTextReader
             return y + fy;
         }
 
+        #endregion
+
+        #region BLOCKSET
+
         BlockSet GetBlockWithLargerWidth(BlockSet a, BlockSet b)
         {
             float a_width = a.GetWidth();
@@ -616,7 +702,52 @@ namespace PdfTextReader
             return true;
         }
 
+        // table
+        BlockSet IsInTable(float px, float py)
+        {
+            if (this.ActiveTables == null)
+                return null;
 
+            foreach (var table in this.ActiveTables)
+            {
+                float b_x1 = table.GetX();
+                float b_x2 = table.GetX() + table.GetWidth();
+                float b_y1 = table.GetH();
+                float b_y2 = table.GetH() + table.GetHeight();
+
+                // this table contains the b block?
+                bool tableContainsX = ((b_x1 < px) && (b_x2 > px));
+                bool tableContainsY = ((b_y1 < py) && (b_y2 > py));
+
+                bool tableContains = tableContainsX && tableContainsY;
+
+                if (tableContains)
+                {
+                    return table;
+                }
+            }
+
+            return null;
+        }
+
+        // table (calculation)
+        static bool HasOverlap(BlockSet blockSet, float x, float h)
+        {
+            float a_x1 = blockSet.GetX();
+            float a_x2 = blockSet.GetX() + blockSet.GetWidth();
+            float a_y1 = blockSet.GetH();
+            float a_y2 = blockSet.GetH() + blockSet.GetHeight();
+
+            bool hasOverlap = ((a_x1 <= x) && (a_x2 >= x) && (a_y1 <= h) && (a_y2 >= h));
+
+            return hasOverlap;
+        }
+
+        #endregion
+
+        #region StructureItem
+
+        // semantic
         void ProcessStructure(PdfPage page, PdfCanvasProcessor parser, List<BlockSet> blockList, PdfCanvas canvas)
         {
             //ProcessLine
@@ -632,126 +763,21 @@ namespace PdfTextReader
             HighlightStructureItems(structures, canvas);
         }
 
-        void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList)
+        // semantic (visual)
+        void HighlightStructureItems(List<StructureItem> listOfItems, PdfCanvas canvas)
         {
-            //int count1 = blockList.Count;
-            //TryMergeBlockSets(blockList);
-            // merge does not work
-
-            int count2 = blockList.Count;
-            BreakBlockSets(blockList);
-
-            int count3 = blockList.Count;
-
-            var header = FindHeader(blockList);
-            var footer = FindFooter(blockList);
-
-            RemoveList(blockList, header);
-            RemoveList(blockList, footer);
-
-            // post-processing
-            DrawRectangle(canvas, footer, ColorConstants.BLUE);
-            DrawRectangle(canvas, header, ColorConstants.BLUE);
-
-            DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
-
-            DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
-            DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
-
-            PrintText(blockList);
-        }
-
-        void TryMergeBlockSets(List<BlockSet> blockList)
-        {
-            for(int i=0; i<blockList.Count-1; i++)
+            foreach (var item in listOfItems)
             {
-                var curBlock = blockList[i];
-                var nextBlock = blockList[i + 1];
-
-                Console.WriteLine(curBlock.GetText());
-
-                float a_x1 = curBlock.GetX();
-                float a_x2 = curBlock.GetX() + curBlock.GetWidth();
-                float b_x1 = nextBlock.GetX();
-                float b_x2 = nextBlock.GetX() + nextBlock.GetWidth();
-
-                // a contains b
-                bool hasOverlapA = ((a_x1 <= b_x1) && (a_x2 >= b_x2));
-                bool hasOverlapB = ((b_x1 <= a_x1) && (b_x2 >= a_x2));
-                bool hasOverlap = hasOverlapA;// || hasOverlapB;
-
-                if (hasOverlap)
-                {
-                    float a_y2 = curBlock.GetH() + curBlock.GetHeight();
-                    float b_y2 = nextBlock.GetH() + nextBlock.GetHeight();
-
-                    if( a_y2 > b_y2 )
-                    {
-
-                    }
-                    else
-                    {
-
-                    }
-
-                    // Merge current and next blocks
-                    var newblock = BlockSet.MergeBlocks(curBlock, nextBlock);
-
-                    blockList[i] = null;
-                    blockList[i + 1] = newblock;
-                }
-            }
-
-            // remove nulled blocks
-            blockList.RemoveAll(b => b == null);
-        }
-        
-        void PrintText(List<BlockSet> blockList)
-        {
-            foreach (var b in blockList)
-            {
-                string text = b.GetText();
-                System.Diagnostics.Debug.WriteLine(text);
-                System.Diagnostics.Debug.WriteLine("=============================");
-            }
-        }
-
-        void RemoveList(List<BlockSet> blockList, IEnumerable<BlockSet> blocksToBeRemoved)
-        {
-            foreach (var b in blocksToBeRemoved)
-            {
-                blockList.Remove(b);
-            }
-        }
-
-        void DrawRectangle(PdfCanvas canvas, IEnumerable<BlockSet> blockList, Color color)
-        {
-            foreach (var bset in blockList)
-            {
-                canvas.SetStrokeColor(color);
-                canvas.Rectangle(bset.GetX(), bset.GetH(), bset.GetWidth(), bset.GetHeight());
+                canvas.SaveState();
+                canvas.SetStrokeColor(item.GetColor());
+                canvas.SetLineWidth(1);
+                Rectangle r = item.GetRectangle();
+                canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
                 canvas.Stroke();
+                canvas.RestoreState();
             }
         }
-        
-        IEnumerable<BlockSet> FindHeader(List<BlockSet> blockList)
-        {
-            float err = 1f;
-            float maxH = blockList.Max(b => b.GetH()) - err;
 
-            var blocksAtHeader = blockList.Where(b => b.GetH() >= maxH);
-
-            return blocksAtHeader.ToArray();
-        }
-
-        IEnumerable<BlockSet> FindFooter(List<BlockSet> blockList)
-        {
-            float err = 1f;
-            float minH = blockList.Min(b => b.GetH()) + err;
-
-            var blocksAtFooter = blockList.Where(b => b.GetH() <= minH);
-
-            return blocksAtFooter.ToArray();
-        }        
+    #endregion
     }
 }
