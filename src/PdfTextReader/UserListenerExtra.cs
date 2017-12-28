@@ -40,7 +40,7 @@ namespace PdfTextReader
             //    var ctm = clip.GetCtm();
             //    var gs = clip.GetGraphicsState();
             //}
-            if (line != null)
+            if( line != null )
             {
                 var bgcolor = line.GetFillColor();
                 var fgcolor = line.GetStrokeColor();

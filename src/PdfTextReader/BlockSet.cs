@@ -12,7 +12,7 @@ namespace PdfTextReader
         Block _cachedBlock = null;
         public string Tag = "";
 
-        public void Add(Block block)
+        public void Add(IBlock block)
         {
             _list.Add(block);
         }
@@ -164,7 +164,12 @@ namespace PdfTextReader
 
             //int checkpoint1 = position;
 
-            //return null;
+            return null;
+        }
+
+        public void MergeWith(BlockSet other)
+        {
+            this._list.AddRange(other._list);            
         }
     }
 }

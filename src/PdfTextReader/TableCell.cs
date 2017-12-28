@@ -13,7 +13,7 @@ namespace PdfTextReader
         public float Width { get; set; }
         public float Height { get; set; }
         public int Op { get; set; }
-        public string GetText() => throw new InvalidOperationException();
+        public string GetText() => "<<TABELA>>";
         public float GetX() => X;
         public float GetH() => H;
         public float GetWidth() => Width;
