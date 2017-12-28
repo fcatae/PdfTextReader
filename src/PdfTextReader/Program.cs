@@ -28,6 +28,7 @@ namespace PdfTextReader
 
         static void ProcessPage()
         {
+            var user = new UserWriter();
             string subfolder = "PerYear";
             var dir = new DirectoryInfo($"bin/{subfolder}");
             string basename = "p44";
