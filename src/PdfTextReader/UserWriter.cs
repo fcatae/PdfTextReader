@@ -10,6 +10,7 @@ using System.Text;
 using System.Linq;
 using PdfTextReader.Lucas_Testes.Helpers;
 using iText.Kernel.Geom;
+using System.Diagnostics;
 
 namespace PdfTextReader
 {
@@ -742,14 +743,40 @@ namespace PdfTextReader
             List<MainItem> items = listener.GetItems();
             parser.ProcessPageContent(page);
             var estilos = processArryOfTextStyles(items);
+
+            //PrintTextStyles(estilos);
             //items.Sort();
+
             List<LineItem> lines = LineItem.GetLines(items, blockList);
+            PrintTextStyle(lines, "a");
+
             //lines.Sort();
+
             List<StructureItem> structures = StructureItem.GetStructures(lines, blockList);
 
             HighlightStructureItems(structures, canvas);
 
             HighlightImages(items, canvas);
+        }
+
+        void PrintTextStyles(List<TextStyle> estilos)
+        {
+            foreach (TextStyle item in estilos)
+            {
+                Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
+            }
+        }
+
+        void PrintTextStyle(List<LineItem> lines, string text)
+        {
+            foreach (LineItem item in lines)
+            {
+                if (item.Text.ToLower() == text)
+                {
+                    Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
+                    Console.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
+                }
+            }
         }
 
         List<TextStyle> processArryOfTextStyles(List<MainItem> items)
