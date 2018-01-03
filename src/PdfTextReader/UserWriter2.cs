@@ -19,7 +19,8 @@ namespace PdfTextReader
         #region MAIN_LOGIC
 
         public List<BlockSet> ActiveTables = null;
-         
+        public List<BlockSet> ActiveTexts = null;
+
         public void ProcessBlockExtra(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
@@ -294,8 +295,11 @@ namespace PdfTextReader
 
                 FinalProcess(canvas, blockList, page, parser);
 
+                // Register
+                ActiveTexts = blockList;
+
                 // nota: 2
-                
+
                 //var header = FindHeader(blockList);
                 //var footer = FindFooter(blockList);
 
@@ -331,7 +335,8 @@ namespace PdfTextReader
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
 
-            ProcessStructure(page, parser, blockList, canvas);
+            // ignore structure for now...
+            // ProcessStructure(page, parser, blockList, canvas);
 
             PrintText(blockList);
         }
