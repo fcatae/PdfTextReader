@@ -9,7 +9,8 @@ namespace PdfTextReader
         static void Main(string[] args)
         {
             var pipeline = new Pipeline();
-            pipeline.Run("p44");
+
+            var lines = pipeline.GetLines("p44");
         }        
     }
 }

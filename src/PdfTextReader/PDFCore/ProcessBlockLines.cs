@@ -79,6 +79,11 @@ namespace PdfTextReader.PDFCore
                 sb.Append(fragment);
                 cb.Add(b);
 
+                // set the current font information
+                cb.FontName = ((Block)b).FontName;
+                cb.FontSize = ((Block)b).FontSize;
+
+
                 lastH = curH;
                 lastX = curX + b.GetWidth();
                 lastT = b.GetText();

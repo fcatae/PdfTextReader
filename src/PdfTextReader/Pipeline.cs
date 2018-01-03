@@ -10,7 +10,7 @@ namespace PdfTextReader
         //   * TableListener -> ProcessTable
         //   * TextListener  -> Remove Tables -> ProcessColumns -> BreakColumns -> MergeBlocks
         //
-        public void Run(string basename)
+        public IEnumerable<Structure.TextLine> GetLines(string basename)
         {
             var user = new UserWriter2();
 
@@ -30,10 +30,17 @@ namespace PdfTextReader
             var proc = new PDFCore.ProcessBlockLines();
             var blocks = proc.FindLines(texts);
 
+            var all_lines = new List<Structure.TextLine>();
             // transform into textLines
-            var bset = ((object)blocks) as BlockSet; // always NULL
-            var proc2 = new Structure.ProcessStructure();
-            var lines = proc2.ProcessLine(bset);
+            foreach(var bset in blocks)
+            {
+                var proc2 = new Structure.ProcessStructure();
+                var lines = proc2.ProcessLine(bset);
+
+                all_lines.AddRange(lines);
+            }
+
+            return all_lines;
         }
     }
 }
