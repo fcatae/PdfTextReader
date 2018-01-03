@@ -110,6 +110,23 @@ namespace PdfTextReader
             }
         }
 
+        void HighlightImages(List<MainItem> listOfItems, PdfCanvas canvas)
+        {
+            foreach (var item in listOfItems)
+            {
+                if (item.GetType() == typeof(ImageItem))
+                {
+                    canvas.SaveState();
+                    canvas.SetStrokeColor(item.GetColor());
+                    canvas.SetLineWidth(1);
+                    Rectangle r = item.GetRectangle();
+                    canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
+                    canvas.Stroke();
+                    canvas.RestoreState();
+                }
+            }
+        }
+
         public void ProcessBlockExtra_Test(string srcpath, string dstpath)
         {
             using (var pdf = new PdfDocument(new PdfReader(srcpath), new PdfWriter(dstpath)))
@@ -477,7 +494,7 @@ namespace PdfTextReader
             DrawRectangle(canvas, footer, ColorConstants.BLUE);
             DrawRectangle(canvas, header, ColorConstants.BLUE);
 
-            DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+            //DrawRectangle(canvas, blockList, ColorConstants.BLACK);
 
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
@@ -724,12 +741,35 @@ namespace PdfTextReader
             parser = new PdfCanvasProcessor(listener);
             List<MainItem> items = listener.GetItems();
             parser.ProcessPageContent(page);
-            items.Sort();
+            var estilos = processArryOfTextStyles(items);
+            //items.Sort();
             List<LineItem> lines = LineItem.GetLines(items, blockList);
-
+            //lines.Sort();
             List<StructureItem> structures = StructureItem.GetStructures(lines, blockList);
 
             HighlightStructureItems(structures, canvas);
+
+            HighlightImages(items, canvas);
+        }
+
+        List<TextStyle> processArryOfTextStyles(List<MainItem> items)
+        {
+            List<TextStyle> Styles = new List<TextStyle>();
+
+            foreach (var item in items)
+            {
+                if (item.GetType() == typeof(TextItem))
+                {
+                    var tItem = item as TextItem;
+                    var s = tItem.textStyle;
+                    var result = Styles.Where(i => i.fontName == s.fontName && i.fontSize == s.fontSize).FirstOrDefault();
+                    if (result == null)
+                    {
+                        Styles.Add(s);
+                    }
+                }
+            }
+            return Styles;
         }
 
         void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList)
