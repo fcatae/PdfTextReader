@@ -12,7 +12,7 @@ namespace PdfTextReader.Structure
         public string Text { get; set; }
         public float MarginRight { get; set; }
         public float MarginLeft { get; set; }
-        public decimal Distace2NextLine { get; set; }
+        public decimal Breakline { get; set; }
 
 
         public TextLine()
