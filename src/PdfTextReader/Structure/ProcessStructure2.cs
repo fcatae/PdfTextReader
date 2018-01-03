@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 
@@ -63,6 +64,7 @@ namespace PdfTextReader.Structure
                     lines.Add(LineTreatment(line, b));
             }
 
+            lines = ProcessBreakLineDistance(lines);
             return lines;
         }
 
@@ -79,8 +81,16 @@ namespace PdfTextReader.Structure
                 line.MarginLeft = GetMargins(finalBlocks, b)[0];
                 line.MarginRight = GetMargins(finalBlocks, b)[1];
             }
-
             return line;
+        }
+
+        List<TextLine> ProcessBreakLineDistance(List<TextLine> lines)
+        {
+            for (int i = 0; i < lines.Count; i++)
+            {
+               // ???? Onde pego a porra da posição do item para medir a distancia?
+            }
+            return lines;
         }
 
         List<float> GetGraphicPositions(List<Lucas_Testes.Helpers.MainItem> items)
@@ -162,7 +172,6 @@ namespace PdfTextReader.Structure
             }
             return false;
         }
-
 
         static bool AreOnSameLine(Lucas_Testes.Helpers.MainItem i1, Lucas_Testes.Helpers.MainItem i2)
         {
