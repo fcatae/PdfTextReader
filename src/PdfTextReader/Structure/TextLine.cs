@@ -10,8 +10,8 @@ namespace PdfTextReader.Structure
         public string FontName { get; set; }
         public decimal FontSize { get; set; }
         public string Text { get; set; }
-        public float MarginRight { get; set; }
-        public float MarginLeft { get; set; }
+        public decimal MarginRight { get; set; }
+        public decimal MarginLeft { get; set; }
         public decimal Breakline { get; set; }
 
 
