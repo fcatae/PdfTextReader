@@ -9,6 +9,7 @@ namespace PdfTextReader.Structure
         CENTER,
         LEFT,
         RIGHT,
-        JUSTIFY
+        JUSTIFY,
+        UNKNOW
     }
 }

@@ -8,6 +8,7 @@ namespace PdfTextReader.Structure
 {
     class ProcessStructure2
     {
+        decimal Tolerance = 3;
         public List<TextStructure> ProcessParagraph(IEnumerable<TextLine> lineSet)
         {
             List<TextStructure> structures = new List<TextStructure>();
@@ -62,13 +63,52 @@ namespace PdfTextReader.Structure
 
         private TextAlignment GetTextAlignment(List<TextLine> lines)
         {
-            throw new NotImplementedException();
+
+            List<TextAlignment> alignments = new List<TextAlignment>();
+            foreach (var item in lines)
+            {
+                if (item.MarginLeft - item.MarginRight <= Tolerance && item.MarginRight < Tolerance)
+                {
+                    alignments.Add(TextAlignment.JUSTIFY);
+                }
+                else if (item.MarginLeft - item.MarginRight <= Tolerance && item.MarginRight > Tolerance)
+                {
+                    alignments.Add(TextAlignment.CENTER);
+                }
+                else if (item.MarginLeft - item.MarginRight > 0)
+                {
+                    alignments.Add(TextAlignment.RIGHT);
+                }
+                else if (item.MarginLeft - item.MarginRight < 0)
+                {
+                    alignments.Add(TextAlignment.LEFT);
+                }
+                else
+                {
+                    alignments.Add(TextAlignment.UNKNOW);
+                }
+            }
+
+            int listc = alignments.Count;
+
+            var listGrouped = alignments.GroupBy(a => a);
+            var result = listGrouped.OrderByDescending(group => group.Count()).ToList().FirstOrDefault().Key;
+            return result;
         }
 
 
         //Verify if two lines are in the same structure
         bool AreInSameStructure(TextLine l1, TextLine l2)
         {
+            if (l1.FontName == l2.FontName && l1.FontSize == l2.FontSize)
+            {
+                if (l1.Breakline < l2.FontSize / 2)
+                {
+                    return true;
+                }
+                return false;
+            }
+
             return false;
         }
 
@@ -77,6 +117,18 @@ namespace PdfTextReader.Structure
         string GetText(List<TextLine> lines)
         {
             StringBuilder sb = new StringBuilder();
+
+            foreach (TextLine line in lines)
+            {
+                if (lines.Count > 1)
+                {
+                    if ((lines[0].MarginRight < Tolerance && lines[0].MarginLeft > Tolerance) && (lines[1].MarginLeft - lines[1].MarginRight <= Tolerance && lines[1].MarginRight < Tolerance))
+                    {
+                        sb.Append("\t");
+                    }
+                }
+                sb.Append($"{line.Text}\n");
+            }
 
             return sb.ToString();
         }
