@@ -9,8 +9,7 @@ namespace PdfTextReader.Structure
 {
     class ProcessStructure
     {
-
-        public List<TextItem> ProcessLine(BlockSet items)
+        public List<TextLine> ProcessLine(BlockSet items)
         {
             throw new InvalidOperationException();
         }
