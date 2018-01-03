@@ -30,16 +30,13 @@ namespace PdfTextReader.Structure
                     FontName = bl.FontName,
                     FontSize = (decimal)bl.FontSize,
                     Text = bl.Text,
-                    MarginLeft = bl.GetX() - minx,
-                    MarginRight = maxx - (bl.GetX() + bl.GetWidth()),
+                    MarginLeft = (decimal)( bl.GetX() - minx ),
+                    MarginRight = (decimal)( maxx - (bl.GetX() + bl.GetWidth())),
                     Breakline = 0
                 };
 
                 lines.Add(tl);
-
-                if (tl.Text.Contains("DIRETORIA EXECUTIVA"))
-                    tl = tl;
-
+                
                 if(last_tl != null)
                 {
                     if (float.IsNaN(last_y))
