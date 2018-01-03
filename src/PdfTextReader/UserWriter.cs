@@ -10,6 +10,7 @@ using System.Text;
 using System.Linq;
 using PdfTextReader.Lucas_Testes.Helpers;
 using iText.Kernel.Geom;
+using System.Diagnostics;
 
 namespace PdfTextReader
 {
@@ -107,6 +108,23 @@ namespace PdfTextReader
                 canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
                 canvas.Stroke();
                 canvas.RestoreState();
+            }
+        }
+
+        void HighlightImages(List<MainItem> listOfItems, PdfCanvas canvas)
+        {
+            foreach (var item in listOfItems)
+            {
+                if (item.GetType() == typeof(ImageItem))
+                {
+                    canvas.SaveState();
+                    canvas.SetStrokeColor(item.GetColor());
+                    canvas.SetLineWidth(1);
+                    Rectangle r = item.GetRectangle();
+                    canvas.Rectangle(r.GetLeft(), r.GetBottom(), r.GetWidth(), r.GetHeight());
+                    canvas.Stroke();
+                    canvas.RestoreState();
+                }
             }
         }
 
@@ -477,7 +495,7 @@ namespace PdfTextReader
             DrawRectangle(canvas, footer, ColorConstants.BLUE);
             DrawRectangle(canvas, header, ColorConstants.BLUE);
 
-            DrawRectangle(canvas, blockList, ColorConstants.YELLOW);
+            //DrawRectangle(canvas, blockList, ColorConstants.BLACK);
 
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "gray"), ColorConstants.LIGHT_GRAY);
             DrawRectangle(canvas, blockList.Where(b => b.Tag == "orange"), ColorConstants.ORANGE);
@@ -724,12 +742,61 @@ namespace PdfTextReader
             parser = new PdfCanvasProcessor(listener);
             List<MainItem> items = listener.GetItems();
             parser.ProcessPageContent(page);
-            items.Sort();
+            var estilos = processArryOfTextStyles(items);
+
+            //PrintTextStyles(estilos);
+            //items.Sort();
+
             List<LineItem> lines = LineItem.GetLines(items, blockList);
+            PrintTextStyle(lines, "a");
+
+            //lines.Sort();
 
             List<StructureItem> structures = StructureItem.GetStructures(lines, blockList);
 
             HighlightStructureItems(structures, canvas);
+
+            HighlightImages(items, canvas);
+        }
+
+        void PrintTextStyles(List<TextStyle> estilos)
+        {
+            foreach (TextStyle item in estilos)
+            {
+                Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
+            }
+        }
+
+        void PrintTextStyle(List<LineItem> lines, string text)
+        {
+            foreach (LineItem item in lines)
+            {
+                if (item.Text.ToLower() == text)
+                {
+                    Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
+                    Console.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
+                }
+            }
+        }
+
+        List<TextStyle> processArryOfTextStyles(List<MainItem> items)
+        {
+            List<TextStyle> Styles = new List<TextStyle>();
+
+            foreach (var item in items)
+            {
+                if (item.GetType() == typeof(TextItem))
+                {
+                    var tItem = item as TextItem;
+                    var s = tItem.textStyle;
+                    var result = Styles.Where(i => i.fontName == s.fontName && i.fontSize == s.fontSize).FirstOrDefault();
+                    if (result == null)
+                    {
+                        Styles.Add(s);
+                    }
+                }
+            }
+            return Styles;
         }
 
         void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList)

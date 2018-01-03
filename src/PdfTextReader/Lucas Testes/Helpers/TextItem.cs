@@ -12,6 +12,9 @@ namespace PdfTextReader.Lucas_Testes.Helpers
         static Color artifactColor = ColorConstants.GRAY;
         float baseline;
         public string text;
+        public string fontName;
+        public float fontSize;
+        public TextStyle textStyle;
 
         public static Dictionary<TextStyle, Color> textStyles = new Dictionary<TextStyle, Color>()
         {
@@ -24,6 +27,41 @@ namespace PdfTextReader.Lucas_Testes.Helpers
             baseline = textRenderInfo.GetBaseline().GetStartPoint().Get(1);
             rectangle = GetRectangle(textRenderInfo);
             color = GetColor(textRenderInfo, top);
+            fontName = GetFontName(textRenderInfo);
+            fontSize = GetFontSize(textRenderInfo);
+            textStyle = new TextStyle(fontName, fontSize);
+        }
+
+        static string GetFontName(TextRenderInfo textRenderInfo)
+        {
+            string font = String.Empty;
+            try
+            {
+                font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFullName()[0][3];
+            }
+            catch (Exception ex) { }
+            if (String.IsNullOrWhiteSpace(font))
+            {
+                try
+                {
+                    font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFamilyName()[0][3];
+                }
+                catch (Exception ex) { }
+            }
+            if (String.IsNullOrWhiteSpace(font))
+            {
+                try
+                {
+                    font = textRenderInfo.GetFont().GetFontProgram().GetFontNames().GetFontName();
+                }
+                catch (Exception ex) { }
+            }
+            return font;
+        }
+
+        static float GetFontSize(TextRenderInfo textRenderInfo)
+        {
+            return textRenderInfo.GetAscentLine().GetStartPoint().Get(1) - textRenderInfo.GetDescentLine().GetStartPoint().Get(1);
         }
 
         public Point GetLL()
@@ -33,16 +71,10 @@ namespace PdfTextReader.Lucas_Testes.Helpers
 
         static Color GetColor(TextRenderInfo textRenderInfo, double top)
         {
-            var text = textRenderInfo.GetText();
-            if (text.ToLower().Contains("por"))
-            {
-
-            }
             if (textRenderInfo.GetBaseline().GetStartPoint().Get(1) > top)
                 return artifactColor;
             if (textRenderInfo.GetBaseline().GetStartPoint().Get(1) < 20)
                 return artifactColor;
-            text = text;
             TextStyle ts = new TextStyle(textRenderInfo);
             Color cc = ColorConstants.GRAY;
             if (ts.fontName.ToLower().Contains("times"))
