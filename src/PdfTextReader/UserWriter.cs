@@ -11,6 +11,7 @@ using System.Linq;
 using PdfTextReader.Lucas_Testes.Helpers;
 using iText.Kernel.Geom;
 using System.Diagnostics;
+using PdfTextReader.Stats;
 
 namespace PdfTextReader
 {
@@ -742,13 +743,15 @@ namespace PdfTextReader
             parser = new PdfCanvasProcessor(listener);
             List<MainItem> items = listener.GetItems();
             parser.ProcessPageContent(page);
-            var estilos = processArryOfTextStyles(items);
 
-            //PrintTextStyles(estilos);
             //items.Sort();
 
             List<LineItem> lines = LineItem.GetLines(items, blockList);
-            PrintTextStyle(lines, "a");
+            //ProcessStats.PrintTextStyle(lines, "delegacia da receita federal do brasil");
+
+            //Printing
+            //ProcessStats.PrintTextInfo(ProcessStats.GetAllTextStyles(items));
+            ProcessStats.PrintTextInfo(ProcessStats.GetAllTextStyles(lines));
 
             //lines.Sort();
 
@@ -759,45 +762,7 @@ namespace PdfTextReader
             HighlightImages(items, canvas);
         }
 
-        void PrintTextStyles(List<TextStyle> estilos)
-        {
-            foreach (TextStyle item in estilos)
-            {
-                Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
-            }
-        }
-
-        void PrintTextStyle(List<LineItem> lines, string text)
-        {
-            foreach (LineItem item in lines)
-            {
-                if (item.Text.ToLower() == text)
-                {
-                    Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
-                    Console.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
-                }
-            }
-        }
-
-        List<TextStyle> processArryOfTextStyles(List<MainItem> items)
-        {
-            List<TextStyle> Styles = new List<TextStyle>();
-
-            foreach (var item in items)
-            {
-                if (item.GetType() == typeof(TextItem))
-                {
-                    var tItem = item as TextItem;
-                    var s = tItem.textStyle;
-                    var result = Styles.Where(i => i.fontName == s.fontName && i.fontSize == s.fontSize).FirstOrDefault();
-                    if (result == null)
-                    {
-                        Styles.Add(s);
-                    }
-                }
-            }
-            return Styles;
-        }
+        
 
         void FinalProcess(PdfCanvas canvas, List<BlockSet> blockList)
         {

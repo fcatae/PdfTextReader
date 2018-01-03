@@ -14,7 +14,7 @@ namespace PdfTextReader
 
             // 2
             Console.WriteLine("Processando a tabela!");            
-            ProcessFileWithTable("p44");
+            ProcessFileWithTable("p40");
 
             //ProcessPage();
             //ProcessFilesWithTable();
