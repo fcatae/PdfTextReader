@@ -27,8 +27,13 @@ namespace PdfTextReader
             var texts = user.ActiveTexts;
 
             // TODO: transform into blocklines
+            var proc = new PDFCore.ProcessBlockLines();
+            var blocks = proc.FindLines(texts);
 
             // transform into textLines
+            var bset = ((object)blocks) as BlockSet; // always NULL
+            var proc2 = new Structure.ProcessStructure();
+            var lines = proc2.ProcessLine(bset);
         }
     }
 }

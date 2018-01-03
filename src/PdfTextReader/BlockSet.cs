@@ -12,6 +12,8 @@ namespace PdfTextReader
         Block _cachedBlock = null;
         public string Tag = "";
 
+        public IList<IBlock> GetList() => _list;
+
         public void Add(IBlock block)
         {
             _list.Add(block);
