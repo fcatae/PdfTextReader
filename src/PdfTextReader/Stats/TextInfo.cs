@@ -2,9 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-//Temp
-using PdfTextReader.Lucas_Testes.Helpers;
-
 namespace PdfTextReader.Stats
 {
     public class TextInfo
@@ -13,18 +10,18 @@ namespace PdfTextReader.Stats
         public decimal FontSize;
         public string Text;
 
-        public TextInfo(TextItem item)
+        public TextInfo(Structure.TextLine line)
         {
-            this.FontName = item.fontName;
-            this.FontSize = Decimal.Round(Convert.ToDecimal(item.fontSize),2);
-            this.Text = item.text;
+            this.FontName = line.FontName;
+            this.FontSize = Decimal.Round(Convert.ToDecimal(line.FontSize),2);
+            this.Text = line.Text;
         }
 
-        public TextInfo(LineItem item)
+        public TextInfo(string fontName, decimal fontSize)
         {
-            this.FontName = item.fontName;
-            this.FontSize = Decimal.Round(Convert.ToDecimal(item.fontSize), 2);
-            this.Text = item.Text;
+            this.FontName = fontName;
+            this.FontSize = fontSize;
+            this.Text = "";
         }
     }
 }

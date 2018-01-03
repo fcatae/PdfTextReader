@@ -8,15 +8,105 @@ namespace PdfTextReader.Structure
 {
     class ProcessStructure2
     {
-        public List<TextStructure> ProcessParagraph(List<TextLine> lineSet)
+        public List<TextStructure> ProcessParagraph(IEnumerable<TextLine> lineSet)
         {
-            throw new InvalidOperationException();
+            List<TextStructure> structures = new List<TextStructure>();
+            List<TextLine> lines = new List<TextLine>();
+
+
+            foreach (TextLine line in lineSet)
+            {
+                //If structure is empty, add the first line
+                if (lines.Count == 0)
+                {
+                    lines.Add(line);
+                    continue;
+                }
+                //If this line it is in the same structure, add it. Otherwise, it is other structure
+                if (AreInSameStructure(lines[lines.Count - 1], line))
+                {
+                    lines.Add(line);
+                }
+                else
+                {
+                    Stats.TextInfo infos = GetTextInfos(lines);
+                    TextStructure structure = new TextStructure()
+                    {
+                        FontName = infos.FontName,
+                        FontSize = infos.FontSize,
+                        Text = GetText(lines),
+                        TextAlignment = GetTextAlignment(lines)
+                    };
+                    structures.Add(structure);
+
+                    lines = new List<TextLine>()
+                    {
+                        line
+                    };
+                }
+            }
+            if (lines.Count > 0)
+            {
+                Stats.TextInfo infos = GetTextInfos(lines);
+                TextStructure structure = new TextStructure()
+                {
+                    FontName = infos.FontName,
+                    FontSize = infos.FontSize,
+                    Text = GetText(lines),
+                    TextAlignment = GetTextAlignment(lines)
+                };
+                structures.Add(structure);
+            }
+            return structures;
         }
 
-        public List<TextLine> ProcessLine(BlockSet items)
+        private TextAlignment GetTextAlignment(List<TextLine> lines)
         {
-            throw new InvalidOperationException();
+            throw new NotImplementedException();
         }
+
+
+        //Verify if two lines are in the same structure
+        bool AreInSameStructure(TextLine l1, TextLine l2)
+        {
+            return false;
+        }
+
+
+        //Get all texts inside the structure and put /n and /t
+        string GetText(List<TextLine> lines)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            return sb.ToString();
+        }
+
+
+        //Analyze Font
+        public static List<Stats.TextInfo> GetAllTextInfos(List<TextLine> lines)
+        {
+            List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
+
+            foreach (TextLine line in lines)
+            {
+                var result = Styles.Where(i => i.FontName == line.FontName && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
+                if (result == null)
+                {
+                    Styles.Add(new Stats.TextInfo(line));
+                }
+            }
+            return Styles;
+        }
+
+        public static Stats.TextInfo GetTextInfos(List<TextLine> lines)
+        {
+            var linesGrouped = lines.GroupBy(line => new { line.FontName, line.FontSize });
+            var result = linesGrouped.OrderByDescending(group => group.Count()).ToList().FirstOrDefault().Key;
+            return new Stats.TextInfo(result.FontName, result.FontSize);
+        }
+
+
+
 
         #region Codigo Temporario
         public List<TextLine> ProcessLine(List<Lucas_Testes.Helpers.MainItem> items, List<BlockSet> _list = null)

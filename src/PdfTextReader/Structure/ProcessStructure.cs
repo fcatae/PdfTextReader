@@ -30,8 +30,8 @@ namespace PdfTextReader.Structure
                     FontName = bl.FontName,
                     FontSize = (decimal)bl.FontSize,
                     Text = bl.Text,
-                    MarginLeft = (decimal)( bl.GetX() - minx ),
-                    MarginRight = (decimal)( maxx - (bl.GetX() + bl.GetWidth())),
+                    MarginLeft = Decimal.Round( Convert.ToDecimal( bl.GetX() - minx ), 2),
+                    MarginRight = Decimal.Round(Convert.ToDecimal(maxx - (bl.GetX() + bl.GetWidth())), 2),
                     Breakline = 0
                 };
 

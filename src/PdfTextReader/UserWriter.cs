@@ -751,7 +751,7 @@ namespace PdfTextReader
 
             //Printing
             //ProcessStats.PrintTextInfo(ProcessStats.GetAllTextStyles(items));
-            ProcessStats.PrintTextInfo(ProcessStats.GetAllTextStyles(lines));
+            //ProcessStats.PrintTextInfo(ProcessStats.GetAllTextStyles(lines));
 
             //lines.Sort();
 

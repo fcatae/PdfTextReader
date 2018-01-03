@@ -11,6 +11,10 @@ namespace PdfTextReader
             var pipeline = new Pipeline();
 
             var lines = pipeline.GetLines("p44");
+
+            //Testing paragraphs
+            var process = new Structure.ProcessStructure2();
+            var paragraphs = process.ProcessParagraph(lines);
         }        
     }
 }
