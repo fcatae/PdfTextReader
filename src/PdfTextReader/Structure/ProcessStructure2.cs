@@ -36,7 +36,7 @@ namespace PdfTextReader.Structure
                         FontName = infos.FontName,
                         FontSize = infos.FontSize,
                         Text = GetText(lines),
-                        TextAlignment = GetTextAlignment(lines)
+                        TextAlignment = GetParagraphTextAlignment(lines)
                     };
                     structures.Add(structure);
 
@@ -54,46 +54,49 @@ namespace PdfTextReader.Structure
                     FontName = infos.FontName,
                     FontSize = infos.FontSize,
                     Text = GetText(lines),
-                    TextAlignment = GetTextAlignment(lines)
+                    TextAlignment = GetParagraphTextAlignment(lines)
                 };
                 structures.Add(structure);
             }
             return structures;
         }
 
-        private TextAlignment GetTextAlignment(List<TextLine> lines)
+        private TextAlignment GetParagraphTextAlignment(List<TextLine> lines)
         {
 
             List<TextAlignment> alignments = new List<TextAlignment>();
             foreach (var item in lines)
             {
-                if (item.MarginLeft - item.MarginRight <= Tolerance && item.MarginRight < Tolerance)
-                {
-                    alignments.Add(TextAlignment.JUSTIFY);
-                }
-                else if (item.MarginLeft - item.MarginRight <= Tolerance && item.MarginRight > Tolerance)
-                {
-                    alignments.Add(TextAlignment.CENTER);
-                }
-                else if (item.MarginLeft - item.MarginRight > 0)
-                {
-                    alignments.Add(TextAlignment.RIGHT);
-                }
-                else if (item.MarginLeft - item.MarginRight < 0)
-                {
-                    alignments.Add(TextAlignment.LEFT);
-                }
-                else
-                {
-                    alignments.Add(TextAlignment.UNKNOW);
-                }
+                alignments.Add(GetLineTextAlignment(item));
             }
-
-            int listc = alignments.Count;
 
             var listGrouped = alignments.GroupBy(a => a);
             var result = listGrouped.OrderByDescending(group => group.Count()).ToList().FirstOrDefault().Key;
             return result;
+        }
+
+        TextAlignment GetLineTextAlignment(TextLine line)
+        {
+            if (line.MarginLeft - line.MarginRight <= Tolerance && line.MarginRight < Tolerance)
+            {
+                return TextAlignment.JUSTIFY;
+            }
+            else if (line.MarginLeft - line.MarginRight <= Tolerance && line.MarginLeft - line.MarginRight > 0 && line.MarginRight > Tolerance)
+            {
+                return TextAlignment.CENTER;
+            }
+            else if (line.MarginLeft - line.MarginRight > 0)
+            {
+                return TextAlignment.RIGHT;
+            }
+            else if (line.MarginLeft - line.MarginRight < 0)
+            {
+                return TextAlignment.LEFT;
+            }
+            else
+            {
+                return TextAlignment.UNKNOW;
+            }
         }
 
 
@@ -104,11 +107,16 @@ namespace PdfTextReader.Structure
             {
                 if (l1.Breakline < l2.FontSize / 2)
                 {
-                    return true;
+                    if ((GetLineTextAlignment(l1) == TextAlignment.JUSTIFY || GetLineTextAlignment(l1) == TextAlignment.LEFT ) && GetLineTextAlignment(l2) == TextAlignment.RIGHT)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
                 }
-                return false;
             }
-
             return false;
         }
 
@@ -122,7 +130,7 @@ namespace PdfTextReader.Structure
             {
                 if (lines.Count > 1)
                 {
-                    if ((lines[0].MarginRight < Tolerance && lines[0].MarginLeft > Tolerance) && (lines[1].MarginLeft - lines[1].MarginRight <= Tolerance && lines[1].MarginRight < Tolerance))
+                    if (GetLineTextAlignment(lines[0]) == TextAlignment.RIGHT && GetLineTextAlignment(lines[1]) == TextAlignment.JUSTIFY)
                     {
                         sb.Append("\t");
                     }
@@ -230,7 +238,7 @@ namespace PdfTextReader.Structure
         {
             for (int i = 0; i < lines.Count; i++)
             {
-               // ???? Onde pego a porra da posição do item para medir a distancia?
+                // ???? Onde pego a porra da posição do item para medir a distancia?
             }
             return lines;
         }
