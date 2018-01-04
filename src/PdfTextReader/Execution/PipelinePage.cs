@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace PdfTextReader.Execution
@@ -14,19 +15,19 @@ namespace PdfTextReader.Execution
         {
             throw new NotImplementedException();
         }
-        public PipelinePage Show(System.Drawing.Color Color)
+        public PipelinePage Show(Color Color)
         {
             throw new NotImplementedException();
         }
-        public PipelinePage Debug(System.Drawing.Color Color)
+        public PipelinePage Debug(Color Color)
         {
             throw new NotImplementedException();
         }
-        public PipelinePage Show<T>(Func<T, bool> filter, System.Drawing.Color Color)
+        public PipelinePage Show<T>(Func<T, bool> filter, Color Color)
         {
             throw new NotImplementedException();
         }
-        public PipelinePage Validate<T>(System.Drawing.Color Color)
+        public PipelinePage Validate<T>(Color Color)
         {
             throw new NotImplementedException();
         }
