@@ -1,11 +1,12 @@
-﻿using System;
+﻿using PdfTextReader.Execution;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PdfTextReader
 {
     class Pipeline
-    {
+    {        
         // Pipeline Definition: 
         //   * TableListener -> ProcessTable
         //   * TextListener  -> Remove Tables -> ProcessColumns -> BreakColumns -> MergeBlocks
