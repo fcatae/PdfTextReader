@@ -12,11 +12,11 @@ namespace PdfTextReader.Parser
             List<Conteudo> contents = new List<Conteudo>();
             foreach (Structure.TextStructure structure in structures)
             {
-                if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
+                if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Assinatura));
                 }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight > Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.MarginRight > Tolerance)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Cargo));
                 }
@@ -24,7 +24,7 @@ namespace PdfTextReader.Parser
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Corpo));
                 }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight < Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.MarginRight < Tolerance)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Caput));
                 }

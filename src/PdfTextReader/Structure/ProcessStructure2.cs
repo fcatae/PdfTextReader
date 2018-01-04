@@ -38,7 +38,9 @@ namespace PdfTextReader.Structure
                         FontStyle = infos.FontStyle,
                         Text = GetText(lines),
                         TextAlignment = GetParagraphTextAlignment(lines),
-                        Lines = lines
+                        Lines = lines,
+                        MarginLeft = lines[0].MarginLeft,
+                        MarginRight = lines[0].MarginRight
                     };
                     structures.Add(structure);
 
@@ -58,7 +60,9 @@ namespace PdfTextReader.Structure
                     FontStyle = infos.FontStyle,
                     Text = GetText(lines),
                     TextAlignment = GetParagraphTextAlignment(lines),
-                    Lines = lines
+                    Lines = lines,
+                    MarginLeft = lines[0].MarginLeft,
+                    MarginRight = lines[0].MarginRight
                 };
                 structures.Add(structure);
             }
