@@ -15,6 +15,10 @@ namespace PdfTextReader
             //Testing paragraphs
             var process = new Structure.ProcessStructure2();
             var paragraphs = process.ProcessParagraph(lines);
+
+            //Testing Naming Structures (e.g Title, Sector, etc)
+            var parser = new Parser.ProcessParser();
+            var namedStructures = parser.ProcessStructures(paragraphs);
         }        
     }
 }
