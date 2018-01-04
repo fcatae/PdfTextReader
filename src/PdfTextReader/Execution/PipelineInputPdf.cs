@@ -140,6 +140,18 @@ namespace PdfTextReader.Execution
                 canvas.Rectangle(x, h, width, height);
                 canvas.Stroke();
             }
+            public void DrawLine(double x1, double h1, double x2, double h2, System.Drawing.Color color)
+            {
+                var canvas = GetCanvas();
+
+                var pdfColor = GetColor(color);
+
+                canvas.SetStrokeColor(pdfColor);
+                canvas.MoveTo(x1, h1);
+                canvas.LineTo(x2, h2);
+                canvas.Stroke();
+            }
+            
 
             public void Dispose()
             {

@@ -35,6 +35,27 @@ namespace PdfTextReader.Execution
                 pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
             }
         }
+        static public void ShowLine(PipelineInputPdf pdf, BlockPage blockPage, Color color)
+        {
+            var blocks = blockPage.Current;
+
+            float x1 = float.NaN;
+            float h1 = float.NaN;
+
+            foreach (var b in blocks)
+            {
+                float x2 = b.GetX() + b.GetWidth() / 2;
+                float h2 = b.GetH() + b.GetHeight() / 2;
+
+                if ( (!float.IsNaN(x1)) && (!float.IsNaN(h1)) )
+                {
+                    pdf.CurrentPage.DrawLine(x1, h1, x2, h2, color);
+                }
+
+                x1 = x2;
+                h1 = h2;
+            }
+        }
     }
 
     static class PipelineDebugExtensions
@@ -56,6 +77,11 @@ namespace PdfTextReader.Execution
             return page;
         }
 
+        static public PipelinePage ShowLine(this PipelinePage page, Color color)
+        {
+            PipelineDebug.ShowLine((PipelineInputPdf)page.Context, page.LastResult, color);
+            return page;
+        }
         //static public PipelineText Output(this PipelineText page, string filename)
         //{
         //    PipelineDebug.Output(page.Context, filename);
