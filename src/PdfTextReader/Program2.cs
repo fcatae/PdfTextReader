@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            ProcessSingle("p1");
+            ProcessSingle("p42");
         }
 
         static void ProcessSingle(string page)
@@ -64,7 +64,7 @@ namespace PdfTextReader
             }
         }
 
-        static void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, List<Structure.TextStructure> structures, List<Parser.TextContent> contents)
+        static void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, IEnumerable<Structure.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
         {
             Stats.ProcessStats.PrintAnalytics(pdfname, lines, structures, contents);
         }

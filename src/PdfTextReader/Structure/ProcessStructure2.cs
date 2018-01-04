@@ -9,7 +9,7 @@ namespace PdfTextReader.Structure
     class ProcessStructure2
     {
         decimal Tolerance = 3;
-        public List<TextStructure> ProcessParagraph(IEnumerable<TextLine> lineSet)
+        public IEnumerable<TextStructure> ProcessParagraph(IEnumerable<TextLine> lineSet)
         {
             List<TextStructure> structures = new List<TextStructure>();
             List<TextLine> lines = new List<TextLine>();
