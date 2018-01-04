@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Parser
 {
-    class TextContent : Structure.TextStructure
+    public class TextContent : Structure.TextStructure
     {
         public ContentType ContentType { get; set; }
 
