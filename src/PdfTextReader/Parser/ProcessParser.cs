@@ -16,7 +16,7 @@ namespace PdfTextReader.Parser
                 {
                     contents.Add(new TextContent(structure, ContentType.Signature));
                 }
-                if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight > Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight > Tolerance)
                 {
                     contents.Add(new TextContent(structure, ContentType.Role));
                 }
