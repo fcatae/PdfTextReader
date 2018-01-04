@@ -6,11 +6,11 @@ using System.Text;
 
 namespace PdfTextReader.Stats
 {
-    class ProcessStats
+    static class ProcessStats
     {
-        TextInfo GridStyle;
+        static TextInfo GridStyle;
 
-        public List<TextInfo> GetAllTextInfo(List<Structure.TextLine> lines)
+        public static List<TextInfo> GetAllTextInfo(List<Structure.TextLine> lines)
         {
             List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
 
@@ -25,18 +25,18 @@ namespace PdfTextReader.Stats
             return Styles;
         }
 
-        public void SetGridStyle(List<TextInfo> infos)
+        public static void SetGridStyle(List<TextInfo> infos)
         {
             var result = infos.Where(i => i.FontName.ToLower().Contains("times"));
             GridStyle = infos.Except(result).ToList().FirstOrDefault();
         }
 
-        public TextInfo GetGridStyle()
+        public static TextInfo GetGridStyle()
         {
             return GridStyle;
         }
 
-        public void PrintTextInfo(List<TextInfo> items)
+        public static void PrintTextInfo(List<TextInfo> items)
         {
             foreach (TextInfo item in items)
             {
@@ -45,7 +45,7 @@ namespace PdfTextReader.Stats
             }
         }
 
-        public void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, List<Structure.TextStructure> structures, List<Parser.TextContent> contents)
+        public static void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, List<Structure.TextStructure> structures, List<Parser.TextContent> contents)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter($"bin/{pdfname}-Analytics.txt"))
             {

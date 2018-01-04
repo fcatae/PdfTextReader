@@ -30,11 +30,11 @@ namespace PdfTextReader.Parser
                 }
                 else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.FontStyle == "Bold")
                 {
-                    if (!structure.FontName.ToLower().Contains("times")) // preciso pegar do Stats
+                    if (structure.FontName == Stats.ProcessStats.GetGridStyle().FontName)
                     {
                         contents.Add(new TextContent(structure, ContentType.Grid));
                     }
-                    else if (structure.FontSize > 9) // Preciso pegar do Statsrser
+                    else if (structure.FontSize > 9) // Preciso pegar do Stats
                     {
                         contents.Add(new TextContent(structure, ContentType.Sector));
                     }
