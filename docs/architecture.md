@@ -7,20 +7,30 @@ Execution pipeline to run listeners and block processors.
 
 Pipeline:
 
-    Pipeline.Input("input")
-            .Page(1)  // .AllPages()
-            .ParsePdf( PreProcessTables )
+    Pipeline.Input("input") //.Output
+            .Page(1)  // .AllPages( p => p.CurrentPage )
+            .ParsePdf( PreProcessTables )             
+            .StoreResult( "INLINETABLES" )
+                .Output("table-output")
+                .Show( b => b.op ==1, Color: green )
+            .Output("lines")
             .ParsePdf( ProcessPdfText )
-            .ParseBlock( RemoveTableInlineText , Color: green)
+            .ParseBlock( RemoveTableInlineText("INLINETABLES"))
             .ParseBlock( FindPageColumns )
-            .ParseBlock( BreakColumns , Color: Orange)
-                .Show( "error1", Color: orange )
-                .Show( "error2", Color: gray )
+            .ParseBlock( BreakColumns )
+                .Validate( BreakColumns, Color: red )
             .ParseBlock( RemoveHeader , Color: blue)
             .ParseBlock( RemoveFooter , Color: blue)
-            .Show( Color: yellow )
-
+                .Validate( ValidFooter, p => PipelineException() )
             .ParseBlock( CreateLines )
-            .CreateText( CreateStructures )
+            .ParseBlock( CreateStructures )
+                .Show( Color: yellow )
+            .ParseText( ProcessParagraphs )
+            .ParseText( ProcessStructure )
+                .Output("structures")
+                .Show( Color: red )
+            .ParseContent( Articles )
+                .SaveXml( p => $"file-{p.page}")
+
 
             
