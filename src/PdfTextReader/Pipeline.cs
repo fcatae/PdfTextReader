@@ -52,6 +52,18 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void ShowRenderPath(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessRenderPath>()
+                    .Show(Color.Red);                    
+
+            pipeline.Done();
+        }
         public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();
