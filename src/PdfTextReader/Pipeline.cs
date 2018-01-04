@@ -30,7 +30,7 @@ namespace PdfTextReader
                         .Validate<BreakColumns>(Color.Red)
                     .ParseBlock<RemoveHeader>().Debug(Color.Blue)
                     .ParseBlock<RemoveFooter>().Debug(Color.Blue)
-                        .Validate<ValidFooter>(p => new Exception())
+                    //    .Validate<ValidFooter>(p => new Exception())
                     .ParseBlock<CreateLines>()
                     .Text<CreateStructures>()
                         .Show(Color.Yellow)
