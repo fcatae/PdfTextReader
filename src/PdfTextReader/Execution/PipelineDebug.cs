@@ -28,7 +28,7 @@ namespace PdfTextReader.Execution
 
         static public void Show(PipelineInputPdf pdf, BlockPage blockPage, Color color)
         {
-            var blocks = blockPage.Current;
+            var blocks = blockPage.AllBlocks;
 
             foreach(var b in blocks)
             {
@@ -37,7 +37,7 @@ namespace PdfTextReader.Execution
         }
         static public void ShowLine(PipelineInputPdf pdf, BlockPage blockPage, Color color)
         {
-            var blocks = blockPage.Current;
+            var blocks = blockPage.AllBlocks;
 
             float x1 = float.NaN;
             float h1 = float.NaN;

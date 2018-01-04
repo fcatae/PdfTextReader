@@ -103,6 +103,12 @@ namespace PdfTextReader.Execution
                 var page = new PipelinePage(_pdf, _pageNumber);
                 page.LastResult = listener.GetResults();
 
+                if (page.LastResult == null)
+                    throw new InvalidOperationException();
+
+                if (page.LastResult.AllBlocks == null)
+                    throw new InvalidOperationException();
+
                 return page;
             }
 

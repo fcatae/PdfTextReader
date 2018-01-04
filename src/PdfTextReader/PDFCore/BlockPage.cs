@@ -6,6 +6,23 @@ namespace PdfTextReader.PDFCore
 {
     public class BlockPage
     {
-        public BlockSet<Block> Current { get; set; }
+        BlockSet<IBlock> _blocks = new BlockSet<IBlock>();
+
+        public BlockSet<IBlock> AllBlocks => _blocks;
+
+        public void Add(IBlock block)
+        {
+            if (block == null)
+                throw new ArgumentNullException(nameof(block));
+
+            _blocks.Add(block);
+        }
+        public void AddRange(IEnumerable<IBlock> blockList)
+        {
+            foreach(var block in blockList)
+            {
+                Add(block);
+            }
+        }
     }
 }

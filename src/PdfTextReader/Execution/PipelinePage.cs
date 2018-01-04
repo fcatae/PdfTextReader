@@ -41,7 +41,7 @@ namespace PdfTextReader.Execution
             return this;
         }
 
-        public PipelinePage Validate<T>(Action<BlockSet<Block>> filter = null)
+        public PipelinePage Validate<T>(Action<BlockSet<IBlock>> filter = null)
             where T : IValidateBlock, new()
         {
             var initial = this.LastResult;
@@ -53,7 +53,7 @@ namespace PdfTextReader.Execution
             if( filter != null && result != null )
             {
                 //foreach(var blockSet in )
-                filter(result.Current);
+                filter(result.AllBlocks);
             }
 
             this.LastErrors = result;

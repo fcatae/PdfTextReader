@@ -87,7 +87,8 @@ namespace PdfTextReader.PDFCore
         public BlockPage GetResults()
         {
             var blockPage = new BlockPage();
-            blockPage.Current = _blockSet;
+
+            blockPage.Add(_blockSet);
 
             return blockPage;
         }

@@ -9,12 +9,12 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>, IProcessBlock
+    public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
     {
-        private readonly List<EventType> _supportedEvents = new List<EventType>() {
-            EventType.RENDER_PATH
-        };
-        
+        private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_PATH };
+
+        private BlockSet<TableCell> _blockSet = new BlockSet<TableCell>();
+
         public void EventOccurred(IEventData data, EventType type)
         {
             var line = data as PathRenderInfo;
@@ -75,13 +75,20 @@ namespace PdfTextReader.PDFCore
                 if (tableCell.Width < 0 || tableCell.Height < 0)
                     throw new InvalidOperationException();
 
-                // _callback(tableCell);
+                if( tableCell.Op == 1 )
+                {
+                    _blockSet.Add(tableCell);
+                }
             }
         }
 
         public BlockPage GetResults()
         {
-            return new BlockPage();
+            var page = new BlockPage();
+
+            page.AddRange(_blockSet);
+
+            return page;
         }
 
         public ICollection<EventType> GetSupportedEvents()

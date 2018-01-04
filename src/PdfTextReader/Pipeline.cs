@@ -17,7 +17,6 @@ namespace PdfTextReader
                     .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<MarkAllComponents>()
                     .Show(Color.Yellow);
 
             pipeline.Done();            
@@ -31,8 +30,24 @@ namespace PdfTextReader
                     .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<MarkAllComponents>()
                     .ShowLine(Color.Orange);
+
+            pipeline.Done();
+        }
+
+        public static void ShowTables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                    .Show(Color.Yellow)
+                    .ParseBlock<IdentifyTables>()
+                    .Show(Color.Green);
+
+                    //.Show<TableCell>(b => b.Op == 1, Color.Green);
 
             pipeline.Done();
         }
@@ -50,7 +65,7 @@ namespace PdfTextReader
                     .Show<TableCell>(b => b.Op == 1, Color.Green)
                     .Output("lines")
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<PreProcessTables>() 
+                    //.ParseBlock<PreProcessTables>() 
                     .ParseBlock<FindPageColumns>()
                     .ParseBlock<BreakColumns>()
                         .Validate<BreakColumns>(Color.Red)
