@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            ProcessSingle("p44");
+            ProcessSingle("p1");
         }
 
         static void ProcessSingle(string page)
@@ -21,6 +21,9 @@ namespace PdfTextReader
             var pipeline = new Pipeline();
 
             var lines = pipeline.GetLines(page);
+
+            //Analyzing Grid Font
+            Stats.ProcessStats.SetGridStyle(Stats.ProcessStats.GetAllTextInfo(lines));
 
             //Testing paragraphs
             var process = new Structure.ProcessStructure2();
@@ -44,6 +47,9 @@ namespace PdfTextReader
                 string basename = Path.GetFileNameWithoutExtension(filename);
 
                 var lines = pipeline.GetLines($"/{subfolder}/{basename}");
+
+                //Analyzing Grid Font
+                Stats.ProcessStats.SetGridStyle(Stats.ProcessStats.GetAllTextInfo(lines));
 
                 //Testing paragraphs
                 var process = new Structure.ProcessStructure2();

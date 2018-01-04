@@ -30,7 +30,7 @@ namespace PdfTextReader.Parser
                 }
                 else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.FontStyle == "Bold")
                 {
-                    if (structure.FontName == Stats.ProcessStats.GetGridStyle().FontName)
+                    if (Stats.ProcessStats.GetGridStyle() != null && structure.FontName == Stats.ProcessStats.GetGridStyle().FontName)
                     {
                         contents.Add(new TextContent(structure, ContentType.Grid));
                     }

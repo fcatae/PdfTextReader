@@ -10,7 +10,7 @@ namespace PdfTextReader.Stats
     {
         static TextInfo GridStyle;
 
-        public static List<TextInfo> GetAllTextInfo(List<Structure.TextLine> lines)
+        public static List<TextInfo> GetAllTextInfo(IEnumerable<Structure.TextLine> lines)
         {
             List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
 
