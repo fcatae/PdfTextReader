@@ -81,7 +81,7 @@ namespace PdfTextReader.Structure
             {
                 return TextAlignment.JUSTIFY;
             }
-            else if (line.MarginLeft - line.MarginRight <= Tolerance && line.MarginLeft - line.MarginRight > 0 && line.MarginRight > Tolerance)
+            else if (line.MarginLeft - line.MarginRight <= Tolerance && line.MarginLeft - line.MarginRight > -Tolerance && line.MarginRight > Tolerance)
             {
                 return TextAlignment.CENTER;
             }
@@ -103,17 +103,26 @@ namespace PdfTextReader.Structure
         //Verify if two lines are in the same structure
         bool AreInSameStructure(TextLine l1, TextLine l2)
         {
+            //Have the same Font Name and Font Size? It is the same line
             if (l1.FontName == l2.FontName && l1.FontSize == l2.FontSize)
             {
+                //The breakline for the first line is minor than the font size of second line? It is the same line
                 if (l1.Breakline < l2.FontSize / 2)
                 {
-                    if ((GetLineTextAlignment(l1) == TextAlignment.JUSTIFY || GetLineTextAlignment(l1) == TextAlignment.LEFT ) && GetLineTextAlignment(l2) == TextAlignment.RIGHT)
+                    //The second line has a paragraph margin and the first line is not centered or right alignment? It is NOT the same line
+                    if ((GetLineTextAlignment(l1) == TextAlignment.JUSTIFY || GetLineTextAlignment(l1) == TextAlignment.LEFT) && GetLineTextAlignment(l2) == TextAlignment.RIGHT)
                     {
                         return false;
                     }
-                    else
+                    else // Otherwise, it is the same line
                     {
-                        return true;
+                        //All signatures are not centered. They have right alignment with a huge right margin
+                        //If the second line has right alignment and the right margin is bigger than Tolerance (3) * 2? It is NOT the same line
+                        if ((GetLineTextAlignment(l2) == TextAlignment.RIGHT) && l2.MarginRight > Tolerance * 2)
+                        {
+                            return false;
+                        }
+                        return true; // Otherwise it is the same line
                     }
                 }
             }
