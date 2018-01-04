@@ -6,11 +6,11 @@ using System.Text;
 
 namespace PdfTextReader.Stats
 {
-    public static class ProcessStats
+    static class ProcessStats
     {
         static TextInfo GridStyle;
 
-        public static List<TextInfo> GetAllTextInfo(List<Structure.TextLine> lines)
+        public static List<TextInfo> GetAllTextInfo(IEnumerable<Structure.TextLine> lines)
         {
             List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
 
@@ -28,7 +28,7 @@ namespace PdfTextReader.Stats
         public static void SetGridStyle(List<TextInfo> infos)
         {
             var result = infos.Where(i => i.FontName.ToLower().Contains("times"));
-            GridStyle =  infos.Except(result).ToList().FirstOrDefault();
+            GridStyle = infos.Except(result).ToList().FirstOrDefault();
         }
 
         public static TextInfo GetGridStyle()
@@ -42,6 +42,83 @@ namespace PdfTextReader.Stats
             {
                 Debug.WriteLine($"Text: {item.Text} ---- Name: {item.FontName} ---- Fontsize: {item.FontSize}");
                 Console.WriteLine($"Text: {item.Text} ---- Name: {item.FontName} ---- Fontsize: {item.FontSize}");
+            }
+        }
+
+        public static void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, IEnumerable<Structure.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        {
+            using (System.IO.StreamWriter file = new System.IO.StreamWriter($"bin/{pdfname}-Analytics.txt"))
+            {
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("START ANALYTICS");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("");
+                file.WriteLine("");
+
+
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("PROCESSING LINES");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("");
+                file.WriteLine("");
+                foreach (Structure.TextLine line in lines)
+                {
+                    file.WriteLine($"Breakline: {line.Breakline}");
+                    file.WriteLine($"FontName: {line.FontName}");
+                    file.WriteLine($"FontSize: {line.FontSize}");
+                    file.WriteLine($"FontStyle: {line.FontStyle}");
+                    file.WriteLine($"MarginLeft: {line.MarginLeft}");
+                    file.WriteLine($"MarginRight: {line.MarginRight}");
+                    file.WriteLine($"Text: {line.Text}");
+                    file.WriteLine("");
+                    file.WriteLine("-----");
+                }
+
+
+
+                file.WriteLine("");
+                file.WriteLine("");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("PROCESSING PARAGRAPHS");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("");
+                file.WriteLine("");
+                foreach (Structure.TextStructure structure in structures)
+                {
+                    file.WriteLine($"TextAlignment: {structure.TextAlignment}");
+                    file.WriteLine($"FontName: {structure.FontName}");
+                    file.WriteLine($"FontSize: {structure.FontSize}");
+                    file.WriteLine($"FontStyle: {structure.FontStyle}");
+                    file.WriteLine($"Text: {structure.Text}");
+                    file.WriteLine("");
+                    file.WriteLine("-----");
+                }
+
+
+
+                file.WriteLine("");
+                file.WriteLine("");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("PROCESSING CONTENTS");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("");
+                file.WriteLine("");
+                foreach (Parser.Conteudo content in contents)
+                {
+                    file.WriteLine($"TextAlignment: {content.TextAlignment}");
+                    file.WriteLine($"FontName: {content.FontName}");
+                    file.WriteLine($"FontSize: {content.FontSize}");
+                    file.WriteLine($"FontStyle: {content.FontStyle}");
+                    file.WriteLine($"Text: {content.Text}");
+                    file.WriteLine($"Content-Type: {content.ContentType}");
+                    file.WriteLine("");
+                    file.WriteLine("-----");
+                }
+
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+                file.WriteLine("END ANALYTICS");
+                file.WriteLine("<<<<<>>>>>>>>>>>>>");
+
             }
         }
     }

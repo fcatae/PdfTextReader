@@ -7,49 +7,49 @@ namespace PdfTextReader.Parser
     class ProcessParser
     {
         decimal Tolerance = 3;
-        public List<TextContent> ProcessStructures(List<Structure.TextStructure> structures)
+        public IEnumerable<Conteudo> ProcessStructures(IEnumerable<Structure.TextStructure> structures)
         {
-            List<TextContent> contents = new List<TextContent>();
+            List<Conteudo> contents = new List<Conteudo>();
             foreach (Structure.TextStructure structure in structures)
             {
-                if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
+                if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
                 {
-                    contents.Add(new TextContent(structure, ContentType.Signature));
+                    contents.Add(new Conteudo(structure, TipoDoConteudo.Assinatura));
                 }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight > Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.MarginRight > Tolerance)
                 {
-                    contents.Add(new TextContent(structure, ContentType.Role));
+                    contents.Add(new Conteudo(structure, TipoDoConteudo.Cargo));
                 }
                 else if (structure.CountLines() > 1 && structure.TextAlignment == Structure.TextAlignment.JUSTIFY)
                 {
-                    contents.Add(new TextContent(structure, ContentType.Body));
+                    contents.Add(new Conteudo(structure, TipoDoConteudo.Corpo));
                 }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.Lines[0].MarginRight < Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == Structure.TextAlignment.RIGHT && structure.MarginRight < Tolerance)
                 {
-                    contents.Add(new TextContent(structure, ContentType.Caput));
+                    contents.Add(new Conteudo(structure, TipoDoConteudo.Caput));
                 }
                 else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.FontStyle == "Bold")
                 {
-                    if (!structure.FontName.ToLower().Contains("times")) // preciso pegar do Stats
+                    if (Stats.ProcessStats.GetGridStyle() != null && structure.FontName == Stats.ProcessStats.GetGridStyle().FontName)
                     {
-                        contents.Add(new TextContent(structure, ContentType.Grid));
+                        contents.Add(new Conteudo(structure, TipoDoConteudo.Grade));
                     }
-                    else if (structure.FontSize > 9) // Preciso pegar do Statsrser
+                    else if (structure.FontSize > 9) // Preciso pegar do Stats
                     {
-                        contents.Add(new TextContent(structure, ContentType.Sector));
+                        contents.Add(new Conteudo(structure, TipoDoConteudo.Seção));
                     }
                     else
                     {
-                        contents.Add(new TextContent(structure, ContentType.Title));
+                        contents.Add(new Conteudo(structure, TipoDoConteudo.Título));
                     }
                 }
                 else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.Text.ToUpper() != structure.Text)
                 {
-                    contents.Add(new TextContent(structure, ContentType.Date));
+                    contents.Add(new Conteudo(structure, TipoDoConteudo.Data));
                 }
                 else if (structure.TextAlignment == Structure.TextAlignment.CENTER)
                 {
-                    contents.Add(new TextContent(structure, ContentType.Office));
+                    contents.Add(new Conteudo(structure, TipoDoConteudo.Departamento));
                 }
             }
             return contents;
