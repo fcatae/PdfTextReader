@@ -10,5 +10,10 @@ namespace PdfTextReader.Structure
         public decimal FontSize { get; set; }
         public string Text { get; set; }
         public TextAlignment TextAlignment { get; set; }
+
+        //For ContentType
+        public List<TextLine> Lines { get; set; }
+
+        public int CountLines() => Lines.Count;
     }
 }

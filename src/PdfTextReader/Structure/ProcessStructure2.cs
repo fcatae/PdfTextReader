@@ -36,7 +36,8 @@ namespace PdfTextReader.Structure
                         FontName = infos.FontName,
                         FontSize = infos.FontSize,
                         Text = GetText(lines),
-                        TextAlignment = GetParagraphTextAlignment(lines)
+                        TextAlignment = GetParagraphTextAlignment(lines),
+                        Lines = lines
                     };
                     structures.Add(structure);
 
@@ -54,7 +55,8 @@ namespace PdfTextReader.Structure
                     FontName = infos.FontName,
                     FontSize = infos.FontSize,
                     Text = GetText(lines),
-                    TextAlignment = GetParagraphTextAlignment(lines)
+                    TextAlignment = GetParagraphTextAlignment(lines),
+                    Lines = lines
                 };
                 structures.Add(structure);
             }
