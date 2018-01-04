@@ -26,32 +26,33 @@ namespace PdfTextReader.Execution
             System.Diagnostics.Debugger.Break();
         }
 
-        static public void Show(BlockPage blockPage, Color color)
+        static public void Show(PipelineInputPdf pdf, BlockPage blockPage, Color color)
         {
-            throw new NotImplementedException();
-        }
+            var blocks = blockPage.Current;
 
+            foreach(var b in blocks)
+            {
+                pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
+            }
+        }
     }
 
     static class PipelineDebugExtensions
     {
         static public PipelinePage Output(this PipelinePage page, string filename)
         {
-            PipelineDebug.Output(page.Context, filename);
-
+            PipelineDebug.Output((PipelineInputPdf)page.Context, filename);
             return page;
         }
         static public PipelinePage DebugBreak(this PipelinePage page, Func<PipelinePage,bool> condition = null)
         {
             PipelineDebug.DebugBreak(page, condition);
-
             return page;
         }
 
         static public PipelinePage Show(this PipelinePage page, Color color)
-        {
-            PipelineDebug.Show(page.LastResult, color);
-
+        {            
+            PipelineDebug.Show((PipelineInputPdf)page.Context, page.LastResult, color);
             return page;
         }
 

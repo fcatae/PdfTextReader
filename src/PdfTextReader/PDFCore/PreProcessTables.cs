@@ -9,7 +9,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
+    public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>, IProcessBlock
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() {
             EventType.RENDER_PATH
@@ -87,6 +87,11 @@ namespace PdfTextReader.PDFCore
         public ICollection<EventType> GetSupportedEvents()
         {
             return _supportedEvents;
+        }
+
+        public BlockPage Process(BlockPage page)
+        {
+            throw new NotImplementedException();
         }
     }
 }

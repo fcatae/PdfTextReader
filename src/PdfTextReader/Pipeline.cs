@@ -9,6 +9,19 @@ namespace PdfTextReader
 {
     class Pipeline
     {
+        public static void ShowBox(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+            
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-t-output.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<MarkAllComponents>()
+                    .Show(Color.Yellow);
+
+            pipeline.Done();            
+        }
 
         public static void TestPipeline(string basename)
         {
@@ -16,15 +29,14 @@ namespace PdfTextReader
 
             pipeline.Input($"bin/{basename}.pdf") //.Output
                     .Page(1)  // .AllPages( p => p.CurrentPage )
-                    //.ParsePdf<PreProcessTables>()
-                    //    .Output($"bin/{basename}-table-output.pdf")
-                    //    .DebugBreak( c => c != null )
-                    //    .Show(Color.Green)
-                    //.Show<TableCell>(b => b.Op == 1, Color.Green)
-                    //.Output("lines")
+                    .ParsePdf<PreProcessTables>()
+                        .Output($"bin/{basename}-table-output.pdf")
+                        .DebugBreak(c => c != null)
+                        .Show(Color.Green)
+                    .Show<TableCell>(b => b.Op == 1, Color.Green)
+                    .Output("lines")
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<RemoveTableInlineText>() // "INLINETABLES"
-                                                         //.ParseBlock<PreProcessTables>() // use singleton instead?
+                    .ParseBlock<PreProcessTables>() 
                     .ParseBlock<FindPageColumns>()
                     .ParseBlock<BreakColumns>()
                         .Validate<BreakColumns>(Color.Red)

@@ -8,7 +8,7 @@ namespace PdfTextReader.Execution
 {
     class PipelinePage
     {
-        public PipelineInputPdf Context { get; }
+        public IPipelineContext Context { get; }
         public int PageNumber { get; }
         public BlockPage LastResult { get; set; }
         private BlockPage LastErrors { get; set; }

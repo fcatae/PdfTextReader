@@ -1,4 +1,5 @@
 ﻿using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfTextReader.PDFCore;
@@ -8,12 +9,14 @@ using System.Text;
 
 namespace PdfTextReader.Execution
 {
-    class PipelineInputPdf : IDisposable
+    class PipelineInputPdf : IPipelinePdfContext, IDisposable
     {
         private readonly string _input;
         private PdfDocument _pdfDocument;
         private string _output;
         private PdfDocument _pdfOutput;
+        
+        public PipelineInputPdfPage CurrentPage { get; private set; }
 
         public PipelineInputPdf(string filename)
         {
@@ -25,7 +28,16 @@ namespace PdfTextReader.Execution
         
         public PipelineInputPdfPage Page(int pageNumber)
         {
-            return new PipelineInputPdfPage(this, pageNumber);
+            var page = new PipelineInputPdfPage(this, pageNumber);
+
+            if( CurrentPage != null )
+            {
+                CurrentPage.Dispose();
+            }
+
+            CurrentPage = page;
+
+            return page;
         }
 
         public PipelineInputPdf Output(string outfile)
@@ -45,6 +57,12 @@ namespace PdfTextReader.Execution
 
         public void Dispose()
         {
+            if( CurrentPage != null )
+            {
+                CurrentPage.Dispose();
+                CurrentPage = null;
+            }
+
             if (_pdfDocument != null)
             {
                 ((IDisposable)_pdfDocument).Dispose();
@@ -58,11 +76,12 @@ namespace PdfTextReader.Execution
             }
         }
 
-        public class PipelineInputPdfPage
+        public class PipelineInputPdfPage : IDisposable
         {
             private readonly PipelineInputPdf _pdf;
-            private readonly int _pageNumber;
-            private PdfPage _pdfPage;
+            private readonly int _pageNumber;            
+            private readonly PdfPage _pdfPage;
+            private PdfCanvas _outputCanvas;
 
             public PipelineInputPdfPage(PipelineInputPdf pipelineInputContext, int pageNumber)
             {
@@ -85,6 +104,50 @@ namespace PdfTextReader.Execution
                 page.LastResult = listener.GetResults();
 
                 return page;
+            }
+
+            public PipelineInputPdfPage Output(string filename)
+            {
+                this._pdf.Output(filename);
+                return this;
+            }
+
+            PdfCanvas GetCanvas()
+            {
+                if(_outputCanvas == null)
+                {
+                    var page = _pdf._pdfOutput.GetPage(_pageNumber);                                        
+                    var canvas = new PdfCanvas(page);
+
+                    _outputCanvas = canvas;
+                }                
+
+                return _outputCanvas;
+            }
+
+            iText.Kernel.Colors.DeviceRgb GetColor(System.Drawing.Color color)
+            {
+                return new iText.Kernel.Colors.DeviceRgb(color.R, color.G, color.B);
+            }
+
+            public void DrawRectangle(double x, double h, double width, double height, System.Drawing.Color color)
+            {
+                var canvas = GetCanvas();
+
+                var pdfColor = GetColor(color);
+
+                canvas.SetStrokeColor(pdfColor);
+                canvas.Rectangle(x, h, width, height);
+                canvas.Stroke();
+            }
+
+            public void Dispose()
+            {
+                if( _outputCanvas != null )
+                {
+                    _outputCanvas.Release();
+                    _outputCanvas = null;
+                }
             }
         }        
     }

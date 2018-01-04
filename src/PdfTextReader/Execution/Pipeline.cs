@@ -17,6 +17,11 @@ namespace PdfTextReader.Execution
             return context;
         }
 
+        public void Done()
+        {
+            Dispose();
+        }
+
         public void Dispose()
         {
             var disposable = _activeContext as IDisposable;

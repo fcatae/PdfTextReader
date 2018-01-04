@@ -4,11 +4,11 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveTableInlineText : IProcessBlock
+    class MarkAllComponents : IProcessBlock
     {
         public BlockPage Process(BlockPage page)
         {
-            throw new NotImplementedException();
+            return page;
         }
     }
 }
