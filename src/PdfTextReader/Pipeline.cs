@@ -17,8 +17,10 @@ namespace PdfTextReader
             pipeline.Input($"bin/{basename}.pdf") //.Output
                     .Page(1)  // .AllPages( p => p.CurrentPage )
                     .ParsePdf<PreProcessTables>()
-                        .Output("table-output")
-                        .Show<TableCell>(b => b.Op == 1, Color.Green)
+                        .Output($"bin/{basename}-table-output.pdf")
+                        .DebugBreak( c => c != null )
+                        .Show(Color.Green)
+                    //.Show<TableCell>(b => b.Op == 1, Color.Green)
                     .Output("lines")
                     .ParsePdf<ProcessPdfText>()
                     .ParseBlock<RemoveTableInlineText>() // "INLINETABLES"

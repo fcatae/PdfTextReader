@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader.PDFCore;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -7,10 +8,16 @@ namespace PdfTextReader.Execution
 {
     class PipelinePage
     {
-        public PipelinePage Output(string filename)
+        public PipelinePage(PipelineInputPdf pdf, int pageNumber)
         {
-            throw new NotImplementedException();
+            this.Context = pdf;
+            this.PageNumber = pageNumber;
         }
+
+        public PipelineInputPdf Context { get; }
+        public int PageNumber { get; }
+        public BlockPage LastResult { get; set; }
+
         public PipelinePage Show(Color Color)
         {
             throw new NotImplementedException();

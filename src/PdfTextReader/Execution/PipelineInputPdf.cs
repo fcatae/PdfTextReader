@@ -1,6 +1,7 @@
 ﻿using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using PdfTextReader.PDFCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,14 +10,16 @@ namespace PdfTextReader.Execution
 {
     class PipelineInputPdf : IDisposable
     {
-        private readonly string _filename;
+        private readonly string _input;
         private PdfDocument _pdfDocument;
+        private string _output;
+        private PdfDocument _pdfOutput;
 
         public PipelineInputPdf(string filename)
         {
             var pdfDocument = new PdfDocument(new PdfReader(filename));
 
-            this._filename = filename;
+            this._input = filename;
             this._pdfDocument = pdfDocument;
         }
         
@@ -25,12 +28,33 @@ namespace PdfTextReader.Execution
             return new PipelineInputPdfPage(this, pageNumber);
         }
 
+        public PipelineInputPdf Output(string outfile)
+        {
+            if( _pdfOutput != null )
+            {
+                ((IDisposable)_pdfOutput).Dispose();
+            }
+
+            var pdfOutput = new PdfDocument(new PdfReader(_input), new PdfWriter(outfile));
+
+            this._output = outfile;
+            this._pdfOutput = pdfOutput;
+
+            return this;
+        }
+
         public void Dispose()
         {
-            if( _pdfDocument != null )
+            if (_pdfDocument != null)
             {
                 ((IDisposable)_pdfDocument).Dispose();
                 _pdfDocument = null;
+            }
+
+            if (_pdfOutput != null)
+            {
+                ((IDisposable)_pdfOutput).Dispose();
+                _pdfOutput = null;
             }
         }
 
@@ -50,7 +74,7 @@ namespace PdfTextReader.Execution
             }
 
             public PipelinePage ParsePdf<T>()
-                where T: IEventListener, new()
+                where T: IEventListener, IPipelineResults<BlockPage>, new()
             {
                 var listener = new T();
 
@@ -58,7 +82,7 @@ namespace PdfTextReader.Execution
 
                 parser.ProcessPageContent(_pdfPage);
 
-                return new PipelinePage();
+                return new PipelinePage(_pdf, _pageNumber);
             }
         }        
     }
