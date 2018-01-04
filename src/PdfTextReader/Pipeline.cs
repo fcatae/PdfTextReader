@@ -9,7 +9,7 @@ namespace PdfTextReader
 {
     class Pipeline
     {
-        public static void ShowBox(string basename)
+        public static void MarkAllComponents(string basename)
         {
             var pipeline = new Execution.Pipeline();
             
