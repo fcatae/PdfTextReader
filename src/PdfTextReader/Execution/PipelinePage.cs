@@ -7,10 +7,6 @@ namespace PdfTextReader.Execution
 {
     class PipelinePage
     {
-        public PipelinePage StoreResult(string name)
-        {
-            throw new NotImplementedException();
-        }
         public PipelinePage Output(string filename)
         {
             throw new NotImplementedException();

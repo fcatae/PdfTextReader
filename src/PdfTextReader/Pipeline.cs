@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.Execution;
+using PdfTextReader.PDFCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,14 +10,13 @@ namespace PdfTextReader
     class Pipeline
     {
 
-        void TestPipeline()
+        public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input("input") //.Output
+            pipeline.Input($"bin/{basename}.pdf") //.Output
                     .Page(1)  // .AllPages( p => p.CurrentPage )
                     .ParsePdf<PreProcessTables>()
-                    .StoreResult("INLINETABLES")
                         .Output("table-output")
                         .Show<TableCell>(b => b.Op == 1, Color.Green)
                     .Output("lines")

@@ -4,7 +4,6 @@ using System.Text;
 
 namespace PdfTextReader.Execution
 {
-    class PreProcessTables { }
     class ProcessPdfText { }
     class RemoveTableInlineText { }
     class FindPageColumns { }

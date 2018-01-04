@@ -13,7 +13,9 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            ProcessSingle("p42");
+            //ProcessSingle("p42");
+
+            Pipeline.TestPipeline("p42");
         }
 
         static void ProcessSingle(string page)
