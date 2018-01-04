@@ -30,14 +30,14 @@ namespace PdfTextReader
                         .Validate<BreakColumns>(Color.Red)
                     .ParseBlock<RemoveHeader>().Debug(Color.Blue)
                     .ParseBlock<RemoveFooter>().Debug(Color.Blue)
-                    //    .Validate<ValidFooter>(p => new Exception())
+                        .Validate<ValidFooter>(p => new Exception())
                     .ParseBlock<CreateLines>()
                     .Text<CreateStructures>()
-                        .Show(Color.Yellow)
+                        // .Show(Color.Yellow)
                     .ParseText<ProcessParagraphs>()
                     .ParseText<ProcessStructure>()
-                        .Output("structures")
-                        .Show(Color.Red)
+                        // .Output("structures")
+                        // .Show(Color.Red)
                     .ParseContent<ProcessArticle>()
                         ;//.SaveXml(p => $"file-{p.page}");
 

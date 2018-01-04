@@ -54,5 +54,26 @@ namespace PdfTextReader.Execution
 
             return page;
         }
+
+        //static public PipelineText Output(this PipelineText page, string filename)
+        //{
+        //    PipelineDebug.Output(page.Context, filename);
+
+        //    return page;
+        //}
+
+        static public PipelineText DebugBreak(this PipelineText page, Func<PipelineText, bool> condition = null)
+        {
+            PipelineDebug.DebugBreak(page, condition);
+
+            return page;
+        }
+
+        //static public PipelineText Show(this PipelineText page, Color color)
+        //{
+        //    PipelineDebug.Show(page.LastResult, color);
+
+        //    return page;
+        //}
     }
 }
