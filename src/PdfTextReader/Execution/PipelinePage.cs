@@ -18,10 +18,6 @@ namespace PdfTextReader.Execution
         public int PageNumber { get; }
         public BlockPage LastResult { get; set; }
 
-        public PipelinePage Show(Color Color)
-        {
-            throw new NotImplementedException();
-        }
         public PipelinePage Debug(Color Color)
         {
             throw new NotImplementedException();
@@ -41,6 +37,8 @@ namespace PdfTextReader.Execution
 
         public PipelinePage ParseBlock<T>()
         {
+            var data = this.LastResult;
+
             throw new NotImplementedException();
         }
         public PipelineText Text<T>()

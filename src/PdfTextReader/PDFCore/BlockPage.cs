@@ -6,5 +6,6 @@ namespace PdfTextReader.PDFCore
 {
     public class BlockPage
     {
+        public BlockSet<Block> Current { get; set; }
     }
 }

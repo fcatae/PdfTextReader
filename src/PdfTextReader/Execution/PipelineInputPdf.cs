@@ -79,10 +79,12 @@ namespace PdfTextReader.Execution
                 var listener = new T();
 
                 var parser = new PdfCanvasProcessor(listener);
-
                 parser.ProcessPageContent(_pdfPage);
 
-                return new PipelinePage(_pdf, _pageNumber);
+                var page = new PipelinePage(_pdf, _pageNumber);
+                page.LastResult = listener.GetResults();
+
+                return page;
             }
         }        
     }
