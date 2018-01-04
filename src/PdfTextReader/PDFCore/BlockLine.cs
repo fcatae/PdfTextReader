@@ -8,6 +8,7 @@ namespace PdfTextReader.PDFCore
     {
         public string FontName { get; set; }
         public float FontSize { get; set; }
+        public string FontStyle { get; set; }
         public string Text => GetText();
 
     }

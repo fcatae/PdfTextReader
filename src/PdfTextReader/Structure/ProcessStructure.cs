@@ -29,6 +29,7 @@ namespace PdfTextReader.Structure
                 {
                     FontName = bl.FontName,
                     FontSize = (decimal)bl.FontSize,
+                    FontStyle = bl.FontStyle,
                     Text = bl.Text,
                     MarginLeft = Decimal.Round( Convert.ToDecimal( bl.GetX() - minx ), 2),
                     MarginRight = Decimal.Round(Convert.ToDecimal(maxx - (bl.GetX() + bl.GetWidth())), 2),

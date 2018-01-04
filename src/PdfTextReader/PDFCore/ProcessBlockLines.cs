@@ -80,9 +80,10 @@ namespace PdfTextReader.PDFCore
                 cb.Add(b);
 
                 // set the current font information
+                // HACK: needs to calculate a histogram (?)
                 cb.FontName = ((Block)b).FontName;
                 cb.FontSize = ((Block)b).FontSize;
-
+                cb.FontStyle = ((Block)b).FontStyle;
 
                 lastH = curH;
                 lastX = curX + b.GetWidth();
