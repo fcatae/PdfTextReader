@@ -14,6 +14,7 @@ namespace PdfTextReader.Parser
         {
             this.FontName = structure.FontName;
             this.FontSize = structure.FontSize;
+            this.FontStyle = structure.FontStyle;
             this.Text = structure.Text;
             this.TextAlignment = structure.TextAlignment;
             this.ContentType = type;

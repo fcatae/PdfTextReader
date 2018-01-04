@@ -4,15 +4,37 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-//Temp
-using PdfTextReader.Lucas_Testes.Helpers;
-
 namespace PdfTextReader.Stats
 {
     public static class ProcessStats
     {
+        static TextInfo GridStyle;
 
+        public static List<TextInfo> GetAllTextInfo(List<Structure.TextLine> lines)
+        {
+            List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
 
+            foreach (Structure.TextLine line in lines)
+            {
+                var result = Styles.Where(i => i.FontName == line.FontName && i.FontStyle == line.FontStyle && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
+                if (result == null)
+                {
+                    Styles.Add(new Stats.TextInfo(line));
+                }
+            }
+            return Styles;
+        }
+
+        public static void SetGridStyle(List<TextInfo> infos)
+        {
+            var result = infos.Where(i => i.FontName.ToLower().Contains("times"));
+            GridStyle =  infos.Except(result).ToList().FirstOrDefault();
+        }
+
+        public static TextInfo GetGridStyle()
+        {
+            return GridStyle;
+        }
 
         public static void PrintTextInfo(List<TextInfo> items)
         {
@@ -20,18 +42,6 @@ namespace PdfTextReader.Stats
             {
                 Debug.WriteLine($"Text: {item.Text} ---- Name: {item.FontName} ---- Fontsize: {item.FontSize}");
                 Console.WriteLine($"Text: {item.Text} ---- Name: {item.FontName} ---- Fontsize: {item.FontSize}");
-            }
-        }
-
-        public static void PrintTextStyle(List<LineItem> lines, string text)
-        {
-            foreach (LineItem item in lines)
-            {
-                if (item.Text.ToLower() == text)
-                {
-                    Debug.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
-                    Console.WriteLine($"Name: {item.fontName} --- Fontsize: {item.fontSize}");
-                }
             }
         }
     }

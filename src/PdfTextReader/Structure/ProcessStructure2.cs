@@ -35,6 +35,7 @@ namespace PdfTextReader.Structure
                     {
                         FontName = infos.FontName,
                         FontSize = infos.FontSize,
+                        FontStyle = infos.FontStyle,
                         Text = GetText(lines),
                         TextAlignment = GetParagraphTextAlignment(lines),
                         Lines = lines
@@ -54,6 +55,7 @@ namespace PdfTextReader.Structure
                 {
                     FontName = infos.FontName,
                     FontSize = infos.FontSize,
+                    FontStyle = infos.FontStyle,
                     Text = GetText(lines),
                     TextAlignment = GetParagraphTextAlignment(lines),
                     Lines = lines
@@ -171,9 +173,9 @@ namespace PdfTextReader.Structure
 
         public static Stats.TextInfo GetTextInfos(List<TextLine> lines)
         {
-            var linesGrouped = lines.GroupBy(line => new { line.FontName, line.FontSize });
+            var linesGrouped = lines.GroupBy(line => new { line.FontName, line.FontStyle, line.FontSize });
             var result = linesGrouped.OrderByDescending(group => group.Count()).ToList().FirstOrDefault().Key;
-            return new Stats.TextInfo(result.FontName, result.FontSize);
+            return new Stats.TextInfo(result.FontName, result.FontStyle, result.FontSize);
         }
 
 

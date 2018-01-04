@@ -7,7 +7,7 @@ namespace PdfTextReader.Parser
     public enum ContentType
     {
         Title,
-        Grade,
+        Grid,
         Body,
         Signature,
         Date,

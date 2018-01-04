@@ -28,9 +28,20 @@ namespace PdfTextReader.Parser
                 {
                     contents.Add(new TextContent(structure, ContentType.Caput));
                 }
-                else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.FontName.ToLower().Contains("bold"))
+                else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.FontStyle == "Bold")
                 {
-                    contents.Add(new TextContent(structure, ContentType.Title));
+                    if (!structure.FontName.ToLower().Contains("times")) // preciso pegar do Stats
+                    {
+                        contents.Add(new TextContent(structure, ContentType.Grid));
+                    }
+                    else if (structure.FontSize > 9) // Preciso pegar do Statsrser
+                    {
+                        contents.Add(new TextContent(structure, ContentType.Sector));
+                    }
+                    else
+                    {
+                        contents.Add(new TextContent(structure, ContentType.Title));
+                    }
                 }
                 else if (structure.TextAlignment == Structure.TextAlignment.CENTER && structure.Text.ToUpper() != structure.Text)
                 {

@@ -12,7 +12,7 @@ namespace PdfTextReader
         {
             var pipeline = new Pipeline();
 
-            var lines = pipeline.GetLines("p44");
+            var lines = pipeline.GetLines("p40");
 
             //Testing paragraphs
             var process = new Structure.ProcessStructure2();
