@@ -142,6 +142,24 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+        
+        public static void TestEnumFiles(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.EnumFiles("bin/*.pdf", f => $"bin/{f}-batch-output.pdf", pipe => {
+                pipe.Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    .ParseBlock<BreakColumns>()
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>()
+                    .Show(Color.Yellow);              
+            });
+        }
 
         public static void TestPipeline(string basename)
         {

@@ -66,21 +66,15 @@ namespace PdfTextReader.PDFCore
                         int k = SelectBlock(splitted, blocks, i, j);
 
                         bool breakInTheMiddle = false;
-                        float middle = -1;
-                        IBlock otherBlock = null;
-
+                        
                         if ((k == -1) && (blockContainsA || blockContainsB))
                         {
                             k = (blockContainsA) ? i : k;
                             k = (blockContainsB) ? j : k;
 
-                            var other = (blockContainsA) ? blocks[j] : blocks[i];
-
-                            otherBlock = other;
-                            middle = other.GetH() + other.GetHeight() / 2;
                             breakInTheMiddle = true;
                         }
-
+                        
                         if ( k == -1 )
                         {
                             // cannot break the blocks ?!?!?!?!
@@ -90,21 +84,30 @@ namespace PdfTextReader.PDFCore
                         var selected_block = blocks[k];
                         var selected_block_split = splitted[k];
 
+                        IBlock otherBlock = (selected_block == blocks[i]) ? blocks[j] : blocks[i];
+                        float middle = otherBlock.GetH() + otherBlock.GetHeight() / 2;
+
                         int size = -1;
 
-                        if(breakInTheMiddle)
+                        if (breakInTheMiddle)
                         {
                             size = SelectSize(selected_block, middle);
                         }
                         else
                         {
                             size = SelectSize(blocks[i], blocks[j], selected_block_split);
-                        }
 
+                            if (size == -1)
+                                size = SelectSize(selected_block, middle);
+                        }
+                        
                         if (size == 0)
                             throw new InvalidOperationException();
 
                         if (size == -1)
+                            throw new InvalidOperationException();
+
+                        if (size == ((BlockSet<IBlock>)selected_block).Count())
                             throw new InvalidOperationException();
 
                         var newblocks = CreateNewBlocks((BlockSet<IBlock>)selected_block, size);
@@ -207,6 +210,9 @@ namespace PdfTextReader.PDFCore
             }
 
             int total = top + bottom + core;
+
+            if ((!checkBottom) && (!checkTop))
+                return -1;
 
             if (checkTop)
                 total = top;

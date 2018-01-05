@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.RemoveHeaderFooter("dz-break/dz069");
+            Pipeline.TestEnumFiles("dz-break/dz069");
         }
 
         static void ProcessSingle(string page)
