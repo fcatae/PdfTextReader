@@ -100,7 +100,10 @@ namespace PdfTextReader.PDFCore
                         {
                             size = SelectSize(blocks[i], blocks[j], selected_block_split);
                         }
-                        
+
+                        if (size == 0)
+                            throw new InvalidOperationException();
+
                         if (size == -1)
                             throw new InvalidOperationException();
 
@@ -114,6 +117,8 @@ namespace PdfTextReader.PDFCore
                             if (checkOverlap)
                                 throw new InvalidOperationException();
                         }
+
+
 
                         // replace
                         blocks[k] = null;
@@ -188,11 +193,18 @@ namespace PdfTextReader.PDFCore
 
             bool checkTop = Block.HasOverlapY(topBlock, intersection[0], intersection[1]);
             bool checkBottom = Block.HasOverlapY(bottomBlock, intersection[0], intersection[1]);
-            bool checkCore = Block.HasOverlapY(coreBlock, intersection[0], intersection[1]);
 
             int top = ((BlockSet<IBlock>)topBlock).Count();
             int bottom = ((BlockSet<IBlock>)bottomBlock).Count();
-            int core = ((BlockSet<IBlock>)coreBlock).Count();
+
+            bool checkCore = false;
+            int core = 0;
+
+            if (coreBlock != null)
+            {
+                checkCore = Block.HasOverlapY(coreBlock, intersection[0], intersection[1]);
+                core = ((BlockSet<IBlock>)coreBlock).Count();
+            }
 
             int total = top + bottom + core;
 
@@ -323,7 +335,7 @@ namespace PdfTextReader.PDFCore
                 var blockB = new BlockSet<IBlock>();
 
                 blockA.AddRange(blocks.Take(middle));
-                blockB.AddRange(blocks.Take(total - middle + 1));
+                blockB.AddRange(blocks.TakeLast(total - middle + 1));
 
                 int count2 = blockA.Count() + blockB.Count();
                 if (count2 != blocks.Count)

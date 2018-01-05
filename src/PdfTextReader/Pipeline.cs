@@ -124,7 +124,7 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
-        public static void RemoveFooter(string basename)
+        public static void RemoveHeaderFooter(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
@@ -135,7 +135,9 @@ namespace PdfTextReader
                     .ParseBlock<FindInitialBlockset>()
                     .ParseBlock<BreakColumns>()
                     .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
                     .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>()
                     .Show(Color.Yellow);
 
             pipeline.Done();
