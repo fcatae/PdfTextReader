@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.TestEnumFiles("dz-break/dz069");
+            Pipeline.MergeBlockLines("dz-table/dz007");
         }
 
         static void ProcessSingle(string page)

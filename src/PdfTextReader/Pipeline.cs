@@ -152,13 +152,36 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                     .ParseBlock<GroupLines>()
                     .ParseBlock<FindInitialBlockset>()
+                        .Show(Color.Orange)
                     .ParseBlock<BreakColumns>()
                     .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                     .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
                     .ParseBlock<RemoveFooter>()
                     .ParseBlock<RemoveHeader>()
-                    .Show(Color.Yellow);              
+                    .Show(Color.Yellow);           
             });
+        }
+
+        public static void MergeBlockLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ShowLine(Color.Gray)
+                    .ParseBlock<FindInitialBlockset>()
+                    .ParseBlock<MergeBlockLines>()
+                    .Show(Color.Green)
+                    //.ParseBlock<BreakColumns>()
+                    //.Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    //.Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    //.ParseBlock<RemoveFooter>()
+                    //.ParseBlock<RemoveHeader>()
+                    .Show(Color.Yellow);
+
+            pipeline.Done();
         }
 
         public static void TestPipeline(string basename)
