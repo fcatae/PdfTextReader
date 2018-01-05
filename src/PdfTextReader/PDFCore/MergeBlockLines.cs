@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.PDFCore
@@ -9,37 +10,37 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {
             var result = new BlockPage();
-            IBlock last = null;
+            BlockSet<IBlock> last = null;
 
             foreach (var block in page.AllBlocks)
             {
-                var next = block;
+                var blockset = (BlockSet<IBlock>)block;
 
-                if( last != null )
+                if ((last == null) || (!CanBeMerged(last, blockset)))
                 {
-                    if((last.GetH() < block.GetH()) && Block.HasOverlap(last, block))
-                    {
-                        // merge
-                        var blockset = last as BlockSet<IBlock>;
+                    var b = new BlockSet<IBlock>();
+                    b.AddRange(blockset);
 
-                        if( blockset == null )
-                        {
-                            var b = new BlockSet<IBlock>();
-                            b.Add(last);
-                            blockset = b;
-                        }
-                        
-                        blockset.Add(block);
-                        next = blockset;
-                    }
+                    result.Add(b);
+
+                    last = b;
                 }
-
-                result.Add(next);
-                
-                last = next;
+                else
+                {
+                    // merge blocks
+                    last.AddRange(blockset);
+                }
             }
 
             return result;
+        }
+
+        bool CanBeMerged(BlockSet<IBlock> a, BlockSet<IBlock> b)
+        {
+            var lastLine = a.Last();
+            var firstLine = b.First();
+            
+            return Block.HasOverlap(lastLine, firstLine);
         }
     }
 }

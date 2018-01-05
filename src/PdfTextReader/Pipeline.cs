@@ -170,16 +170,18 @@ namespace PdfTextReader
                     .Output($"bin/{basename}-tmp-output.pdf")
                     .ParsePdf<ProcessPdfText>()
                     .ParseBlock<GroupLines>()
-                    .ShowLine(Color.Gray)
                     .ParseBlock<FindInitialBlockset>()
+                    //.ParseBlock<TestSplitBlocksets>()
+                    //.Show(Color.Red)
+                    .ShowLine(Color.Gray)
                     .ParseBlock<MergeBlockLines>()
                     .Show(Color.Green)
                     //.ParseBlock<BreakColumns>()
-                    //.Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                    //.Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
-                    //.ParseBlock<RemoveFooter>()
-                    //.ParseBlock<RemoveHeader>()
-                    .Show(Color.Yellow);
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>();
+                    //.Show(Color.Yellow);
 
             pipeline.Done();
         }

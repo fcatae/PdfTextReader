@@ -7,7 +7,7 @@ namespace PdfTextReader.PDFCore
     class FindInitialBlockset : IProcessBlock
     {
         // TODO: set it back to 100f or less
-        const float statDownInTheBottom = 1000000f;
+        const float statDownInTheBottom = 100f;
         const float statGoingUp = 5f;
 
         public FindInitialBlockset()

@@ -35,6 +35,7 @@ namespace PdfTextReader.PDFCore
             result.AddRange(blocksAtFooter);
 
             float height = result.AllBlocks.GetHeight();
+
             if (height > statRegionTooLarge)
                 throw new InvalidOperationException();
 
