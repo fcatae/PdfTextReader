@@ -106,6 +106,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
         public static void BreakColumns(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -119,6 +120,23 @@ namespace PdfTextReader
                         .ParseBlock<BreakColumns>()
                         .Show(Color.Green)
                         .Validate<BreakColumns>().ShowErrors(p => p.Show(Color.Red));
+
+            pipeline.Done();
+        }
+
+        public static void RemoveFooter(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    .ParseBlock<BreakColumns>()
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .Show(Color.Yellow);
 
             pipeline.Done();
         }

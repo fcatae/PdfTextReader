@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.BreakColumns("p40");
+            Pipeline.RemoveFooter("p40");
         }
 
         static void ProcessSingle(string page)
