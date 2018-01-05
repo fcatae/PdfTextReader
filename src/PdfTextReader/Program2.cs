@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.ShowRenderPath("p40");
+            Pipeline.GroupLines("p40");
         }
 
         static void ProcessSingle(string page)

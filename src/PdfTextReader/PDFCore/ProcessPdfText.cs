@@ -51,6 +51,13 @@ namespace PdfTextReader.PDFCore
                     WordSpacing = textInfo.GetWordSpacing()
                 };
 
+                float dbgWordSpacing = textInfo.GetWordSpacing();
+                
+                if(dbgWordSpacing==0)
+                {
+                    // why 0?
+                }
+
                 _blockSet.Add(block);
             }
         }
@@ -88,7 +95,7 @@ namespace PdfTextReader.PDFCore
         {
             var blockPage = new BlockPage();
 
-            blockPage.Add(_blockSet);
+            blockPage.AddRange(_blockSet);
 
             return blockPage;
         }

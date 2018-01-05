@@ -64,6 +64,19 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+        public static void GroupLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")                    
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .Show(Color.Orange);
+
+            pipeline.Done();
+        }
+
         public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();
