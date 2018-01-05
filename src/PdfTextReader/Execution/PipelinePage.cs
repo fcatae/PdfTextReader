@@ -49,7 +49,7 @@ namespace PdfTextReader.Execution
             var processor = new T();
 
             var result = processor.Validate(initial);
-
+            
             if( filter != null && result != null )
             {
                 //foreach(var blockSet in )
@@ -75,6 +75,20 @@ namespace PdfTextReader.Execution
 
             this.LastResult = result;
             
+            return this;
+        }
+
+        public PipelinePage ShowErrors(Action<PipelinePage> callback)
+        {
+            var newpage = new PipelinePage((PipelineInputPdf)this.Context, this.PageNumber);
+
+            var errors = this.LastErrors;
+
+            newpage.LastResult = errors;
+            newpage.LastErrors = errors;
+
+            callback(newpage);
+                        
             return this;
         }
 
