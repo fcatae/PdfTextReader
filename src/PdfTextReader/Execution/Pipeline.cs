@@ -32,9 +32,20 @@ namespace PdfTextReader.Execution
 
                 string outputPath = outputNameFunc(filename);
 
-                var pdf = Input(inputfile).Output(outputPath);
-
-                callback(pdf);
+                using (var pdf = Input(inputfile).Output(outputPath))
+                {
+                    try
+                    {
+                        callback(pdf);
+                    }
+                    catch(Exception ex) {
+                        Console.WriteLine("===============================");
+                        Console.WriteLine($"{ex.Message}");
+                        Console.WriteLine("===============================");
+                        Console.WriteLine($"{ex.ToString()}");
+                        Console.WriteLine("");
+                    }                    
+                }
             }
         }
 

@@ -147,7 +147,7 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.EnumFiles("bin/*.pdf", f => $"bin/{f}-batch-output.pdf", pipe => {
+            pipeline.EnumFiles("bin/dz-table/*.pdf", f => $"bin/out/{f}-batch-output.pdf", pipe => {
                 pipe.Page(1)
                     .ParsePdf<ProcessPdfText>()
                     .ParseBlock<GroupLines>()

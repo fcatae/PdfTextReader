@@ -77,8 +77,19 @@ namespace PdfTextReader.PDFCore
                         
                         if ( k == -1 )
                         {
+                            // the blocks can merge?
+                            float wdiff = Math.Abs(blocks[i].GetWidth() - blocks[j].GetWidth());
+                            float xdiff = Math.Abs( blocks[i].GetX() - blocks[j].GetX() );
+
+                            // ignore?
+                            if (wdiff < 10f && xdiff < 10f)
+                                continue;
+
+                            throw new NotImplementedException("merge blockLines");
+
                             // cannot break the blocks ?!?!?!?!
                             throw new InvalidOperationException("should be handled previously in precheck");
+                            //continue;
                         }
 
                         var selected_block = blocks[k];
@@ -214,16 +225,18 @@ namespace PdfTextReader.PDFCore
             if ((!checkBottom) && (!checkTop))
                 return -1;
 
+            int result = -1;
+
             if (checkTop)
-                total = top;
+                result = top;
 
             if (checkBottom)
-                total = total - bottom;
+                result = total - bottom;
 
-            if (total < 0)
+            if (result < 0)
                 throw new NotImplementedException();
 
-            return total;
+            return result;
         }
 
         BlockSet<IBlock>[] CreateNewBlocks(BlockSet<IBlock> blocks, int middle)
