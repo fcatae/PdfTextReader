@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.GroupLines("p40");
+            Pipeline.FindInitialBlockset("p40");
         }
 
         static void ProcessSingle(string page)

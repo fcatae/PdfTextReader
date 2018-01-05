@@ -77,6 +77,20 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void FindInitialBlockset(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    .Show(Color.Orange)
+                    .ShowLine(Color.Gray);
+
+            pipeline.Done();
+        }
         public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -91,13 +105,13 @@ namespace PdfTextReader
                     .Output("lines")
                     .ParsePdf<ProcessPdfText>()
                     //.ParseBlock<PreProcessTables>() 
-                    .ParseBlock<FindPageColumns>()
+                    .ParseBlock<FindInitialBlockset>()
                     .ParseBlock<BreakColumns>()
                         .Validate<BreakColumns>(Color.Red)
                     .ParseBlock<RemoveHeader>().Debug(Color.Blue)
                     .ParseBlock<RemoveFooter>().Debug(Color.Blue)
                         .Validate<ValidFooter>(p => new Exception())
-                    .ParseBlock<CreateLines>()
+                    //.ParseBlock<CreateLines>() -- GroupLines
                     .Text<CreateStructures>()
                         // .Show(Color.Yellow)
                     .ParseText<ProcessParagraphs>()
