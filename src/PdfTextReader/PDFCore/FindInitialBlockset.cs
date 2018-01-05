@@ -6,8 +6,15 @@ namespace PdfTextReader.PDFCore
 {
     class FindInitialBlockset : IProcessBlock
     {
-        const float statDownInTheBottom = 100f;
+        // TODO: set it back to 100f or less
+        const float statDownInTheBottom = 1000000f;
         const float statGoingUp = 5f;
+
+        public FindInitialBlockset()
+        {
+            if (statDownInTheBottom > 1000f)
+                System.Diagnostics.Debug.WriteLine($"Feature Disabled: {statDownInTheBottom}");
+        }
 
         public BlockPage Process(BlockPage page)
         {

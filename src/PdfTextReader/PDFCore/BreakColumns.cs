@@ -9,7 +9,7 @@ namespace PdfTextReader.PDFCore
     {
         public BlockPage Process(BlockPage page)
         {
-            return BreakPage(page);            
+            return BreakPage(page);         
         }
 
         public BlockPage Validate(BlockPage page)
@@ -47,22 +47,73 @@ namespace PdfTextReader.PDFCore
 
             for (int i = 0; i < blocks.Count; i++)
             {
-                if (blocks[i] == null) continue;
-
                 for (int j = i + 1; j < blocks.Count; j++)
                 {
+                    if (blocks[i] == null) continue;
                     if (blocks[j] == null) continue;
 
                     if (Block.HasOverlap(blocks[i], blocks[j]))
                     {
+                        // precheck: contained block?
+                        bool blockContainsA = BlockContains(blocks[i], blocks[j]);
+                        bool blockContainsB = BlockContains(blocks[j], blocks[i]);
+
+                        if( blockContainsA || blockContainsB )
+                        {
+
+                        }
+
                         int k = SelectBlock(splitted, blocks, i, j);
+
+                        bool breakInTheMiddle = false;
+                        float middle = -1;
+                        IBlock otherBlock = null;
+
+                        if ((k == -1) && (blockContainsA || blockContainsB))
+                        {
+                            k = (blockContainsA) ? i : k;
+                            k = (blockContainsB) ? j : k;
+
+                            var other = (blockContainsA) ? blocks[j] : blocks[i];
+
+                            otherBlock = other;
+                            middle = other.GetH() + other.GetHeight() / 2;
+                            breakInTheMiddle = true;
+                        }
+
+                        if ( k == -1 )
+                        {
+                            // cannot break the blocks ?!?!?!?!
+                            throw new InvalidOperationException("should be handled previously in precheck");
+                        }
 
                         var selected_block = blocks[k];
                         var selected_block_split = splitted[k];
 
-                        int size = SelectSize(blocks[i], blocks[j], selected_block_split);
+                        int size = -1;
+
+                        if(breakInTheMiddle)
+                        {
+                            size = SelectSize(selected_block, middle);
+                        }
+                        else
+                        {
+                            size = SelectSize(blocks[i], blocks[j], selected_block_split);
+                        }
+                        
+                        if (size == -1)
+                            throw new InvalidOperationException();
 
                         var newblocks = CreateNewBlocks((BlockSet<IBlock>)selected_block, size);
+                        
+                        if(breakInTheMiddle)
+                        {
+                            // Check if newblocks has collision
+                            bool checkOverlap = CheckOverlapCrossIntersection(newblocks, otherBlock);
+
+                            if (checkOverlap)
+                                throw new InvalidOperationException();
+                        }
 
                         // replace
                         blocks[k] = null;
@@ -97,7 +148,30 @@ namespace PdfTextReader.PDFCore
             if (goodCandidate2)
                 return j;
 
-            throw new NotImplementedException("can it happen?");
+            if( goodCandidate1 && goodCandidate2 )
+                throw new NotImplementedException("can it happen?");
+
+            // else
+            // NOTHING FOUND
+            //throw new NotImplementedException("needs to improve the scenario");
+            // the blocks are overlapped and requires more than one split
+            // adjust (FindInitialBlocks -> statDownInTheBottom)
+            return -1;
+        }
+
+        int SelectSize(IBlock container, float middle)
+        {
+            var blockset = (BlockSet<IBlock>)container;
+            int k = 0;
+            foreach(var b in blockset)
+            {
+                float h = b.GetH() + b.GetHeight();
+                if (h < middle)
+                    return k;
+                k++;
+            }
+
+            return -1;
         }
 
         int SelectSize(IBlock container1, IBlock container2, BlockSet<IBlock>[] candidateBlockArray)
@@ -171,6 +245,16 @@ namespace PdfTextReader.PDFCore
             var ys_ordered = ys.OrderBy(f => f).ToArray();
 
             return new float[] { ys_ordered[1], ys_ordered[2]};
+        }
+
+        bool BlockContains(IBlock a, IBlock b)
+        {
+            float a_y1 = a.GetH();
+            float a_y2 = a.GetH() + a.GetHeight();
+            float b_y1 = b.GetH();
+            float b_y2 = b.GetH() + b.GetHeight();
+
+            return ((a_y2 > b_y2) && (a_y1 < b_y1));
         }
 
         void TryBreak(IBlock topBlock, IBlock bottomBlock)
