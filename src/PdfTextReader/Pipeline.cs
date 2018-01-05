@@ -60,7 +60,7 @@ namespace PdfTextReader
                     .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessRenderPath>()
-                    .Show(Color.Red);                    
+                    .ShowLine(Color.Green);                    
 
             pipeline.Done();
         }
