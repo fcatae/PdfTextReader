@@ -38,6 +38,14 @@ namespace PdfTextReader.PDFCore
             _blockList.Add(block);
         }
 
+        public void AddRange(IEnumerable<T> blockList)
+        {
+            foreach(var block in blockList)
+            {
+                Add(block);
+            }
+        }
+
         // UpdateBoundary has a MAJOR BUG:
         // if BlockSet owns a collection of updatable IBlocks 
         // (eg, another BlockSet objects), then the boundary

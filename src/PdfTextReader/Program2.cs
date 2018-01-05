@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.ValidateBreakColumns("p40");
+            Pipeline.BreakColumns("p40");
         }
 
         static void ProcessSingle(string page)

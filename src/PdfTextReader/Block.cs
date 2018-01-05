@@ -53,6 +53,22 @@ namespace PdfTextReader
 
         static bool HasOverlap(float a1, float a2, float b1, float b2)
         {
+            if ((b1 > b2) || (a1 > a2))
+                throw new InvalidOperationException();
+
+            bool separated = ((a1 < b1) && (a2 < b1)) ||
+                             ((a1 > b2) && (a2 > b2));
+            return !separated;
+        }
+
+        public static bool HasOverlapY(IBlock block, float b1, float b2)
+        {
+            if (b1 > b2)
+                throw new InvalidOperationException();
+
+            float a1 = block.GetH();
+            float a2 = block.GetH() + block.GetHeight();
+
             bool separated = ((a1 < b1) && (a2 < b1)) ||
                              ((a1 > b2) && (a2 > b2));
             return !separated;

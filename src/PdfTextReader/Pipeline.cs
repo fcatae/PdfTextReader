@@ -115,8 +115,10 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                     .ParseBlock<GroupLines>()
                     .ParseBlock<FindInitialBlockset>()
-                    .Validate<BreakColumns>().ShowErrors(p => p.Show(Color.Gray));
-                    
+                        .Validate<BreakColumns>().ShowErrors(p => p.Show(Color.LightGray))
+                        .ParseBlock<BreakColumns>()
+                        .Show(Color.Green)
+                        .Validate<BreakColumns>().ShowErrors(p => p.Show(Color.Red));
 
             pipeline.Done();
         }
