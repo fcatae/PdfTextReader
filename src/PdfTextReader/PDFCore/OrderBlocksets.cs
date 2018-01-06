@@ -67,7 +67,7 @@ namespace PdfTextReader.PDFCore
             return result;
         }
 
-        void scan(int x = 2, int min_y = -1, int max_x=6)
+        void scan(int x = 2, int min_y = -1, int max_x=6, int cur_w=-1)
         {
             // Algorithm
             // 1. Scan the values in x=2..6
@@ -93,7 +93,14 @@ namespace PdfTextReader.PDFCore
                     if (v.Y < min_y)
                         continue;
 
+                    if (cur_w != -1)
+                        cur_w = v.W;
+
                     // if W >= 3
+                    if( v.W != cur_w )
+                    {
+                        scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: v.W);
+                    }
 
                     // consume all values < X2
                     if ( x >= v.X2 )
@@ -106,7 +113,7 @@ namespace PdfTextReader.PDFCore
                     }
 
                     // define a new goal
-                    scan(x: x+2, min_y: v.Y1 + 1, max_x: v.X2);
+                    scan(x: x+2, min_y: v.Y1 + 1, max_x: v.X2, cur_w: cur_w);
 
                     // consume X2
                     OrderedBlocks.Add((IBlock)v.B);
