@@ -204,6 +204,31 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void OrderBlocksets(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeader>()
+                        .ParseBlock<OrderBlocksets>()
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black);
+
+            pipeline.Done();
+        }
+
         public static void RunCorePdf(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -229,7 +254,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
-                            
+
         public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();

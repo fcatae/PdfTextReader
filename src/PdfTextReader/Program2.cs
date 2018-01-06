@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.RunCorePdf("p40");
+            Pipeline.OrderBlocksets("p40");
         }
 
         static void ProcessSingle(string page)
