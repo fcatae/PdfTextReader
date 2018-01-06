@@ -1,4 +1,5 @@
-﻿using PdfTextReader.PDFCore;
+﻿using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using PdfTextReader.PDFCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -60,13 +61,18 @@ namespace PdfTextReader.Execution
 
             return this;
         }
+        T CreateInstance<T>()
+                where T : new()
+        {
+            return Execution.PipelineFactory.Create<T>();
+        }
 
         public PipelinePage ParseBlock<T>()
             where T: IProcessBlock, new()
         {
             var initial = this.LastResult;
 
-            var processor = new T();
+            var processor = CreateInstance<T>();
 
             var result = processor.Process(initial);
 
@@ -98,9 +104,9 @@ namespace PdfTextReader.Execution
         }
 
         public PipelinePage ParsePdf<T>()
+            where T : IEventListener, IPipelineResults<BlockPage>, new()
         {
-            // should be extension method
-            throw new NotImplementedException();
+            return ((PipelineInputPdf)this.Context).CurrentPage.ParsePdf<T>();
         }
 
     }

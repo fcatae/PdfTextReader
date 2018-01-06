@@ -186,6 +186,49 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void RemoveTables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                        .Show(Color.Green)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .Show(Color.Red);
+            
+            pipeline.Done();
+        }
+
+        public static void RunCorePdf(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                        .Show(Color.Green)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .Show(Color.Red)
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeader>()
+                        .Show(Color.Yellow);
+
+            pipeline.Done();
+        }
+                            
         public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();

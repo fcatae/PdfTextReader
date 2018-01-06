@@ -92,10 +92,16 @@ namespace PdfTextReader.Execution
                 this._pdfPage = pdfPage;
             }
 
+            T CreateInstance<T>()
+                where T: new()
+            {
+                return Execution.PipelineFactory.Create<T>();
+            }
+
             public PipelinePage ParsePdf<T>()
                 where T: IEventListener, IPipelineResults<BlockPage>, new()
             {
-                var listener = new T();
+                var listener = CreateInstance<T>();
 
                 var parser = new PdfCanvasProcessor(listener);
                 parser.ProcessPageContent(_pdfPage);

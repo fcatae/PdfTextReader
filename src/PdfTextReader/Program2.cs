@@ -15,7 +15,7 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.MergeBlockLines("dz-table/dz007");
+            Pipeline.RunCorePdf("dz-table/dz007");
         }
 
         static void ProcessSingle(string page)

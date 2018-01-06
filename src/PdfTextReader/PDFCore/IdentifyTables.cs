@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader.Execution;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,9 @@ namespace PdfTextReader.PDFCore
 {
     class IdentifyTables : IProcessBlock
     {
+        private BlockPage _pageResult;
+        public BlockPage PageTables => _pageResult;
+
         public BlockPage Process(BlockPage page)
         {
             var cellList = page.AllBlocks.ToList();
@@ -114,7 +118,9 @@ namespace PdfTextReader.PDFCore
             {
                 result.Add(b);
             }
-                        
+
+            this._pageResult = result;
+
             return result;
         }
 
@@ -128,6 +134,6 @@ namespace PdfTextReader.PDFCore
             bool hasOverlap = ((a_x1 <= x) && (a_x2 >= x) && (a_y1 <= h) && (a_y2 >= h));
 
             return hasOverlap;
-        }
+        }        
     }
 }
