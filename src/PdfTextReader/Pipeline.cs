@@ -217,14 +217,15 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
-                        .Show(Color.Red)
+                        .Show(Color.LightGray)
                         .ParseBlock<FindInitialBlockset>()
                         .ParseBlock<BreakColumns>()
                         .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                         .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
                         .ParseBlock<RemoveFooter>()
                         .ParseBlock<RemoveHeader>()
-                        .Show(Color.Yellow);
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black);
 
             pipeline.Done();
         }
