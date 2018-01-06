@@ -143,25 +143,6 @@ namespace PdfTextReader
             pipeline.Done();
         }
         
-        public static void TestEnumFiles(string basename)
-        {
-            var pipeline = new Execution.Pipeline();
-
-            pipeline.EnumFiles("bin/dz-table/*.pdf", f => $"bin/out/{f}-batch-output.pdf", pipe => {
-                pipe.Page(1)
-                    .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<GroupLines>()
-                    .ParseBlock<FindInitialBlockset>()
-                        .Show(Color.Orange)
-                    .ParseBlock<BreakColumns>()
-                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
-                    .ParseBlock<RemoveFooter>()
-                    .ParseBlock<RemoveHeader>()
-                    .Show(Color.Yellow);           
-            });
-        }
-
         public static void MergeBlockLines(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -227,6 +208,26 @@ namespace PdfTextReader
                         .ShowLine(Color.Black);
 
             pipeline.Done();
+        }
+
+
+        public static void TestEnumFiles(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.EnumFiles("bin/dz-table/*.pdf", f => $"bin/out/{f}-batch-output.pdf", pipe => {
+                pipe.Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                        .Show(Color.Orange)
+                    .ParseBlock<BreakColumns>()
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>()
+                    .Show(Color.Yellow);
+            });
         }
 
         public static void RunCorePdf(string basename)

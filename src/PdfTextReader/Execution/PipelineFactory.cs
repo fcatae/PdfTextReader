@@ -4,6 +4,10 @@ using System.Text;
 
 namespace PdfTextReader.Execution
 {
+    // TODO: move to pipeline page
+    // It cannot be a singleton because it will break when 
+    // processing multiple pages in a single execution
+
     class PipelineFactory
     {
         static PipelineFactory g_singleton = new PipelineFactory();
