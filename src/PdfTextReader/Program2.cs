@@ -11,11 +11,11 @@ namespace PdfTextReader
     {
         static void Main(string[] args)
         {
-            //ProcessBatch("dz");
+            ProcessBatch("dz");
 
             //ProcessSingle("p42");
 
-            Pipeline.FollowText("p40");
+            //Pipeline.FollowText("p40");
         }
 
         static void ProcessSingle(string page)

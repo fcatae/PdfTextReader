@@ -13,7 +13,7 @@ namespace PdfTextReader.Parser
         Data,
         Caput,
         Cargo,
-        Seção,
+        Setor,
         Departamento
     }
 }
