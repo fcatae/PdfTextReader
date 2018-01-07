@@ -9,7 +9,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
+    public class PreProcessRenderPath : IEventListener, IPipelineResults<BlockPage>
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_PATH };
 
@@ -75,7 +75,7 @@ namespace PdfTextReader.PDFCore
                 if (tableCell.Width < 0 || tableCell.Height < 0)
                     throw new InvalidOperationException();
 
-                if( tableCell.Op == 1 )
+                if( tableCell.Op != 1 )
                 {
                     _blockSet.Add(tableCell);
                 }

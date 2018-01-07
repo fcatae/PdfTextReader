@@ -27,9 +27,9 @@ namespace PdfTextReader
             {
                 var page = pdf.GetPage(1);
                 var canvas = new PdfCanvas(page);
-                //var blockList = new List<BlockSet>();
-                //var blockSet = new BlockSet();
-                //TableCell last = null;
+                ////var blockList = new List<BlockSet>();
+                ////var blockSet = new BlockSet();
+                ////TableCell last = null;
                 List<TableCell> cellList = new List<TableCell>();
 
                 var parser = new PdfCanvasProcessor(new UserListenerExtra(c => {

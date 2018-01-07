@@ -17,7 +17,6 @@ namespace PdfTextReader
                     .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<MarkAllComponents>()
                     .Show(Color.Yellow);
 
             pipeline.Done();            
@@ -31,8 +30,228 @@ namespace PdfTextReader
                     .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<MarkAllComponents>()
                     .ShowLine(Color.Orange);
+
+            pipeline.Done();
+        }
+
+        public static void ShowTables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                    .Show(Color.Yellow)
+                    .ParseBlock<IdentifyTables>()
+                    .Show(Color.Green);
+
+                    //.Show<TableCell>(b => b.Op == 1, Color.Green);
+
+            pipeline.Done();
+        }
+
+        public static void ShowRenderPath(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessRenderPath>()
+                    .ShowLine(Color.Green);                    
+
+            pipeline.Done();
+        }
+        public static void GroupLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")                    
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .Show(Color.Orange);
+
+            pipeline.Done();
+        }
+
+        public static void FindInitialBlockset(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    .Show(Color.Orange)
+                    .ShowLine(Color.Gray);
+
+            pipeline.Done();
+        }
+
+        public static void ValidateBreakColumns(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    .Validate<BreakColumns>()
+                    .ShowErrors(p => p.Show(Color.Purple));
+
+            pipeline.Done();
+        }
+
+        public static void BreakColumns(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                        .Validate<BreakColumns>().ShowErrors(p => p.Show(Color.LightGray))
+                        .ParseBlock<BreakColumns>()
+                        .Show(Color.Green)
+                        .Validate<BreakColumns>().ShowErrors(p => p.Show(Color.Red));
+
+            pipeline.Done();
+        }
+
+        public static void RemoveHeaderFooter(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    .ParseBlock<BreakColumns>()
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>()
+                    .Show(Color.Yellow);
+
+            pipeline.Done();
+        }
+        
+        public static void MergeBlockLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf").Page(1)
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                    //.ParseBlock<TestSplitBlocksets>()
+                    //.Show(Color.Red)
+                    .ShowLine(Color.Gray)
+                    .ParseBlock<MergeBlockLines>()
+                    .Show(Color.Green)
+                    //.ParseBlock<BreakColumns>()
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>();
+                    //.Show(Color.Yellow);
+
+            pipeline.Done();
+        }
+
+        public static void RemoveTables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                        .Show(Color.Green)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .Show(Color.Red);
+            
+            pipeline.Done();
+        }
+
+        public static void OrderBlocksets(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeader>()
+                        .ParseBlock<OrderBlocksets>()
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black);
+
+            pipeline.Done();
+        }
+
+
+        public static void TestEnumFiles(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.EnumFiles("bin/dz-table/*.pdf", f => $"bin/out/{f}-batch-output.pdf", pipe => {
+                pipe.Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<GroupLines>()
+                    .ParseBlock<FindInitialBlockset>()
+                        .Show(Color.Orange)
+                    .ParseBlock<BreakColumns>()
+                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()
+                    .ParseBlock<RemoveHeader>()
+                    .Show(Color.Yellow);
+            });
+        }
+
+        public static void RunCorePdf(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                        .Show(Color.Green)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .Show(Color.LightGray)
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeader>()
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black);
 
             pipeline.Done();
         }
@@ -50,14 +269,14 @@ namespace PdfTextReader
                     .Show<TableCell>(b => b.Op == 1, Color.Green)
                     .Output("lines")
                     .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<PreProcessTables>() 
-                    .ParseBlock<FindPageColumns>()
+                    //.ParseBlock<PreProcessTables>() 
+                    .ParseBlock<FindInitialBlockset>()
                     .ParseBlock<BreakColumns>()
                         .Validate<BreakColumns>(Color.Red)
                     .ParseBlock<RemoveHeader>().Debug(Color.Blue)
                     .ParseBlock<RemoveFooter>().Debug(Color.Blue)
                         .Validate<ValidFooter>(p => new Exception())
-                    .ParseBlock<CreateLines>()
+                    //.ParseBlock<CreateLines>() -- GroupLines
                     .Text<CreateStructures>()
                         // .Show(Color.Yellow)
                     .ParseText<ProcessParagraphs>()

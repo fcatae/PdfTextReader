@@ -92,16 +92,28 @@ namespace PdfTextReader.Execution
                 this._pdfPage = pdfPage;
             }
 
+            T CreateInstance<T>()
+                where T: new()
+            {
+                return Execution.PipelineFactory.Create<T>();
+            }
+
             public PipelinePage ParsePdf<T>()
                 where T: IEventListener, IPipelineResults<BlockPage>, new()
             {
-                var listener = new T();
+                var listener = CreateInstance<T>();
 
                 var parser = new PdfCanvasProcessor(listener);
                 parser.ProcessPageContent(_pdfPage);
 
                 var page = new PipelinePage(_pdf, _pageNumber);
                 page.LastResult = listener.GetResults();
+
+                if (page.LastResult == null)
+                    throw new InvalidOperationException();
+
+                if (page.LastResult.AllBlocks == null)
+                    throw new InvalidOperationException();
 
                 return page;
             }

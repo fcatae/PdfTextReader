@@ -1,4 +1,5 @@
-﻿using PdfTextReader.PDFCore;
+﻿using iText.Kernel.Pdf.Canvas.Parser.Listener;
+using PdfTextReader.PDFCore;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -41,7 +42,7 @@ namespace PdfTextReader.Execution
             return this;
         }
 
-        public PipelinePage Validate<T>(Action<BlockSet<Block>> filter = null)
+        public PipelinePage Validate<T>(Action<BlockSet<IBlock>> filter = null)
             where T : IValidateBlock, new()
         {
             var initial = this.LastResult;
@@ -49,16 +50,21 @@ namespace PdfTextReader.Execution
             var processor = new T();
 
             var result = processor.Validate(initial);
-
+            
             if( filter != null && result != null )
             {
                 //foreach(var blockSet in )
-                filter(result.Current);
+                filter(result.AllBlocks);
             }
 
             this.LastErrors = result;
 
             return this;
+        }
+        T CreateInstance<T>()
+                where T : new()
+        {
+            return Execution.PipelineFactory.Create<T>();
         }
 
         public PipelinePage ParseBlock<T>()
@@ -66,7 +72,7 @@ namespace PdfTextReader.Execution
         {
             var initial = this.LastResult;
 
-            var processor = new T();
+            var processor = CreateInstance<T>();
 
             var result = processor.Process(initial);
 
@@ -78,15 +84,29 @@ namespace PdfTextReader.Execution
             return this;
         }
 
+        public PipelinePage ShowErrors(Action<PipelinePage> callback)
+        {
+            var newpage = new PipelinePage((PipelineInputPdf)this.Context, this.PageNumber);
+
+            var errors = this.LastErrors;
+
+            newpage.LastResult = errors;
+            newpage.LastErrors = errors;
+
+            callback(newpage);
+                        
+            return this;
+        }
+
         public PipelineText Text<T>()
         {
             throw new NotImplementedException();
         }
 
         public PipelinePage ParsePdf<T>()
+            where T : IEventListener, IPipelineResults<BlockPage>, new()
         {
-            // should be extension method
-            throw new NotImplementedException();
+            return ((PipelineInputPdf)this.Context).CurrentPage.ParsePdf<T>();
         }
 
     }
