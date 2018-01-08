@@ -48,6 +48,15 @@ namespace PdfTextReader.Execution
             }
         }
 
+        static public void Show(PipelineInputPdf pdf, System.Collections.IEnumerable objectList, Color color)
+        {
+            foreach (var t in objectList)
+            {
+                var b = (IBlock)t;
+                pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
+            }
+        }
+
         static public void ShowLine(PipelineInputPdf pdf, BlockPage blockPage, Color color)
         {
             var blocks = blockPage.AllBlocks;

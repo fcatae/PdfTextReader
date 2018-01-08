@@ -296,15 +296,13 @@ namespace PdfTextReader
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Blue)
                     .Text<CreateStructures>()
-                        .ParseText<CenteredLines>()
+                        .ConvertText<CenteredLines2, TextStructure>()
                         .Show(Color.Orange)
                         ;
 
             pipeline.Done();
-
-            var lines = textOutput.CurrentText.AllText;
-
-            return lines;
+            
+            return null;
         }
         public static void TestPipeline(string basename)
         {

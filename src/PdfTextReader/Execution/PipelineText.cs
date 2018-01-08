@@ -2,21 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.Execution
 {
-    class PipelineText<T>
+    class PipelineText<TT>
     {
         public IPipelineContext Context { get; }
-        public IEnumerable<T> CurrentStream;
+        public IEnumerable<TT> CurrentStream;
 
         public PipelineText(IPipelineContext context, TextSet text)
         {
             this.Context = context;
             this.CurrentText = text;
         }
-        public PipelineText(IPipelineContext context, IEnumerable<T> stream)
+        public PipelineText(IPipelineContext context, IEnumerable<TT> stream)
         {
             this.Context = context;
             this.CurrentStream = stream;
@@ -24,13 +25,14 @@ namespace PdfTextReader.Execution
 
         public TextSet CurrentText;
 
-        public PipelineText<T> Debug(Color Color)
+        public PipelineText<TT> Debug(Color Color)
         {
             throw new NotImplementedException();
         }
-        public PipelineText<T> Show(Color Color)
+        public PipelineText<TT> Show(Color Color)
         {
-            PipelineDebug.Show((PipelineInputPdf)Context, CurrentText, Color);
+            PipelineDebug.Show((PipelineInputPdf)Context, CurrentStream, Color);
+            //PipelineDebug.Show((PipelineInputPdf)Context, CurrentText, Color);
 
             return this;
         }
@@ -49,18 +51,18 @@ namespace PdfTextReader.Execution
             var result = processor.ProcessText(initial);
 
             this.CurrentText = result;
-            this.CurrentStream = (IEnumerable<T>)result.AllText;
+            this.CurrentStream = (IEnumerable<TT>)result.AllText;
 
             return (PipelineText<TextLine>)((object)this);
         }
-        public PipelineText<TO> ConvertText<T,TI,TO>()
-            where T : class, ITransformStructure<TI,TO>, new()
+        public PipelineText<TO> ConvertText<P,TO>()
+            where P : class, ITransformStructure<TT,TO>, new()
         {
-            var initial = (IEnumerable<TI>)this.CurrentStream;
+            var initial = (IEnumerable<TT>)this.CurrentStream;
             
-            var processor = new TransformText<T,TI,TO>();
+            var processor = new TransformText<P,TT,TO>();
 
-            var result = processor.Transform(initial);
+            var result = processor.Transform(initial).ToList();
 
             // this.CurrentStream = (IEnumerable<TO>)result;
 

@@ -16,7 +16,8 @@ namespace PdfTextReader.Structure
                 FontName = line.FontName,
                 FontStyle = line.FontStyle,
                 FontSize = line.FontSize,
-                VSpacing = line.Breakline
+                VSpacing = line.Breakline,
+                Lines = new List<TextLine>()
             };
 
             _structure.Lines.Add(line);
@@ -28,11 +29,11 @@ namespace PdfTextReader.Structure
                 (_structure.FontStyle != line.FontStyle) ||
                 (_structure.FontSize != line.FontSize))
                 return false;
-
-            if (line.Breakline > line.FontSize / 2)
+            
+            if (_structure.VSpacing == null)
                 return false;
 
-            if (_structure.VSpacing == null)
+            if (line.VSpacing > line.FontSize / 2)
                 return false;
 
             if (_structure.VSpacing != line.VSpacing)
@@ -50,6 +51,9 @@ namespace PdfTextReader.Structure
             if (lineset.All(t => IsZero(t.MarginLeft - t.MarginRight))
                     && lineset.Any(t => !IsZero(t.MarginLeft)))
             {
+                var textArray = lineset.Select(t => t.Text);
+                _structure.Text = String.Join("\n", textArray);
+
                 return _structure;
             }
 
