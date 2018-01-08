@@ -59,7 +59,11 @@ namespace PdfTextReader.Parser
 
         public void XMLWriter(IEnumerable<Artigo> artigos, string doc)
         {
-            using (XmlWriter writer = XmlWriter.Create($"{doc}.xml"))
+            var settings = new XmlWriterSettings()
+            {
+                Indent = true                
+            };
+            using (XmlWriter writer = XmlWriter.Create($"{doc}.xml", settings))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Pagina");

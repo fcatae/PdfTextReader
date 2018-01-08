@@ -334,7 +334,7 @@ namespace PdfTextReader
                         .ConvertText<TransformArtigo, Artigo>()
                         //.Show(Color.Orange)
                         ;
-
+            
             var artigos = pipeline.GetResults<Artigo>();
 
             var procParser = new ProcessParser();
