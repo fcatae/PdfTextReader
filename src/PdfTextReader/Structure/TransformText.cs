@@ -13,10 +13,6 @@ namespace PdfTextReader.Structure
 
             foreach (var line in lines)
             {
-                if ((line as TextLine).Text.Contains("ANEXO"))
-                {
-                }
-                
                 if ( transform != null )
                 {
                     bool agg = transform.Aggregate(line);
@@ -35,6 +31,12 @@ namespace PdfTextReader.Structure
                 
                 transform = new T();
                 transform.Init(line);
+            }
+
+            var result_value = transform.Create();
+            if (result_value != null)
+            {
+                yield return result_value;
             }
         }
 

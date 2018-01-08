@@ -15,7 +15,6 @@ namespace PdfTextReader.Structure
         public decimal MarginLeft { get; set; }
         public decimal? VSpacing { get; set; }
         public TextAlignment TextAlignment { get; set; }
-
         //For ContentType
         public List<TextLine> Lines { get; set; }
 

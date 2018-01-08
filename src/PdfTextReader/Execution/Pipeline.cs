@@ -38,6 +38,11 @@ namespace PdfTextReader.Execution
             }
         }
 
+        public void GetResults()
+        {
+            //_activeContext.CurrentPage
+        }
+
         public void Done()
         {
             Dispose();

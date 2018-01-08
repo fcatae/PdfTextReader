@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.Execution;
+using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
 using PdfTextReader.Structure;
 using System;
@@ -274,6 +275,7 @@ namespace PdfTextReader
 
             return lines;
         }
+
         public static IEnumerable<TextLine> CenteredLines(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -302,6 +304,39 @@ namespace PdfTextReader
 
             pipeline.Done();
             
+            return null;
+        }
+
+
+        public static IEnumerable<Artigo> CreateArtigos(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            var textOutput =
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeader>()
+                        .ParseBlock<OrderBlocksets>()
+                        .Show(Color.Blue)
+                    .Text<CreateStructures>()
+                        .ConvertText<CreateParagraphs, TextStructure>()
+                        .ConvertText<TransformArtigo, Artigo>()
+                        //.Show(Color.Orange)
+                        ;
+
+            pipeline.Done();
+
             return null;
         }
         public static void TestPipeline(string basename)
