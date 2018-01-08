@@ -62,13 +62,13 @@ namespace PdfTextReader.Parser
             using (XmlWriter writer = XmlWriter.Create($"{doc}.xml"))
             {
                 writer.WriteStartDocument();
-                writer.WriteStartElement("Página");
+                writer.WriteStartElement("Pagina");
 
                 foreach (Artigo artigo in artigos)
                 {
                     writer.WriteStartElement("Artigo");
 
-                    writer.WriteElementString("Título", artigo.Titulo);
+                    writer.WriteElementString("Titulo", artigo.Titulo);
                     writer.WriteElementString("Corpo", artigo.Corpo);
                     writer.WriteElementString("Assinatura", artigo.Assinatura);
                     writer.WriteElementString("Cargo", artigo.Cargo);
