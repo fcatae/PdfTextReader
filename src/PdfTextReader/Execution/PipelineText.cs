@@ -64,9 +64,11 @@ namespace PdfTextReader.Execution
 
             var result = processor.Transform(initial).ToList();
 
-            // this.CurrentStream = (IEnumerable<TO>)result;
+            var pipe = new PipelineText<TO>(this.Context, result);
 
-            return new PipelineText<TO>(this.Context, result);
+            ((PipelineInputPdf)this.Context).CurrentText = pipe;
+
+            return pipe;
         }
 
         public PipelineText<T> ParseContent<T>()

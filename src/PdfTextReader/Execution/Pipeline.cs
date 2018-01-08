@@ -38,9 +38,9 @@ namespace PdfTextReader.Execution
             }
         }
 
-        public void GetResults()
+        public IEnumerable<T> GetResults<T>()
         {
-            //_activeContext.CurrentPage
+            return ((PipelineText<T>)_activeContext.CurrentText).CurrentStream;
         }
 
         public void Done()
