@@ -45,6 +45,7 @@ namespace PdfTextReader.Structure
                     Text = bl.Text,
                     MarginLeft = Decimal.Round(Convert.ToDecimal(bl.GetX() - minx), 2),
                     MarginRight = Decimal.Round(Convert.ToDecimal(maxx - (bl.GetX() + bl.GetWidth())), 2),
+                    VSpacing = (last_tl != null) ? (decimal?)(last_y - bl.GetH() - bl.FontSize) : null,
                     Breakline = null,
                     Block = bl
                 };

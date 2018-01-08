@@ -212,23 +212,11 @@ namespace PdfTextReader
         }
 
 
-        public static void TestEnumFiles(string basename)
+        public static void TestEnumFiles(string foldername, Action<string> action)
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.EnumFiles("bin/dz-table/*.pdf", f => $"bin/out/{f}-batch-output.pdf", pipe => {
-                pipe.Page(1)
-                    .ParsePdf<ProcessPdfText>()
-                    .ParseBlock<GroupLines>()
-                    .ParseBlock<FindInitialBlockset>()
-                        .Show(Color.Orange)
-                    .ParseBlock<BreakColumns>()
-                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                    .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
-                    .ParseBlock<RemoveFooter>()
-                    .ParseBlock<RemoveHeader>()
-                    .Show(Color.Yellow);
-            });
+            pipeline.EnumFiles(foldername, action);
         }
 
         public static void RunCorePdf(string basename)

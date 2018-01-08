@@ -13,7 +13,9 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.TestEnumFiles("p40");
+            Pipeline.CenteredLines("dz-table/dz007");
+
+            Pipeline.TestEnumFiles("bin/dz-table", f => Pipeline.CenteredLines(f.Substring(4)) );
 
             //ProcessSingle("p42");
 

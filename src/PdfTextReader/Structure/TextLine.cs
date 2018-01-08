@@ -12,6 +12,7 @@ namespace PdfTextReader.Structure
         public decimal MarginRight { get; set; }
         public decimal MarginLeft { get; set; }
         public decimal? Breakline { get; set; }
+        public decimal? VSpacing { get; set; }
         public string FontStyle { get; set; }
 
         public IBlock Block { get; set; }
