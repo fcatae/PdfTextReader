@@ -264,7 +264,7 @@ namespace PdfTextReader
 
             var textOutput =
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-table-output.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()
@@ -286,7 +286,38 @@ namespace PdfTextReader
 
             return lines;
         }
+        public static IEnumerable<TextLine> CenteredLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
 
+            var textOutput =
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeader>()
+                        .ParseBlock<OrderBlocksets>()
+                        .Show(Color.Blue)
+                    .Text<CreateStructures>()
+                        .ParseText<CenteredLines>()
+                        .Show(Color.Orange)
+                        ;
+
+            pipeline.Done();
+
+            var lines = textOutput.CurrentText.AllText;
+
+            return lines;
+        }
         public static void TestPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();

@@ -8,8 +8,11 @@ namespace PdfTextReader.Execution
 {
     class PipelineText
     {
-        public PipelineText(TextSet text)
+        public IPipelineContext Context { get; }
+
+        public PipelineText(IPipelineContext context, TextSet text)
         {
+            this.Context = context;
             this.CurrentText = text;
         }
 
@@ -19,9 +22,11 @@ namespace PdfTextReader.Execution
         {
             throw new NotImplementedException();
         }
-        public PipelineText Show<T>(Func<T, bool> filter, Color Color)
+        public PipelineText Show(Color Color)
         {
-            throw new NotImplementedException();
+            PipelineDebug.Show((PipelineInputPdf)Context, CurrentText, Color);
+
+            return this;
         }
         public PipelineText Validate<T>(Color Color)
         {

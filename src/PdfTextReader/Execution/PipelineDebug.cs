@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.PDFCore;
+using PdfTextReader.Structure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -35,6 +36,18 @@ namespace PdfTextReader.Execution
                 pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
             }
         }
+
+        static public void Show(PipelineInputPdf pdf, TextSet textSet, Color color)
+        {            
+            var texts = textSet.AllText;
+
+            foreach (var t in texts)
+            {
+                var b = (IBlock)t;
+                pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
+            }
+        }
+
         static public void ShowLine(PipelineInputPdf pdf, BlockPage blockPage, Color color)
         {
             var blocks = blockPage.AllBlocks;

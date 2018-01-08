@@ -107,7 +107,7 @@ namespace PdfTextReader.Execution
             var proc2 = new T();
             var lines = proc2.ConvertBlock(this.LastResult);
 
-            var pipe = new PipelineText(lines);
+            var pipe = new PipelineText(Context, lines);
 
             ((PipelineInputPdf)this.Context).CurrentText = pipe;
 

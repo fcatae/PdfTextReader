@@ -51,3 +51,5 @@ Rodapé padrão
 # Quebrar blockset longos
 
 Implementacao usando o centro do overlap
+
+dz002: decreto
