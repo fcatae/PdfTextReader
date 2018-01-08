@@ -5,6 +5,7 @@ using System.Linq;
 
 //Temp
 using PdfTextReader.Lucas_Testes.Helpers;
+using PdfTextReader.PDFCore;
 
 namespace PdfTextReader.Structure
 {

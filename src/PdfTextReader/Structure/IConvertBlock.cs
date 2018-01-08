@@ -7,6 +7,6 @@ namespace PdfTextReader.Structure
 {
     interface IConvertBlock
     {
-        TextSet Convert(BlockPage page);
+        TextSet ConvertBlock(BlockPage page);
     }
 }

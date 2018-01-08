@@ -8,7 +8,12 @@ namespace PdfTextReader.Execution
 {
     class PipelineText
     {
-        TextSet CurrentText;
+        public PipelineText(TextSet text)
+        {
+            this.CurrentText = text;
+        }
+
+        public TextSet CurrentText;
 
         public PipelineText Debug(Color Color)
         {

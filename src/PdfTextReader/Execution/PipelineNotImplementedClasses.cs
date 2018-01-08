@@ -7,14 +7,6 @@ using PdfTextReader.PDFCore;
 
 namespace PdfTextReader.Execution
 {
-    class CreateStructures : IConvertBlock
-    {
-        public TextSet Convert(BlockPage page)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     class ProcessParagraphs : IProcessText
     {
         public TextSet ProcessText(TextSet text)

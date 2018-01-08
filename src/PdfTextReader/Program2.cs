@@ -15,7 +15,13 @@ namespace PdfTextReader
 
             //ProcessSingle("p42");
 
-            Pipeline.OrderBlocksets("dz-table/dz128");
+            var lines1 = Pipeline.GetLinesUsingPipeline("p40");
+
+            var pipeline = new Pipeline();
+
+            var lines2 = pipeline.GetLines("p40");
+
+
         }
 
         static void ProcessSingle(string page)

@@ -1,5 +1,6 @@
 ﻿using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfTextReader.PDFCore;
+using PdfTextReader.Structure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -99,8 +100,18 @@ namespace PdfTextReader.Execution
         }
 
         public PipelineText Text<T>()
+            where T: IConvertBlock, new()
         {
-            throw new NotImplementedException();
+            var all_lines = new List<TextLine>();
+
+            var proc2 = new T();
+            var lines = proc2.ConvertBlock(this.LastResult);
+
+            var pipe = new PipelineText(lines);
+
+            ((PipelineInputPdf)this.Context).CurrentText = pipe;
+
+            return pipe;
         }
 
         public PipelinePage ParsePdf<T>()
