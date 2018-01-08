@@ -15,8 +15,6 @@ namespace PdfTextReader.Execution
         public BlockPage LastResult { get; set; }
         private BlockPage LastErrors { get; set; }
 
-        private PipelinePageFactory _factory = new PipelinePageFactory();
-        
         public PipelinePage(PipelineInputPdf pdf, int pageNumber)
         {
             this.Context = pdf;
@@ -64,17 +62,26 @@ namespace PdfTextReader.Execution
 
             return this;
         }
+        
         public T CreateInstance<T>()
-                where T : new()
+            where T : IProcessBlock, new()
         {
-            return _factory.CreateInstance<T>();
+            var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
+
+            var deps = obj as IPipelineDependency;
+            if(deps != null)
+            {
+                deps.SetPage(this);
+            }
+
+            return obj;
         }
 
         public PipelinePage ParseBlock<T>()
             where T: IProcessBlock, new()
         {
             var initial = this.LastResult;
-
+            
             var processor = CreateInstance<T>();
 
             var result = processor.Process(initial);

@@ -84,6 +84,8 @@ namespace PdfTextReader.Execution
             private readonly PdfPage _pdfPage;
             private PdfCanvas _outputCanvas;
 
+            private PipelinePageFactory _factory = new PipelinePageFactory();
+
             public PipelineInputPdfPage(PipelineInputPdf pipelineInputContext, int pageNumber)
             {
                 var pdfPage = pipelineInputContext._pdfDocument.GetPage(pageNumber);
@@ -93,12 +95,10 @@ namespace PdfTextReader.Execution
                 this._pdfPage = pdfPage;
             }
 
-            T CreateInstance<T>()
+            public T CreateInstance<T>()
                 where T: new()
             {
-                var page = _pdf.CurrentPage;
-
-                return page.CreateInstance<T>();
+                return _factory.CreateInstance<T>();
             }
 
             public PipelinePage ParsePdf<T>()

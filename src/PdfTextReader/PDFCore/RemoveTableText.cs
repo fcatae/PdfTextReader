@@ -24,6 +24,9 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Process(BlockPage page)
         {
+            if(this._tables == null)
+                throw new InvalidOperationException("RemoveTableText requires IdentifyTables");
+
             var result = new BlockPage();
 
             foreach(var block in page.AllBlocks)
