@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            var lines0 = Pipeline.CenteredLines("dz031");
+            Pipeline.TestEnumFiles("p40");
 
             //ProcessSingle("p42");
 

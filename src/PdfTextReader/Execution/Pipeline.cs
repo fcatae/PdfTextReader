@@ -20,8 +20,6 @@ namespace PdfTextReader.Execution
 
         public void EnumFiles(string input, Func<string,string> outputNameFunc, Action<PipelineInputPdf> callback)
         {
-            throw new NotImplementedException("EnumFiles broken if called with pipeline factory -- TODO: move to pipeline page");
-
             var inputDirectory = new DirectoryInfo(".");
             
             foreach (var f in inputDirectory.EnumerateFiles(input))
