@@ -102,7 +102,7 @@ namespace PdfTextReader.Execution
         //    return page;
         //}
 
-        static public PipelineText DebugBreak(this PipelineText page, Func<PipelineText, bool> condition = null)
+        static public PipelineText<T> DebugBreak<T>(this PipelineText<T> page, Func<PipelineText<T>, bool> condition = null)
         {
             PipelineDebug.DebugBreak(page, condition);
 

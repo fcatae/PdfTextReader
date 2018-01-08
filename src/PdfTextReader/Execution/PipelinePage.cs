@@ -108,17 +108,17 @@ namespace PdfTextReader.Execution
             return this;
         }
 
-        public PipelineText Text<T>()
+        public PipelineText<TextLine> Text<T>()
             where T: IConvertBlock, new()
         {
-            var all_lines = new List<TextLine>();
-
             var proc2 = new T();
             var lines = proc2.ConvertBlock(this.LastResult);
 
-            var pipe = new PipelineText(Context, lines);
+            var pipe = new PipelineText<TextLine>(Context, lines);
 
-            ((PipelineInputPdf)this.Context).CurrentText = pipe;
+            pipe.CurrentStream = lines.AllText;
+
+            // ((PipelineInputPdf)this.Context).CurrentText = pipe;
 
             return pipe;
         }

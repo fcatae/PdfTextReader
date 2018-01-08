@@ -17,7 +17,7 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfOutput;
         
         public PipelineInputPdfPage CurrentPage { get; private set; }
-        public PipelineText CurrentText { get; set; }
+        //public PipelineText CurrentText { get; set; }
 
         public PipelineInputPdf(string filename)
         {

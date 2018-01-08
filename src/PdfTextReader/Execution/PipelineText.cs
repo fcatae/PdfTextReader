@@ -6,48 +6,68 @@ using System.Text;
 
 namespace PdfTextReader.Execution
 {
-    class PipelineText
+    class PipelineText<T>
     {
         public IPipelineContext Context { get; }
+        public IEnumerable<T> CurrentStream;
 
         public PipelineText(IPipelineContext context, TextSet text)
         {
             this.Context = context;
             this.CurrentText = text;
         }
+        public PipelineText(IPipelineContext context, IEnumerable<T> stream)
+        {
+            this.Context = context;
+            this.CurrentStream = stream;
+        }
 
         public TextSet CurrentText;
 
-        public PipelineText Debug(Color Color)
+        public PipelineText<T> Debug(Color Color)
         {
             throw new NotImplementedException();
         }
-        public PipelineText Show(Color Color)
+        public PipelineText<T> Show(Color Color)
         {
             PipelineDebug.Show((PipelineInputPdf)Context, CurrentText, Color);
 
             return this;
         }
-        public PipelineText Validate<T>(Color Color)
+        public PipelineText<T> Validate<T>(Color Color)
         {
             throw new NotImplementedException();
         }
 
-        public PipelineText ParseText<T>()
-            where T: IProcessText, new()
+        public PipelineText<TextLine> ParseText<P>()
+            where P: IProcessText, new()
         {
             var initial = this.CurrentText;
 
-            var processor = new T();
+            var processor = new P();
 
             var result = processor.ProcessText(initial);
 
             this.CurrentText = result;
+            this.CurrentStream = (IEnumerable<T>)result.AllText;
 
-            return this;
+            return (PipelineText<TextLine>)((object)this);
+        }
+        public PipelineText<TO> ConvertText<T,TI,TO>()
+            where T : class, ITransformStructure<TI,TO>, new()
+        {
+            var initial = (IEnumerable<TI>)this.CurrentStream;
+            
+            var processor = new TransformText<T,TI,TO>();
+
+            var result = processor.Transform(initial);
+
+            // this.CurrentStream = (IEnumerable<TO>)result;
+
+            return new PipelineText<TO>(this.Context, result);
         }
 
-        public PipelineText ParseContent<T>()
+        public PipelineText<T> ParseContent<T>()
         {
             throw new NotImplementedException();
         }
