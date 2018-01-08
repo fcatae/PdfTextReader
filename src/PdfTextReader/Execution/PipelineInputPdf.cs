@@ -96,7 +96,9 @@ namespace PdfTextReader.Execution
             T CreateInstance<T>()
                 where T: new()
             {
-                return Execution.PipelineFactory.Create<T>();
+                var page = _pdf.CurrentPage;
+
+                return page.CreateInstance<T>();
             }
 
             public PipelinePage ParsePdf<T>()

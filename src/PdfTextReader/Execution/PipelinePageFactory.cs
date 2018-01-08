@@ -8,16 +8,8 @@ namespace PdfTextReader.Execution
     // It cannot be a singleton because it will break when 
     // processing multiple pages in a single execution
 
-    class PipelineFactory
+    class PipelinePageFactory
     {
-        static PipelineFactory g_singleton = new PipelineFactory();
-
-        static public T Create<T>()
-            where T : new()
-        {
-            return g_singleton.CreateInstance<T>();
-        }
-
         Dictionary<Type, object> _dictionary = new Dictionary<Type, object>();
 
         public T CreateInstance<T>()

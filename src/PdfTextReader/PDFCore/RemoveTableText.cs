@@ -1,17 +1,19 @@
-﻿using System;
+﻿using PdfTextReader.Execution;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveTableText : IProcessBlock
+    class RemoveTableText : IProcessBlock, IPipelineDependency
     {
         private List<IBlock> _tables;
 
-        public RemoveTableText()
+        public void SetPage(PipelinePage p)
         {
-            var parserTable = Execution.PipelineFactory.Create<PDFCore.IdentifyTables>();
+            var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
+
             var page = parserTable.PageTables;
 
             if (page == null)

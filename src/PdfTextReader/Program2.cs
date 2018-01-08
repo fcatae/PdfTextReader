@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            var lines0 = Pipeline.CenteredLines("p40");
+            var lines0 = Pipeline.CenteredLines("dz031");
 
             //ProcessSingle("p42");
 
