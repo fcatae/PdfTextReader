@@ -10,6 +10,6 @@ namespace PdfTextReader.Structure
         LEFT,
         RIGHT,
         JUSTIFY,
-        UNKNOW
+        UNKNOWN
     }
 }

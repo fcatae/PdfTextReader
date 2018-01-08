@@ -103,7 +103,7 @@ namespace PdfTextReader.Structure
             }
             else
             {
-                return TextAlignment.UNKNOW;
+                return TextAlignment.UNKNOWN;
             }
         }
 
