@@ -15,6 +15,8 @@ namespace PdfTextReader.PDFCore
 
         private BlockSet<IBlock> _blockSet = new BlockSet<IBlock>();
 
+        public BlockPage Images = null;
+
         public void EventOccurred(IEventData data, EventType type)
         {
             var image = data as ImageRenderInfo;
@@ -50,6 +52,8 @@ namespace PdfTextReader.PDFCore
             var page = new BlockPage();
 
             page.AddRange(_blockSet);
+
+            this.Images = page;
 
             return page;
         }
