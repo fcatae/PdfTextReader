@@ -274,7 +274,7 @@ namespace PdfTextReader
                         .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
                         .ParseBlock<RemoveFooter>()
                         .ParseBlock<RemoveHeader>()
-                        //.ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddTableSpace>()
                         .ParseBlock<ResizeBlocksets>()
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Orange)

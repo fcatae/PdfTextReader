@@ -93,13 +93,22 @@ namespace PdfTextReader.PDFCore
                     if (v.Y < min_y)
                         continue;
 
-                    if (cur_w != -1)
+                    if (cur_w == -1)
                         cur_w = v.W;
 
+                    bool oneColumn = (cur_w == 6);
+                    bool twoColumns = (cur_w == 3);
+                    bool threeColumns = (cur_w == 2) || (cur_w == 4);
+
                     // if W >= 3
-                    if( v.W != cur_w )
+                    if ( v.W != cur_w )
                     {
-                        scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: v.W);
+                        bool oneColumn2 = (v.W == 6);
+                        bool twoColumns2 = (v.W == 3);
+                        bool threeColumns2 = (v.W == 2) || (v.W == 4);
+
+                        if(!(threeColumns && threeColumns2))
+                            scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: v.W);
                     }
 
                     // consume all values < X2
@@ -111,6 +120,9 @@ namespace PdfTextReader.PDFCore
                         Values[k] = null;
                         continue;
                     }
+
+                    if (v.X2 > max_x)
+                        continue;
 
                     // define a new goal
                     scan(x: x+2, min_y: v.Y1 + 1, max_x: v.X2, cur_w: cur_w);
