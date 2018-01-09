@@ -14,7 +14,7 @@ namespace PdfTextReader
             //ProcessBatch("dz");
             //Pipeline.RunCorePdf("p40");
             //Pipeline.RunCorePdf("TesteTabelaGafa");
-            Pipeline.ExtractPage("DO1_2016_12_20");
+            Pipeline.MultipageCore("pg16");
 
             //Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 

@@ -695,12 +695,68 @@ namespace PdfTextReader
                         ;//.SaveXml(p => $"file-{p.page}");
 
         }
-        public static void ExtractPage(string basename)
+        public static void ExtractPage(string basename, int pages)
         {
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Extract($"bin/{basename}-table-output.pdf", 1, 5);
+                    .Extract($"bin/{basename}-table-output.pdf", 1, pages);
+        }
+
+        public static void Multipage(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-page-output.pdf")
+                    .AllPages(p =>
+                    {
+                        p.ParsePdf<ProcessPdfText>()
+                            .ParseBlock<GroupLines>()
+                            .Show(Color.Orange);
+                    });                    
+
+            pipeline.Done();
+        }
+
+        public static void MultipageCore(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-page-output.pdf")
+                    .AllPages(p => ProcessPage(p));
+
+            pipeline.Done();
+        }
+
+        public static void ProcessPage(PipelineInputPdf.PipelineInputPdfPage page)
+        {
+            page.ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                        .Show(Color.Green)
+                    .ParsePdf<PreProcessImages>()
+                            .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<RemoveOverlapedImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlocksetWithRewind>()
+                        .ParseBlock<BreakColumnsLight>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeaderImage>()
+                            .Validate<DetectInvisibleTable>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddImageSpace>()
+                        .ParseBlock<BreakInlineElements>()
+                        .ParseBlock<ResizeBlocksets>()
+                            .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<OrderBlocksets>()
+                        //.Validate<DetectInvisibleTable>().ShowErrors(p => p.Show(Color.Red))
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black);            
         }
 
         // Pipeline Definition: 

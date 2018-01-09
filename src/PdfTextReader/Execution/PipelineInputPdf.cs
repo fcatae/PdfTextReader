@@ -91,6 +91,18 @@ namespace PdfTextReader.Execution
             }
         }
 
+        public void AllPages(Action<PipelineInputPdfPage> callback)
+        {
+            int totalPages = _pdfDocument.GetNumberOfPages();
+
+            for (int i=1; i<=totalPages; i++)
+            {
+                var pdfPage = Page(i);
+
+                callback(pdfPage);
+            }
+        }
+
         public class PipelineInputPdfPage : IDisposable
         {
             private readonly PipelineInputPdf _pdf;

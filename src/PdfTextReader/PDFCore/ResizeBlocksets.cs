@@ -62,6 +62,9 @@ namespace PdfTextReader.PDFCore
             
             foreach(var blsearch in values)
             {
+                if (blsearch.B is ImageBlock)
+                    continue;
+
                 // we could have used predefined blocks (w=6, w=3, etc)
                 var predefinedBlocks = values;
 
