@@ -12,10 +12,10 @@ namespace PdfTextReader
         static void Main(string[] args)
         {
             //ProcessBatch("dz");
+            Pipeline.RunCorePdfLight("p40");
+            Pipeline.RunCorePdfLight("TesteTabelaGafa");
 
-            Pipeline.DetectInvisibleTable("dz001");
-
-            //Pipeline.TestEnumFiles("bin/", f => Pipeline.BreakColumnsLight(f.Substring(4)) );
+            //Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 
             //ProcessSingle("p42");
 

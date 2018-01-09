@@ -76,9 +76,16 @@ namespace PdfTextReader.PDFCore
                 if (tableCell.Width < 0 || tableCell.Height < 0)
                     throw new InvalidOperationException();
 
-                if( tableCell.Op == 1 )
+                if (tableCell.X >= 0 || tableCell.H >= 0)
                 {
-                    _blockSet.Add(tableCell);
+                    if (tableCell.Op != 0)
+                    {
+                        _blockSet.Add(tableCell);
+                    }                    
+                }
+                else
+                {
+                    // sometimes it draws a large rectangle to fill the background
                 }
             }
         }
