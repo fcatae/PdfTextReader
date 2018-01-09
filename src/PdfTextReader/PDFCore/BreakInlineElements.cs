@@ -81,28 +81,11 @@ namespace PdfTextReader.PDFCore
                         //replacements[i] = elems;
                         break;
                     }
-
-                    if( Block.HasOverlap(blocks[i], blocks[j]))
-                    {
-
-                    }
                 }
             }
 
             result.AddRange(blocks.Where(b=> b!=null));
-
-            //for (int i = 0; i < blocks.Count; i++)
-            //{
-            //    if (replacements[i] != null)
-            //    {
-            //        result.AddRange(replacements[i]);
-            //    }
-            //    else
-            //    {
-            //        result.Add(blocks[i]);
-            //    }
-            //}
-
+            
             return result;
         }
 
