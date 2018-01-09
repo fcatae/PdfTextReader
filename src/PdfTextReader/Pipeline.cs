@@ -340,6 +340,36 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void BreakInlineElements(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<PreProcessImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeaderImage>()
+                        .ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddImageSpace>()
+                        .Show(Color.Orange)
+                        .Validate<BreakInlineElements>().ShowErrors(p => p.Show(Color.Green));
+                        //.ParseBlock<ResizeBlocksets>()
+                        //.ParseBlock<OrderBlocksets>()
+                        //.Show(Color.Orange);                        
+
+            pipeline.Done();
+        }
+
         public static void RunCorePdf(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -368,7 +398,6 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
-
         public static void RemoveHeaderImage(string basename)
         {
             var pipeline = new Execution.Pipeline();
