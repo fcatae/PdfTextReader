@@ -9,7 +9,9 @@ namespace PdfTextReader.PDFCore
     class IdentifyTables : IProcessBlock
     {
         private BlockPage _pageResult;
+        private BlockPage _pageLines;
         public BlockPage PageTables => _pageResult;
+        public BlockPage PageLines=> _pageLines;
 
         public BlockPage Process(BlockPage page)
         {
@@ -113,13 +115,20 @@ namespace PdfTextReader.PDFCore
             int count2 = blockList.Count;
 
             var result = new BlockPage();
+            var lines = new BlockPage();
 
             foreach(var b in blockList)
             {
-                result.Add(b);
+                // does not add line segments
+                if (b.Count() == 1)
+                    lines.Add(b);
+                else
+                    result.Add(b);
+                
             }
 
             this._pageResult = result;
+            this._pageLines = lines;
 
             return result;
         }
