@@ -29,6 +29,9 @@ namespace PdfTextReader.Execution
                 string inputfile = f.FullName;
                 string filename = Path.GetFileNameWithoutExtension(inputfile);
 
+                if (filename.StartsWith("~"))
+                    continue;
+
                 if (filename.EndsWith("-output"))
                     continue;
 
