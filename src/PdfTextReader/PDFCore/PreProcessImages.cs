@@ -49,6 +49,17 @@ namespace PdfTextReader.PDFCore
                 var width = ctm.Get(0);
                 var height = ctm.Get(4);
 
+                // ensure we have a simple transformation matrix
+                if ((ctm.Get(1) != 0) || (ctm.Get(2) != 0) || (ctm.Get(3) != 0)
+                    || (ctm.Get(5) != 0) || (ctm.Get(8) != 1))
+                    throw new InvalidOperationException();
+
+                if ( height < 0 )
+                {
+                    h = h + height;
+                    height = -height;
+                }
+
                 var imageBlock = new ImageBlock()
                 {
                     X = x,

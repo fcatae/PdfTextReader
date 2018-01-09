@@ -23,6 +23,8 @@ namespace PdfTextReader.Execution
         {
             var pdfDocument = new PdfDocument(new PdfReader(filename));
 
+            Console.WriteLine($"Filename={filename}");
+
             this._input = filename;
             this._pdfDocument = pdfDocument;
         }

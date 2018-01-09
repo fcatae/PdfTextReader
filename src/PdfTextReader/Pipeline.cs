@@ -371,16 +371,34 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void RemoveOverlapedImages(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Page(1)
+                    //.ParsePdf<PreProcessTables>()
+                    //    .ParseBlock<IdentifyTables>()
+                    .ParsePdf<PreProcessImages>()
+                        .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<RemoveOverlapedImages>()
+                        .Show(Color.Green);
+            pipeline.Done();
+        }
+
         public static void RunCorePdf(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-table-output.pdf")
+                    .Output($"bin/{basename}-tmp-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()
                     .ParsePdf<PreProcessImages>()
+                        .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<RemoveOverlapedImages>()
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
@@ -392,6 +410,7 @@ namespace PdfTextReader
                         .ParseBlock<RemoveHeaderImage>()
                         .ParseBlock<AddTableSpace>()
                         .ParseBlock<AddImageSpace>()
+                        .ParseBlock<BreakInlineElements>()
                         .ParseBlock<ResizeBlocksets>()
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Orange)
@@ -399,6 +418,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
         public static void RemoveHeaderImage(string basename)
         {
             var pipeline = new Execution.Pipeline();
