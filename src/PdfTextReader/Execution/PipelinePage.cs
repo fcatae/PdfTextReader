@@ -48,7 +48,7 @@ namespace PdfTextReader.Execution
         {
             var initial = this.LastResult;
 
-            var processor = new T();
+            var processor = CreateInstance<T>();
 
             var result = processor.Validate(initial);
             
@@ -64,7 +64,7 @@ namespace PdfTextReader.Execution
         }
         
         public T CreateInstance<T>()
-            where T : IProcessBlock, new()
+            where T : new()
         {
             var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 

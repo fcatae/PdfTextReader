@@ -318,7 +318,7 @@ namespace PdfTextReader
 
             pipeline.EnumFiles(foldername, action);
         }
-
+        
         public static void RunCorePdf(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -328,17 +328,19 @@ namespace PdfTextReader
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()
-                        .Show(Color.Green)
+                    .ParsePdf<PreProcessImages>()
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
-                        .Show(Color.LightGray)
                         .ParseBlock<FindInitialBlockset>()
                         .ParseBlock<BreakColumns>()
                         .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                         .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
                         .ParseBlock<RemoveFooter>()
-                        .ParseBlock<RemoveHeader>()
+                        //.ParseBlock<RemoveHeader>()
+                        .ParseBlock<RemoveHeaderImage>()
+                        .ParseBlock<AddTableSpace>()
+                        .ParseBlock<ResizeBlocksets>()
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Orange)
                         .ShowLine(Color.Black);
@@ -346,6 +348,30 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void RemoveHeaderImage(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-img-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<PreProcessImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Orange))
+                        //.Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Orange))
+                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Orange))
+                        .ParseBlock<RemoveFooter>()
+                        //.ParseBlock<RemoveHeader>()
+                        .ParseBlock<RemoveHeaderImage>()
+                        .Show(Color.Yellow);
+
+            pipeline.Done();
+        }
         public static IEnumerable<TextLine> GetLinesUsingPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();

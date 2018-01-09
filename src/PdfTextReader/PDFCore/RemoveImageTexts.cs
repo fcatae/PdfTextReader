@@ -8,7 +8,7 @@ namespace PdfTextReader.PDFCore
 {
     class RemoveImageTexts : IProcessBlock, IPipelineDependency
     {
-        private List<IBlock> _tables;
+        private List<IBlock> _images;
 
         public void SetPage(PipelinePage p)
         {
@@ -19,12 +19,12 @@ namespace PdfTextReader.PDFCore
             if (page == null)
                 throw new InvalidOperationException("RemoveImageTexts requires PreProcessImages");
 
-            this._tables = page.AllBlocks.ToList();
+            this._images = page.AllBlocks.ToList();
         }
 
         public BlockPage Process(BlockPage page)
         {
-            if (this._tables == null)
+            if (this._images == null)
                 throw new InvalidOperationException("RemoveImageTexts requires PreProcessImages");
 
             var result = new BlockPage();
@@ -33,7 +33,7 @@ namespace PdfTextReader.PDFCore
             {
                 bool insideImage = false;
 
-                foreach (var table in _tables)
+                foreach (var table in _images)
                 {
                     if (Block.HasOverlap(table, block))
                     {

@@ -9,13 +9,31 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class PreProcessImages : IEventListener, IPipelineResults<BlockPage>, IProcessBlock
+    public class PreProcessImages : IEventListener, IPipelineResults<BlockPage>
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_IMAGE };
 
         private BlockSet<IBlock> _blockSet = new BlockSet<IBlock>();
 
         public BlockPage Images = null;
+
+        public void RemoveImage(IBlock block)
+        {
+            if (Images == null)
+                throw new InvalidOperationException();
+
+            int before = Images.AllBlocks.Count();
+
+            var allBlocksMinusOne = Images.AllBlocks.Except(new IBlock[] { block });
+
+            Images = new BlockPage();
+            Images.AddRange(allBlocksMinusOne);
+
+            int after = Images.AllBlocks.Count();
+
+            if (after == before)
+                throw new InvalidOperationException();
+        }
 
         public void EventOccurred(IEventData data, EventType type)
         {
@@ -61,13 +79,6 @@ namespace PdfTextReader.PDFCore
         public ICollection<EventType> GetSupportedEvents()
         {
             return _supportedEvents;
-        }
-
-        public BlockPage Process(BlockPage page)
-        {
-            // we need this just because of the IProcessBlock requirement
-            // otherwise, we can't use a pipeline factory
-            throw new NotImplementedException();
-        }
+        }        
     }
 }
