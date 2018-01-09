@@ -62,8 +62,12 @@ namespace PdfTextReader.PDFCore
             
             foreach(var blsearch in values)
             {
-                var over = values
+                // we could have used predefined blocks (w=6, w=3, etc)
+                var predefinedBlocks = values;
+
+                var over = predefinedBlocks
                     .Where(v => v != blsearch && v.X <= blsearch.X && v.X2 >= blsearch.X2)
+                    .Where(v => v.RW > blsearch.RW )
                     .Where(v => Math.Abs(v.RW - blsearch.RW) > error_othercolumn)
                     .Select(v => v.B)
                     .ToList();
@@ -83,7 +87,11 @@ namespace PdfTextReader.PDFCore
 
                     if (CheckBoundary(compareBlocks, block))
                     {
-                        float diff = blsearch.B.GetWidth() - block.GetWidth();
+                        float diff = block.GetWidth() - blsearch.B.GetWidth();
+
+                        if (diff < 0)
+                            throw new InvalidOperationException("should never decrease the block size");
+
                         var original = (IEnumerable<IBlock>)blsearch.B;
                         var replace = new BlockSet2<IBlock>(original, block.GetX(), block.GetH(), block.GetX()+block.GetWidth(), block.GetH()+block.GetHeight());
 
