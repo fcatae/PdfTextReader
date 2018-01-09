@@ -108,7 +108,9 @@ namespace PdfTextReader.PDFCore
                         bool threeColumns2 = (v.W == 2) || (v.W == 4);
 
                         if(!(threeColumns && threeColumns2))
-                            scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: v.W);
+                            scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: cur_w);
+
+                        //scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: v.W);
                     }
 
                     // consume all values < X2
