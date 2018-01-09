@@ -695,6 +695,13 @@ namespace PdfTextReader
                         ;//.SaveXml(p => $"file-{p.page}");
 
         }
+        public static void ExtractPage(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Extract($"bin/{basename}-table-output.pdf", 1, 5);
+        }
 
         // Pipeline Definition: 
         //   * TableListener -> ProcessTable

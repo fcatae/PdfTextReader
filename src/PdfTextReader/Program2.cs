@@ -12,8 +12,9 @@ namespace PdfTextReader
         static void Main(string[] args)
         {
             //ProcessBatch("dz");
-            Pipeline.RunCorePdf("p40");
-            Pipeline.RunCorePdf("TesteTabelaGafa");
+            //Pipeline.RunCorePdf("p40");
+            //Pipeline.RunCorePdf("TesteTabelaGafa");
+            Pipeline.ExtractPage("DO1_2016_12_20");
 
             //Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 

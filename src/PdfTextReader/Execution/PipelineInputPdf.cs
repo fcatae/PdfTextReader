@@ -5,6 +5,7 @@ using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfTextReader.PDFCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.Execution
@@ -76,6 +77,17 @@ namespace PdfTextReader.Execution
             {
                 ((IDisposable)_pdfOutput).Dispose();
                 _pdfOutput = null;
+            }
+        }
+
+        public void Extract(string outfile, int start, int end)
+        {
+            IList<int> pageNumbers = Enumerable.Range(start, end - start + 1).ToList();
+
+            using (var pdfInput = new PdfDocument(new PdfReader(_input)) )
+            using (var pdfOutput = new PdfDocument(new PdfWriter(outfile)))
+            {
+                pdfInput.CopyPagesTo(pageNumbers, pdfOutput);                
             }
         }
 
