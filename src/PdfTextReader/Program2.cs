@@ -13,9 +13,9 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.RemoveOverlapedImages("dz-easy/dz079");
+            // Pipeline.OverlappedTables("dz-easy/dz127");
 
-            //Pipeline.TestEnumFiles("bin/dz-easy", f => Pipeline.RunCorePdf(f.Substring(4)) );
+            Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 
             //ProcessSingle("p42");
 

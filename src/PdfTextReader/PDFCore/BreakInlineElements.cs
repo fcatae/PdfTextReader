@@ -69,6 +69,8 @@ namespace PdfTextReader.PDFCore
 
                     if (OverlapContains(blocks[i], blocks[j]))
                     {
+                        //if(blocks[i])
+
                         var elems = BreakElements(blocks[i], blocks[j]);
 
                         if (elems == null)

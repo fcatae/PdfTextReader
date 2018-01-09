@@ -387,12 +387,44 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
+        public static void OverlappedTables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<PreProcessImages>()
+                        .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<RemoveOverlapedImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeaderImage>()
+                        .ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddImageSpace>()
+                        //.ParseBlock<BreakInlineElements>()
+                        //.ParseBlock<ResizeBlocksets>()
+                        //.ParseBlock<OrderBlocksets>()
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black);
+
+            pipeline.Done();
+        }
+
         public static void RunCorePdf(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-tmp-output.pdf")
+                    .Output($"bin/{basename}-test-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()

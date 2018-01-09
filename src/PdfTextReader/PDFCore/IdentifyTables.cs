@@ -19,6 +19,7 @@ namespace PdfTextReader.PDFCore
             
             var blockArray = new BlockSet<IBlock>[cellList.Count];
 
+            retry:
             bool hasModification = true;
             while (hasModification)
             {
@@ -62,8 +63,20 @@ namespace PdfTextReader.PDFCore
                         bool b2 = HasOverlap(blockSet, b_x1, b_y2);
                         bool b3 = HasOverlap(blockSet, b_x2, b_y2);
                         bool b4 = HasOverlap(blockSet, b_x2, b_y1);
-
+                        
                         bool hasOverlap = b1 || b2 || b3 || b4;
+
+                        // for some reason, hasOverlap is not 100% guarantee to work
+                        if( blockArray[j] != null )
+                        {
+                            if (currentBlockset == null)
+                                throw new InvalidOperationException();
+
+                            bool bb = Block.HasOverlap(blockArray[j], currentBlockset);
+
+                            if ((!hasOverlap) && bb)
+                                hasOverlap = true;
+                        }
 
                         // FOUND A CONNECTED LINE!
                         if (hasOverlap)
@@ -130,7 +143,28 @@ namespace PdfTextReader.PDFCore
             this._pageResult = result;
             this._pageLines = lines;
 
+            if(HasTableOverlap(result))
+            {
+                throw new InvalidOperationException("cannot have overlapped table");
+            }
+
             return result;
+        }
+
+        bool HasTableOverlap(BlockPage page)
+        {
+            foreach(var a in page.AllBlocks)
+            {
+                foreach (var b in page.AllBlocks)
+                {
+                    if (a == b)
+                        continue;
+
+                    if (Block.HasOverlap(a, b))
+                        return true;
+                }
+            }
+            return false;
         }
 
         static bool HasOverlap(BlockSet<IBlock> blockSet, float x, float h)
