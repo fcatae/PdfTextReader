@@ -25,8 +25,12 @@ namespace PdfTextReader.PDFCore
         float _x2 = float.MinValue;
         float _h2 = float.MinValue;
 
+        public static BlockSet2<IBlock> GetBlockCache(BlockSet<IBlock> block)
+        {
+            return new BlockSet2<IBlock>(block, block.GetX(), block.GetH(), block.GetX() + block.GetWidth(), block.GetH() + block.GetHeight());
+        }
+
         public string GetText() => throw new InvalidOperationException();
-        // UpdateBoundary bug: revert to dynamic Linq calculation
         public float GetX() => _x1;
         public float GetH() => _h1;
         public float GetWidth() => (_x2 - _x1);

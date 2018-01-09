@@ -15,11 +15,11 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Process(BlockPage page)
         {
+            // try to improve processing time
             var cellList = page.AllBlocks.ToList();
-            
-            var blockArray = new BlockSet<IBlock>[cellList.Count];
 
-            retry:
+            var blockArray = new TableSet[cellList.Count];
+            
             bool hasModification = true;
             while (hasModification)
             {
@@ -33,12 +33,12 @@ namespace PdfTextReader.PDFCore
                     if (blockArray[i] == null)
                     {
                         // create a fresh blockset
-                        blockArray[i] = new BlockSet<IBlock>();
+                        blockArray[i] = new TableSet();
                         // add the current element to the blockset
                         blockArray[i].Add(c);
                     }
 
-                    BlockSet<IBlock> currentBlockset = blockArray[i];
+                    var currentBlockset = blockArray[i];
 
                     // assume that currentBlockset ALWAYS contains c
                     // -- it was added during blockArray assignment
@@ -167,7 +167,7 @@ namespace PdfTextReader.PDFCore
             return false;
         }
 
-        static bool HasOverlap(BlockSet<IBlock> blockSet, float x, float h)
+        static bool HasOverlap(IBlock blockSet, float x, float h)
         {
             float a_x1 = blockSet.GetX();
             float a_x2 = blockSet.GetX() + blockSet.GetWidth();
