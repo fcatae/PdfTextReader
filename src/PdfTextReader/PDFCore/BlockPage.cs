@@ -21,6 +21,9 @@ namespace PdfTextReader.PDFCore
         {
             foreach(var block in blockList)
             {
+                if (block == null)
+                    throw new ArgumentNullException(nameof(block));
+
                 Add(block);
             }
         }

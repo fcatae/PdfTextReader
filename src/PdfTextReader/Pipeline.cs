@@ -361,8 +361,9 @@ namespace PdfTextReader
                         .ParseBlock<RemoveHeaderImage>()
                         .ParseBlock<AddTableSpace>()
                         .ParseBlock<AddImageSpace>()
-                        .Show(Color.Orange)
-                        .Validate<BreakInlineElements>().ShowErrors(p => p.Show(Color.Green));
+                        .Validate<BreakInlineElements>().ShowErrors(p => p.Show(Color.Green))
+                        .ParseBlock<BreakInlineElements>()
+                        .Show(Color.Orange);
                         //.ParseBlock<ResizeBlocksets>()
                         //.ParseBlock<OrderBlocksets>()
                         //.Show(Color.Orange);                        

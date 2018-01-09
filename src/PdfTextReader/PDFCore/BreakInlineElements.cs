@@ -9,11 +9,15 @@ namespace PdfTextReader.PDFCore
     {
         public BlockPage Process(BlockPage page)
         {
-            throw new NotImplementedException();
-            return BreakPage(page);         
+            return BreakElements(page);         
         }
 
         public BlockPage Validate(BlockPage page)
+        {
+            return FindInlineElements(page);
+        }
+
+        BlockPage FindInlineElements(BlockPage page)
         {
             var blocks = page.AllBlocks.ToList();
             var overlapped = new bool[blocks.Count];
@@ -45,149 +49,85 @@ namespace PdfTextReader.PDFCore
             return result;
         }
 
-        public BlockPage BreakPage(BlockPage page)
+        BlockPage BreakElements(BlockPage page)
         {
-            var blocks = page.AllBlocks.ToList();            
+            var blocks = page.AllBlocks.ToList();
+            var replacements = new IBlock[blocks.Count][];
             var result = new BlockPage();
-
-            var splitted = blocks.Select(b => SplitBlock((BlockSet<IBlock>)b)).ToList();
 
             for (int i = 0; i < blocks.Count; i++)
             {
-                for (int j = i + 1; j < blocks.Count; j++)
+                if (blocks[i] == null) continue;
+
+                for (int j = 0; j < blocks.Count; j++)
                 {
-                    if (blocks[i] == null) continue;
                     if (blocks[j] == null) continue;
 
-                    if (Block.HasOverlap(blocks[i], blocks[j]))
+                    // same block
+                    if (i == j)
+                        continue;
+
+                    if (OverlapContains(blocks[i], blocks[j]))
                     {
-                        // precheck: contained block?
-                        bool blockContainsA = BlockContains(blocks[i], blocks[j]);
-                        bool blockContainsB = BlockContains(blocks[j], blocks[i]);
+                        var elems = BreakElements(blocks[i], blocks[j]);
 
-                        if( blockContainsA || blockContainsB )
-                        {
-
-                        }
-
-                        int k = SelectBlock(splitted, blocks, i, j);
-
-                        bool breakInTheMiddle = false;
-                        
-                        if ((k == -1) && (blockContainsA || blockContainsB))
-                        {
-                            k = (blockContainsA) ? i : k;
-                            k = (blockContainsB) ? j : k;
-
-                            breakInTheMiddle = true;
-                        }
-                        
-                        if ( k == -1 )
-                        {
-                            // the blocks can merge?
-                            float wdiff = Math.Abs(blocks[i].GetWidth() - blocks[j].GetWidth());
-                            float xdiff = Math.Abs( blocks[i].GetX() - blocks[j].GetX() );
-
-                            // ignore?
-                            if (wdiff < 10f && xdiff < 10f)
-                                continue;
-
-                            throw new NotImplementedException("merge blockLines");
-
-                            // cannot break the blocks ?!?!?!?!
-                            throw new InvalidOperationException("should be handled previously in precheck");
-                            //continue;
-                        }
-
-                        var selected_block = blocks[k];
-                        var selected_block_split = splitted[k];
-
-                        IBlock otherBlock = (selected_block == blocks[i]) ? blocks[j] : blocks[i];
-                        float middle = otherBlock.GetH() + otherBlock.GetHeight() / 2;
-
-                        int size = -1;
-
-                        if (breakInTheMiddle)
-                        {
-                            size = SelectSize(selected_block, middle);
-                        }
-                        else
-                        {
-                            size = SelectSize(blocks[i], blocks[j], selected_block_split);
-
-                            if (size == -1)
-                                size = SelectSize(selected_block, middle);
-                        }
-                        
-                        if (size == 0)
+                        if (elems == null)
                             throw new InvalidOperationException();
 
-                        if (size == -1)
-                            throw new InvalidOperationException();
+                        // has to do replacement in place
+                        blocks[i] = null;
+                        blocks.AddRange(elems);
 
-                        if (size == ((BlockSet<IBlock>)selected_block).Count())
-                            throw new InvalidOperationException();
-
-                        var newblocks = CreateNewBlocks((BlockSet<IBlock>)selected_block, size);
-                        
-                        if(breakInTheMiddle)
-                        {
-                            // Check if newblocks has collision
-                            bool checkOverlap = CheckOverlapCrossIntersection(newblocks, otherBlock);
-
-                            if (checkOverlap)
-                                throw new InvalidOperationException();
-                        }
-
-
-
-                        // replace
-                        blocks[k] = null;
-                        blocks.Add(newblocks[0]);
-                        blocks.Add(newblocks[1]);
-                        splitted[k] = null;
-                        splitted.Add(SplitBlock(newblocks[0]));
-                        splitted.Add(SplitBlock(newblocks[1]));
+                        //replacements[i] = elems;
+                        break;
                     }
-                }                
+
+                    if( Block.HasOverlap(blocks[i], blocks[j]))
+                    {
+
+                    }
+                }
             }
 
-            result.AddRange(blocks.Where(b => b != null));
+            result.AddRange(blocks.Where(b=> b!=null));
+
+            //for (int i = 0; i < blocks.Count; i++)
+            //{
+            //    if (replacements[i] != null)
+            //    {
+            //        result.AddRange(replacements[i]);
+            //    }
+            //    else
+            //    {
+            //        result.Add(blocks[i]);
+            //    }
+            //}
 
             return result;
         }
 
-        int SelectBlock(List<BlockSet<IBlock>[]> splitted, IList<IBlock> blocks, int i, int j)
+        IBlock[] BreakElements(IBlock a, IBlock b)
         {
-            var split1 = splitted[i];
-            var container1 = blocks[i];
+            float middle = b.GetH() + b.GetHeight() / 2;
 
-            var split2 = splitted[j];
-            var container2 = blocks[j];
+            int size = SelectSize((BlockSet<IBlock>)a, middle);
 
-            bool goodCandidate1 = !CheckOverlapCrossIntersection(split1, container2);
-            bool goodCandidate2 = !CheckOverlapCrossIntersection(split2, container1);
+            if (size == -1)
+                throw new InvalidOperationException();
 
-            if (goodCandidate1)
-                return i;
+            var blocks = CreateNewBlocks((BlockSet<IBlock>)a, size);
 
-            if (goodCandidate2)
-                return j;
+            bool overlap1 = OverlapContains(b, blocks[0]);
+            bool overlap2 = OverlapContains(b, blocks[1]);
 
-            if( goodCandidate1 && goodCandidate2 )
-                throw new NotImplementedException("can it happen?");
+            if (overlap1 || overlap2)
+                throw new InvalidOperationException();
 
-            // else
-            // NOTHING FOUND
-            //throw new NotImplementedException("needs to improve the scenario");
-            // the blocks are overlapped and requires more than one split
-            // adjust (FindInitialBlocks -> statDownInTheBottom)
-            return -1;
+            return blocks;
         }
 
-        int SelectSize(IBlock container, float middle)
+        int SelectSize(BlockSet<IBlock> blockset, float middle)
         {
-            var blockset = (BlockSet<IBlock>)container;
             int k = 0;
             foreach(var b in blockset)
             {
@@ -199,54 +139,8 @@ namespace PdfTextReader.PDFCore
 
             return -1;
         }
-
-        int SelectSize(IBlock container1, IBlock container2, BlockSet<IBlock>[] candidateBlockArray)
-        {
-            float[] intersection = GetIntersectionAreaY(container1, container2);
-            
-            IBlock topBlock = null;
-            IBlock bottomBlock = null;
-            IBlock coreBlock = null;
-
-            topBlock = candidateBlockArray.First();
-            bottomBlock = candidateBlockArray.Last();
-            coreBlock = (candidateBlockArray.Length == 3) ? candidateBlockArray[1] : null;
-
-            bool checkTop = Block.HasOverlapY(topBlock, intersection[0], intersection[1]);
-            bool checkBottom = Block.HasOverlapY(bottomBlock, intersection[0], intersection[1]);
-
-            int top = ((BlockSet<IBlock>)topBlock).Count();
-            int bottom = ((BlockSet<IBlock>)bottomBlock).Count();
-
-            bool checkCore = false;
-            int core = 0;
-
-            if (coreBlock != null)
-            {
-                checkCore = Block.HasOverlapY(coreBlock, intersection[0], intersection[1]);
-                core = ((BlockSet<IBlock>)coreBlock).Count();
-            }
-
-            int total = top + bottom + core;
-
-            if ((!checkBottom) && (!checkTop))
-                return -1;
-
-            int result = -1;
-
-            if (checkTop)
-                result = top;
-
-            if (checkBottom)
-                result = total - bottom;
-
-            if (result < 0)
-                throw new NotImplementedException();
-
-            return result;
-        }
-
-        BlockSet<IBlock>[] CreateNewBlocks(BlockSet<IBlock> blocks, int middle)
+        
+        IBlock[] CreateNewBlocks(BlockSet<IBlock> blocks, int middle)
         {
             int total = blocks.Count();
 
@@ -256,199 +150,9 @@ namespace PdfTextReader.PDFCore
             blockA.AddRange(blocks.Take(middle));
             blockB.AddRange(blocks.TakeLast(total - middle));
 
-            return new BlockSet<IBlock>[] { blockA , blockB };
-        }
-
-        bool CheckOverlapCrossIntersection(BlockSet<IBlock>[] splitted, IBlock container)
-        {
-            foreach(var splittedBlock in splitted)
-            {
-                bool overlaps = Block.HasOverlap(splittedBlock, container);
-                if (overlaps)
-                    return true;
-            }
-            
-            return false;
-        }
-
-        float[] GetIntersectionAreaY(IBlock a, IBlock b)
-        {
-            float a_y1 = a.GetH();
-            float a_y2 = a.GetH() + a.GetHeight();
-            float b_y1 = b.GetH();
-            float b_y2 = b.GetH() + b.GetHeight();
-
-            float[] ys = new float[] { a_y1, a_y2, b_y1, b_y2 };
-
-            var ys_ordered = ys.OrderBy(f => f).ToArray();
-
-            return new float[] { ys_ordered[1], ys_ordered[2]};
-        }
-
-        bool BlockContains(IBlock a, IBlock b)
-        {
-            float a_y1 = a.GetH();
-            float a_y2 = a.GetH() + a.GetHeight();
-            float b_y1 = b.GetH();
-            float b_y2 = b.GetH() + b.GetHeight();
-
-            return ((a_y2 > b_y2) && (a_y1 < b_y1));
-        }
-
-        void TryBreak(IBlock topBlock, IBlock bottomBlock)
-        {
-            float a_x1 = topBlock.GetX();
-            float a_x2 = topBlock.GetX() + topBlock.GetWidth();
-            float a_y1 = topBlock.GetH();
-            float a_y2 = topBlock.GetH() + topBlock.GetHeight();
-
-            float b_x1 = bottomBlock.GetX();
-            float b_x2 = bottomBlock.GetX() + bottomBlock.GetWidth();
-            float b_y1 = bottomBlock.GetH();
-            float b_y2 = bottomBlock.GetH() + bottomBlock.GetHeight();
-
-            // assume a > y
-            if (a_y2 > b_y2)
-                return;
-
-            // ensure the intersection ( expect to exists b > a , too)
-            if (!(b_y2 > a_y1))
-                throw new InvalidOperationException("No intersection?");
-
-            bool topContainsBottom = (b_y1 > a_y1);
-
-            // hope it works anyway
-            //if (topContainsBottom)
-            //    throw new NotImplementedException("should break inside the topBlock");
-
-            // intersection region
-            float it_y1 = a_y1;
-            float it_y2 = b_y2;
-
-            // find cores top and bottom
-        }
-
-        BlockSet<IBlock>[] SplitBlock(BlockSet<IBlock> blockset)
-        {
-            var blocks = blockset.ToList();
-
-            int total = blocks.Count - 1;
-            float limit = blockset.GetWidth() / 2;
-
-            int start = ScanBlock(i => blocks[i], blockset.GetX() + limit);
-            int end = ScanBlock(i => blocks[total - i], blockset.GetX() + limit);
-
-            // no split
-            if (start == 0 && end == 0)
-            {
-                // VALIDATE
-                //System.Diagnostics.Debugger.Break();
-
-                return new BlockSet<IBlock>[] { blockset };
-            }
-
-            // split into 2 pieces
-            int middle = -1;
-
-            // split into 2 pieces: there is a clear division
-            middle = (start + end > total) ? (start) : middle;
-            middle = (start == 0) ? (total - end + 1) : middle;
-            middle = (end == 0) ? (start) : middle;
-
-            if (middle > 0)
-            {
-                var blockA = new BlockSet<IBlock>();
-                var blockB = new BlockSet<IBlock>();
-
-                blockA.AddRange(blocks.Take(middle));
-                blockB.AddRange(blocks.TakeLast(total - middle + 1));
-
-                int count2 = blockA.Count() + blockB.Count();
-                if (count2 != blocks.Count)
-                    throw new InvalidOperationException();
-
-                // VALIDATE
-                //System.Diagnostics.Debugger.Break();
-
-                return new BlockSet<IBlock>[] { blockA, blockB };
-            }
-
-            // split into 3 pieces
-            var topBlock = new BlockSet<IBlock>();
-            var coreBlock = new BlockSet<IBlock>();
-            var bottomBlock = new BlockSet<IBlock>();
-
-            topBlock.AddRange(blocks.Take(start));
-
-            for (int i = start; i <= total - end; i++)
-            {
-                coreBlock.Add(blocks[i]);
-            }
-
-            bottomBlock.AddRange(blocks.TakeLast(end));
-
-            int count3 = topBlock.Count() + coreBlock.Count() + bottomBlock.Count();
-            if (count3 != blocks.Count)
-                throw new InvalidOperationException();
-
-            // VALIDATE
-            //System.Diagnostics.Debugger.Break();
-            return new BlockSet<IBlock>[] { topBlock, coreBlock, bottomBlock };
-        }
-
-        BlockSet<IBlock> FindBlockCore(BlockSet<IBlock> blockset)
-        {
-            var blocks = blockset.ToList();
-
-            int total = blocks.Count - 1;
-            float limit = blockset.GetWidth() / 2;
-
-            int start = ScanBlock(i => blocks[i], blockset.GetX() + limit);
-            int end = ScanBlock(i => blocks[total - i], blockset.GetX() + limit);
-
-            int ini = start;
-            int tot = total + 1 - end;
-
-            var core = new BlockSet<IBlock>();
-            
-            // get the core
-            for (int i = start; i <= total - end; i++)
-            {
-                core.Add(blocks[i]);
-            }
-
-            return core;
-        }
-
-        int ScanBlock(Func<int,IBlock> getBlock, float point)
-        {
-            float x1 = float.MaxValue;
-            float x2 = float.MinValue;
-            int count = 0;
-
-            while(!IntersectLine(point, x1, x2))
-            {
-                var b = getBlock(count++);
-
-                if (b == null)
-                    throw new InvalidOperationException("should not reach the end of the sequence");
-
-                x1 = Math.Min(x1, b.GetX());
-                x2 = Math.Max(x2, b.GetX() + b.GetWidth());
-            }
-
-            if (count == 0)
-                throw new InvalidOperationException();
-
-            return count-1;
+            return new IBlock[] { blockA , blockB };
         }
         
-        bool IntersectLine(float point, float x1, float x2)
-        {
-            return (x1 <= point) && (x2 >= point);
-        }
-
-
         public static bool OverlapContains(IBlock a, IBlock b)
         {
             float a_x1 = a.GetX();
