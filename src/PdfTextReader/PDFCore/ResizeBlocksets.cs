@@ -74,6 +74,8 @@ namespace PdfTextReader.PDFCore
 
                 var curblocks = values.Select(v => v.B).ToList();
 
+                List<IBlock> repls = new List<IBlock>();
+
                 foreach (var bl in over)
                 {
                     var compareBlocks = curblocks.Except(new IBlock[] { bl, blsearch.B });
@@ -85,22 +87,34 @@ namespace PdfTextReader.PDFCore
                         Height = blsearch.B.GetHeight()
                     };
 
+                    // ensure it will increase
+                    float diff = block.GetWidth() - blsearch.B.GetWidth();
+
+                    if (diff < 0)
+                        throw new InvalidOperationException("should never decrease the block size");
+
                     if (CheckBoundary(compareBlocks, block))
                     {
-                        float diff = block.GetWidth() - blsearch.B.GetWidth();
-
-                        if (diff < 0)
-                            throw new InvalidOperationException("should never decrease the block size");
-
+                        // may receive multiples
                         var original = (IEnumerable<IBlock>)blsearch.B;
                         var replace = new BlockSet2<IBlock>(original, block.GetX(), block.GetH(), block.GetX()+block.GetWidth(), block.GetH()+block.GetHeight());
-
-                        blsearch.B = replace;
+                        repls.Add(replace);
                     }
                 }
 
+                if(repls.Count > 0)
+                {
+                    // this is important because repls.Count can be > 1
+                    if( repls.Count > 1 )
+                    {
+                        // add a breakpoint to monitor if needed
+                    }
+
+                    var largest_replace = repls.OrderByDescending(t => t.GetWidth()).First();
+                    blsearch.B = largest_replace;
+                }
             }
-            
+
             var result = new BlockPage();
 
             result.AddRange(values.Select(p => (IBlock)p.B));

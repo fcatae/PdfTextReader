@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.RunCorePdf("p40");
+            Pipeline.RunCorePdf("dz-test/dz127");
 
             // Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 
