@@ -6,59 +6,76 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class HighlightTextTable : IProcessBlock, IPipelineDependency
+    class HighlightTextTable : IProcessBlock, IValidateBlock, IPipelineDependency
     {
-        private List<IBlock> _lines;
+        const float DARKCOLOR = 0.5f;
+
+        private List<IBlock> _region;
 
         public void SetPage(PipelinePage p)
         {
             var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
 
-            var page = parserTable.PageLines;
+            var lines = parserTable.PageLines.AllBlocks;
+            var backgrounds = parserTable.PageBackground.AllBlocks;
 
-            if (page == null)
+            if ((lines == null)|| (backgrounds == null))
                 throw new InvalidOperationException("HighlightTextTable requires IdentifyTables");
 
-            this._lines = page.AllBlocks.ToList();
+            var region = new List<IBlock>();
+            region.AddRange(lines.AsEnumerable());
+            region.AddRange(backgrounds.AsEnumerable());
+            this._region = region;            
         }
 
-        public BlockPage Process(BlockPage page)
+        public BlockPage FindHighlightBlocks(BlockPage page)
         {
-            if(this._lines == null)
+            if(this._region == null)
                 throw new InvalidOperationException("HighlightTextTable requires IdentifyTables");
 
             var result = new BlockPage();
 
             foreach(var block in page.AllBlocks)
             {
-                bool insideTable = false;
-
-                foreach(var table in _lines)
+                foreach(var table in _region)
                 {
                     if( Block.HasOverlap(table, block) )
                     {
-                        var cell = (TableCell)((BlockSet<IBlock>)table).First();
+                        var cell = (TableCell)((TableSet)table).First();
                         float width = cell.LineWidth;
+                        float bgcolor = cell.BgColor;
+                        int op = cell.Op;
 
-                        if (width < block.GetHeight() / 2)
-                            throw new InvalidOperationException("not expected");
+                        if (op == 1 && width < block.GetHeight() / 2)
+                            continue; // throw new InvalidOperationException("not expected");
 
-                        ((Block)block).SetHighlight((int)width);
+                        if (op == 2 && bgcolor < DARKCOLOR)
+                            continue; // throw new InvalidOperationException("not expected");
 
-                        insideTable = true;
+                        result.Add(block);
                         break;
                     }
-                }
-
-
-                if (insideTable)
-                {
-                }
-
-                result.Add(block);
+                }                
             }
 
             return result;
+        }
+
+        public BlockPage Process(BlockPage page)
+        {
+            var blocks = FindHighlightBlocks(page);
+            
+            foreach(var block in blocks.AllBlocks)
+            {
+                ((Block)block).SetHighlight(100);
+            }
+
+            return page;
+        }
+
+        public BlockPage Validate(BlockPage page)
+        {
+            return FindHighlightBlocks(page);
         }
     }
 }

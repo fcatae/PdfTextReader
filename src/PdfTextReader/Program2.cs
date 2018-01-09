@@ -13,7 +13,9 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.ShowTables("DO1_2016_12_20-p23");
+            Pipeline.RunCorePdf("p42");
+            Pipeline.RunCorePdf("DO1_2016_12_20-p23");
+            //Pipeline.RunCorePdf("DO1_2016_12_20-p36");
             //Pipeline.ShowTablesImages("DO1_2016_12_20-p23");
 
             //Pipeline.MultipageCore("DO1_2016_12_20");

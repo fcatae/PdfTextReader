@@ -12,6 +12,8 @@ namespace PdfTextReader.PDFCore
 {
     public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
     {
+        const float DARKCOLOR = 0.5f;
+
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_PATH };
 
         private BlockSet<TableCell> _blockSet = new BlockSet<TableCell>();
@@ -37,9 +39,9 @@ namespace PdfTextReader.PDFCore
 
             if (line != null)
             {
-                var bgcolor = GetColor(line.GetFillColor());
-                var fgcolor = GetColor(line.GetStrokeColor()); 
                 int op = line.GetOperation();
+                var bgcolor = ( op == 2 ) ? GetColor(line.GetFillColor()) : 0;
+                var fgcolor = GetColor(line.GetStrokeColor()); 
                 float linewidth = line.GetLineWidth();
                 var path = line.GetPath();
                 var subpaths = path.GetSubpaths();
@@ -47,7 +49,7 @@ namespace PdfTextReader.PDFCore
                 var ctm = line.GetCtm();
                 var dx = ctm.Get(6);
                 var dy = ctm.Get(7);
-
+                
                 if (op == 0)
                     return;
                                 
@@ -70,7 +72,7 @@ namespace PdfTextReader.PDFCore
 
                 float translate_x = dx;
                 float translate_y = dy;
-
+                
                 var tableCell = new TableCell()
                 {
                     Op = op,
@@ -90,7 +92,7 @@ namespace PdfTextReader.PDFCore
                     if (tableCell.Op != 0)
                     {
                         _blockSet.Add(tableCell);
-                    }                    
+                    }
                 }
                 else
                 {

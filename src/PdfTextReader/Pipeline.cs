@@ -514,6 +514,8 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                         //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                         .ParseBlock<MergeTableText>()
+                        .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                        .ParseBlock<HighlightTextTable>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
                             .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))

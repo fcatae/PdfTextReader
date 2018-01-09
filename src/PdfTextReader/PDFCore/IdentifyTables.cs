@@ -8,10 +8,14 @@ namespace PdfTextReader.PDFCore
 {
     class IdentifyTables : IProcessBlock
     {
+        const float DARKCOLOR = 0.5f;
+
         private BlockPage _pageResult;
         private BlockPage _pageLines;
+        private BlockPage _pageBackground;
         public BlockPage PageTables => _pageResult;
         public BlockPage PageLines=> _pageLines;
+        public BlockPage PageBackground => _pageBackground;
 
         public void SetPageTables(IEnumerable<IBlock> tables)
         {
@@ -27,7 +31,7 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {
             // try to improve processing time
-            var cellList = page.AllBlocks.ToList();
+            var cellList = page.AllBlocks.Where(b => ((TableCell)b).BgColor < DARKCOLOR).ToList();
 
             var blockArray = new TableSet[cellList.Count];
             
@@ -140,19 +144,29 @@ namespace PdfTextReader.PDFCore
 
             var result = new BlockPage();
             var lines = new BlockPage();
+            var background = new BlockPage();
 
-            foreach(var b in blockList)
+            float color_tolerance = .5f;
+
+            foreach (var b in blockList)
             {
                 // does not add line segments
                 if (b.Count() == 1)
                     lines.Add(b);
                 else
                     result.Add(b);
-                
             }
+
+            // add background
+            var dark = page.AllBlocks
+                        .Where(b => ((TableCell)b).BgColor >= DARKCOLOR)
+                        .Select(b => new TableSet() { b });
+
+            background.AddRange(dark);
 
             this._pageResult = result;
             this._pageLines = lines;
+            this._pageBackground = background;
 
             if(HasTableOverlap(result))
             {
