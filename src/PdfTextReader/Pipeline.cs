@@ -448,12 +448,12 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
-        public static void BreakColumnsLight(string basename)
+        public static void DetectInvisibleTable(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-test-output.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()
@@ -463,19 +463,22 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
-                        .ParseBlock<FindInitialBlockset>()
-                        .ParseBlock<BreakColumnsLight>()
-                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                        .ParseBlock<RemoveFooter>()
-                        .ParseBlock<RemoveHeaderImage>()
-                        .ParseBlock<AddTableSpace>()
-                        .ParseBlock<AddImageSpace>()
-                        .ParseBlock<BreakInlineElements>()
-                        .ParseBlock<ResizeBlocksets>()
-                            .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
-                        .ParseBlock<OrderBlocksets>()
-                        .Show(Color.Orange)
+                        .ParseBlock<FindInitialBlocksetWithRewind>()
+                        .Show(Color.Yellow)
+                        .Validate<DetectInvisibleTable>().ShowErrors( p=> p.Show(Color.Red))
+                        .ParseBlock<DetectInvisibleTable>()
+                        //.ParseBlock<BreakColumns>()
+                        //.Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        //.Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                        //.ParseBlock<RemoveFooter>()
+                        //.ParseBlock<RemoveHeaderImage>()
+                        //.ParseBlock<AddTableSpace>()
+                        //.ParseBlock<AddImageSpace>()
+                        //.ParseBlock<BreakInlineElements>()
+                        //.ParseBlock<ResizeBlocksets>()
+                        //    .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                        //.ParseBlock<OrderBlocksets>()
+                        //.Show(Color.Orange)
                         .ShowLine(Color.Black);
 
             pipeline.Done();

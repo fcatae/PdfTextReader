@@ -79,6 +79,24 @@ namespace PdfTextReader
                              ((a1 > b2) && (a2 > b2));
             return !separated;
         }
+        public static bool AreSameLine(IBlock a, IBlock b)
+        {
+            float err = 0.01f;
+
+            float diff_h1 = Math.Abs(a.GetH() - b.GetH());
+            float diff_h2 = Math.Abs(a.GetHeight() - b.GetHeight());
+
+            return ( diff_h1 < err && diff_h2 < err );
+        }
+
+        public static bool IsSuperscriptFont(Block a, Block b)
+        {
+            float a_y1 = a.GetH();
+            float a_y2 = a.GetH() + a.FontSize;
+            float b_y1 = b.GetH();
+
+            return ((a_y2 > b_y1) && (a_y1 < b_y1)) && (a.FontSize > b.FontSize);
+        }
     }
 
 }
