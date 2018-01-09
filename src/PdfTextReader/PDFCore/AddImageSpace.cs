@@ -6,26 +6,26 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class AddTableSpace : IProcessBlock, IPipelineDependency
+    class AddImageSpace : IProcessBlock, IPipelineDependency
     {
-        private List<IBlock> _tables;
+        private List<IBlock> _images;
 
         public void SetPage(PipelinePage p)
         {
-            var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
+            var parserImage = p.CreateInstance<PDFCore.PreProcessImages>();
 
-            var page = parserTable.PageTables;
+            var page = parserImage.Images;
 
             if (page == null)
-                throw new InvalidOperationException("AddTableSpace requires IdentifyTables");
+                throw new InvalidOperationException("AddImageSpace requires PreProcessImages");
 
-            this._tables = page.AllBlocks.ToList();
+            this._images = page.AllBlocks.ToList();
         }
 
         public BlockPage Process(BlockPage page)
         {
-            if(this._tables == null)
-                throw new InvalidOperationException("AddTableSpace requires IdentifyTables");
+            if(this._images == null)
+                throw new InvalidOperationException("AddImageSpace requires PreProcessImages");
 
             var result = new BlockPage();
 
@@ -33,7 +33,7 @@ namespace PdfTextReader.PDFCore
             {
                 result.Add(block);
             }
-            foreach (var block in _tables)
+            foreach (var block in _images)
             {
                 result.Add(block);
             }

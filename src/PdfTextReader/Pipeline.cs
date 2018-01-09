@@ -319,6 +319,27 @@ namespace PdfTextReader
             pipeline.EnumFiles(foldername, action);
         }
         
+        public static void AddImageSpace(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-img-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<PreProcessImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddImageSpace>()
+                        .Show(Color.Orange);
+
+            pipeline.Done();
+        }
+
         public static void RunCorePdf(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -335,11 +356,11 @@ namespace PdfTextReader
                         .ParseBlock<FindInitialBlockset>()
                         .ParseBlock<BreakColumns>()
                         .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                         .ParseBlock<RemoveFooter>()
-                        //.ParseBlock<RemoveHeader>()
                         .ParseBlock<RemoveHeaderImage>()
                         .ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddImageSpace>()
                         .ParseBlock<ResizeBlocksets>()
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Orange)
@@ -372,6 +393,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
         public static IEnumerable<TextLine> GetLinesUsingPipeline(string basename)
         {
             var pipeline = new Execution.Pipeline();
