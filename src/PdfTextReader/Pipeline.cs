@@ -419,7 +419,7 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
-        public static void RunCorePdf(string basename)
+        public static void ValidateResizeBlock(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
@@ -436,6 +436,35 @@ namespace PdfTextReader
                         .ParseBlock<GroupLines>()
                         .ParseBlock<FindInitialBlockset>()
                         .ParseBlock<BreakColumns>()
+                        //.Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                        //.Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                        .ParseBlock<RemoveFooter>()
+                        .ParseBlock<RemoveHeaderImage>()
+                        .ParseBlock<AddTableSpace>()
+                        .ParseBlock<AddImageSpace>()
+                        //.ParseBlock<BreakInlineElements>()
+                        .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red));
+
+            pipeline.Done();
+        }
+
+        public static void RunCorePdf(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-test-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                    .ParsePdf<PreProcessImages>()
+                            .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                        .ParseBlock<RemoveOverlapedImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveTableText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                        .ParseBlock<BreakColumns>()
                         .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                         .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                         .ParseBlock<RemoveFooter>()
@@ -444,6 +473,7 @@ namespace PdfTextReader
                         .ParseBlock<AddImageSpace>()
                         .ParseBlock<BreakInlineElements>()
                         .ParseBlock<ResizeBlocksets>()
+                            .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Orange)
                         .ShowLine(Color.Black);

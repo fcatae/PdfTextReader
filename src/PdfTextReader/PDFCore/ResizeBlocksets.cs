@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class ResizeBlocksets : IProcessBlock
+    class ResizeBlocksets : IProcessBlock, IValidateBlock
     {
         private List<Data> Values { get; set; }
         private List<Data> ValuesY { get; set; }
@@ -119,6 +119,69 @@ namespace PdfTextReader.PDFCore
             }
 
             return true;
+        }
+
+        public BlockPage Validate(BlockPage page)
+        {
+            float error_column = 2f;
+
+            var blocksets = page.AllBlocks.ToList();
+
+            float x1 = page.AllBlocks.GetX();
+            float x2 = page.AllBlocks.GetX() + page.AllBlocks.GetWidth();
+            float dx = page.AllBlocks.GetWidth() + 2;
+            float h1 = page.AllBlocks.GetH();
+            float h2 = page.AllBlocks.GetH() + page.AllBlocks.GetHeight();
+            float dh = page.AllBlocks.GetHeight() + 2;
+
+            float pageSize = page.AllBlocks.Max(b => b.GetX() + b.GetWidth());
+
+            // Prepare the values order by X
+            int id = 0;
+            var values = page.AllBlocks.Select(b => new Data
+            {
+                ID = id++,
+                X = (int)(6.0 * ((b.GetX() - x1) / dx) + 0.5),
+                X2 = (int)(6.0 * ((b.GetX() + b.GetWidth() - x1) / dx) + 0.5),
+                Y = (int)(1000 * (b.GetH() - h1) / (dh)),
+                Y1 = (int)(1000 * (b.GetH() + b.GetHeight() - h1) / (dh)),
+                W = (int)(6.0 * (b.GetWidth() / dx) + 0.5),
+                RW = b.GetWidth(),
+                B = b
+            })
+            .OrderByDescending(p => p.W)
+            .ToList();
+            
+            var columnW = (from v in values
+                           group v by v.W into g
+                           select new { g.Key, MaxRW = g.Max(ta => ta.RW) }).ToDictionary(t => t.Key);
+
+            var result = new BlockPage();
+
+            foreach (var block in values)
+            {
+                if( block.W != 2 && block.W != 3 && block.W != 4 && block.W != 6)
+                {
+                    result.Add(block.B);
+                    continue;
+                }
+
+                if ((block.X % block.W) != 0)
+                {
+                    result.Add(block.B);
+                    continue;
+                }
+
+                float rw = columnW[block.W].MaxRW;
+
+                if( (rw - block.RW) > error_column)
+                {
+                    result.Add(block.B);
+                    continue;
+                }
+            }            
+
+            return result;
         }
     }
 }
