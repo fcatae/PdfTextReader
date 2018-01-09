@@ -488,18 +488,19 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
+                            .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                            .ParseBlock<RemoveHeaderImage>()
                         .ParseBlock<FindInitialBlocksetWithRewind>()
                         .ParseBlock<BreakColumns>()
-                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                        .ParseBlock<RemoveFooter>()
-                        .ParseBlock<RemoveHeaderImage>()
+                            .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                            .ParseBlock<RemoveFooter>()
                         .ParseBlock<AddTableSpace>()
                         .ParseBlock<AddImageSpace>()
                         .ParseBlock<BreakInlineElements>()
                         .ParseBlock<ResizeBlocksets>()
                             .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                         .ParseBlock<OrderBlocksets>()
+
                         .Show(Color.Orange)
                         .ShowLine(Color.Black);
 
@@ -693,16 +694,21 @@ namespace PdfTextReader
                         // .Show(Color.Red)
                     .ParseContent<ProcessArticle>()
                         ;//.SaveXml(p => $"file-{p.page}");
-
         }
-        public static void ExtractPage(string basename, int pages)
+        public static void Extract(string basename, int pages)
         {
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
                     .Extract($"bin/{basename}-table-output.pdf", 1, pages);
         }
+        public static void ExtractPage(string basename, int page)
+        {
+            var pipeline = new Execution.Pipeline();
 
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Extract($"bin/{basename}-p{page}.pdf", page, page);
+        }
         public static void Multipage(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -742,7 +748,7 @@ namespace PdfTextReader
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
                         .ParseBlock<FindInitialBlocksetWithRewind>()
-                        .ParseBlock<BreakColumnsLight>()
+                        .ParseBlock<BreakColumns>()
                         .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                         .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                         .ParseBlock<RemoveFooter>()

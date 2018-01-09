@@ -13,8 +13,14 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
             //Pipeline.RunCorePdf("p40");
-            //Pipeline.RunCorePdf("TesteTabelaGafa");
-            Pipeline.MultipageCore("pg16");
+
+            //Pipeline.MultipageCore("DO1_2016_12_20");
+            
+            //Pipeline.RunCorePdf("DO1_2016_12_20-p68");
+            Pipeline.RunCorePdf("DO1_2016_12_20-p75");
+
+            //Pipeline.ExtractPage("DO1_2016_12_20", 30);
+            //Pipeline.ExtractPage("DO1_2016_12_20", 48);
 
             //Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 

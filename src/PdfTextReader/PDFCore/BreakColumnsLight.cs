@@ -77,6 +77,8 @@ namespace PdfTextReader.PDFCore
                         
                         if ( k == -1 )
                         {
+                            Console.WriteLine("BreakColumnsLight:k == -1");
+
                             continue;
 
                             //// the blocks can merge?
@@ -131,11 +133,9 @@ namespace PdfTextReader.PDFCore
                             bool checkOverlap = CheckOverlapCrossIntersection(newblocks, otherBlock);
 
                             if (checkOverlap)
-                                throw new InvalidOperationException();
+                                Console.WriteLine("BreakColumnsLight:checkOverlap");
                         }
-
-
-
+                        
                         // replace
                         blocks[k] = null;
                         blocks.Add(newblocks[0]);

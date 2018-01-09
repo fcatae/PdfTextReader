@@ -32,6 +32,8 @@ namespace PdfTextReader.Execution
         
         public PipelineInputPdfPage Page(int pageNumber)
         {
+            Console.WriteLine($"  page: {pageNumber}");
+
             var page = new PipelineInputPdfPage(this, pageNumber);
 
             if( CurrentPage != null )
