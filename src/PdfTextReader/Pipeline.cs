@@ -198,7 +198,8 @@ namespace PdfTextReader
                         .ParseBlock<IdentifyTables>()
                         .Show(Color.Green)
                     .ParsePdf<ProcessPdfText>()
-                        .ParseBlock<RemoveTableText>()
+                        //.ParseBlock<RemoveTableText>()
+                        .ParseBlock<HighlightTextTable>()
                         .ParseBlock<GroupLines>()
                         .Show(Color.Red);
 

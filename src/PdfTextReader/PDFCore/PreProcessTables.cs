@@ -24,7 +24,7 @@ namespace PdfTextReader.PDFCore
                 var bgcolor = line.GetFillColor();
                 var fgcolor = line.GetStrokeColor();
                 int op = line.GetOperation();
-                float width = line.GetLineWidth();
+                float linewidth = line.GetLineWidth();
                 var path = line.GetPath();
                 var subpaths = path.GetSubpaths();
                 int count = subpaths.Count;
@@ -69,7 +69,8 @@ namespace PdfTextReader.PDFCore
                     X = x1 + translate_x,
                     H = y1 + translate_y,
                     Width = x2 - x1,
-                    Height = y2 - y1
+                    Height = y2 - y1,
+                    LineWidth = linewidth
                 };
 
                 if (tableCell.Width < 0 || tableCell.Height < 0)

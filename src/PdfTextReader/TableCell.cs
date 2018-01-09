@@ -19,5 +19,6 @@ namespace PdfTextReader
         public float GetWidth() => Width;
         public float GetHeight() => Height;
         public float GetWordSpacing() => X;
+        public float LineWidth { get; set; }
     }
 }
