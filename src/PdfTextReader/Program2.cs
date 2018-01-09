@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.ProcessImages("dz001");
+            Pipeline.RemoveImageTexts("p40");
 
             //Pipeline.TestEnumFiles("bin/dz-table", f => Pipeline.CenteredLines(f.Substring(4)) );
 

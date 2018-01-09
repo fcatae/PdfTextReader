@@ -289,9 +289,24 @@ namespace PdfTextReader
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-table-output.pdf")
+                    .Output($"bin/{basename}-img-output.pdf")
                     .Page(1)
-                    .ParsePdf<ProcessImages>()
+                    .ParsePdf<PreProcessImages>()
+                        .Show(Color.Red);
+
+            pipeline.Done();
+        }
+
+        public static void RemoveImageTexts(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-img-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessImages>()
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<RemoveImageTexts>()
                         .Show(Color.Red);
 
             pipeline.Done();

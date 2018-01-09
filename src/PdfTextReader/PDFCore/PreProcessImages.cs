@@ -9,7 +9,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class ProcessImages : IEventListener, IPipelineResults<BlockPage>
+    public class PreProcessImages : IEventListener, IPipelineResults<BlockPage>, IProcessBlock
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_IMAGE };
 
@@ -61,6 +61,13 @@ namespace PdfTextReader.PDFCore
         public ICollection<EventType> GetSupportedEvents()
         {
             return _supportedEvents;
-        }        
+        }
+
+        public BlockPage Process(BlockPage page)
+        {
+            // we need this just because of the IProcessBlock requirement
+            // otherwise, we can't use a pipeline factory
+            throw new NotImplementedException();
+        }
     }
 }
