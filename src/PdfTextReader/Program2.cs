@@ -13,7 +13,7 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.DetectInvisibleTable("dz031");
+            Pipeline.DetectInvisibleTable("dz001");
 
             //Pipeline.TestEnumFiles("bin/", f => Pipeline.BreakColumnsLight(f.Substring(4)) );
 

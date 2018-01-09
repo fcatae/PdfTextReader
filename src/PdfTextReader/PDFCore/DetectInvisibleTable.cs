@@ -9,17 +9,52 @@ namespace PdfTextReader.PDFCore
     {
         public BlockPage Process(BlockPage page)
         {
-            return page;      
+            var blocks = page.AllBlocks.ToList();
+            var overlapped = new bool[blocks.Count];
+            var result = new BlockPage();
+
+            for (int i = 0; i < blocks.Count - 1; i++)
+            {
+                int j = i + 1;
+
+                if (Block.HasOverlap(blocks[i], blocks[j]))
+                {
+                    if (HasSmallerFont((BlockSet<IBlock>)blocks[i], (BlockSet<IBlock>)blocks[j]) ||
+                        HasLineOverlap((BlockSet<IBlock>)blocks[i], (BlockSet<IBlock>)blocks[j]))
+                    {
+                        var merge = Merge( (BlockSet<IBlock>)blocks[i], (BlockSet<IBlock>)blocks[j] );
+
+                        blocks[i] = null;
+                        blocks[j] = merge;
+                    }
+                }
+
+                if (blocks[i] != null)
+                {
+                    result.Add(blocks[i]);
+                }
+            }
+
+            return result;
+        }
+
+        BlockSet<IBlock> Merge(BlockSet<IBlock> a, BlockSet<IBlock> b)
+        {
+            var result = new BlockSet<IBlock>();
+            result.AddRange(a);
+            result.AddRange(b);
+
+            return result;
         }
 
         public BlockPage Validate(BlockPage page)
         {
             var blocks = page.AllBlocks.ToList();
-            var overlapped = new bool[blocks.Count];
             var result = new BlockPage();
 
             for(int i=0; i<blocks.Count - 1; i++)
             {
+                bool overlapped = false;
                 int j = i + 1;
 
                 if (Block.HasOverlap(blocks[i], blocks[j]))
@@ -27,12 +62,11 @@ namespace PdfTextReader.PDFCore
                     if( HasSmallerFont((BlockSet<IBlock>)blocks[i], (BlockSet<IBlock>)blocks[j]) ||
                         HasLineOverlap((BlockSet<IBlock>)blocks[i], (BlockSet<IBlock>)blocks[j]))
                     {
-                        overlapped[i] = true;
-                        overlapped[j] = true;
+                        overlapped = true;
                     }
                 }
 
-                if (overlapped[i])
+                if (overlapped)
                 {
                     result.Add(blocks[i]);
                 }
