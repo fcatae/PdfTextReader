@@ -256,6 +256,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
         public static void ResizeBlocksets(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -281,7 +282,20 @@ namespace PdfTextReader
                         .ShowLine(Color.Black);
 
             pipeline.Done();
-        }        
+        }
+
+        public static void ProcessImages(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-table-output.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessImages>()
+                        .Show(Color.Red);
+
+            pipeline.Done();
+        }
 
         public static void TestEnumFiles(string foldername, Action<string> action)
         {
