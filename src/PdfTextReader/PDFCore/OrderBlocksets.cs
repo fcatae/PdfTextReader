@@ -134,6 +134,7 @@ namespace PdfTextReader.PDFCore
 
                     // reset
                     k = -1;
+                    cur_w = -1;
                 }
             }
 
