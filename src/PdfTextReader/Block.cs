@@ -57,6 +57,22 @@ namespace PdfTextReader
             return (HasOverlap(a_x1, a_x2, b_x1, b_x2) && HasOverlap(a_y1, a_y2, b_y1, b_y2));
         }
 
+        public static bool HasOverlapWithY(IBlock a, IBlock b, float errY)
+        {
+            float a_x1 = a.GetX();
+            float a_x2 = a.GetX() + a.GetWidth();
+            float a_y1 = a.GetH() - errY;
+            float a_y2 = a.GetH() + a.GetHeight() + errY;
+
+            float b_x1 = b.GetX();
+            float b_x2 = b.GetX() + b.GetWidth();
+            float b_y1 = b.GetH() - errY;
+            float b_y2 = b.GetH() + b.GetHeight() + errY;
+
+            return (HasOverlap(a_x1, a_x2, b_x1, b_x2) && HasOverlap(a_y1, a_y2, b_y1, b_y2));
+        }
+
+
         static bool HasOverlap(float a1, float a2, float b1, float b2)
         {
             if ((b1 > b2) || (a1 > a2))

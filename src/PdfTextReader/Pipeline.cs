@@ -486,6 +486,8 @@ namespace PdfTextReader
                             .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
                         .ParseBlock<RemoveOverlapedImages>()
                     .ParsePdf<ProcessPdfText>()
+                        //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
+                        .ParseBlock<MergeTableText>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
                             .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
@@ -500,7 +502,6 @@ namespace PdfTextReader
                         .ParseBlock<ResizeBlocksets>()
                             .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                         .ParseBlock<OrderBlocksets>()
-
                         .Show(Color.Orange)
                         .ShowLine(Color.Black);
 

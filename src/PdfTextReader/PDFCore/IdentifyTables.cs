@@ -13,6 +13,17 @@ namespace PdfTextReader.PDFCore
         public BlockPage PageTables => _pageResult;
         public BlockPage PageLines=> _pageLines;
 
+        public void SetPageTables(IEnumerable<IBlock> tables)
+        {
+            var page = new BlockPage();
+            page.AddRange(tables);
+
+            if (HasTableOverlap(page))
+                throw new InvalidOperationException();
+
+            _pageResult = page;
+        }
+
         public BlockPage Process(BlockPage page)
         {
             // try to improve processing time
