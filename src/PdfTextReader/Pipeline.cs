@@ -5,6 +5,7 @@ using PdfTextReader.Structure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader
@@ -514,7 +515,7 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                         //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                         .ParseBlock<MergeTableText>()
-                        .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                        //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                         .ParseBlock<HighlightTextTable>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
@@ -728,6 +729,44 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+        
+        public static IEnumerable<Artigo> MultipageCreateArtigos(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-page-output.pdf")
+                    .StreamConvert<CreateStructures>(p =>
+                    {
+                        p.ParsePdf<PreProcessTables>()
+                                .ParseBlock<IdentifyTables>()
+                            .ParsePdf<ProcessPdfText>()
+                                .ParseBlock<RemoveTableText>()
+                                .ParseBlock<GroupLines>()
+                                .ParseBlock<FindInitialBlockset>();
+                    })
+                    .Select(t => { Console.WriteLine(t.FontName); return t; })
+                    .Count();
+
+            pipeline.Done();
+
+            //var pipeline = new Execution.Pipeline();
+            
+            //        .Text<CreateStructures>()
+            //            .ConvertText<CreateParagraphs, TextStructure>()
+            //            .ConvertText<TransformArtigo, Artigo>()
+            //            //.Show(Color.Orange)
+            //            ;
+
+            //var artigos = pipeline.GetResults<Artigo>();
+
+            //var procParser = new ProcessParser();
+            //procParser.XMLWriter(artigos, $"bin/{basename}");
+
+            //pipeline.Done();
+
+            return null;
+        }
 
         public static void ProcessPage(PipelineInputPdf.PipelineInputPdfPage page)
         {
@@ -739,6 +778,8 @@ namespace PdfTextReader
                     .ParsePdf<ProcessPdfText>()
                         //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                         .ParseBlock<MergeTableText>()
+                        //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                        .ParseBlock<HighlightTextTable>()
                         .ParseBlock<RemoveTableText>()
                         .ParseBlock<GroupLines>()
                             .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
@@ -754,7 +795,7 @@ namespace PdfTextReader
                             .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Orange)
-                        .ShowLine(Color.Black);          
+                        .ShowLine(Color.Black);
         }
 
         // Pipeline Definition: 

@@ -12,13 +12,24 @@ namespace PdfTextReader.Execution
     {
         public IPipelineContext Context { get; }
         public int PageNumber { get; }
-        public BlockPage LastResult { get; set; }
+        public PipelineInputPdf.PipelineInputPdfPage PageRef { get; }
         private BlockPage LastErrors { get; set; }
 
-        public PipelinePage(PipelineInputPdf pdf, int pageNumber)
+        public BlockPage LastResult {
+            get
+            {
+                return PageRef.LastResult;
+            }
+            set 
+            {
+                PageRef.LastResult = value;
+            }
+}
+        public PipelinePage(PipelineInputPdf pdf, PipelineInputPdf.PipelineInputPdfPage page, int pageNumber)
         {
             this.Context = pdf;
             this.PageNumber = pageNumber;
+            this.PageRef = page;
         }
 
         public PipelinePage Debug(Color Color)
@@ -96,7 +107,7 @@ namespace PdfTextReader.Execution
 
         public PipelinePage ShowErrors(Action<PipelinePage> callback)
         {
-            var newpage = new PipelinePage((PipelineInputPdf)this.Context, this.PageNumber);
+            var newpage = new PipelinePage((PipelineInputPdf)this.Context, this.PageRef, this.PageNumber);
 
             var errors = this.LastErrors;
 

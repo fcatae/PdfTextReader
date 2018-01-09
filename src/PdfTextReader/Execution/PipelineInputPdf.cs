@@ -3,6 +3,7 @@ using iText.Kernel.Pdf.Canvas;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfTextReader.PDFCore;
+using PdfTextReader.Structure;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfDocument;
         private string _output;
         private PdfDocument _pdfOutput;
-        
+
         public PipelineInputPdfPage CurrentPage { get; private set; }
         public object CurrentText { get; set; }
 
@@ -104,6 +105,28 @@ namespace PdfTextReader.Execution
                 callback(pdfPage);
             }
         }
+        
+        public IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
+            where T: IConvertBlock, new()
+        {
+            var processor = new T();            
+
+            int totalPages = _pdfDocument.GetNumberOfPages();
+
+            for (int i = 1; i <= totalPages; i++)
+            {
+                var pdfPage = Page(i);
+
+                callback(pdfPage);
+
+                var textSet = processor.ConvertBlock(pdfPage.LastResult);
+
+                foreach(var t in textSet.AllText)
+                {
+                    yield return t;
+                }
+            }
+        }
 
         public class PipelineInputPdfPage : IDisposable
         {
@@ -111,9 +134,10 @@ namespace PdfTextReader.Execution
             private readonly int _pageNumber;            
             private readonly PdfPage _pdfPage;
             private PdfCanvas _outputCanvas;
+            public BlockPage LastResult { get; set; }
 
             private PipelinePageFactory _factory = new PipelinePageFactory();
-
+            
             public PipelineInputPdfPage(PipelineInputPdf pipelineInputContext, int pageNumber)
             {
                 var pdfPage = pipelineInputContext._pdfDocument.GetPage(pageNumber);
@@ -137,7 +161,7 @@ namespace PdfTextReader.Execution
                 var parser = new PdfCanvasProcessor(listener);
                 parser.ProcessPageContent(_pdfPage);
 
-                var page = new PipelinePage(_pdf, _pageNumber);
+                var page = new PipelinePage(_pdf, this, _pageNumber);
                 page.LastResult = listener.GetResults();
 
                 if (page.LastResult == null)
