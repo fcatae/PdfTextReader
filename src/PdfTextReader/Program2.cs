@@ -12,15 +12,18 @@ namespace PdfTextReader
         static void Main(string[] args)
         {
             //ProcessBatch("dz");
-            //Pipeline.RunCorePdf("p40");
+
+            Pipeline.ShowTables("DO1_2016_12_20-p23");
+            //Pipeline.ShowTablesImages("DO1_2016_12_20-p23");
 
             //Pipeline.MultipageCore("DO1_2016_12_20");
-            
-            //Pipeline.RunCorePdf("DO1_2016_12_20-p68");
-            Pipeline.RunCorePdf("DO1_2016_12_20-p75");
 
-            //Pipeline.ExtractPage("DO1_2016_12_20", 30);
-            //Pipeline.ExtractPage("DO1_2016_12_20", 48);
+            //Pipeline.RunCorePdf("DO1_2016_12_20-p68");
+
+            //Pipeline.ExtractPage("DO1_2016_12_20", 75);
+            //Pipeline.ExtractPage("DO1_2016_12_20", 36);
+            //Pipeline.ExtractPage("DO1_2016_12_20", 23);
+            //Pipeline.ExtractPage("DO1_2016_12_20", 80);
 
             //Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
 

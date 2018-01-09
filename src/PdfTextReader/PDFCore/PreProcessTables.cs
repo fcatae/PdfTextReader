@@ -1,4 +1,5 @@
-﻿using iText.Kernel.Pdf.Canvas.Parser;
+﻿using iText.Kernel.Colors;
+using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Data;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfTextReader.Execution;
@@ -15,14 +16,29 @@ namespace PdfTextReader.PDFCore
 
         private BlockSet<TableCell> _blockSet = new BlockSet<TableCell>();
 
+        float GetColor(Color color)
+        {
+            float[] components = color.GetColorValue();
+            int size = components.Length;
+
+            // 1=Gray, 3=RGB, 4=CMYK
+            if (size == 1 || size == 3 || size == 4)
+            {
+                // return Gray, Blue or BlacK
+                return components[size - 1];
+            }
+
+            throw new InvalidOperationException("invalid color space");
+        }
+
         public void EventOccurred(IEventData data, EventType type)
         {
             var line = data as PathRenderInfo;
 
             if (line != null)
             {
-                var bgcolor = line.GetFillColor();
-                var fgcolor = line.GetStrokeColor();
+                var bgcolor = GetColor(line.GetFillColor());
+                var fgcolor = GetColor(line.GetStrokeColor()); 
                 int op = line.GetOperation();
                 float linewidth = line.GetLineWidth();
                 var path = line.GetPath();
@@ -32,24 +48,16 @@ namespace PdfTextReader.PDFCore
                 var dx = ctm.Get(6);
                 var dy = ctm.Get(7);
 
+                if (op == 0)
+                    return;
+                                
                 var segs = subpaths
                                 .SelectMany(p => p.GetSegments())
                                 .SelectMany(s => s.GetBasePoints())
                                 .ToArray();
 
-                foreach (var sub in subpaths)
-                {
-                    var segments = sub.GetSegments();
-
-                    foreach (var s in segments)
-                    {
-                        var ps = s.GetBasePoints();
-                        var ps_count = ps.Count;
-
-                        var ps2 = ps.Select(p => p.GetLocation()).ToArray();
-                    }
-                }
-
+                int segcount = segs.Length;
+                
                 float minerr = .5f;
 
                 var sign_x = ctm.Get(0);
@@ -70,7 +78,8 @@ namespace PdfTextReader.PDFCore
                     H = y1 + translate_y,
                     Width = x2 - x1,
                     Height = y2 - y1,
-                    LineWidth = linewidth
+                    LineWidth = linewidth,
+                    BgColor = bgcolor
                 };
 
                 if (tableCell.Width < 0 || tableCell.Height < 0)

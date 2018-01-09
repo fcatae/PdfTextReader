@@ -131,9 +131,7 @@ namespace PdfTextReader.PDFCore
                             if (checkOverlap)
                                 throw new InvalidOperationException();
                         }
-
-
-
+                        
                         // replace
                         blocks[k] = null;
                         blocks.Add(newblocks[0]);

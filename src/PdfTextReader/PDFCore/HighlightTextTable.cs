@@ -8,7 +8,7 @@ namespace PdfTextReader.PDFCore
 {
     class HighlightTextTable : IProcessBlock, IPipelineDependency
     {
-        private List<IBlock> _tables;
+        private List<IBlock> _lines;
 
         public void SetPage(PipelinePage p)
         {
@@ -19,12 +19,12 @@ namespace PdfTextReader.PDFCore
             if (page == null)
                 throw new InvalidOperationException("HighlightTextTable requires IdentifyTables");
 
-            this._tables = page.AllBlocks.ToList();
+            this._lines = page.AllBlocks.ToList();
         }
 
         public BlockPage Process(BlockPage page)
         {
-            if(this._tables == null)
+            if(this._lines == null)
                 throw new InvalidOperationException("HighlightTextTable requires IdentifyTables");
 
             var result = new BlockPage();
@@ -33,7 +33,7 @@ namespace PdfTextReader.PDFCore
             {
                 bool insideTable = false;
 
-                foreach(var table in _tables)
+                foreach(var table in _lines)
                 {
                     if( Block.HasOverlap(table, block) )
                     {
@@ -42,7 +42,6 @@ namespace PdfTextReader.PDFCore
 
                         if (width < block.GetHeight() / 2)
                             throw new InvalidOperationException("not expected");
-
 
                         ((Block)block).SetHighlight((int)width);
 
