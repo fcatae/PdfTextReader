@@ -20,7 +20,25 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfOutput;
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
-        public object CurrentText { get; set; }
+        
+        private List<IDisposable> _disposableObjects = new List<IDisposable>();
+
+        public object CurrentText { get; private set; }
+        public void SetCurrentText<T>(PipelineText<T> pipeText)
+        {
+            ReleaseAfterFinish(pipeText);
+
+            CurrentText = pipeText;
+        }
+
+        public void ReleaseAfterFinish(object instance)
+        {
+            var disposableObj = instance as IDisposable;
+            if (disposableObj != null)
+            {
+                _disposableObjects.Add(disposableObj);
+            }
+        }
 
         public PipelineInputPdf(string filename)
         {
@@ -81,6 +99,19 @@ namespace PdfTextReader.Execution
             {
                 ((IDisposable)_pdfOutput).Dispose();
                 _pdfOutput = null;
+            }
+            
+            lock (_disposableObjects)
+            {
+                if (_disposableObjects != null)
+                {
+                    foreach (var obj in _disposableObjects)
+                    {
+                        obj.Dispose();
+                    }
+
+                    _disposableObjects = null;
+                }
             }
         }
 

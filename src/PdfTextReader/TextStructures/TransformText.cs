@@ -6,7 +6,7 @@ using PdfTextReader.Base;
 namespace PdfTextReader.TextStructures
 {
     class TransformText<T, TI, TO>
-        where T: class, ITransformStructure<TI,TO>, new()
+        where T: class, IAggregateStructure<TI,TO>, new()
     {
         List<TI> _input;
 

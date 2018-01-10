@@ -8,11 +8,11 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Execution
 {
-    class PipelineText<TT>
+    class PipelineText<TT> 
     {
         public IPipelineContext Context { get; }
         public IEnumerable<TT> CurrentStream;
-
+        
         public PipelineText(IPipelineContext context, TextSet text)
         {
             this.Context = context;
@@ -42,33 +42,56 @@ namespace PdfTextReader.Execution
             throw new NotImplementedException();
         }
 
-        public PipelineText<TextLine> ParseText<P>()
-            where P: IProcessText, new()
-        {
-            var initial = this.CurrentText;
+        //public PipelineText<TextLine> ParseText<P>()
+        //    where P: IProcessText, new()
+        //{
+        //    var initial = this.CurrentText;
 
-            var processor = new P();
+        //    var processor = new P();
 
-            var result = processor.ProcessText(initial);
+        //    var result = processor.ProcessText(initial);
 
-            this.CurrentText = result;
-            this.CurrentStream = (IEnumerable<TT>)result.AllText;
+        //    this.CurrentText = result;
+        //    this.CurrentStream = (IEnumerable<TT>)result.AllText;
 
-            return (PipelineText<TextLine>)((object)this);
-        }
+        //    return (PipelineText<TextLine>)((object)this);
+        //}
+
         public PipelineText<TO> ConvertText<P,TO>()
-            where P : class, ITransformStructure<TT,TO>, new()
+            where P : class, IAggregateStructure<TT,TO>, new()
         {
             var initial = (IEnumerable<TT>)this.CurrentStream;
             
             var processor = new TransformText<P,TT,TO>();
+            ReleaseAfterFinish(processor);
 
-            var result = processor.Transform(initial).ToList();
+            var result = processor.Transform(initial);
 
             var pipe = new PipelineText<TO>(this.Context, result);
 
-            ((PipelineInputPdf)this.Context).CurrentText = pipe;
+            ((PipelineInputPdf)this.Context).SetCurrentText(pipe);
 
+            return pipe;
+        }
+
+        void ReleaseAfterFinish(object instance)
+        {
+            ((PipelineInputPdf)this.Context).ReleaseAfterFinish(instance);
+        }
+
+        public PipelineText<TT> Process(IProcessStructure<TT> processor, bool dispose = true)
+        {
+            if(dispose)
+            {
+                ReleaseAfterFinish(processor);
+            }
+
+            var initial = (IEnumerable<TT>)this.CurrentStream;
+
+            var result = initial.Select( data => processor.Process( data ));
+
+            var pipe = new PipelineText<TT>(this.Context, result);
+            
             return pipe;
         }
 

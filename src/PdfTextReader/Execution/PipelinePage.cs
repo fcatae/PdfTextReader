@@ -124,7 +124,7 @@ namespace PdfTextReader.Execution
 
             pipe.CurrentStream = lines.AllText;
 
-            // ((PipelineInputPdf)this.Context).CurrentText = pipe;
+            ((PipelineInputPdf)this.Context).SetCurrentText(pipe);
 
             return pipe;
         }

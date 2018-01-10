@@ -6,6 +6,8 @@ using System.Drawing;
 using System.IO;
 using PdfTextReader.Base;
 using PdfTextReader.Parser;
+using PdfTextReader.ExecutionStats;
+using PdfTextReader.TextStructures;
 
 namespace PdfTextReader
 {
@@ -13,7 +15,7 @@ namespace PdfTextReader
     {
         public static void MainTest()
         {
-            ProcessSingleText("p40");
+            ProcessSingleTextWithAnalytics("p40");
         }
         
         static void ProcessSingleText(string page)
@@ -23,10 +25,29 @@ namespace PdfTextReader
                             .ConvertText<TransformArtigo, Artigo>()
                             .ToList();
 
+            var procParser = new ProcessParser();
+            procParser.XMLWriter(artigos, $"bin/{page}-out");
+        }
+        static void ProcessSingleTextWithAnalytics(string page)
+        {
+            var artigos = Examples.GetTextLines(page)
+                            // show text lines
+                            .Process( PrintAnalytics.ShowTextLine($"bin/{page}-out-txtline.xml") )
+                            
+                            // TextLine -> TextStructure
+                            .ConvertText<CreateParagraphs, TextStructure>()                            
+
+                            // show text structures
+                            .Process( PrintAnalytics.ShowTextStructure($"bin/{page}-out-txtstr.xml") )
+
+                            // convert to artigos
+                            .ConvertText<TransformArtigo, Artigo>()
+
+                            // array
+                            .ToList();
 
             var procParser = new ProcessParser();
             procParser.XMLWriter(artigos, $"bin/{page}-out");
-
         }
 
         static void ProcessSingle(string page)
@@ -44,7 +65,7 @@ namespace PdfTextReader
             var parser = new Parser.ProcessParser();
             var contents = parser.ProcessStructures(paragraphs);
 
-            PrintAnalytics(page, lines, paragraphs, contents);
+            PrintAnalyticsFunc(page, lines, paragraphs, contents);
         }
 
         static void ProcessBatch(string subfolder)
@@ -70,12 +91,12 @@ namespace PdfTextReader
                 var parser = new Parser.ProcessParser();
                 var contents = parser.ProcessStructures(paragraphs);
 
-                PrintAnalytics(basename, lines, paragraphs, contents);
+                PrintAnalyticsFunc(basename, lines, paragraphs, contents);
 
             }
         }
 
-        static void PrintAnalytics(string pdfname, IEnumerable<TextLine> lines, IEnumerable<TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        static void PrintAnalyticsFunc(string pdfname, IEnumerable<TextLine> lines, IEnumerable<TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
         {
             ExecutionStats.ProcessStats.PrintAnalytics(pdfname, lines, structures, contents);
         }

@@ -6,7 +6,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.TextStructures
 {
-    class CreateParagraphs : ITransformStructure<TextLine, TextStructure>
+    class CreateParagraphs : IAggregateStructure<TextLine, TextStructure>
     {
         TextStructure _structure;
 

@@ -7,7 +7,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    class TransformArtigo : ITransformStructure<TextStructure, Artigo>
+    class TransformArtigo : IAggregateStructure<TextStructure, Artigo>
     {
         bool _title = true;
 

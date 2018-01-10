@@ -13,6 +13,18 @@ namespace PdfTextReader
 {
     class Examples
     {
+        public static PipelineText<TextLine> GetTextLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            var result =
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-test-output.pdf")
+                    .AllPages<CreateStructures>(ProcessPage);                  
+
+            return result;
+        }
+
         public static PipelineText<TextStructure> GetTextParagraphs(string basename)
         {
             var pipeline = new Execution.Pipeline();
