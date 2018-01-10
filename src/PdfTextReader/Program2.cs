@@ -23,7 +23,7 @@ namespace PdfTextReader
 
             //ExamplesPipeline.ShowTablesImages("DO1_2016_12_20-p23");
 
-            //ExamplesPipeline.MultipageCreateArtigos("p40");
+            ExamplesPipeline.MultipageCreateArtigos("p40");
 
             //ExamplesPipeline.MultipageCreateArtigos("pg20");
 
