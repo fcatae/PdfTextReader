@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 
 
-namespace PdfTextReader.Structure
+namespace PdfTextReader.TextStructures
 {
     class ProcessStructure2
     {
@@ -30,7 +30,7 @@ namespace PdfTextReader.Structure
                 }
                 else
                 {
-                    Stats.TextInfo infos = GetTextInfos(lines);
+                    ExecutionStats.TextInfo infos = GetTextInfos(lines);
                     TextStructure structure = new TextStructure()
                     {
                         FontName = infos.FontName,
@@ -52,7 +52,7 @@ namespace PdfTextReader.Structure
             }
             if (lines.Count > 0)
             {
-                Stats.TextInfo infos = GetTextInfos(lines);
+                ExecutionStats.TextInfo infos = GetTextInfos(lines);
                 TextStructure structure = new TextStructure()
                 {
                     FontName = infos.FontName,
@@ -160,26 +160,26 @@ namespace PdfTextReader.Structure
 
 
         //Analyze Font
-        public static List<Stats.TextInfo> GetAllTextInfos(List<TextLine> lines)
+        public static List<ExecutionStats.TextInfo> GetAllTextInfos(List<TextLine> lines)
         {
-            List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
+            List<ExecutionStats.TextInfo> Styles = new List<ExecutionStats.TextInfo>();
 
             foreach (TextLine line in lines)
             {
                 var result = Styles.Where(i => i.FontName == line.FontName && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
                 if (result == null)
                 {
-                    Styles.Add(new Stats.TextInfo(line));
+                    Styles.Add(new ExecutionStats.TextInfo(line));
                 }
             }
             return Styles;
         }
 
-        public static Stats.TextInfo GetTextInfos(List<TextLine> lines)
+        public static ExecutionStats.TextInfo GetTextInfos(List<TextLine> lines)
         {
             var linesGrouped = lines.GroupBy(line => new { line.FontName, line.FontStyle, line.FontSize });
             var result = linesGrouped.OrderByDescending(group => group.Count()).ToList().FirstOrDefault().Key;
-            return new Stats.TextInfo(result.FontName, result.FontStyle, result.FontSize);
+            return new ExecutionStats.TextInfo(result.FontName, result.FontStyle, result.FontSize);
         }
         
     }

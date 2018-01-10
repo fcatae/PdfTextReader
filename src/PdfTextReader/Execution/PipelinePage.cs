@@ -1,6 +1,6 @@
 ﻿using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using PdfTextReader.PDFCore;
-using PdfTextReader.Structure;
+using PdfTextReader.TextStructures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

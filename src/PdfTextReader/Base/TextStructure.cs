@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PdfTextReader.Structure
+namespace PdfTextReader.TextStructures
 {
     public class TextStructure : IBlock 
     {

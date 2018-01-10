@@ -39,10 +39,10 @@ namespace PdfTextReader
             var lines = Examples.GetLinesUsingPipeline(page);
 
             //Analyzing Grid Font
-            Stats.ProcessStats.SetGridStyle(Stats.ProcessStats.GetAllTextInfo(lines));
+            ExecutionStats.ProcessStats.SetGridStyle(ExecutionStats.ProcessStats.GetAllTextInfo(lines));
 
             //Testing paragraphs
-            var process = new Structure.ProcessStructure2();
+            var process = new TextStructures.ProcessStructure2();
             var paragraphs = process.ProcessParagraph(lines);
 
             //Testing Naming Structures (e.g Title, Sector, etc)
@@ -65,10 +65,10 @@ namespace PdfTextReader
                 var lines = Examples.GetLinesUsingPipeline($"/{subfolder}/{basename}");
 
                 //Analyzing Grid Font
-                Stats.ProcessStats.SetGridStyle(Stats.ProcessStats.GetAllTextInfo(lines));
+                ExecutionStats.ProcessStats.SetGridStyle(ExecutionStats.ProcessStats.GetAllTextInfo(lines));
 
                 //Testing paragraphs
-                var process = new Structure.ProcessStructure2();
+                var process = new TextStructures.ProcessStructure2();
                 var paragraphs = process.ProcessParagraph(lines);
 
                 //Testing Naming Structures (e.g Title, Sector, etc)
@@ -80,9 +80,9 @@ namespace PdfTextReader
             }
         }
 
-        static void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, IEnumerable<Structure.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        static void PrintAnalytics(string pdfname, IEnumerable<TextStructures.TextLine> lines, IEnumerable<TextStructures.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
         {
-            Stats.ProcessStats.PrintAnalytics(pdfname, lines, structures, contents);
+            ExecutionStats.ProcessStats.PrintAnalytics(pdfname, lines, structures, contents);
         }
                 
     }

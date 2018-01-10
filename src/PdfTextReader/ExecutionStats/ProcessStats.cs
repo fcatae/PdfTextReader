@@ -4,22 +4,22 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
-namespace PdfTextReader.Stats
+namespace PdfTextReader.ExecutionStats
 {
     static class ProcessStats
     {
         static TextInfo GridStyle;
 
-        public static List<TextInfo> GetAllTextInfo(IEnumerable<Structure.TextLine> lines)
+        public static List<TextInfo> GetAllTextInfo(IEnumerable<TextStructures.TextLine> lines)
         {
-            List<Stats.TextInfo> Styles = new List<Stats.TextInfo>();
+            List<ExecutionStats.TextInfo> Styles = new List<ExecutionStats.TextInfo>();
 
-            foreach (Structure.TextLine line in lines)
+            foreach (TextStructures.TextLine line in lines)
             {
                 var result = Styles.Where(i => i.FontName == line.FontName && i.FontStyle == line.FontStyle && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
                 if (result == null)
                 {
-                    Styles.Add(new Stats.TextInfo(line));
+                    Styles.Add(new ExecutionStats.TextInfo(line));
                 }
             }
             return Styles;
@@ -45,7 +45,7 @@ namespace PdfTextReader.Stats
             }
         }
 
-        public static void PrintAnalytics(string pdfname, IEnumerable<Structure.TextLine> lines, IEnumerable<Structure.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        public static void PrintAnalytics(string pdfname, IEnumerable<TextStructures.TextLine> lines, IEnumerable<TextStructures.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter($"bin/{pdfname}-Analytics.txt"))
             {
@@ -61,7 +61,7 @@ namespace PdfTextReader.Stats
                 file.WriteLine("<<<<<>>>>>>>>>>>>>");
                 file.WriteLine("");
                 file.WriteLine("");
-                foreach (Structure.TextLine line in lines)
+                foreach (TextStructures.TextLine line in lines)
                 {
                     file.WriteLine($"Breakline: {line.Breakline}");
                     file.WriteLine($"FontName: {line.FontName}");
@@ -83,7 +83,7 @@ namespace PdfTextReader.Stats
                 file.WriteLine("<<<<<>>>>>>>>>>>>>");
                 file.WriteLine("");
                 file.WriteLine("");
-                foreach (Structure.TextStructure structure in structures)
+                foreach (TextStructures.TextStructure structure in structures)
                 {
                     file.WriteLine($"TextAlignment: {structure.TextAlignment}");
                     file.WriteLine($"FontName: {structure.FontName}");

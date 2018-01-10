@@ -4,13 +4,13 @@ using System.Text;
 
 namespace PdfTextReader.Parser
 {
-    public class Conteudo : Structure.TextStructure
+    public class Conteudo : TextStructures.TextStructure
     {
         public TipoDoConteudo ContentType { get; set; }
 
         public Conteudo() { }
 
-        public Conteudo(Structure.TextStructure structure, TipoDoConteudo type)
+        public Conteudo(TextStructures.TextStructure structure, TipoDoConteudo type)
         {
             this.FontName = structure.FontName;
             this.FontSize = structure.FontSize;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PdfTextReader.Structure
+namespace PdfTextReader.TextStructures
 {
     class TransformText<T, TI, TO>
         where T: class, ITransformStructure<TI,TO>, new()

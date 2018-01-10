@@ -4,7 +4,7 @@ using System.Text;
 using PdfTextReader.PDFCore;
 using System.Linq;
 
-namespace PdfTextReader.Structure
+namespace PdfTextReader.TextStructures
 {
     class CreateStructures : IConvertBlock
     {

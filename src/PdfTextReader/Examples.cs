@@ -1,7 +1,7 @@
 ﻿using PdfTextReader.Execution;
 using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
-using PdfTextReader.Structure;
+using PdfTextReader.TextStructures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
