@@ -20,7 +20,7 @@ namespace PdfTextReader.PDFCore
             {
                 if(last != null)
                 {
-                    if ( CheckSubfonts(line, block) )
+                    if ( CheckSubfonts(line, (Block)block) )
                     {
                         bool isBackspace = CheckBackspace(line, block);
 
@@ -101,14 +101,15 @@ namespace PdfTextReader.PDFCore
             return (distance > wordSpacing);
         }
 
-        bool CheckSubfonts(IBlock normal, IBlock sub)
+        bool CheckSubfonts(Block normal, Block sub)
         {
             float subH1 = sub.GetH();
             float subH2 = sub.GetH() + sub.GetHeight();
             float norH1 = normal.GetH();
             float norH2 = normal.GetH() + normal.GetHeight();
 
-            return ((norH1 < subH1) && (norH2 > subH2));
+            // return ((norH1 < subH1) && (norH2 > subH2)); // subH2 > norH2
+            return ((norH1 < subH1) && (norH2 > subH1)) && (normal.FontSize > sub.FontSize);
         }
 
         bool CheckBackspace(IBlock line, IBlock block)

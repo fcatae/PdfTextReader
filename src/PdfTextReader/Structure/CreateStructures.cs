@@ -52,7 +52,8 @@ namespace PdfTextReader.Structure
                     Breakline = null,
                     Block = bl
                 };
-
+                if(tl.Text.Contains("MEDIDA"))
+                { }
                 lines.Add(tl);
 
                 if (last_tl != null)

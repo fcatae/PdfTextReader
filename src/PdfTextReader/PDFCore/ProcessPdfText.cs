@@ -35,6 +35,10 @@ namespace PdfTextReader.PDFCore
                     FamilyNameString = font.GetFontNames().GetFamilyName()[0][3];
                 }
 
+                // calculate font-size
+                float ctm_y = textInfo.GetTextMatrix().Get(4);
+                float fontSize = textInfo.GetFontSize() * ctm_y;
+
                 var block = new Block()
                 {
                     Text = textInfo.GetText(),
@@ -47,7 +51,7 @@ namespace PdfTextReader.PDFCore
                     FontName = FamilyNameString,
                     FontFullName = font.GetFontNames().GetFontName(),
                     FontStyle = TrimFontStyle(font.GetFontNames().GetFontName()),
-                    FontSize = textInfo.GetFontSize(),
+                    FontSize = fontSize,
                     WordSpacing = textInfo.GetWordSpacing()
                 };
 

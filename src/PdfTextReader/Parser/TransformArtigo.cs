@@ -42,10 +42,11 @@ namespace PdfTextReader.Parser
 
             int idxTitle = _structures.FindIndex(l => l.TextAlignment != TextAlignment.CENTER) - 1;
             int idxSigna = _structures.FindLastIndex(l => l.TextAlignment != TextAlignment.RIGHT) + 1;
-            int idxEmenta = _structures.FindIndex(idxTitle + 1, l => l.TextAlignment != TextAlignment.RIGHT);
 
             if (idxTitle < 0)
-                throw new InvalidOperationException();
+                return null; // throw new InvalidOperationException();
+
+            int idxEmenta = _structures.FindIndex(idxTitle + 1, l => l.TextAlignment != TextAlignment.RIGHT);
 
             string titulo = _structures[idxTitle].Text;
 

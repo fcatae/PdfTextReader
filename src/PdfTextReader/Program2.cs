@@ -17,6 +17,8 @@ namespace PdfTextReader
 
             //Pipeline.ShowTablesImages("DO1_2016_12_20-p23");
 
+            //Pipeline.MultipageCreateArtigos("p40");
+
             Pipeline.MultipageCreateArtigos("pg5");
 
             //Pipeline.RunCorePdf("pg5");
