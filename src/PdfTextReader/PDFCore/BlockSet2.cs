@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class BlockSet2<T> : IBlock, IEnumerable<T>
+    public class BlockSet2<T> : IBlockSet<T>
         where T: IBlock
     {
         public BlockSet2(IEnumerable<T> blockset, float x1, float h1, float x2, float h2)

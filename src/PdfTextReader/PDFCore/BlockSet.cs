@@ -6,7 +6,11 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    public class BlockSet<T> : IBlock, IEnumerable<T>
+    public interface IBlockSet<T> : IBlock, IEnumerable<T>
+    {
+    }
+
+    public class BlockSet<T> : IBlockSet<T>
         where T: IBlock
     {
         List<T> _blockList = new List<T>();

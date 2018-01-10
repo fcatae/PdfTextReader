@@ -14,7 +14,10 @@ namespace PdfTextReader.Structure
 
             foreach(var bset in page.AllBlocks)
             {
-                var lines = ProcessLine((BlockSet<IBlock>)bset);
+                if (bset is ImageBlock || bset is TableSet)
+                    continue;
+
+                var lines = ProcessLine((IBlockSet<IBlock>)bset);
 
                 textSet.Append(lines);
             }
@@ -22,7 +25,7 @@ namespace PdfTextReader.Structure
             return textSet;
         }
 
-        List<TextLine> ProcessLine(BlockSet<IBlock> bset)
+        List<TextLine> ProcessLine(IBlockSet<IBlock> bset)
         {
             var items = bset;
 

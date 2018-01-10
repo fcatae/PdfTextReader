@@ -13,7 +13,7 @@ namespace PdfTextReader.Parser
 
         public bool Aggregate(TextStructure line)
         {
-            if( _title == true )
+            if ( _title == true )
             {
                 if (line.TextAlignment == TextAlignment.CENTER)
                 {
@@ -36,39 +36,33 @@ namespace PdfTextReader.Parser
 
         public Artigo Create()
         {
-            int idxTitle = _structures.FindIndex(l => l.TextAlignment != TextAlignment.CENTER) - 1;
-            int idxSigna = _structures.FindLastIndex(l => l.TextAlignment != TextAlignment.RIGHT) + 1;
-            int idxEmenta = 0; 
-
-            if (idxTitle < 0)
-                return null;
-            //    idxTitle = 0;
-
-            if (idxSigna >= _structures.Count || idxSigna == 0)
-                return null;
-            //    idxSigna = 
-
-            string title = _structures[idxTitle].Text;
-
-            string body = String.Join("\n", _structures.Skip(idxTitle + 1).Take(idxSigna-idxTitle-1).Select( t => t.Text ));
-
-            string signa = String.Join("\n", _structures.Skip(idxSigna).Select(t => t.Text));
-
-            // ementa
+            string body = null;
+            string signa = null;
             string ementa = null;
 
-            idxEmenta = _structures.FindIndex(idxTitle + 1, l => l.TextAlignment != TextAlignment.RIGHT);
+            int idxTitle = _structures.FindIndex(l => l.TextAlignment != TextAlignment.CENTER) - 1;
+            int idxSigna = _structures.FindLastIndex(l => l.TextAlignment != TextAlignment.RIGHT) + 1;
+            int idxEmenta = _structures.FindIndex(idxTitle + 1, l => l.TextAlignment != TextAlignment.RIGHT);
 
+            if (idxTitle < 0)
+                throw new InvalidOperationException();
+
+            string titulo = _structures[idxTitle].Text;
+
+            if (idxSigna > 0 && idxSigna < _structures.Count )
+                signa = String.Join("\n", _structures.Skip(idxSigna).Select(t => t.Text));
+
+            body = String.Join("\n", _structures.Skip(idxTitle + 1).Take(idxSigna-idxTitle-1).Select( t => t.Text ));
+            
             if (idxEmenta > 0)
             {
                 ementa = String.Join("\n", _structures.Skip(idxTitle + 1).Take(idxEmenta - idxTitle - 1).Select(t => t.Text));
                 body = String.Join("\n", _structures.Skip(idxEmenta).Take(idxSigna - idxEmenta).Select(t => t.Text));
             }
 
-
             return new Artigo()
             {
-                Titulo = title,
+                Titulo = titulo,
                 Caput = ementa,
                 Corpo = body,
                 Assinatura = signa
