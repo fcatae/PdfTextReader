@@ -145,9 +145,7 @@ namespace PdfTextReader.PDFCore
             var result = new BlockPage();
             var lines = new BlockPage();
             var background = new BlockPage();
-
-            float color_tolerance = .5f;
-
+            
             foreach (var b in blockList)
             {
                 // does not add line segments

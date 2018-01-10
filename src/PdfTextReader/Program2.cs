@@ -11,41 +11,32 @@ namespace PdfTextReader
     {
         static void Main(string[] args)
         {
+            Program2.MainTest();
+        }
+
+        public static void MainTest()
+        {
             //ProcessBatch("dz");
 
-            //Pipeline.MultipageCreateArtigos("pg5");
+            //Examples.MultipageCreateArtigos("pg5");
 
-            //Pipeline.ShowTablesImages("DO1_2016_12_20-p23");
+            //Examples.ShowTablesImages("DO1_2016_12_20-p23");
 
-            //Pipeline.MultipageCreateArtigos("p40");
+            //Examples.MultipageCreateArtigos("p40");
 
-            Pipeline.MultipageCreateArtigos("pg20");
+            //Examples.MultipageCreateArtigos("pg20");
 
-            //Pipeline.RunCorePdf("pg5");
+            //Examples.RunCorePdf("pg5");
 
-            //Pipeline.ExtractPage("DO1_2016_12_20", 75);
-            //Pipeline.ExtractPage("DO1_2016_12_20", 36);
-            //Pipeline.ExtractPage("DO1_2016_12_20", 23);
-            //Pipeline.ExtractPage("DO1_2016_12_20", 80);
-
-            //Pipeline.TestEnumFiles("bin/", f => Pipeline.RunCorePdf(f.Substring(4)) );
-
-            //ProcessSingle("p42");
-
-            //var lines1 = Pipeline.GetLinesUsingPipeline("p40");
-
-            //var pipeline = new Pipeline();
-
-            //var lines2 = pipeline.GetLines("p40");
-
-
+            //Examples.ExtractPage("DO1_2016_12_20", 75);
+            //Examples.ExtractPage("DO1_2016_12_20", 36);
+            //Examples.ExtractPage("DO1_2016_12_20", 23);
+            //Examples.ExtractPage("DO1_2016_12_20", 80);
         }
 
         static void ProcessSingle(string page)
         {
-            var pipeline = new Pipeline();
-
-            var lines = pipeline.GetLines(page);
+            var lines = Examples.GetLinesUsingPipeline(page);
 
             //Analyzing Grid Font
             Stats.ProcessStats.SetGridStyle(Stats.ProcessStats.GetAllTextInfo(lines));
@@ -64,14 +55,14 @@ namespace PdfTextReader
         static void ProcessBatch(string subfolder)
         {
             var dir = new DirectoryInfo($"bin/{subfolder}");
-            var pipeline = new Pipeline();
+            var pipeline = new Examples();
 
             foreach (var f in dir.EnumerateFiles("*.pdf"))
             {
                 string filename = f.Name;
                 string basename = Path.GetFileNameWithoutExtension(filename);
 
-                var lines = pipeline.GetLines($"/{subfolder}/{basename}");
+                var lines = Examples.GetLinesUsingPipeline($"/{subfolder}/{basename}");
 
                 //Analyzing Grid Font
                 Stats.ProcessStats.SetGridStyle(Stats.ProcessStats.GetAllTextInfo(lines));

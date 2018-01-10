@@ -12,7 +12,7 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Process(BlockPage page)
         {
-            BlockLine2 line = null;
+            BlockLine line = null;
             IBlock last = null;
             var result = new BlockPage();
             
@@ -42,7 +42,7 @@ namespace PdfTextReader.PDFCore
                 {
                     var b = (Block)block;
 
-                    line = new BlockLine2()
+                    line = new BlockLine()
                     {
                         Text = block.GetText(),
                         X = block.GetX(),

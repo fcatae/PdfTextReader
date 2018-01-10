@@ -38,7 +38,7 @@ namespace PdfTextReader.Structure
 
             foreach (var it in items)
             {
-                var bl = (PDFCore.BlockLine2)it;
+                var bl = (PDFCore.BlockLine)it;
 
                 var tl = new TextLine
                 {

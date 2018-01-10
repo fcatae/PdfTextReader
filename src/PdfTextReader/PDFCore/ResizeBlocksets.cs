@@ -26,7 +26,6 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Process(BlockPage page)
         {
-            float error_samecolumn = 1f;
             float error_othercolumn = 2f;
 
             var blocksets = page.AllBlocks.ToList();

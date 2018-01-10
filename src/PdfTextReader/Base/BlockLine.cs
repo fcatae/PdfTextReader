@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class BlockLine2 : Block
+    class BlockLine : Block
     {
     }
 }
