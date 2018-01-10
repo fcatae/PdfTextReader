@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public class BlockPage
+    class BlockPage
     {
         BlockSet<IBlock> _blocks = new BlockSet<IBlock>();
 

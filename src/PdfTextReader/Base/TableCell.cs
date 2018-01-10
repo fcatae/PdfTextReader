@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public class TableCell : IBlock
+    class TableCell : IBlock
     {
         public string Text { get; set; }
         public float X { get; set; }

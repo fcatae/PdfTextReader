@@ -11,7 +11,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFText
 {
-    public class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
+    class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
     {
         const float DARKCOLOR = 0.5f;
 

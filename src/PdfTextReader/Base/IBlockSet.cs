@@ -4,11 +4,11 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public interface IBlockSet : IBlockSet<IBlock>
+    interface IBlockSet : IBlockSet<IBlock>
     {
     }
 
-    public interface IBlockSet<T> : IBlock, IEnumerable<T>
+    interface IBlockSet<T> : IBlock, IEnumerable<T>
     {
     }
 }

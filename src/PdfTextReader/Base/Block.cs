@@ -5,7 +5,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader
 {
-    public class Block : IBlock
+    class Block : IBlock
     {
         public string Text { get; set; }
         public float X { get; set; }

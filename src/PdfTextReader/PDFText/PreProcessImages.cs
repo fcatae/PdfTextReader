@@ -10,7 +10,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFText
 {
-    public class PreProcessImages : IEventListener, IPipelineResults<BlockPage>
+    class PreProcessImages : IEventListener, IPipelineResults<BlockPage>
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_IMAGE };
 

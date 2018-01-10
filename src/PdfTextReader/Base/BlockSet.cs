@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {    
-    public class BlockSet<T> : IBlockSet<T>
+    class BlockSet<T> : IBlockSet<T>
         where T: IBlock
     {
         List<T> _blockList = new List<T>();

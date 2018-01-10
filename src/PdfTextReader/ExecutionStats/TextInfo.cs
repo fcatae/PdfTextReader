@@ -5,7 +5,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.ExecutionStats
 {
-    public class TextInfo
+    class TextInfo
     {
         public string FontName;
         public decimal FontSize;

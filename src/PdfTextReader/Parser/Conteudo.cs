@@ -5,7 +5,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    public class Conteudo : TextStructure
+    class Conteudo : TextStructure
     {
         public TipoDoConteudo ContentType { get; set; }
 

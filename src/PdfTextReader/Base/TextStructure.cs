@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public class TextStructure : IBlock 
+    class TextStructure : IBlock 
     {
         public string FontName { get; set; }
         public decimal FontSize { get; set; }

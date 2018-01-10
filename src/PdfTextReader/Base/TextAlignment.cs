@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public enum TextAlignment
+    enum TextAlignment
     {
         CENTER,
         LEFT,

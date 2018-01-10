@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public interface IBlock
+    interface IBlock
     {
         string GetText();
         float GetX();
