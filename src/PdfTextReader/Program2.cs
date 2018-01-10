@@ -52,7 +52,7 @@ namespace PdfTextReader
 
         static void ProcessSingle(string page)
         {
-            var lines = ExamplesPipeline.GetLinesUsingPipeline(page);
+            var lines = Examples.GetEnumerableLines(page);
 
             //Analyzing Grid Font
             ExecutionStats.ProcessStats.SetGridStyle(ExecutionStats.ProcessStats.GetAllTextInfo(lines));
@@ -78,7 +78,7 @@ namespace PdfTextReader
                 string filename = f.Name;
                 string basename = Path.GetFileNameWithoutExtension(filename);
 
-                var lines = ExamplesPipeline.GetLinesUsingPipeline($"/{subfolder}/{basename}");
+                var lines = Examples.GetEnumerableLines($"/{subfolder}/{basename}");
 
                 //Analyzing Grid Font
                 ExecutionStats.ProcessStats.SetGridStyle(ExecutionStats.ProcessStats.GetAllTextInfo(lines));

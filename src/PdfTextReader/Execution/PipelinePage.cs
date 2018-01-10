@@ -120,7 +120,7 @@ namespace PdfTextReader.Execution
             var proc2 = new T();
             var lines = proc2.ConvertBlock(this.LastResult);
 
-            var pipe = new PipelineText<TextLine>(Context, lines);
+            var pipe = new PipelineText<TextLine>(Context, lines.AllText, null);
 
             pipe.CurrentStream = lines.AllText;
 

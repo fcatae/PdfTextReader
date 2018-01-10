@@ -564,34 +564,34 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
-        public static IEnumerable<TextLine> GetLinesUsingPipeline(string basename)
-        {
-            var pipeline = new Execution.Pipeline();
+        //public static IEnumerable<TextLine> GetLinesUsingPipeline(string basename)
+        //{
+        //    var pipeline = new Execution.Pipeline();
 
-            var textOutput =
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-tmp-output.pdf")
-                    .Page(1)
-                    .ParsePdf<PreProcessTables>()
-                        .ParseBlock<IdentifyTables>()
-                    .ParsePdf<ProcessPdfText>()
-                        .ParseBlock<RemoveTableText>()
-                        .ParseBlock<GroupLines>()
-                        .ParseBlock<FindInitialBlockset>()
-                        .ParseBlock<BreakColumns>()
-                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
-                        .ParseBlock<RemoveFooter>()
-                        .ParseBlock<RemoveHeader>()
-                        .ParseBlock<OrderBlocksets>()
-                    .Text<CreateStructures>();
+        //    var textOutput =
+        //    pipeline.Input($"bin/{basename}.pdf")
+        //            .Output($"bin/{basename}-tmp-output.pdf")
+        //            .Page(1)
+        //            .ParsePdf<PreProcessTables>()
+        //                .ParseBlock<IdentifyTables>()
+        //            .ParsePdf<ProcessPdfText>()
+        //                .ParseBlock<RemoveTableText>()
+        //                .ParseBlock<GroupLines>()
+        //                .ParseBlock<FindInitialBlockset>()
+        //                .ParseBlock<BreakColumns>()
+        //                .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+        //                .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+        //                .ParseBlock<RemoveFooter>()
+        //                .ParseBlock<RemoveHeader>()
+        //                .ParseBlock<OrderBlocksets>()
+        //            .Text<CreateStructures>();
 
-            pipeline.Done();
+        //    pipeline.Done();
 
-            var lines = textOutput.CurrentText.AllText;
+        //    var lines = textOutput.CurrentText.AllText;
 
-            return lines;
-        }
+        //    return lines;
+        //}
 
         //public static IEnumerable<TextLine> CenteredLines(string basename)
         //{

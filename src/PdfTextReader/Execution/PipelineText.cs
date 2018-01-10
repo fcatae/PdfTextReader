@@ -13,12 +13,7 @@ namespace PdfTextReader.Execution
         public IPipelineContext Context { get; }
         public IEnumerable<TT> CurrentStream;
         private List<IDisposable> _disposableObjects;
-
-        public PipelineText(IPipelineContext context, TextSet text)
-        {
-            this.Context = context;
-            this.CurrentText = text;
-        }
+        
 
         public PipelineText(IPipelineContext context, IEnumerable<TT> stream, IDisposable chain)
         {
@@ -27,7 +22,7 @@ namespace PdfTextReader.Execution
             this._disposableObjects = new List<IDisposable>() { chain };
         }
 
-        public TextSet CurrentText;
+        // public TextSet CurrentText;
         
         public void ReleaseAfterFinish(object instance)
         {
