@@ -9,33 +9,26 @@ namespace PdfTextReader.Parser
 {
     class TransformArtigo : ITransformStructure<TextStructure, Artigo>
     {
-        List<TextStructure> _structures;
         bool _title = true;
 
         public bool Aggregate(TextStructure line)
         {
-            if ( _title == true )
+            if (_title == true)
             {
-                if (line.TextAlignment == TextAlignment.CENTER)
-                {
-                }
-                else
+                if (line.TextAlignment != TextAlignment.CENTER)
                 {
                     _title = false;
                 }
 
-                _structures.Add(line);
                 return true;
             }
 
-            if (line.TextAlignment == TextAlignment.CENTER)
-                return false;
+            bool newTitle = (line.TextAlignment == TextAlignment.CENTER);                
 
-            _structures.Add(line);
-            return true;
+            return (newTitle == false);
         }
 
-        public Artigo Create()
+        public Artigo Create(List<TextStructure> _structures)
         {
             string body = null;
             string signa = null;
@@ -73,8 +66,6 @@ namespace PdfTextReader.Parser
 
         public void Init(TextStructure line)
         {
-            _structures = new List<TextStructure>();
-            _structures.Add(line);
             _title = (line.TextAlignment == TextAlignment.CENTER);
         }
     }

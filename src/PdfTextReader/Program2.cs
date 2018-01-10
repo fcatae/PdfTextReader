@@ -5,34 +5,28 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using PdfTextReader.Base;
+using PdfTextReader.Parser;
 
 namespace PdfTextReader
 {
     class Program2
     {
-        static void Main(string[] args)
-        {
-            Program2.MainTest();
-        }
-
         public static void MainTest()
         {
-            //ProcessBatch("dz");
+            ProcessSingleText("p40");
+        }
+        
+        static void ProcessSingleText(string page)
+        {
+            var artigos = Examples.GetTextParagraphs(page)
+                            .ConvertText<TransformExemplo, TextStructure>()
+                            .ConvertText<TransformArtigo, Artigo>()
+                            .ToList();
 
-            //ExamplesPipeline.MultipageCreateArtigos("pg5");
 
-            //ExamplesPipeline.ShowTablesImages("DO1_2016_12_20-p23");
+            var procParser = new ProcessParser();
+            procParser.XMLWriter(artigos, $"bin/{page}-out");
 
-            ExamplesPipeline.MultipageCreateArtigos("p40");
-
-            //ExamplesPipeline.MultipageCreateArtigos("pg20");
-
-            //ExamplesPipeline.RunCorePdf("pg5");
-
-            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 75);
-            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 36);
-            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 23);
-            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 80);
         }
 
         static void ProcessSingle(string page)
@@ -85,6 +79,23 @@ namespace PdfTextReader
         {
             ExecutionStats.ProcessStats.PrintAnalytics(pdfname, lines, structures, contents);
         }
-                
+
+
+        //ProcessBatch("dz");
+
+        //ExamplesPipeline.MultipageCreateArtigos("pg5");
+
+        //ExamplesPipeline.ShowTablesImages("DO1_2016_12_20-p23");
+
+        // ExamplesPipeline.MultipageCreateArtigos("p40");
+
+            //ExamplesPipeline.MultipageCreateArtigos("pg20");
+
+            //ExamplesPipeline.RunCorePdf("pg5");
+
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 75);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 36);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 23);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 80);
     }
 }

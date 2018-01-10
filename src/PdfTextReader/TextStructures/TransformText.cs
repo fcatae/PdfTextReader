@@ -8,20 +8,26 @@ namespace PdfTextReader.TextStructures
     class TransformText<T, TI, TO>
         where T: class, ITransformStructure<TI,TO>, new()
     {
+        List<TI> _input;
+
         public IEnumerable<TO> Transform(IEnumerable<TI> lines)
         {
             T transform = null;
 
             foreach (var line in lines)
             {
+                // process all the lines
                 if ( transform != null )
                 {
                     bool agg = transform.Aggregate(line);
 
                     if (agg)
+                    {
+                        _input.Add(line);
                         continue;
+                    }
 
-                    var result = transform.Create();
+                    var result = transform.Create(_input);
 
                     // caller returns null when the object should be ignored
                     if (result != null)
@@ -29,15 +35,23 @@ namespace PdfTextReader.TextStructures
                         yield return result;
                     }
                 }
-                
+
+                // first line: initialize data
+                _input = new List<TI>();
+                _input.Add(line);
+
                 transform = new T();
                 transform.Init(line);
             }
 
-            var result_value = transform.Create();
-            if (result_value != null)
+            // process the last result, if it exists
+            if( _input != null )
             {
-                yield return result_value;
+                var result_value = transform.Create(_input);
+                if (result_value != null)
+                {
+                    yield return result_value;
+                }
             }
         }
 

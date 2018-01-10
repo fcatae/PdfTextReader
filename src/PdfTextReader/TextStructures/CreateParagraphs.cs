@@ -18,16 +18,12 @@ namespace PdfTextReader.TextStructures
                 FontStyle = line.FontStyle,
                 FontSize = line.FontSize,
                 VSpacing = line.Breakline,
-                Lines = new List<TextLine>()
-            };
-
-            _structure.Lines.Add(line);
+                TextAlignment = TextAlignment.JUSTIFY
+            };            
         }
 
         public bool Aggregate(TextLine line)
         {
-            if (line.Text.Contains("zonte"))
-            { }
             if ((_structure.FontName != line.FontName) ||
                 (_structure.FontStyle != line.FontStyle) ||
                 (_structure.FontSize != line.FontSize))
@@ -42,21 +38,13 @@ namespace PdfTextReader.TextStructures
             if ((line.VSpacing != null) && ( !IsZero( (decimal)_structure.VSpacing - (decimal)line.VSpacing ) ))
                 return false;
 
-            _structure.Lines.Add(line);
-
             return true;
         }
 
-        public TextStructure Create()
+        public TextStructure Create(List<TextLine> lineset)
         {
-            var lineset = _structure.Lines;
-
-            // no check at all
-            _structure.TextAlignment = TextAlignment.JUSTIFY;
-
-            if (lineset[0].Text.Contains("zonte"))
-            { }
-
+            _structure.Lines = lineset;
+            
             // just a wild guess
             if ( lineset[0].MarginRight < lineset[0].MarginLeft/2 )
             {
@@ -68,7 +56,6 @@ namespace PdfTextReader.TextStructures
                         _structure.TextAlignment = TextAlignment.RIGHT;
                 }
             }
-                
 
             // this is quite accurate
             bool isCentered = (lineset.All(t => IsZero(t.MarginLeft - t.MarginRight))
@@ -85,32 +72,7 @@ namespace PdfTextReader.TextStructures
 
             return _structure;            
         }
-
-        IEnumerable<TextStructure> Transform(IEnumerable<TextLine> lines)
-        {
-            bool active = false;
-
-            foreach(var line in lines)
-            {
-                if( !active )
-                {
-                    Init(line);
-                    active = true;
-                }
-                else
-                {
-                    bool agg = Aggregate(line);
-
-                    if ( !agg )
-                    {
-                        yield return Create();
-
-                        active = false;
-                    }
-                }
-            }
-        }
-        
+                
         bool IsZero(decimal value)
         {
             decimal error = 0.1M;

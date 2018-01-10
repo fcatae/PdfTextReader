@@ -1,4 +1,5 @@
-﻿using PdfTextReader.Execution;
+﻿using PdfTextReader.Base;
+using PdfTextReader.Execution;
 using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
 using PdfTextReader.PDFText;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using PdfTextReader.Base;
 
 namespace PdfTextReader
 {
@@ -593,36 +593,36 @@ namespace PdfTextReader
             return lines;
         }
 
-        public static IEnumerable<TextLine> CenteredLines(string basename)
-        {
-            var pipeline = new Execution.Pipeline();
+        //public static IEnumerable<TextLine> CenteredLines(string basename)
+        //{
+        //    var pipeline = new Execution.Pipeline();
 
-            var textOutput =
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-tmp-output.pdf")
-                    .Page(1)
-                    .ParsePdf<PreProcessTables>()
-                        .ParseBlock<IdentifyTables>()
-                    .ParsePdf<ProcessPdfText>()
-                        .ParseBlock<RemoveTableText>()
-                        .ParseBlock<GroupLines>()
-                        .ParseBlock<FindInitialBlockset>()
-                        .ParseBlock<BreakColumns>()
-                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                        .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
-                        .ParseBlock<RemoveFooter>()
-                        .ParseBlock<RemoveHeader>()
-                        .ParseBlock<OrderBlocksets>()
-                        .Show(Color.Blue)
-                    .Text<CreateStructures>()
-                        .ConvertText<CenteredLines, TextStructure>()
-                        .Show(Color.Orange)
-                        ;
+        //    var textOutput =
+        //    pipeline.Input($"bin/{basename}.pdf")
+        //            .Output($"bin/{basename}-tmp-output.pdf")
+        //            .Page(1)
+        //            .ParsePdf<PreProcessTables>()
+        //                .ParseBlock<IdentifyTables>()
+        //            .ParsePdf<ProcessPdfText>()
+        //                .ParseBlock<RemoveTableText>()
+        //                .ParseBlock<GroupLines>()
+        //                .ParseBlock<FindInitialBlockset>()
+        //                .ParseBlock<BreakColumns>()
+        //                .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+        //                .Validate<RemoveHeader>().ShowErrors(p => p.Show(Color.Purple))
+        //                .ParseBlock<RemoveFooter>()
+        //                .ParseBlock<RemoveHeader>()
+        //                .ParseBlock<OrderBlocksets>()
+        //                .Show(Color.Blue)
+        //            .Text<CreateStructures>()
+        //                .ConvertText<CenteredLines, TextStructure>()
+        //                .Show(Color.Orange)
+        //                ;
 
-            pipeline.Done();
+        //    pipeline.Done();
             
-            return null;
-        }
+        //    return null;
+        //}
 
 
         public static IEnumerable<Artigo> CreateArtigos(string basename)
@@ -739,6 +739,18 @@ namespace PdfTextReader
             return result;
         }
 
+        public static PipelineText<TextStructure> GetTextStructures(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            var result =
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-page-output.pdf")
+                    .AllPages<CreateStructures>( ProcessPage )
+                    .ConvertText<CreateParagraphs, TextStructure>();
+
+            return result;
+        }
         public static void ProcessPage(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.ParsePdf<PreProcessTables>()

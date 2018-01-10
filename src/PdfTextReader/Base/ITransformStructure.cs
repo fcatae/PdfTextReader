@@ -10,6 +10,6 @@ namespace PdfTextReader.Base
 
         bool Aggregate(TI line);
 
-        TO Create();
+        TO Create(List<TI> input);
     }
 }
