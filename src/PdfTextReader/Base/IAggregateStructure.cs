@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    interface IAggregateStructure<TI, TO> : ITransformStructure
+    interface IAggregateStructure<TI, TO>
     {
         void Init(TI line);
 

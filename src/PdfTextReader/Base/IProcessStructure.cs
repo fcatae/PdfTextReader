@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    interface IProcessStructure<T> : ITransformStructure
+    interface IProcessStructure<T>
     {
         T Process(T structure);
     }
