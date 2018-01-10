@@ -18,25 +18,25 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            //Examples.MultipageCreateArtigos("pg5");
+            //ExamplesPipeline.MultipageCreateArtigos("pg5");
 
-            //Examples.ShowTablesImages("DO1_2016_12_20-p23");
+            //ExamplesPipeline.ShowTablesImages("DO1_2016_12_20-p23");
 
-            //Examples.MultipageCreateArtigos("p40");
+            //ExamplesPipeline.MultipageCreateArtigos("p40");
 
-            //Examples.MultipageCreateArtigos("pg20");
+            //ExamplesPipeline.MultipageCreateArtigos("pg20");
 
-            //Examples.RunCorePdf("pg5");
+            //ExamplesPipeline.RunCorePdf("pg5");
 
-            //Examples.ExtractPage("DO1_2016_12_20", 75);
-            //Examples.ExtractPage("DO1_2016_12_20", 36);
-            //Examples.ExtractPage("DO1_2016_12_20", 23);
-            //Examples.ExtractPage("DO1_2016_12_20", 80);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 75);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 36);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 23);
+            //ExamplesPipeline.ExtractPage("DO1_2016_12_20", 80);
         }
 
         static void ProcessSingle(string page)
         {
-            var lines = Examples.GetLinesUsingPipeline(page);
+            var lines = ExamplesPipeline.GetLinesUsingPipeline(page);
 
             //Analyzing Grid Font
             ExecutionStats.ProcessStats.SetGridStyle(ExecutionStats.ProcessStats.GetAllTextInfo(lines));
@@ -55,14 +55,14 @@ namespace PdfTextReader
         static void ProcessBatch(string subfolder)
         {
             var dir = new DirectoryInfo($"bin/{subfolder}");
-            var pipeline = new Examples();
+            var pipeline = new ExamplesPipeline();
 
             foreach (var f in dir.EnumerateFiles("*.pdf"))
             {
                 string filename = f.Name;
                 string basename = Path.GetFileNameWithoutExtension(filename);
 
-                var lines = Examples.GetLinesUsingPipeline($"/{subfolder}/{basename}");
+                var lines = ExamplesPipeline.GetLinesUsingPipeline($"/{subfolder}/{basename}");
 
                 //Analyzing Grid Font
                 ExecutionStats.ProcessStats.SetGridStyle(ExecutionStats.ProcessStats.GetAllTextInfo(lines));
