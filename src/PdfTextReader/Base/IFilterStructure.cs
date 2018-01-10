@@ -4,7 +4,8 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    interface ITransformStructure
+    interface IFilterStructure<T> : ITransformStructure
     {
+        T Filter(T structure);
     }
 }

@@ -7,7 +7,12 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    class TransformExemplo : ITransformStructure<TextStructure, TextStructure>
+    //
+    //
+    // TODO: rewrite using IFilterStructure
+    //
+    //
+    class TransformExemplo : IAggregateStructure<TextStructure, TextStructure>
     {
         public bool Aggregate(TextStructure line)
         {
