@@ -5,8 +5,9 @@ using PdfTextReader.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using PdfTextReader.PDFCore;
 
-namespace PdfTextReader.PDFCore
+namespace PdfTextReader.PDFText
 {
     class ProcessPdfText : IEventListener, IPipelineResults<BlockPage>
     {

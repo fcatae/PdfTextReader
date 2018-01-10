@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using PdfTextReader.PDFText;
 
 namespace PdfTextReader.PDFCore
 {
@@ -12,7 +13,7 @@ namespace PdfTextReader.PDFCore
 
         public void SetPage(PipelinePage p)
         {
-            var parserImage = p.CreateInstance<PDFCore.PreProcessImages>();
+            var parserImage = p.CreateInstance<PreProcessImages>();
 
             var page = parserImage.Images;
 
