@@ -6,6 +6,6 @@ namespace PdfTextReader.Base
 {
     interface IConvertBlock
     {
-        TextSet ConvertBlock(BlockPage page);
+        IEnumerable<TextLine> ProcessPage(BlockPage page);
     }
 }

@@ -37,18 +37,7 @@ namespace PdfTextReader.Execution
                 pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
             }
         }
-
-        static public void Show(PipelineInputPdf pdf, TextSet textSet, Color color)
-        {            
-            var texts = textSet.AllText;
-
-            foreach (var t in texts)
-            {
-                var b = (IBlock)t;
-                pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
-            }
-        }
-
+        
         static public void Show(PipelineInputPdf pdf, System.Collections.IEnumerable objectList, Color color)
         {
             foreach (var t in objectList)

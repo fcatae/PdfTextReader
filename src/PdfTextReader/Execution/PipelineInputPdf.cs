@@ -135,9 +135,9 @@ namespace PdfTextReader.Execution
 
                 callback(pdfPage);
 
-                var textSet = processor.ConvertBlock(CurrentPage.GetLastResult());
+                var textSet = processor.ProcessPage(CurrentPage.GetLastResult());
 
-                foreach(var t in textSet.AllText)
+                foreach(var t in textSet)
                 {
                     yield return t;
                 }

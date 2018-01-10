@@ -118,11 +118,11 @@ namespace PdfTextReader.Execution
             where T: IConvertBlock, new()
         {
             var proc2 = new T();
-            var lines = proc2.ConvertBlock(this.LastResult);
+            var lines = proc2.ProcessPage(this.LastResult);
 
-            var pipe = new PipelineText<TextLine>(Context, lines.AllText, null);
+            var pipe = new PipelineText<TextLine>(Context, lines, null);
 
-            pipe.CurrentStream = lines.AllText;
+            pipe.CurrentStream = lines;
 
             ((PipelineInputPdf)this.Context).SetCurrentText(pipe);
 

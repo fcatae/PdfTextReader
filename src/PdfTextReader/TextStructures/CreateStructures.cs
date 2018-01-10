@@ -9,21 +9,26 @@ namespace PdfTextReader.TextStructures
 {
     class CreateStructures : IConvertBlock
     {
-        public TextSet ConvertBlock(BlockPage page)
+        //public TextSet ConvertBlock(BlockPage page)
+        //{
+        //    var textSet = new TextSet();
+
+        //    foreach(var bset in page.AllBlocks)
+        //    {
+        //        if (bset is ImageBlock || bset is TableSet)
+        //            continue;
+
+        //        var lines = ProcessLine((IBlockSet<IBlock>)bset);
+
+        //        textSet.Append(lines);
+        //    }
+
+        //    return textSet;
+        //}
+
+        public IEnumerable<TextLine> ProcessPage(BlockPage page)
         {
-            var textSet = new TextSet();
-
-            foreach(var bset in page.AllBlocks)
-            {
-                if (bset is ImageBlock || bset is TableSet)
-                    continue;
-
-                var lines = ProcessLine((IBlockSet<IBlock>)bset);
-
-                textSet.Append(lines);
-            }
-
-            return textSet;
+            return ProcessLine(page.AllBlocks);
         }
 
         List<TextLine> ProcessLine(IBlockSet<IBlock> bset)
@@ -53,8 +58,7 @@ namespace PdfTextReader.TextStructures
                     Breakline = null,
                     Block = bl
                 };
-                if(tl.Text.Contains("MEDIDA"))
-                { }
+
                 lines.Add(tl);
 
                 if (last_tl != null)
