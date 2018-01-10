@@ -1,28 +1,3 @@
-TODO: 
-- Problemas com tabela
-- Problemas com imagens (dz67, dz68)
-Assumir:
-
-- Capa
-- Texto
-
-- Figuras
-- Tabelas
-- 1, 2 ou 3 colunas
-- Todos documentos possuem 3 colunas
-
-Materia:
-- Titulo
-- Ementa
-- Corpo
-- Assinatura
-
-Texto
-- Alinhamento central
-- Alinhamento justificado
-- Tabulacao esquerda: Primeira linha do paragrafo
-- Tabulacao direita: Assinatura 
-
 Titulo:
 - Letra maiúscula
 
@@ -47,9 +22,3 @@ Apenas textos justificados direita podem ter variacao de espaçamento.
 
 Cabeçalho padrão
 Rodapé padrão
-
-# Quebrar blockset longos
-
-Implementacao usando o centro do overlap
-
-dz002: decreto

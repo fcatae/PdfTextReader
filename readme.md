@@ -5,60 +5,13 @@ Architecture
 2. Semantic Tagging
 3. Linker
 
-
 Current Status
 ===============
 
+Parser PDF is quite robust and it gathers text from the document.
+The next step is to understand the text to extract the metadata,
+and feed the Linker.
+
 Work in progress:
-1. Rewriting the parse module
-2. Brainstorming the semantic tagging
-3. Working on the Linker
-
-
-# 1. Rewriting the parse module #
-
-`UserWriter` contains major codebase separated into 4 different categories.
-
-### MainLogic ###
-
-Process
-- ActiveTables
-- ProcessBlockExtra
-- ProcessBlock
-- FinalProcess
-
-### Blocklist ###
-  
-Structure
-- TryMergeBlockSets
-- RemoveList
-
-Region
-- FindHeader
-- FindFooter
-
-Visual
-- DrawRectangle (depends on PDFCanvas)
-- PrintText
-
-Complex code
-- BreakBlockSets
-- CalculateCenterBreak
-
-### BlockSet ###
-
-Calculation
-- GetBlockWithLargerWidth
-- GetBlockWithSmallerWidth
-- HasAreaOverlap
-- HasOverlap(segA, segB)
-- HasOverlap(area,x,y)
-
-Table
-- IsInTable
-
-### StructureItem ###
-
-- ProcessStructure
-- HighlightStructureItems
-
+- Identify the article (title, body, signature)
+- Working on the Linker

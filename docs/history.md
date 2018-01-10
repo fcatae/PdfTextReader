@@ -1,11 +1,6 @@
 # Pipeline #
 
-Execution pipeline to run listeners and block processors.
-
-- Run the listeners
-- Run the blocks
-
-Pipeline:
+## Week 3: Rearchitecture with Pipeline ##
 
     Pipeline.Input("input") //.Output
             .Page(1)  // .AllPages( p => p.CurrentPage )
@@ -34,56 +29,15 @@ Pipeline:
 
 
             
-# Old Architecture
-
-# 1. Rewriting the parse module #
+## Week 2: Use iText library to extract valuable information from PDF ##
 
 `UserWriter` contains major codebase separated into 4 different categories.
+- MainLogic
+- BlockLine
+- Block
+- Structure
 
-### MainLogic ###
-
-Process
-- ActiveTables
-- ProcessBlockExtra
-- ProcessBlock
-- FinalProcess
-
-### Blocklist ###
-  
-Structure
-- TryMergeBlockSets
-- RemoveList
-
-Region
-- FindHeader
-- FindFooter
-
-Visual
-- DrawRectangle (depends on PDFCanvas)
-- PrintText
-
-Complex code
-- BreakBlockSets
-- CalculateCenterBreak
-
-### BlockSet ###
-
-Calculation
-- GetBlockWithLargerWidth
-- GetBlockWithSmallerWidth
-- HasAreaOverlap
-- HasOverlap(segA, segB)
-- HasOverlap(area,x,y)
-
-Table
-- IsInTable
-
-### StructureItem ###
-
-- ProcessStructure
-- HighlightStructureItems
-
-            
+Problems found            
 - Problemas com tabela
 - Problemas com imagens (dz67, dz68)
 Assumir:
@@ -137,4 +91,4 @@ Rodapé padrão
 
 Implementacao usando o centro do overlap
 
-dz002: decreto            
+dz002: decreto         
