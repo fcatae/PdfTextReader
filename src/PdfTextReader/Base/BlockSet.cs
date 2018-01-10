@@ -5,11 +5,7 @@ using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.Base
-{
-    public interface IBlockSet<T> : IBlock, IEnumerable<T>
-    {
-    }
-
+{    
     public class BlockSet<T> : IBlockSet<T>
         where T: IBlock
     {
