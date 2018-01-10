@@ -75,6 +75,49 @@ namespace PdfTextReader.Execution
         {
             throw new NotImplementedException();
         }
-        
+
+        public PipelineText<TT> DebugCount(string message)
+        {
+            var pipe = new PipelineText<TT>(this.Context, DebugCount(CurrentStream));
+            
+            IEnumerable<TT> DebugCount(IEnumerable<TT> input)
+            {
+                int count = 0;
+                foreach (var i in input)
+                {
+                    count++;
+                    yield return i;
+                }
+                Console.WriteLine(message + ": " + count);
+            }
+
+            return pipe;
+        }
+
+        public PipelineText<TT> DebugPrint(string message)
+        {
+            var pipe = new PipelineText<TT>(this.Context, DebugPrint(CurrentStream));
+
+            IEnumerable<TT> DebugPrint(IEnumerable<TT> input)
+            {
+                foreach (var i in input)
+                {
+                    Console.WriteLine(message + ": " + i.ToString());
+                    yield return i;
+                }                
+            }
+
+            return pipe;
+        }
+
+        public IEnumerable<TT> ToEnumerable()
+        {
+            return CurrentStream;
+        }
+
+        public IList<TT> ToList()
+        {
+            return CurrentStream.ToList();
+        }
     }
 }

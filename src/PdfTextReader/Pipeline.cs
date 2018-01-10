@@ -682,7 +682,7 @@ namespace PdfTextReader
                     //.ParseBlock<CreateLines>() -- GroupLines
                     .Text<CreateStructures>()
                         // .Show(Color.Yellow)
-                    .ParseText<ProcessParagraphs>()
+                    //.ParseText<ProcessParagraphs>()
                     //.ParseText<ProcessStructure>()
                         // .Output("structures")
                         // .Show(Color.Red)
@@ -736,17 +736,28 @@ namespace PdfTextReader
 
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-page-output.pdf")
-                    .StreamConvert<CreateStructures>(p =>
+                    .AllPages<CreateStructures>(p =>
                     {
-                        p.ParsePdf<PreProcessTables>()
-                                .ParseBlock<IdentifyTables>()
-                            .ParsePdf<ProcessPdfText>()
-                                .ParseBlock<RemoveTableText>()
-                                .ParseBlock<GroupLines>()
-                                .ParseBlock<FindInitialBlockset>();
+                        ProcessPage(p);
+                        //p.ParsePdf<PreProcessTables>()
+                        //        .ParseBlock<IdentifyTables>()
+                        //    .ParsePdf<ProcessPdfText>()
+                        //        .ParseBlock<RemoveTableText>()
+                        //        .ParseBlock<GroupLines>()
+                        //        .ParseBlock<FindInitialBlockset>();
                     })
-                    .Select(t => { Console.WriteLine(t.FontName); return t; })
-                    .Count();
+                    .ConvertText<CreateParagraphs, TextStructure>()
+                        .DebugCount("Paragraphs")
+                        .DebugPrint("Paragraphs")
+                    .ConvertText<TransformArtigo, Artigo>()
+                        .DebugCount("Artigo")
+                        .DebugPrint("Artigo")
+                    .ToEnumerable()
+                    .ToArray();
+
+                    //.
+            //
+              
 
             pipeline.Done();
 
@@ -781,7 +792,7 @@ namespace PdfTextReader
                         //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                         .ParseBlock<HighlightTextTable>()
                         .ParseBlock<RemoveTableText>()
-                        .ParseBlock<GroupLines>()
+                        .ParseBlock<GroupLines>()                        
                             .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                             .ParseBlock<RemoveHeaderImage>()
                         .ParseBlock<FindInitialBlocksetWithRewind>()

@@ -105,7 +105,17 @@ namespace PdfTextReader.Execution
                 callback(pdfPage);
             }
         }
-        
+
+        public PipelineText<TextLine> AllPages<T>(Action<PipelineInputPdfPage> callback)
+            where T : IConvertBlock, new()
+        {
+            var textLines = StreamConvert<T>(callback);
+            
+            var pipeText = new PipelineText<TextLine>(this, textLines);
+            
+            return pipeText;
+        }
+
         public IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
             where T: IConvertBlock, new()
         {
@@ -119,7 +129,7 @@ namespace PdfTextReader.Execution
 
                 callback(pdfPage);
 
-                var textSet = processor.ConvertBlock(pdfPage.LastResult);
+                var textSet = processor.ConvertBlock(CurrentPage.GetLastResult());
 
                 foreach(var t in textSet.AllText)
                 {
@@ -133,11 +143,13 @@ namespace PdfTextReader.Execution
             private readonly PipelineInputPdf _pdf;
             private readonly int _pageNumber;            
             private readonly PdfPage _pdfPage;
+            private PipelinePage _page;
             private PdfCanvas _outputCanvas;
-            public BlockPage LastResult { get; set; }
 
             private PipelinePageFactory _factory = new PipelinePageFactory();
-            
+
+            public BlockPage GetLastResult() => _page.LastResult;
+
             public PipelineInputPdfPage(PipelineInputPdf pipelineInputContext, int pageNumber)
             {
                 var pdfPage = pipelineInputContext._pdfDocument.GetPage(pageNumber);
@@ -161,7 +173,8 @@ namespace PdfTextReader.Execution
                 var parser = new PdfCanvasProcessor(listener);
                 parser.ProcessPageContent(_pdfPage);
 
-                var page = new PipelinePage(_pdf, this, _pageNumber);
+                var page = new PipelinePage(_pdf,  _pageNumber);
+
                 page.LastResult = listener.GetResults();
 
                 if (page.LastResult == null)
@@ -169,6 +182,8 @@ namespace PdfTextReader.Execution
 
                 if (page.LastResult.AllBlocks == null)
                     throw new InvalidOperationException();
+
+                _page = page;
 
                 return page;
             }

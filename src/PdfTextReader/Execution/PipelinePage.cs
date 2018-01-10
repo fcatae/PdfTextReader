@@ -4,6 +4,7 @@ using PdfTextReader.Structure;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.Execution
@@ -12,24 +13,14 @@ namespace PdfTextReader.Execution
     {
         public IPipelineContext Context { get; }
         public int PageNumber { get; }
-        public PipelineInputPdf.PipelineInputPdfPage PageRef { get; }
         private BlockPage LastErrors { get; set; }
 
-        public BlockPage LastResult {
-            get
-            {
-                return PageRef.LastResult;
-            }
-            set 
-            {
-                PageRef.LastResult = value;
-            }
-}
-        public PipelinePage(PipelineInputPdf pdf, PipelineInputPdf.PipelineInputPdfPage page, int pageNumber)
+        public BlockPage LastResult { get; set; }
+
+        public PipelinePage(PipelineInputPdf pdf, int pageNumber)
         {
             this.Context = pdf;
             this.PageNumber = pageNumber;
-            this.PageRef = page;
         }
 
         public PipelinePage Debug(Color Color)
@@ -101,13 +92,16 @@ namespace PdfTextReader.Execution
                 throw new InvalidOperationException();
 
             this.LastResult = result;
-            
+
+            if (result.AllBlocks.Count() == 0)
+                Console.WriteLine($"Warning: {typeof(T).Name} returned no data");
+
             return this;
         }
 
         public PipelinePage ShowErrors(Action<PipelinePage> callback)
         {
-            var newpage = new PipelinePage((PipelineInputPdf)this.Context, this.PageRef, this.PageNumber);
+            var newpage = new PipelinePage((PipelineInputPdf)this.Context, this.PageNumber);
 
             var errors = this.LastErrors;
 

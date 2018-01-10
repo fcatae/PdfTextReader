@@ -13,13 +13,13 @@ namespace PdfTextReader
         {
             //ProcessBatch("dz");
 
-            Pipeline.MultipageCreateArtigos("pg5");
+            //Pipeline.MultipageCreateArtigos("pg5");
 
             //Pipeline.ShowTablesImages("DO1_2016_12_20-p23");
 
-            //Pipeline.MultipageCore("DO1_2016_12_20");
+            Pipeline.MultipageCore("pg5");
 
-            //Pipeline.RunCorePdf("DO1_2016_12_20-p68");
+            //Pipeline.RunCorePdf("pg5");
 
             //Pipeline.ExtractPage("DO1_2016_12_20", 75);
             //Pipeline.ExtractPage("DO1_2016_12_20", 36);
