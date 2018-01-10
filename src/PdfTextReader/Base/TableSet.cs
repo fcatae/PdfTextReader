@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace PdfTextReader.PDFCore
+namespace PdfTextReader.Base
 {
     public class TableSet : IBlock, IEnumerable<IBlock>
     {

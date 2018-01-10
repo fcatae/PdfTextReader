@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using PdfTextReader.Base;
 
 namespace PdfTextReader
 {
@@ -80,7 +81,7 @@ namespace PdfTextReader
             }
         }
 
-        static void PrintAnalytics(string pdfname, IEnumerable<TextStructures.TextLine> lines, IEnumerable<TextStructures.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        static void PrintAnalytics(string pdfname, IEnumerable<TextLine> lines, IEnumerable<TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
         {
             ExecutionStats.ProcessStats.PrintAnalytics(pdfname, lines, structures, contents);
         }

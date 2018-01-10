@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    public class Conteudo : TextStructures.TextStructure
+    public class Conteudo : TextStructure
     {
         public TipoDoConteudo ContentType { get; set; }
 
         public Conteudo() { }
 
-        public Conteudo(TextStructures.TextStructure structure, TipoDoConteudo type)
+        public Conteudo(TextStructure structure, TipoDoConteudo type)
         {
             this.FontName = structure.FontName;
             this.FontSize = structure.FontSize;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using PdfTextReader.PDFCore;
 using System.Linq;
+using PdfTextReader.Base;
 
 namespace PdfTextReader.TextStructures
 {
@@ -38,7 +39,7 @@ namespace PdfTextReader.TextStructures
 
             foreach (var it in items)
             {
-                var bl = (PDFCore.BlockLine)it;
+                var bl = (BlockLine)it;
 
                 var tl = new TextLine
                 {

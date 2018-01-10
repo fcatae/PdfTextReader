@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PdfTextReader.TextStructures
+namespace PdfTextReader.Base
 {
     public enum TextAlignment
     {

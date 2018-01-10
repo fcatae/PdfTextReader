@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PdfTextReader.Base;
 
 namespace PdfTextReader.ExecutionStats
 {
@@ -11,7 +12,7 @@ namespace PdfTextReader.ExecutionStats
         public string FontStyle;
         public string Text;
 
-        public TextInfo(TextStructures.TextLine line)
+        public TextInfo(TextLine line)
         {
             this.FontName = line.FontName;
             this.FontSize = Decimal.Round(Convert.ToDecimal(line.FontSize),2);

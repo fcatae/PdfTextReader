@@ -1,9 +1,8 @@
-﻿using PdfTextReader.PDFCore;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace PdfTextReader.TextStructures
+namespace PdfTextReader.Base
 {
     public class TextStructure : IBlock 
     {

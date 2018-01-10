@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using PdfTextReader.Base;
 
 namespace PdfTextReader.Execution
 {

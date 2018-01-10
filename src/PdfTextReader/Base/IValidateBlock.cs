@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PdfTextReader.PDFCore
+namespace PdfTextReader.Base
 {
     interface IValidateBlock
     {

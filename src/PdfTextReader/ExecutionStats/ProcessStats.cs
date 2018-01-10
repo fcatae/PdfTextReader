@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using PdfTextReader.Base;
 
 namespace PdfTextReader.ExecutionStats
 {
@@ -10,11 +11,11 @@ namespace PdfTextReader.ExecutionStats
     {
         static TextInfo GridStyle;
 
-        public static List<TextInfo> GetAllTextInfo(IEnumerable<TextStructures.TextLine> lines)
+        public static List<TextInfo> GetAllTextInfo(IEnumerable<TextLine> lines)
         {
             List<ExecutionStats.TextInfo> Styles = new List<ExecutionStats.TextInfo>();
 
-            foreach (TextStructures.TextLine line in lines)
+            foreach (TextLine line in lines)
             {
                 var result = Styles.Where(i => i.FontName == line.FontName && i.FontStyle == line.FontStyle && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
                 if (result == null)
@@ -45,7 +46,7 @@ namespace PdfTextReader.ExecutionStats
             }
         }
 
-        public static void PrintAnalytics(string pdfname, IEnumerable<TextStructures.TextLine> lines, IEnumerable<TextStructures.TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        public static void PrintAnalytics(string pdfname, IEnumerable<TextLine> lines, IEnumerable<TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter($"bin/{pdfname}-Analytics.txt"))
             {
@@ -61,7 +62,7 @@ namespace PdfTextReader.ExecutionStats
                 file.WriteLine("<<<<<>>>>>>>>>>>>>");
                 file.WriteLine("");
                 file.WriteLine("");
-                foreach (TextStructures.TextLine line in lines)
+                foreach (TextLine line in lines)
                 {
                     file.WriteLine($"Breakline: {line.Breakline}");
                     file.WriteLine($"FontName: {line.FontName}");
@@ -83,7 +84,7 @@ namespace PdfTextReader.ExecutionStats
                 file.WriteLine("<<<<<>>>>>>>>>>>>>");
                 file.WriteLine("");
                 file.WriteLine("");
-                foreach (TextStructures.TextStructure structure in structures)
+                foreach (TextStructure structure in structures)
                 {
                     file.WriteLine($"TextAlignment: {structure.TextAlignment}");
                     file.WriteLine($"FontName: {structure.FontName}");

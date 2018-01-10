@@ -3,34 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
+using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
     class ProcessParser
     {
         decimal Tolerance = 3;
-        public List<Conteudo> ProcessStructures(IEnumerable<TextStructures.TextStructure> structures)
+        public List<Conteudo> ProcessStructures(IEnumerable<TextStructure> structures)
         {
             List<Conteudo> contents = new List<Conteudo>();
-            foreach (TextStructures.TextStructure structure in structures)
+            foreach (TextStructure structure in structures)
             {
-                if (structure.CountLines() == 1 && structure.TextAlignment == TextStructures.TextAlignment.RIGHT && structure.MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
+                if (structure.CountLines() == 1 && structure.TextAlignment == TextAlignment.RIGHT && structure.MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Assinatura));
                 }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == TextStructures.TextAlignment.RIGHT && structure.MarginRight > Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == TextAlignment.RIGHT && structure.MarginRight > Tolerance)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Cargo));
                 }
-                else if (structure.CountLines() > 1 && structure.TextAlignment == TextStructures.TextAlignment.JUSTIFY)
+                else if (structure.CountLines() > 1 && structure.TextAlignment == TextAlignment.JUSTIFY)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Corpo));
                 }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == TextStructures.TextAlignment.RIGHT && structure.MarginRight < Tolerance)
+                else if (structure.CountLines() == 1 && structure.TextAlignment == TextAlignment.RIGHT && structure.MarginRight < Tolerance)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Caput));
                 }
-                else if (structure.TextAlignment == TextStructures.TextAlignment.CENTER && structure.FontStyle == "Bold")
+                else if (structure.TextAlignment == TextAlignment.CENTER && structure.FontStyle == "Bold")
                 {
                     if (ExecutionStats.ProcessStats.GetGridStyle() != null && structure.FontName == ExecutionStats.ProcessStats.GetGridStyle().FontName)
                     {
@@ -45,11 +46,11 @@ namespace PdfTextReader.Parser
                         contents.Add(new Conteudo(structure, TipoDoConteudo.Título));
                     }
                 }
-                else if (structure.TextAlignment == TextStructures.TextAlignment.CENTER && structure.Text.ToUpper() != structure.Text)
+                else if (structure.TextAlignment == TextAlignment.CENTER && structure.Text.ToUpper() != structure.Text)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Data));
                 }
-                else if (structure.TextAlignment == TextStructures.TextAlignment.CENTER)
+                else if (structure.TextAlignment == TextAlignment.CENTER)
                 {
                     contents.Add(new Conteudo(structure, TipoDoConteudo.Departamento));
                 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace PdfTextReader
+namespace PdfTextReader.Base
 {
     public class TableCell : IBlock
     {

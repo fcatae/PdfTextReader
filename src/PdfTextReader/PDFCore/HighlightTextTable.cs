@@ -1,4 +1,5 @@
-﻿using PdfTextReader.Execution;
+﻿using PdfTextReader.Base;
+using PdfTextReader.Execution;
 using System;
 using System.Collections.Generic;
 using System.Linq;
