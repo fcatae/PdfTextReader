@@ -19,7 +19,7 @@ namespace PdfTextReader
 
             //Pipeline.MultipageCreateArtigos("p40");
 
-            Pipeline.MultipageCreateArtigos("pg5");
+            Pipeline.MultipageCreateArtigos("pg20");
 
             //Pipeline.RunCorePdf("pg5");
 

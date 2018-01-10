@@ -734,6 +734,7 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
+            var result = 
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-page-output.pdf")
                     .AllPages<CreateStructures>(p =>
@@ -755,28 +756,12 @@ namespace PdfTextReader
                     .ToEnumerable()
                     .ToArray();
 
-                    //.
-            //
-              
-
             pipeline.Done();
 
-            //var pipeline = new Execution.Pipeline();
+            var procParser = new ProcessParser();
+            procParser.XMLWriter(result, $"bin/{basename}");
             
-            //        .Text<CreateStructures>()
-            //            .ConvertText<CreateParagraphs, TextStructure>()
-            //            .ConvertText<TransformArtigo, Artigo>()
-            //            //.Show(Color.Orange)
-            //            ;
-
-            //var artigos = pipeline.GetResults<Artigo>();
-
-            //var procParser = new ProcessParser();
-            //procParser.XMLWriter(artigos, $"bin/{basename}");
-
-            //pipeline.Done();
-
-            return null;
+            return result;
         }
 
         public static void ProcessPage(PipelineInputPdf.PipelineInputPdfPage page)
