@@ -8,23 +8,35 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Execution
 {
-    class PipelineText<TT> 
+    class PipelineText<TT> : IDisposable
     {
         public IPipelineContext Context { get; }
         public IEnumerable<TT> CurrentStream;
-        
+        private List<IDisposable> _disposableObjects;
+
         public PipelineText(IPipelineContext context, TextSet text)
         {
             this.Context = context;
             this.CurrentText = text;
         }
-        public PipelineText(IPipelineContext context, IEnumerable<TT> stream)
+
+        public PipelineText(IPipelineContext context, IEnumerable<TT> stream, IDisposable chain)
         {
             this.Context = context;
             this.CurrentStream = stream;
+            this._disposableObjects = new List<IDisposable>() { chain };
         }
 
         public TextSet CurrentText;
+        
+        public void ReleaseAfterFinish(object instance)
+        {
+            var disposableObj = instance as IDisposable;
+            if (disposableObj != null)
+            {
+                _disposableObjects.Add(disposableObj);
+            }
+        }
 
         public PipelineText<TT> Debug(Color Color)
         {
@@ -67,18 +79,13 @@ namespace PdfTextReader.Execution
 
             var result = processor.Transform(initial);
 
-            var pipe = new PipelineText<TO>(this.Context, result);
+            var pipe = new PipelineText<TO>(this.Context, result, this);
 
             ((PipelineInputPdf)this.Context).SetCurrentText(pipe);
 
             return pipe;
         }
-
-        void ReleaseAfterFinish(object instance)
-        {
-            ((PipelineInputPdf)this.Context).ReleaseAfterFinish(instance);
-        }
-
+        
         public PipelineText<TT> Process(IProcessStructure<TT> processor, bool dispose = true)
         {
             if(dispose)
@@ -90,7 +97,7 @@ namespace PdfTextReader.Execution
 
             var result = initial.Select( data => processor.Process( data ));
 
-            var pipe = new PipelineText<TT>(this.Context, result);
+            var pipe = new PipelineText<TT>(this.Context, result, this);
             
             return pipe;
         }
@@ -102,7 +109,7 @@ namespace PdfTextReader.Execution
 
         public PipelineText<TT> DebugCount(string message)
         {
-            var pipe = new PipelineText<TT>(this.Context, DebugCount(CurrentStream));
+            var pipe = new PipelineText<TT>(this.Context, DebugCount(CurrentStream), this);
             
             IEnumerable<TT> DebugCount(IEnumerable<TT> input)
             {
@@ -120,7 +127,7 @@ namespace PdfTextReader.Execution
 
         public PipelineText<TT> DebugPrint(string message)
         {
-            var pipe = new PipelineText<TT>(this.Context, DebugPrint(CurrentStream));
+            var pipe = new PipelineText<TT>(this.Context, DebugPrint(CurrentStream), this);
 
             IEnumerable<TT> DebugPrint(IEnumerable<TT> input)
             {
@@ -136,12 +143,36 @@ namespace PdfTextReader.Execution
 
         public IEnumerable<TT> ToEnumerable()
         {
+            // TODO: return a disposable 
             return CurrentStream;
         }
 
         public IList<TT> ToList()
         {
-            return CurrentStream.ToList();
+            var result = CurrentStream.ToList();
+
+            this.Dispose();
+
+            return result;
+        }
+
+        public void Dispose()
+        {
+            lock (_disposableObjects)
+            {
+                if (_disposableObjects != null)
+                {
+                    foreach (var obj in _disposableObjects)
+                    {
+                        if( obj != null )
+                        {
+                            obj.Dispose();
+                        }
+                    }
+
+                    _disposableObjects = null;
+                }
+            }
         }
     }
 }
