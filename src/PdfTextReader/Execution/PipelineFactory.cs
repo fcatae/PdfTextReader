@@ -6,7 +6,7 @@ namespace PdfTextReader.Execution
 {
     class PipelineFactory : IDisposable
     {
-        private List<IDisposable> _disposableObjects;
+        private List<IDisposable> _disposableObjects = new List<IDisposable>();
 
         public T CreateInstance<T>()
             where T : new()
