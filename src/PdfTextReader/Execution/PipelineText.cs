@@ -15,41 +15,20 @@ namespace PdfTextReader.Execution
         public IEnumerable<TT> CurrentStream;
         private List<IDisposable> _disposableObjects;
         
-
         public PipelineText(IPipelineContext context, IEnumerable<TT> stream, IDisposable chain)
         {
             this.Context = context;
             this.CurrentStream = stream;
             this._disposableObjects = new List<IDisposable>() { chain };
         }
-
-        // public TextSet CurrentText;
-        
-        public void ReleaseAfterFinish(object instance)
-        {
-            var disposableObj = instance as IDisposable;
-            if (disposableObj != null)
-            {
-                _disposableObjects.Add(disposableObj);
-            }
-        }
-
-        public PipelineText<TT> Debug(Color Color)
-        {
-            throw new NotImplementedException();
-        }
+                
         public PipelineText<TT> Show(Color Color)
         {
             PipelineDebug.Show((PipelineInputPdf)Context, CurrentStream, Color);
-            //PipelineDebug.Show((PipelineInputPdf)Context, CurrentText, Color);
-
+            
             return this;
         }
-        public PipelineText<T> Validate<T>(Color Color)
-        {
-            throw new NotImplementedException();
-        }
-        
+                
         public PipelineText<TO> ConvertText<P,TO>()
             where P : class, IAggregateStructure<TT,TO>, new()
         {
@@ -65,34 +44,6 @@ namespace PdfTextReader.Execution
             ((PipelineInputPdf)this.Context).SetCurrentText(pipe);
 
             return pipe;
-        }
-
-        T CreateInstance<T>()
-            where T : new()
-        {
-            var obj = new T();
-
-            ReleaseAfterFinish(obj);
-
-            return obj;
-        }
-
-        T CreateInstance<T>(Func<T> create)
-        {
-            var obj = create();
-
-            ReleaseAfterFinish(obj);
-
-            return obj;
-        }
-
-        void FreeObject(object instance)
-        {
-            var disposable = instance as IDisposable;
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
         }
 
         PipelineText<TT> CreateNewPipelineText(IEnumerable<TT> stream)
@@ -166,6 +117,42 @@ namespace PdfTextReader.Execution
             }
 
             logger.EndLog(file);
+        }
+        public void ReleaseAfterFinish(object instance)
+        {
+            var disposableObj = instance as IDisposable;
+            if (disposableObj != null)
+            {
+                _disposableObjects.Add(disposableObj);
+            }
+        }
+
+        T CreateInstance<T>()
+            where T : new()
+        {
+            var obj = new T();
+
+            ReleaseAfterFinish(obj);
+
+            return obj;
+        }
+
+        T CreateInstance<T>(Func<T> create)
+        {
+            var obj = create();
+
+            ReleaseAfterFinish(obj);
+
+            return obj;
+        }
+
+        void FreeObject(object instance)
+        {
+            var disposable = instance as IDisposable;
+            if (disposable != null)
+            {
+                disposable.Dispose();
+            }
         }
 
         public void Dispose()

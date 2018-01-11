@@ -152,7 +152,7 @@ namespace PdfTextReader.Execution
             private PipelinePage _page;
             private PdfCanvas _outputCanvas;
 
-            private PipelinePageFactory _factory = new PipelinePageFactory();
+            private PipelineSingletonFactory _factory = new PipelineSingletonFactory();
 
             public BlockPage GetLastResult() => _page.LastResult;
 
