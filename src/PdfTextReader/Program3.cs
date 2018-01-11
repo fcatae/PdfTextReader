@@ -10,16 +10,16 @@ namespace PdfTextReader
 {
     class Program3
     {
-        public static void ProcessTextLines(string page)
+        public static void ProcessTextLines()
         {
             Console.WriteLine();
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            var artigos = Examples.GetTextLines(page)
+            var artigos = Examples.GetTextLines("pg5")
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()
-                                .DebugPrint()
+                                .Log<AnalyzeSegmentTitles>(Console.Out)
                             .ToList();            
         }
     }

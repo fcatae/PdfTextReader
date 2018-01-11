@@ -10,7 +10,7 @@ namespace PdfTextReader
         {
             Console.WriteLine("PDF Text Reader");
 
-            Program3.ProcessTextLines("p40");
+            Program3.ProcessTextLines();
         }
     }
 }
