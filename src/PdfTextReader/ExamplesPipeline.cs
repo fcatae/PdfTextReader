@@ -709,7 +709,7 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            var result = 
+            var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-page-output.pdf")
                     .AllPages<CreateStructures>(p =>
@@ -728,9 +728,8 @@ namespace PdfTextReader
                     .ConvertText<TransformArtigo, Artigo>()
                         .DebugCount("Artigo")
                         .DebugPrint("Artigo")
-                    .ToEnumerable()
-                    .ToArray();
-
+                    .ToList();
+                    
             pipeline.Done();
 
             var procParser = new ProcessParser();

@@ -67,36 +67,72 @@ namespace PdfTextReader.Execution
             return pipe;
         }
 
-        public PipelineText<TT> Process<T>()
-            where T : IProcessStructure<TT>, new()
+        T CreateInstance<T>()
+            where T : new()
         {
-            var processor = CreateInstance<T>();
+            var obj = new T();
 
-            var stream = from data in ((IEnumerable<TT>)this.CurrentStream)
-                         select processor.Process(data);
+            ReleaseAfterFinish(obj);
 
-            return CreateNewPipelineText(stream);
+            return obj;
         }
+
+        void FreeObject(object instance)
+        {
+            var disposable = instance as IDisposable;
+            if (disposable != null)
+            {
+                disposable.Dispose();
+            }
+        }
+
+        PipelineText<TT> CreateNewPipelineText(IEnumerable<TT> stream)
+        {
+            return new PipelineText<TT>(this.Context, stream, this);
+        }
+
+        //public PipelineText<TT> Process<T>()
+        //    where T : IProcessStructure<TT>, new()
+        //{
+        //    var processor = CreateInstance<T>();
+
+        //    var stream = from data in ((IEnumerable<TT>)this.CurrentStream)
+        //                 select processor.Process(data);
+
+        //    return CreateNewPipelineText(stream);
+        //}
 
         public PipelineText<TT> Log<TL>(string filename)
             where TL : ILogStructure<TT>, new()
         {
-            return CreateNewPipelineText(Log<TL>(filename, this.CurrentStream));
+            return CreateNewPipelineText(PipelineTextLog<TL>(new StreamWriter(filename), this.CurrentStream, true));
         }
 
         public PipelineText<TT> Log<TL>(TextWriter writer)
             where TL : ILogStructure<TT>, new()
         {
-            return CreateNewPipelineText(Log<TL>(writer, this.CurrentStream));
+            return CreateNewPipelineText(PipelineTextLog<TL>(writer, this.CurrentStream, false));
+        }
+        
+        public PipelineText<TT> DebugCount(string message)
+        {
+            return CreateNewPipelineText(PipelineTextDebugCount(message, this.CurrentStream));
         }
 
-        IEnumerable<TT> Log<TL>(TextWriter writer, IEnumerable<TT> stream)
+        public PipelineText<TT> DebugPrint(string message)
+        {
+            return CreateNewPipelineText(PipelineTextDebugPrint(message, this.CurrentStream));
+        }
+
+        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream, Action<TextWriter> callbackDone)
             where TL : ILogStructure<TT>, new()
         {
-            var logger = CreateInstance<TL>();
+            TL logger = default(TL);
 
-            using (var file = writer)
+            try
             {
+                logger = CreateInstance<TL>();
+
                 logger.StartLog(file);
 
                 foreach (var data in stream)
@@ -108,18 +144,29 @@ namespace PdfTextReader.Execution
 
                 logger.EndLog(file);
             }
+            finally
+            {
+                FreeObject(logger);
+
+                if(callbackDone!= null)
+                {
+                    callbackDone(file);
+                }                
+            }
         }
 
-        IEnumerable<TT> Log<TL>(string filename, IEnumerable<TT> stream)
+        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream, bool dispose)
             where TL : ILogStructure<TT>, new()
         {
-            var logger = CreateInstance<TL>();
+            TL logger = default(TL);
 
-            using (var file = new StreamWriter(filename))
+            try
             {
+                logger = CreateInstance<TL>();
+
                 logger.StartLog(file);
 
-                foreach(var data in stream)
+                foreach (var data in stream)
                 {
                     logger.Log(file, data);
 
@@ -128,106 +175,41 @@ namespace PdfTextReader.Execution
 
                 logger.EndLog(file);
             }
-        }
-
-        T CreateInstance<T>()
-            where T: new()
-        {
-            var obj = new T();
-
-            ReleaseAfterFinish(obj);
-
-            return obj;
-        }
-
-        PipelineText<TT> CreateNewPipelineText(IEnumerable<TT> stream)
-        {
-            return new PipelineText<TT>(this.Context, stream, this);
-        }
-
-        public PipelineText<TT> Process(IProcessStructure<TT> processor, bool dispose = true)
-        {
-            if(dispose)
+            finally
             {
-                ReleaseAfterFinish(processor);
+                FreeObject(logger);
+                if (dispose)
+                {
+                    FreeObject(file);
+                }
             }
-
-            var initial = (IEnumerable<TT>)this.CurrentStream;
-
-            var result = initial.Select( data => processor.Process( data ));
-
-            var pipe = new PipelineText<TT>(this.Context, result, this);
-            
-            return pipe;
         }
 
-        public PipelineText<TT> Process2(IProcessStructure2<TT> processor)
+        IEnumerable<TT> PipelineTextDebugCount(string message, IEnumerable<TT> input)
         {
-            ReleaseAfterFinish(processor);
+            int count = 0;
+            foreach (var i in input)
+            {
+                count++;
+                yield return i;
+            }
+            Console.WriteLine(message + ": " + count);
+        }
 
-            var initial = (IEnumerable<TT>)this.CurrentStream;
-
-            var result = processor.Process(initial);
-
-            var pipe = new PipelineText<TT>(this.Context, result, this);
-
-            return pipe;
+        IEnumerable<TT> PipelineTextDebugPrint(string message, IEnumerable<TT> input)
+        {
+            foreach (var i in input)
+            {
+                Console.WriteLine(message + ": " + i.ToString());
+                yield return i;
+            }
         }
         
-        public PipelineText<TT> DebugCount(string message)
-        {
-            var pipe = new PipelineText<TT>(this.Context, DebugCount(CurrentStream), this);
-            
-            IEnumerable<TT> DebugCount(IEnumerable<TT> input)
-            {
-                int count = 0;
-                foreach (var i in input)
-                {
-                    count++;
-                    yield return i;
-                }
-                Console.WriteLine(message + ": " + count);
-            }
-
-            return pipe;
-        }
-
-        private PipelineText<TT> SaveFile(string filename)
-        {
-            IEnumerable<TT> SaveFileFunc(IEnumerable<TT> input)
-            {
-                foreach (var i in input)
-                {
-                    Console.WriteLine(filename + ": " + i.ToString());
-                    yield return i;
-                }
-            }
-
-            return new PipelineText<TT>(this.Context, SaveFileFunc(CurrentStream), this); ;
-        }
-
-
-        public PipelineText<TT> DebugPrint(string message)
-        {
-            var pipe = new PipelineText<TT>(this.Context, DebugPrint(CurrentStream), this);
-
-            IEnumerable<TT> DebugPrint(IEnumerable<TT> input)
-            {
-                foreach (var i in input)
-                {
-                    Console.WriteLine(message + ": " + i.ToString());
-                    yield return i;
-                }                
-            }
-
-            return pipe;
-        }
-
-        public IEnumerable<TT> ToEnumerable()
-        {
-            // TODO: return a disposable 
-            return CurrentStream;
-        }
+        //public IEnumerable<TT> ToEnumerable()
+        //{
+        //    // TODO: return a disposable 
+        //    return CurrentStream;
+        //}
 
         public IList<TT> ToList()
         {
