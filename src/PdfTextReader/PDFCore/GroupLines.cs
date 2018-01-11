@@ -51,6 +51,8 @@ namespace PdfTextReader.PDFCore
                         Width = block.GetWidth(),
                         Height = block.GetHeight(),
 
+                        HasBackColor = b.HasBackColor,
+
                         // might be inaccurate
                         FontFullName = b.FontFullName,
                         FontName = b.FontName,

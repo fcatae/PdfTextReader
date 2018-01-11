@@ -68,7 +68,7 @@ namespace PdfTextReader.PDFCore
             
             foreach(var block in blocks.AllBlocks)
             {
-                ((Block)block).SetHighlight(100);
+                ((Block)block).HasBackColor = true;
             }
 
             return page;

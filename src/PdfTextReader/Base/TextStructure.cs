@@ -14,6 +14,7 @@ namespace PdfTextReader.Base
         public float MarginLeft { get; set; }
         public float? AfterSpace { get; set; }
         public TextAlignment TextAlignment { get; set; }
+        public bool HasBackColor { get; set; }
         //For ContentType
         public List<TextLine> Lines { get; set; }
 

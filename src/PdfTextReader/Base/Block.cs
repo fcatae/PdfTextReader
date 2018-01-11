@@ -19,7 +19,7 @@ namespace PdfTextReader
         public string FontStyle { get; set; }
         public float FontSize { get; set; }
         public float WordSpacing { get; set; }
-        public int Intensity { get; private set; }
+        public bool HasBackColor { get; set; }
 
         public string GetText() => Text;
         public float GetX() => X;
@@ -27,12 +27,7 @@ namespace PdfTextReader
         public float GetWidth() => Width;
         public float GetHeight() => Height;
         public float GetWordSpacing() => WordSpacing;
-
-        public void SetHighlight(int intensity)
-        {
-            Intensity = intensity;
-        }
-
+        
         public static bool HasOverlap(IBlock a, IBlock b)
         {
             float a_x1 = a.GetX();

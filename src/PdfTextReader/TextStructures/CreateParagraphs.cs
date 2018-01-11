@@ -18,7 +18,8 @@ namespace PdfTextReader.TextStructures
                 FontStyle = line.FontStyle,
                 FontSize = line.FontSize,
                 AfterSpace = line.AfterSpace,
-                TextAlignment = TextAlignment.JUSTIFY
+                TextAlignment = TextAlignment.JUSTIFY,
+                HasBackColor = line.HasBackColor
             };            
         }
 
