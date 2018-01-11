@@ -18,7 +18,7 @@ namespace PdfTextReader.Execution
             return obj;
         }
 
-        T CreateInstance<T>(Func<T> create)
+        public T CreateInstance<T>(Func<T> create)
         {
             var obj = create();
 

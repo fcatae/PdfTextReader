@@ -20,13 +20,7 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfOutput;
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
-        
-        public object CurrentText { get; private set; }
-        public void SetCurrentText<T>(PipelineText<T> pipeText)
-        {
-            CurrentText = pipeText;
-        }
-        
+                
         public PipelineInputPdf(string filename)
         {
             var pdfDocument = new PdfDocument(new PdfReader(filename));

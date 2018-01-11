@@ -652,8 +652,8 @@ namespace PdfTextReader
                         .ConvertText<TransformArtigo, Artigo>()
                         //.Show(Color.Orange)
                         ;
-            
-            var artigos = pipeline.GetResults<Artigo>();
+
+            var artigos = textOutput.ToList();
 
             var procParser = new ProcessParser();
             procParser.XMLWriter(artigos, $"bin/{basename}");

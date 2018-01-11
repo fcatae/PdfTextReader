@@ -41,12 +41,7 @@ namespace PdfTextReader.Execution
                 callback(name);
             }
         }
-
-        public IEnumerable<T> GetResults<T>()
-        {
-            return ((PipelineText<T>)_activeContext.CurrentText).CurrentStream;
-        }
-
+        
         public void Done()
         {
             Dispose();

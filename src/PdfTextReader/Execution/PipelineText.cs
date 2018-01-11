@@ -13,13 +13,14 @@ namespace PdfTextReader.Execution
     {
         public IPipelineContext Context { get; }
         public IEnumerable<TT> CurrentStream;
-        private List<IDisposable> _disposableObjects;
-        
+        private PipelineFactory _factory = new PipelineFactory();
+
         public PipelineText(IPipelineContext context, IEnumerable<TT> stream, IDisposable chain)
         {
             this.Context = context;
             this.CurrentStream = stream;
-            this._disposableObjects = new List<IDisposable>() { chain };
+            _factory = new PipelineFactory();
+            _factory.AddReference(chain);            
         }
                 
         public PipelineText<TT> Show(Color Color)
@@ -34,15 +35,12 @@ namespace PdfTextReader.Execution
         {
             var initial = (IEnumerable<TT>)this.CurrentStream;
             
-            var processor = new TransformText<P,TT,TO>();
-            ReleaseAfterFinish(processor);
+            var processor = _factory.CreateInstance( ()=> new TransformText<P,TT,TO>());
 
             var result = processor.Transform(initial);
 
             var pipe = new PipelineText<TO>(this.Context, result, this);
-
-            ((PipelineInputPdf)this.Context).SetCurrentText(pipe);
-
+            
             return pipe;
         }
 
@@ -65,7 +63,7 @@ namespace PdfTextReader.Execution
         public PipelineText<TT> Log<TL>(string filename)
             where TL : ILogStructure<TT>, new()
         {
-            var file = CreateInstance<TextWriter>( ()=> new StreamWriter(filename) );            
+            var file = _factory.CreateInstance<TextWriter>( ()=> new StreamWriter(filename) );            
 
             return Log<TL>(file);
         }
@@ -105,7 +103,7 @@ namespace PdfTextReader.Execution
         IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream)
             where TL : ILogStructure<TT>, new()
         {
-            TL logger = CreateInstance<TL>();
+            TL logger = _factory.CreateInstance<TL>();
 
             logger.StartLog(file);
 
@@ -118,60 +116,10 @@ namespace PdfTextReader.Execution
 
             logger.EndLog(file);
         }
-        public void ReleaseAfterFinish(object instance)
-        {
-            var disposableObj = instance as IDisposable;
-            if (disposableObj != null)
-            {
-                _disposableObjects.Add(disposableObj);
-            }
-        }
-
-        T CreateInstance<T>()
-            where T : new()
-        {
-            var obj = new T();
-
-            ReleaseAfterFinish(obj);
-
-            return obj;
-        }
-
-        T CreateInstance<T>(Func<T> create)
-        {
-            var obj = create();
-
-            ReleaseAfterFinish(obj);
-
-            return obj;
-        }
-
-        void FreeObject(object instance)
-        {
-            var disposable = instance as IDisposable;
-            if (disposable != null)
-            {
-                disposable.Dispose();
-            }
-        }
 
         public void Dispose()
         {
-            lock (_disposableObjects)
-            {
-                if (_disposableObjects != null)
-                {
-                    foreach (var obj in _disposableObjects)
-                    {
-                        if( obj != null )
-                        {
-                            obj.Dispose();
-                        }
-                    }
-
-                    _disposableObjects = null;
-                }
-            }
+            _factory.Dispose();
         }
     }
 }
