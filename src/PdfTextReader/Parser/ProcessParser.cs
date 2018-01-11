@@ -9,7 +9,7 @@ namespace PdfTextReader.Parser
 {
     class ProcessParser
     {
-        decimal Tolerance = 3;
+        float Tolerance = 3;
         public List<Conteudo> ProcessStructures(IEnumerable<TextStructure> structures)
         {
             List<Conteudo> contents = new List<Conteudo>();

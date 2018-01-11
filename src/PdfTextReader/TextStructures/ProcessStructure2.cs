@@ -8,7 +8,7 @@ namespace PdfTextReader.TextStructures
 {
     class ProcessStructure2
     {
-        decimal Tolerance = 3;
+        float Tolerance = 3;
         public IEnumerable<TextStructure> ProcessParagraph(IEnumerable<TextLine> lineSet)
         {
             List<TextStructure> structures = new List<TextStructure>();
@@ -166,7 +166,7 @@ namespace PdfTextReader.TextStructures
 
             foreach (TextLine line in lines)
             {
-                var result = Styles.Where(i => i.FontName == line.FontName && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
+                var result = Styles.Where(i => i.FontName == line.FontName && i.FontSize == line.FontSize).FirstOrDefault();
                 if (result == null)
                 {
                     Styles.Add(new ExecutionStats.TextInfo(line));

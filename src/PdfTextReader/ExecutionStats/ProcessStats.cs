@@ -17,7 +17,7 @@ namespace PdfTextReader.ExecutionStats
 
             foreach (TextLine line in lines)
             {
-                var result = Styles.Where(i => i.FontName == line.FontName && i.FontStyle == line.FontStyle && i.FontSize == Decimal.Round(Convert.ToDecimal(line.FontSize), 2)).FirstOrDefault();
+                var result = Styles.Where(i => i.FontName == line.FontName && i.FontStyle == line.FontStyle && i.FontSize == line.FontSize).FirstOrDefault();
                 if (result == null)
                 {
                     Styles.Add(new ExecutionStats.TextInfo(line));

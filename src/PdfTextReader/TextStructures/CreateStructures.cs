@@ -49,12 +49,12 @@ namespace PdfTextReader.TextStructures
                 var tl = new TextLine
                 {
                     FontName = bl.FontName,
-                    FontSize = (decimal)bl.FontSize,
+                    FontSize = bl.FontSize,
                     FontStyle = bl.FontStyle,
                     Text = bl.Text,
-                    MarginLeft = Decimal.Round(Convert.ToDecimal(bl.GetX() - minx), 2),
-                    MarginRight = Decimal.Round(Convert.ToDecimal(maxx - (bl.GetX() + bl.GetWidth())), 2),
-                    VSpacing = (last_tl != null) ? (decimal?)(last_y - bl.GetH() - bl.FontSize) : null,
+                    MarginLeft = bl.GetX() - minx,
+                    MarginRight = maxx - (bl.GetX() + bl.GetWidth()),
+                    VSpacing = (last_tl != null) ? (float?)(last_y - bl.GetH() - bl.FontSize) : null,
                     Breakline = null,
                     Block = bl
                 };
@@ -69,7 +69,7 @@ namespace PdfTextReader.TextStructures
                     float a = bl.GetHeight();
                     float b = bl.FontSize;
                     float diff = last_y - bl.GetH();
-                    last_tl.Breakline = (decimal)(last_y - bl.GetH() - bl.FontSize);
+                    last_tl.Breakline = (last_y - bl.GetH() - bl.FontSize);
                 }
 
                 last_tl = tl;

@@ -8,19 +8,19 @@ namespace PdfTextReader.ExecutionStats
     class TextInfo
     {
         public string FontName;
-        public decimal FontSize;
+        public float FontSize;
         public string FontStyle;
         public string Text;
 
         public TextInfo(TextLine line)
         {
             this.FontName = line.FontName;
-            this.FontSize = Decimal.Round(Convert.ToDecimal(line.FontSize),2);
+            this.FontSize = line.FontSize;
             this.FontStyle = line.FontStyle;
             this.Text = line.Text;
         }
 
-        public TextInfo(string fontName, string fontStyle, decimal fontSize)
+        public TextInfo(string fontName, string fontStyle, float fontSize)
         {
             this.FontName = fontName;
             this.FontStyle = fontStyle;

@@ -32,10 +32,10 @@ namespace PdfTextReader.TextStructures
             if (_structure.VSpacing == null)
                 return false;
 
-            if (line.VSpacing > line.FontSize / 2)
+            if ((float)line.VSpacing > (float)line.FontSize / 2)
                 return false;
 
-            if ((line.VSpacing != null) && ( !IsZero( (decimal)_structure.VSpacing - (decimal)line.VSpacing ) ))
+            if ((line.VSpacing != null) && ( !IsZero(_structure.VSpacing - line.VSpacing ) ))
                 return false;
 
             return true;
@@ -73,9 +73,9 @@ namespace PdfTextReader.TextStructures
             return _structure;            
         }
                 
-        bool IsZero(decimal value)
+        bool IsZero(float? value)
         {
-            decimal error = 0.1M;
+            float error = 0.1F;
 
             return ((value > -error) && (value < error));                
         }

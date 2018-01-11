@@ -7,12 +7,12 @@ namespace PdfTextReader.Base
     class TextLine : IBlock
     {
         public string FontName { get; set; }
-        public decimal FontSize { get; set; }
+        public float FontSize { get; set; }
         public string Text { get; set; }
-        public decimal MarginRight { get; set; }
-        public decimal MarginLeft { get; set; }
-        public decimal? Breakline { get; set; }
-        public decimal? VSpacing { get; set; }
+        public float MarginRight { get; set; }
+        public float MarginLeft { get; set; }
+        public float? Breakline { get; set; }
+        public float? VSpacing { get; set; }
         public string FontStyle { get; set; }
 
         public IBlock Block { get; set; }
