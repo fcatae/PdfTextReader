@@ -17,8 +17,8 @@ namespace PdfTextReader
             Console.WriteLine();
 
             var artigos = Examples.GetTextLines(page)
-                            .ConvertText<CreateParagraphs, TextStructure>()
-                            .ConvertText<CreateTextSegment, TextSegment>()
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
                                 .DebugPrint()
                             .ToList();            
         }

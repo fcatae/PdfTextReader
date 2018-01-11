@@ -7,7 +7,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    class CreateTextSegment : IAggregateStructure<TextStructure, TextSegment>
+    class CreateTextSegments : IAggregateStructure<TextStructure, TextSegment>
     {
         bool _title = true;
 

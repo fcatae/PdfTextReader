@@ -45,7 +45,7 @@ namespace PdfTextReader
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-test-output.pdf")
                     .AllPages<CreateTextLines>(ProcessPage)
-                    .ConvertText<CreateParagraphs, TextStructure>();
+                    .ConvertText<CreateStructures, TextStructure>();
 
             return result;
         }

@@ -32,7 +32,7 @@ namespace PdfTextReader
                             .PrintAnalytics($"bin/{page}-out-print-analytics-line.xml")
 
                             // TextLine -> TextStructure
-                            .ConvertText<CreateParagraphs, TextStructure>()
+                            .ConvertText<CreateStructures, TextStructure>()
                             .PrintAnalytics($"bin/{page}-out-print-analytics-struct.xml")
 
                             // convert to artigos

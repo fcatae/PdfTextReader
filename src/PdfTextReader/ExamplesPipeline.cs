@@ -648,7 +648,7 @@ namespace PdfTextReader
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Blue)
                     .Text<CreateTextLines>()
-                        .ConvertText<CreateParagraphs, TextStructure>()
+                        .ConvertText<CreateStructures, TextStructure>()
                         .ConvertText<TransformArtigo, Artigo>()
                         //.Show(Color.Orange)
                         ;
@@ -723,7 +723,7 @@ namespace PdfTextReader
                         //        .ParseBlock<GroupLines>()
                         //        .ParseBlock<FindInitialBlockset>();
                     })
-                    .ConvertText<CreateParagraphs, TextStructure>()
+                    .ConvertText<CreateStructures, TextStructure>()
                         .DebugCount()
                         .DebugPrint()
                     .ConvertText<TransformArtigo, Artigo>()
@@ -748,7 +748,7 @@ namespace PdfTextReader
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-page-output.pdf")
                     .AllPages<CreateTextLines>( ProcessPage )
-                    .ConvertText<CreateParagraphs, TextStructure>();
+                    .ConvertText<CreateStructures, TextStructure>();
 
             return result;
         }
