@@ -1,5 +1,6 @@
 ﻿using PdfTextReader.Base;
 using PdfTextReader.Execution;
+using PdfTextReader.ExecutionStats;
 using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
 using PdfTextReader.PDFText;
@@ -723,11 +724,12 @@ namespace PdfTextReader
                         //        .ParseBlock<FindInitialBlockset>();
                     })
                     .ConvertText<CreateParagraphs, TextStructure>()
-                        //.DebugCount("Paragraphs")
-                        .DebugPrint("Paragraphs")
+                        .DebugCount()
+                        .DebugPrint()
                     .ConvertText<TransformArtigo, Artigo>()
-                        //.DebugCount("Artigo")
-                        .DebugPrint("Artigo")
+                        .Log<PrintDebugCount<Artigo>>(Console.Out)
+                        .DebugCount()
+                        .DebugPrint()
                     .ToList();
                     
             pipeline.Done();

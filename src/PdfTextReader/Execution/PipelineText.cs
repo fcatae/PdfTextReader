@@ -77,6 +77,15 @@ namespace PdfTextReader.Execution
             return obj;
         }
 
+        T CreateInstance<T>(Func<T> create)
+        {
+            var obj = create();
+
+            ReleaseAfterFinish(obj);
+
+            return obj;
+        }
+
         void FreeObject(object instance)
         {
             var disposable = instance as IDisposable;
@@ -105,106 +114,21 @@ namespace PdfTextReader.Execution
         public PipelineText<TT> Log<TL>(string filename)
             where TL : ILogStructure<TT>, new()
         {
-            return CreateNewPipelineText(PipelineTextLog<TL>(new StreamWriter(filename), this.CurrentStream, true));
+            var file = CreateInstance<TextWriter>( ()=> new StreamWriter(filename) );            
+
+            return Log<TL>(file);
         }
 
         public PipelineText<TT> Log<TL>(TextWriter writer)
             where TL : ILogStructure<TT>, new()
         {
-            return CreateNewPipelineText(PipelineTextLog<TL>(writer, this.CurrentStream, false));
+            return CreateNewPipelineText(PipelineTextLog<TL>(writer, this.CurrentStream));
         }
-        
-        public PipelineText<TT> DebugPrint(string message)
+
+        public IEnumerable<TT> ToEnumerable()
         {
-            return CreateNewPipelineText(PipelineTextDebugPrint(message, this.CurrentStream));
+            return ConvertPipelineTextToEnumerable(this);
         }
-
-        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream, Action<TextWriter, TT> callbackStep, Action<TextWriter> callbackDone)
-            where TL : ILogStructure<TT>, new()
-        {
-            TL logger = default(TL);
-
-            try
-            {
-                logger = CreateInstance<TL>();
-
-                logger.StartLog(file);
-
-                foreach (var data in stream)
-                {
-                    logger.Log(file, data);
-
-                    yield return data;
-                }
-
-                logger.EndLog(file);
-            }
-            finally
-            {
-                FreeObject(logger);
-
-                if(callbackDone!= null)
-                {
-                    callbackDone(file);
-                }                
-            }
-        }
-
-        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream, bool dispose)
-            where TL : ILogStructure<TT>, new()
-        {
-            TL logger = default(TL);
-
-            try
-            {
-                logger = CreateInstance<TL>();
-
-                logger.StartLog(file);
-
-                foreach (var data in stream)
-                {
-                    logger.Log(file, data);
-
-                    yield return data;
-                }
-
-                logger.EndLog(file);
-            }
-            finally
-            {
-                FreeObject(logger);
-                if (dispose)
-                {
-                    FreeObject(file);
-                }
-            }
-        }
-
-        IEnumerable<TT> PipelineTextDebugCount(string message, IEnumerable<TT> input)
-        {
-            int count = 0;
-            foreach (var i in input)
-            {
-                count++;
-                yield return i;
-            }
-            Console.WriteLine(message + ": " + count);
-        }
-
-        IEnumerable<TT> PipelineTextDebugPrint(string message, IEnumerable<TT> input)
-        {
-            foreach (var i in input)
-            {
-                Console.WriteLine(message + ": " + i.ToString());
-                yield return i;
-            }
-        }
-        
-        //public IEnumerable<TT> ToEnumerable()
-        //{
-        //    // TODO: return a disposable 
-        //    return CurrentStream;
-        //}
 
         public IList<TT> ToList()
         {
@@ -213,6 +137,35 @@ namespace PdfTextReader.Execution
             this.Dispose();
 
             return result;
+        }
+
+        IEnumerable<TT> ConvertPipelineTextToEnumerable(PipelineText<TT> pipelineText)
+        {
+            var stream = pipelineText.CurrentStream;
+
+            foreach (var data in stream)
+            {
+                yield return data;
+            }
+
+            pipelineText.Dispose();
+        }
+
+        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream)
+            where TL : ILogStructure<TT>, new()
+        {
+            TL logger = CreateInstance<TL>();
+
+            logger.StartLog(file);
+
+            foreach (var data in stream)
+            {
+                logger.Log(file, data);
+
+                yield return data;
+            }
+
+            logger.EndLog(file);
         }
 
         public void Dispose()

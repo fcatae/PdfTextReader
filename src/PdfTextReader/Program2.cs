@@ -31,12 +31,11 @@ namespace PdfTextReader
         static void ProcessSingleTextWithAnalytics(string page)
         {
             var artigos = Examples.GetTextLines(page)
-                            .Log<PrintAnalytics3.ShowTextLine>($"bin/{page}-out-print-analytics-line.xml")
+                            .PrintAnalytics($"bin/{page}-out-print-analytics-line.xml")
 
                             // TextLine -> TextStructure
                             .ConvertText<CreateParagraphs, TextStructure>()
-                            .Log<PrintAnalytics3.ShowTextStructure>(Console.Out)
-                            .Log<PrintDebugCount<TextStructure>>(Console.Out)
+                            .PrintAnalytics($"bin/{page}-out-print-analytics-struct.xml")
 
                             // convert to artigos
                             .ConvertText<TransformArtigo, Artigo>()
