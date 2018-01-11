@@ -31,9 +31,11 @@ namespace PdfTextReader
         static void ProcessSingleTextWithAnalytics(string page)
         {
             var artigos = Examples.GetTextLines(page)
+                
                             // show text lines
                             .Process( PrintAnalytics.ShowTextLine($"bin/{page}-out-txtline.xml") )
                             .Process2(new PrintAnalytics2.ShowLines($"bin/{page}-out-txtline2.xml"))
+                            .Log<PrintAnalytics3.ShowTextLine>($"bin/{page}-out-print-analytics-line.xml")
 
                             // TextLine -> TextStructure
                             .ConvertText<CreateParagraphs, TextStructure>()                            
@@ -41,6 +43,7 @@ namespace PdfTextReader
                             // show text structures
                             .Process( PrintAnalytics.ShowTextStructure($"bin/{page}-out-txtstr.xml") )
                             .Process2(new PrintAnalytics2.ShowStructures($"bin/{page}-out-txtstr2.xml"))
+                            .Log<PrintAnalytics3.ShowTextStructure>($"bin/{page}-out-print-analytics-str.xml")
 
                             // convert to artigos
                             .ConvertText<TransformArtigo, Artigo>()

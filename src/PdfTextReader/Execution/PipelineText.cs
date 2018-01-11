@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using PdfTextReader.Base;
+using System.IO;
 
 namespace PdfTextReader.Execution
 {
@@ -65,7 +66,85 @@ namespace PdfTextReader.Execution
 
             return pipe;
         }
-        
+
+        public PipelineText<TT> Process<T>()
+            where T : IProcessStructure<TT>, new()
+        {
+            var processor = CreateInstance<T>();
+
+            var stream = from data in ((IEnumerable<TT>)this.CurrentStream)
+                         select processor.Process(data);
+
+            return CreateNewPipelineText(stream);
+        }
+
+        public PipelineText<TT> Log<TL>(string filename)
+            where TL : ILogStructure<TT>, new()
+        {
+            return CreateNewPipelineText(Log<TL>(filename, this.CurrentStream));
+        }
+
+        public PipelineText<TT> Log<TL>(TextWriter writer)
+            where TL : ILogStructure<TT>, new()
+        {
+            return CreateNewPipelineText(Log<TL>(writer, this.CurrentStream));
+        }
+
+        IEnumerable<TT> Log<TL>(TextWriter writer, IEnumerable<TT> stream)
+            where TL : ILogStructure<TT>, new()
+        {
+            var logger = CreateInstance<TL>();
+
+            using (var file = writer)
+            {
+                logger.StartLog(file);
+
+                foreach (var data in stream)
+                {
+                    logger.Log(file, data);
+
+                    yield return data;
+                }
+
+                logger.EndLog(file);
+            }
+        }
+
+        IEnumerable<TT> Log<TL>(string filename, IEnumerable<TT> stream)
+            where TL : ILogStructure<TT>, new()
+        {
+            var logger = CreateInstance<TL>();
+
+            using (var file = new StreamWriter(filename))
+            {
+                logger.StartLog(file);
+
+                foreach(var data in stream)
+                {
+                    logger.Log(file, data);
+
+                    yield return data;
+                }
+
+                logger.EndLog(file);
+            }
+        }
+
+        T CreateInstance<T>()
+            where T: new()
+        {
+            var obj = new T();
+
+            ReleaseAfterFinish(obj);
+
+            return obj;
+        }
+
+        PipelineText<TT> CreateNewPipelineText(IEnumerable<TT> stream)
+        {
+            return new PipelineText<TT>(this.Context, stream, this);
+        }
+
         public PipelineText<TT> Process(IProcessStructure<TT> processor, bool dispose = true)
         {
             if(dispose)
@@ -94,28 +173,7 @@ namespace PdfTextReader.Execution
 
             return pipe;
         }
-
-        public PipelineText<TT> Process<T>()
-            where T: IProcessStructure2<TT>, new()
-        {
-            var processor = new T();
-
-            ReleaseAfterFinish(processor);
-
-            var initial = (IEnumerable<TT>)this.CurrentStream;
-
-            var result = processor.Process(initial);
-
-            var pipe = new PipelineText<TT>(this.Context, result, this);
-
-            return pipe;
-        }
-
-        public PipelineText<T> ParseContent<T>()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public PipelineText<TT> DebugCount(string message)
         {
             var pipe = new PipelineText<TT>(this.Context, DebugCount(CurrentStream), this);

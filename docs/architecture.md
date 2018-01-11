@@ -5,6 +5,49 @@ Execution pipeline to run listeners and block processors.
 - Run the listeners
 - Run the blocks
 
+Stream:
+
+    .Output<TextLine>()
+        .Tool<CreateStructure>()
+    .Output<TextParagraphs>()
+        .Tool<CreateParagraphs>()
+    .Output<TextStructure>()
+
+                            // show text lines
+                            .Process( PrintAnalytics.ShowTextLine($"bin/{page}-out-txtline.xml") )
+                            .Process2(new PrintAnalytics2.ShowLines($"bin/{page}-out-txtline2.xml"))
+
+                            // TextLine -> TextStructure
+                            .ConvertText<CreateParagraphs, TextStructure>()  
+                                .Filter<Remover>()
+                                .Show()
+
+                                .Log("bin/{page}-step-1")
+                                .Filter<Remover>()
+                                .Log("bin/{page}-step-2")
+                                .Run( t => t.Calculate<Stat>()
+                                            .Log("bin/{page}-step-2-stat"))
+                                .Stat<FontStats>("bin/{page}-step-2-stat")
+
+                                .Run(
+                                    a => {},
+                                    b => {},
+                                    c => {}
+                                )
+                                
+                                LogXml/LogJson/Log<T>ToString
+                                Text(Serialize)
+                                Block(Show) => true/false
+                                Save/Load
+
+                                ApplyHtml<Title>( t => t.Center() )
+
+                            // show text structures
+                            .Process( PrintAnalytics.ShowTextStructure($"bin/{page}-out-txtstr.xml") )
+                            .Process2(new PrintAnalytics2.ShowStructures($"bin/{page}-out-txtstr2.xml"))
+
+
+
 Pipeline:
 
     Pipeline.Input("input") //.Output
