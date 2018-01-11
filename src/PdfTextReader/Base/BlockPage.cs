@@ -6,9 +6,14 @@ namespace PdfTextReader.Base
 {
     class BlockPage
     {
-        BlockSet<IBlock> _blocks = new BlockSet<IBlock>();
+        BlockSet<IBlock> _blocks;
 
         public BlockSet<IBlock> AllBlocks => _blocks;
+
+        public BlockPage()
+        {
+            _blocks = new BlockSet<IBlock>(this);
+        }
 
         public void Add(IBlock block)
         {

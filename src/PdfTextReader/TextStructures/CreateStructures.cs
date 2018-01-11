@@ -28,10 +28,23 @@ namespace PdfTextReader.TextStructures
 
         public IEnumerable<TextLine> ProcessPage(BlockPage page)
         {
-            return ProcessLine(page.AllBlocks);
+            foreach (var bset in page.AllBlocks)
+            {
+                var blockArea = bset as IBlockSet<IBlock>;
+
+                if (bset is ImageBlock || bset is TableSet)
+                    continue;
+
+                var lines = ProcessLine(blockArea);
+
+                foreach(var l in lines)
+                {
+                    yield return l;
+                }                
+            }
         }
 
-        List<TextLine> ProcessLine(IBlockSet<IBlock> bset)
+            List<TextLine> ProcessLine(IBlockSet<IBlock> bset)
         {
             var items = bset;
 

@@ -9,7 +9,19 @@ namespace PdfTextReader.Base
     class BlockSet<T> : IBlockSet<T>
         where T: IBlock
     {
+        public BlockSet()
+        {
+
+        }
+
+        public BlockSet(BlockPage page)
+        {
+            this._page = page;
+        }
+
         List<T> _blockList = new List<T>();
+        private BlockPage _page = null;
+
         // UpdateBoundary bug: revert to dynamic Linq calculation
         //float _x1 = float.MaxValue;
         //float _h1 = float.MaxValue;
@@ -32,6 +44,11 @@ namespace PdfTextReader.Base
         {
             if (block == null)
                 throw new ArgumentNullException(nameof(block));
+
+            if ((block is BlockSet<IBlock>) && (_page == null))
+            {
+                throw new InvalidOperationException();
+            }
 
             //UpdateBoundary(block.GetX(), block.GetH(), block.GetX() + block.GetWidth(), block.GetH() + block.GetHeight());
 
