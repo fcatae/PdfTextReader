@@ -29,14 +29,22 @@ namespace PdfTextReader.TextStructures
                 (_structure.FontSize != line.FontSize))
                 return false;
             
+            // different page or column
             if (_structure.VSpacing == null)
                 return false;
 
-            if ((float)line.VSpacing > (float)line.FontSize / 2)
-                return false;
+            // if there is next line
+            if( line.VSpacing != null )
+            {
+                // too far
+                if ((float)line.VSpacing > (float)line.FontSize / 2)
+                    return false;
 
-            if ((line.VSpacing != null) && ( !IsZero(_structure.VSpacing - line.VSpacing ) ))
-                return false;
+                // same spacing as structure
+                if (!IsZero(_structure.VSpacing - line.VSpacing))
+                    return false;
+            }
+
 
             return true;
         }
