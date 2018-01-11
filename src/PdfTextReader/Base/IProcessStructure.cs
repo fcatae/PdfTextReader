@@ -8,4 +8,9 @@ namespace PdfTextReader.Base
     {
         T Process(T structure);
     }
+
+    interface IProcessStructure2<T>
+    {
+        IEnumerable<T> Process(IEnumerable<T> input);
+    }
 }

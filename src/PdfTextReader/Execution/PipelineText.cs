@@ -48,22 +48,7 @@ namespace PdfTextReader.Execution
         {
             throw new NotImplementedException();
         }
-
-        //public PipelineText<TextLine> ParseText<P>()
-        //    where P: IProcessText, new()
-        //{
-        //    var initial = this.CurrentText;
-
-        //    var processor = new P();
-
-        //    var result = processor.ProcessText(initial);
-
-        //    this.CurrentText = result;
-        //    this.CurrentStream = (IEnumerable<TT>)result.AllText;
-
-        //    return (PipelineText<TextLine>)((object)this);
-        //}
-
+        
         public PipelineText<TO> ConvertText<P,TO>()
             where P : class, IAggregateStructure<TT,TO>, new()
         {
@@ -97,6 +82,35 @@ namespace PdfTextReader.Execution
             return pipe;
         }
 
+        public PipelineText<TT> Process2(IProcessStructure2<TT> processor)
+        {
+            ReleaseAfterFinish(processor);
+
+            var initial = (IEnumerable<TT>)this.CurrentStream;
+
+            var result = processor.Process(initial);
+
+            var pipe = new PipelineText<TT>(this.Context, result, this);
+
+            return pipe;
+        }
+
+        public PipelineText<TT> Process<T>()
+            where T: IProcessStructure2<TT>, new()
+        {
+            var processor = new T();
+
+            ReleaseAfterFinish(processor);
+
+            var initial = (IEnumerable<TT>)this.CurrentStream;
+
+            var result = processor.Process(initial);
+
+            var pipe = new PipelineText<TT>(this.Context, result, this);
+
+            return pipe;
+        }
+
         public PipelineText<T> ParseContent<T>()
         {
             throw new NotImplementedException();
@@ -119,6 +133,21 @@ namespace PdfTextReader.Execution
 
             return pipe;
         }
+
+        private PipelineText<TT> SaveFile(string filename)
+        {
+            IEnumerable<TT> SaveFileFunc(IEnumerable<TT> input)
+            {
+                foreach (var i in input)
+                {
+                    Console.WriteLine(filename + ": " + i.ToString());
+                    yield return i;
+                }
+            }
+
+            return new PipelineText<TT>(this.Context, SaveFileFunc(CurrentStream), this); ;
+        }
+
 
         public PipelineText<TT> DebugPrint(string message)
         {
