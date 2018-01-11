@@ -18,10 +18,19 @@ namespace PdfTextReader.ExecutionStats
             
             foreach(var title in segment.Title)
             {
-                input.WriteLine($"{title.FontName}, {title.FontSize.ToString("0.00")}, {title.FontStyle}, {title.AfterSpace}, {title.HasBackColor}");
+                float? afterSpace = title.AfterSpace;
+
+                if (title.HasBackColor) input.WriteLine("****************************************************");
+                if (title.HasBackColor) input.WriteLine("****************************************************");
+
+                input.WriteLine($"{title.FontName}, {title.FontSize.ToString("0.00")}, {title.FontStyle}");
                 input.WriteLine();
                 input.WriteLine(title.Text);
+                input.WriteLine($" ({afterSpace})");
                 input.WriteLine();
+
+                if (title.HasBackColor) input.WriteLine("****************************************************");
+                if (title.HasBackColor) input.WriteLine("****************************************************");
             }
 
             input.WriteLine("");

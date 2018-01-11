@@ -16,10 +16,12 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            var artigos = Examples.GetTextLines("pg10")
+            string basename = "pg20";
+
+            var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>(Console.Out)
+                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-segments.txt")
                             .ToList();            
         }
     }
