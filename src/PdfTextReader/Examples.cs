@@ -20,7 +20,7 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-test-output.pdf")
-                    .StreamConvert<CreateStructures>(ProcessPage);                    
+                    .StreamConvert<CreateTextLines>(ProcessPage);                    
 
             return result;
         }
@@ -32,7 +32,7 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-test-output.pdf")
-                    .AllPages<CreateStructures>(ProcessPage);                  
+                    .AllPages<CreateTextLines>(ProcessPage);                  
 
             return result;
         }
@@ -44,7 +44,7 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-test-output.pdf")
-                    .AllPages<CreateStructures>(ProcessPage)
+                    .AllPages<CreateTextLines>(ProcessPage)
                     .ConvertText<CreateParagraphs, TextStructure>();
 
             return result;

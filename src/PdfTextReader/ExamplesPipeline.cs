@@ -647,7 +647,7 @@ namespace PdfTextReader
                         .ParseBlock<RemoveHeader>()
                         .ParseBlock<OrderBlocksets>()
                         .Show(Color.Blue)
-                    .Text<CreateStructures>()
+                    .Text<CreateTextLines>()
                         .ConvertText<CreateParagraphs, TextStructure>()
                         .ConvertText<TransformArtigo, Artigo>()
                         //.Show(Color.Orange)
@@ -713,7 +713,7 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-page-output.pdf")
-                    .AllPages<CreateStructures>(p =>
+                    .AllPages<CreateTextLines>(p =>
                     {
                         ProcessPage(p);
                         //p.ParsePdf<PreProcessTables>()
@@ -747,7 +747,7 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-page-output.pdf")
-                    .AllPages<CreateStructures>( ProcessPage )
+                    .AllPages<CreateTextLines>( ProcessPage )
                     .ConvertText<CreateParagraphs, TextStructure>();
 
             return result;

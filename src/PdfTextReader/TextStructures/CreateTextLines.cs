@@ -7,7 +7,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.TextStructures
 {
-    class CreateStructures : IConvertBlock
+    class CreateTextLines : IConvertBlock
     {
         //public TextSet ConvertBlock(BlockPage page)
         //{
