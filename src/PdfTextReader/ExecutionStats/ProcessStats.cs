@@ -64,7 +64,7 @@ namespace PdfTextReader.ExecutionStats
                 file.WriteLine("");
                 foreach (TextLine line in lines)
                 {
-                    file.WriteLine($"Breakline: {line.Breakline}");
+                    file.WriteLine($"Breakline: {line.AfterSpace}");
                     file.WriteLine($"FontName: {line.FontName}");
                     file.WriteLine($"FontSize: {line.FontSize}");
                     file.WriteLine($"FontStyle: {line.FontStyle}");

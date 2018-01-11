@@ -30,6 +30,9 @@ namespace PdfTextReader.Parser
             int idxTitle = _structures.FindIndex(l => l.TextAlignment != TextAlignment.CENTER);
             int total = _structures.Count;
 
+            // when page has one segment, but no title at all
+            idxTitle = (idxTitle < 0) ? 0 : idxTitle;
+
             var title = _structures.GetRange(0, idxTitle);
             var body = _structures.GetRange(idxTitle, total - idxTitle);
             

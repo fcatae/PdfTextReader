@@ -50,8 +50,8 @@ namespace PdfTextReader.TextStructures
                     Text = bl.Text,
                     MarginLeft = bl.GetX() - minx,
                     MarginRight = maxx - (bl.GetX() + bl.GetWidth()),
-                    VSpacing = (last_tl != null) ? (float?)(last_y - bl.GetH() - bl.FontSize) : null,
-                    Breakline = null,
+                    BeforeSpace = (last_tl != null) ? (float?)(last_y - bl.GetH() - bl.FontSize) : null,
+                    AfterSpace = null,
                     Block = bl
                 };
 
@@ -65,7 +65,7 @@ namespace PdfTextReader.TextStructures
                     float a = bl.GetHeight();
                     float b = bl.FontSize;
                     float diff = last_y - bl.GetH();
-                    last_tl.Breakline = (last_y - bl.GetH() - bl.FontSize);
+                    last_tl.AfterSpace = (last_y - bl.GetH() - bl.FontSize);
                 }
 
                 last_tl = tl;

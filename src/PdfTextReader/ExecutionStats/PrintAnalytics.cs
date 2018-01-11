@@ -43,7 +43,7 @@ namespace PdfTextReader.ExecutionStats
 
             public void Log(TextWriter file, TextLine line)
             {
-                file.WriteLine($"Breakline: {line.Breakline}");
+                file.WriteLine($"Breakline: {line.AfterSpace}");
                 file.WriteLine($"FontName: {line.FontName}");
                 file.WriteLine($"FontSize: {line.FontSize}");
                 file.WriteLine($"FontStyle: {line.FontStyle}");

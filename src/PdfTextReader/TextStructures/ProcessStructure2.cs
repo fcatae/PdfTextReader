@@ -115,7 +115,7 @@ namespace PdfTextReader.TextStructures
             if (l1.FontName == l2.FontName && l1.FontSize == l2.FontSize)
             {
                 //The breakline for the first line is minor than the font size of second line? It is the same line
-                if (l1.Breakline < l2.FontSize / Tolerance)
+                if (l1.AfterSpace < l2.FontSize / Tolerance)
                 {
                     //The second line has a paragraph margin and the first line is not centered or right alignment? It is NOT the same line
                     if ((GetLineTextAlignment(l1) == TextAlignment.JUSTIFY || GetLineTextAlignment(l1) == TextAlignment.LEFT) && GetLineTextAlignment(l2) == TextAlignment.RIGHT)

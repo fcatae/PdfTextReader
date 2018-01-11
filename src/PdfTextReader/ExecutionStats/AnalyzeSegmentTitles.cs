@@ -18,7 +18,10 @@ namespace PdfTextReader.ExecutionStats
             
             foreach(var title in segment.Title)
             {
-                input.WriteLine($"{title.FontName}, {title.FontSize.ToString("0.00")}");
+                input.WriteLine($"{title.FontName}, {title.FontSize.ToString("0.00")}, {title.AfterSpace}");
+                input.WriteLine();
+                input.WriteLine(title.Text);
+                input.WriteLine();
             }
 
             input.WriteLine("");

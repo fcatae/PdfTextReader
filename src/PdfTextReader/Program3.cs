@@ -16,7 +16,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            var artigos = Examples.GetTextLines("pg5")
+            var artigos = Examples.GetTextLines("pg10")
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()
                                 .Log<AnalyzeSegmentTitles>(Console.Out)

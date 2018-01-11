@@ -17,7 +17,7 @@ namespace PdfTextReader.TextStructures
                 FontName = line.FontName,
                 FontStyle = line.FontStyle,
                 FontSize = line.FontSize,
-                VSpacing = line.Breakline,
+                AfterSpace = line.AfterSpace,
                 TextAlignment = TextAlignment.JUSTIFY
             };            
         }
@@ -30,18 +30,18 @@ namespace PdfTextReader.TextStructures
                 return false;
             
             // different page or column
-            if (_structure.VSpacing == null)
+            if (_structure.AfterSpace == null)
                 return false;
 
             // if there is next line
-            if( line.VSpacing != null )
+            if( line.BeforeSpace != null )
             {
                 // too far
-                if ((float)line.VSpacing > (float)line.FontSize / 2)
+                if ((float)line.BeforeSpace > (float)line.FontSize / 2)
                     return false;
 
                 // same spacing as structure
-                if (!IsZero(_structure.VSpacing - line.VSpacing))
+                if (!IsZero(_structure.AfterSpace - line.BeforeSpace))
                     return false;
             }
 
