@@ -1,5 +1,3 @@
-using iText.Kernel.Pdf;
-using PdfTextReader.Execution;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

@@ -12,6 +12,7 @@ namespace PdfTextReader.ExecutionStats
 
         public void StartLog(TextWriter input)
         {
+            input.WriteLine("DebugPrint: " + _message);
         }
 
         public void EndLog(TextWriter input)
@@ -20,7 +21,8 @@ namespace PdfTextReader.ExecutionStats
 
         public void Log(TextWriter input, T data)
         {
-            input.WriteLine(_message + ": " + data.ToString());
+            input.WriteLine(data.ToString());
+            input.WriteLine("");
         }
 
     }

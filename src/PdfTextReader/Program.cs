@@ -10,7 +10,7 @@ namespace PdfTextReader
         {
             Console.WriteLine("PDF Parser using iText");
 
-            Program2.MainTest();
+            Program3.ProcessTextLines("p40");
         }
     }
 }
