@@ -8,7 +8,7 @@ namespace PdfTextReader
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("PDF Parser using iText");
+            Console.WriteLine("PDF Text Reader");
 
             Program3.ProcessTextLines("p40");
         }

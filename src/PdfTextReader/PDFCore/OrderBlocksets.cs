@@ -1,4 +1,6 @@
-﻿using System;
+﻿// #define DEBUG_ORDERBLOCKSET
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -119,7 +121,10 @@ namespace PdfTextReader.PDFCore
                     {
                         // take the parameter
                         OrderedBlocks.Add((IBlock)v.B);
+
+#if DEBUG_ORDERBLOCKSET 
                         Console.WriteLine($"[{v.ID}] X={v.X} Y={v.Y} X2={v.X2} W={v.W}");
+#endif
                         Values[k] = null;
                         continue;
                     }
@@ -132,7 +137,11 @@ namespace PdfTextReader.PDFCore
 
                     // consume X2
                     OrderedBlocks.Add((IBlock)v.B);
+
+#if DEBUG_ORDERBLOCKSET
                     Console.WriteLine($"[{v.ID}] X={v.X} Y={v.Y} X2={v.X2} W={v.W}");
+#endif
+
                     Values[k] = null;
 
                     // reset

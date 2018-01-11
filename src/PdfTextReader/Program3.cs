@@ -12,6 +12,10 @@ namespace PdfTextReader
     {
         public static void ProcessTextLines(string page)
         {
+            Console.WriteLine();
+            Console.WriteLine("Program3 - ProcessTextLines");
+            Console.WriteLine();
+
             var artigos = Examples.GetTextLines(page)
                             .ConvertText<CreateParagraphs, TextStructure>()
                             .ConvertText<CreateTextSegment, TextSegment>()
