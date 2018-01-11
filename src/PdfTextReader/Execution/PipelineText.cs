@@ -114,17 +114,12 @@ namespace PdfTextReader.Execution
             return CreateNewPipelineText(PipelineTextLog<TL>(writer, this.CurrentStream, false));
         }
         
-        public PipelineText<TT> DebugCount(string message)
-        {
-            return CreateNewPipelineText(PipelineTextDebugCount(message, this.CurrentStream));
-        }
-
         public PipelineText<TT> DebugPrint(string message)
         {
             return CreateNewPipelineText(PipelineTextDebugPrint(message, this.CurrentStream));
         }
 
-        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream, Action<TextWriter> callbackDone)
+        IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream, Action<TextWriter, TT> callbackStep, Action<TextWriter> callbackDone)
             where TL : ILogStructure<TT>, new()
         {
             TL logger = default(TL);

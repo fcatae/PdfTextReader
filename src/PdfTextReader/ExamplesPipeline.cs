@@ -723,10 +723,10 @@ namespace PdfTextReader
                         //        .ParseBlock<FindInitialBlockset>();
                     })
                     .ConvertText<CreateParagraphs, TextStructure>()
-                        .DebugCount("Paragraphs")
+                        //.DebugCount("Paragraphs")
                         .DebugPrint("Paragraphs")
                     .ConvertText<TransformArtigo, Artigo>()
-                        .DebugCount("Artigo")
+                        //.DebugCount("Artigo")
                         .DebugPrint("Artigo")
                     .ToList();
                     

@@ -36,6 +36,7 @@ namespace PdfTextReader
                             // TextLine -> TextStructure
                             .ConvertText<CreateParagraphs, TextStructure>()
                             .Log<PrintAnalytics3.ShowTextStructure>(Console.Out)
+                            .Log<PrintDebugCount<TextStructure>>(Console.Out)
 
                             // convert to artigos
                             .ConvertText<TransformArtigo, Artigo>()
