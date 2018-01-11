@@ -22,6 +22,7 @@ namespace PdfTextReader
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-segments.txt")
+                                .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ToList();            
         }
     }
