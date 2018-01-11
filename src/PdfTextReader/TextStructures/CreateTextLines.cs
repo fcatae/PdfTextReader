@@ -18,6 +18,10 @@ namespace PdfTextReader.TextStructures
                 if (bset is ImageBlock || bset is TableSet)
                     continue;
 
+                // BUG
+                if (blockArea.First() is TableCell)
+                    throw new InvalidOperationException();
+
                 var lines = ProcessLine(blockArea);
 
                 foreach(var l in lines)
