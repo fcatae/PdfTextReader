@@ -20,7 +20,8 @@ namespace PdfTextReader
         public float FontSize { get; set; }
         public float WordSpacing { get; set; }
         public bool HasBackColor { get; set; }
-
+        public bool IsBold { get; set; }
+        public bool IsItalic { get; set; }
         public string GetText() => Text;
         public float GetX() => X;
         public float GetH() => H;

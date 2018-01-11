@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using PdfTextReader.Base;
+using iText.IO.Font;
 
 namespace PdfTextReader.PDFText
 {
@@ -22,19 +23,9 @@ namespace PdfTextReader.PDFText
                 var baseline = textInfo.GetBaseline().GetStartPoint();
                 var descent = textInfo.GetDescentLine().GetStartPoint();
                 var ascent = textInfo.GetAscentLine().GetEndPoint();
-
-                var font = textInfo.GetFont().GetFontProgram();
-                var FamilyName = font.GetFontNames().GetFamilyName();
-                string FamilyNameString = String.Empty;
-
-                if (FamilyName == null)
-                {
-                    FamilyNameString = font.GetFontNames().GetFontName();
-                }
-                else
-                {
-                    FamilyNameString = font.GetFontNames().GetFamilyName()[0][3];
-                }
+                var font = textInfo.GetFont().GetFontProgram().GetFontNames();
+                var fontName = GetFontName(font);
+                var fontStyle = GetFontStyle(font);
 
                 // calculate font-size
                 float ctm_y = textInfo.GetTextMatrix().Get(4);
@@ -49,13 +40,18 @@ namespace PdfTextReader.PDFText
                     Width = ascent.Get(0) - descent.Get(0),
                     Height = ascent.Get(1) - descent.Get(1),
                     Lower = baseline.Get(1) - descent.Get(1),
-                    FontName = FamilyNameString,
-                    FontFullName = font.GetFontNames().GetFontName(),
-                    FontStyle = TrimFontStyle(font.GetFontNames().GetFontName()),
+                    FontFullName = font.GetFontName(),
+                    FontName = fontName,
+                    FontStyle = fontStyle,
                     FontSize = fontSize,
+                    IsBold = (fontStyle == "Bold"),
+                    IsItalic = (fontStyle == "Italic"),
                     WordSpacing = textInfo.GetWordSpacing()
                 };
 
+                // valuable log information: sometimes FontStyle is wrong!
+                // var workfont = WorkFont(font);
+                                
                 float dbgWordSpacing = textInfo.GetWordSpacing();
                 
                 if(dbgWordSpacing==0)
@@ -67,28 +63,72 @@ namespace PdfTextReader.PDFText
             }
         }
         
-        string TrimFontStyle(String name)
+        object WorkFont(FontNames font)
         {
-            if (name == null)
+            var stat = new
             {
-                return null;
-            }
-            if (name.EndsWith("Bold"))
+                Name = font.GetFontName(),
+                Weight = font.GetFontWeight(),
+                IsBold = font.IsBold(),
+                GetFamilyName = font.GetFamilyName()
+            };
+
+            return stat;
+        }
+
+        string GetFontName(FontNames font)
+        {
+            // Family Name - sometimes return null
+            string[][] familyNameArray = font.GetFamilyName();
+
+            string fontname = font.GetFontName();
+
+            return RemoveSubFontPrefix(fontname);
+        }
+        
+        string RemoveSubFontPrefix(string name)
+        {
+            // According to PDF specification ISO 32000-1:2008, 
+            // font subsets names are prefixed with 6 uppercase letters followed by plus (+) sign.
+            // ref https://developers.itextpdf.com/question/what-are-extra-characters-font-name-my-pdf
+
+            if (name.IndexOf("+") == 6)
+                return name.Substring(6);
+
+            return name;
+        }
+
+        bool IsFontBold(FontNames font)
+        {
+            const int normalWeight = 400;
+
+            bool heavyWeight = (font.GetFontWeight() > normalWeight);
+            bool itextProperty = (font.IsBold());
+
+            return (heavyWeight || itextProperty);
+        }
+        
+        string GetFontStyle(FontNames font)
+        {
+            string fontname = font.GetFontName();
+            string style = "Regular";
+
+            if (fontname.Contains("Bold"))
             {
                 return "Bold";
             }
-            else if (name.EndsWith("Italic"))
+            else if (fontname.Contains("Italic"))
             {
                 return "Italic";
             }
-            else if (name.EndsWith("BoldItalic"))
+            
+            // bold may apply to inline text used for subscript texts
+            if (style != "Bold" && IsFontBold(font))
             {
-                return "BoldItalic";
+                Console.WriteLine($"Font-style {fontname} may be bold");
             }
-            else
-            {
-                return "Regular";
-            }
+
+            return style;
         }
 
         public ICollection<EventType> GetSupportedEvents()
