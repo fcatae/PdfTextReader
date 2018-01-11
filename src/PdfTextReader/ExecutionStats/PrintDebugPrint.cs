@@ -9,7 +9,6 @@ namespace PdfTextReader.ExecutionStats
     class PrintDebugPrint<T> : ILogStructure<T>
     {
         string _message = typeof(T).Name;
-        int _count = 0;
 
         public void StartLog(TextWriter input)
         {
