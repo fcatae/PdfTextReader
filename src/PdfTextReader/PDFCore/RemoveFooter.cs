@@ -19,7 +19,13 @@ namespace PdfTextReader.PDFCore
             var blocksAtFooter = page.AllBlocks.Where(b => b.GetH() > minH);
 
             var result = new BlockPage();
+            
+            if(!HasFooter(result))
+            {
+                return page;
+            }
 
+            // remove blockset that corresponds to footer
             result.AddRange(blocksAtFooter);
 
             return result;
@@ -38,8 +44,18 @@ namespace PdfTextReader.PDFCore
             var blocksAtFooter = page.AllBlocks.Where(b => b.GetH() <= minH);
 
             var result = new BlockPage();
+            
+            if(HasFooter(result))
+            {
+                result.AddRange(blocksAtFooter);
+            }
 
-            if( result.AllBlocks.Count() > 0 )
+            return result;
+        }
+
+        bool HasFooter(BlockPage result)
+        {
+            if (result.AllBlocks.Count() > 0)
             {
                 float height = result.AllBlocks.GetHeight();
 
@@ -49,11 +65,11 @@ namespace PdfTextReader.PDFCore
                 if (height < statRegionTooLarge)
                 {
                     _stats.HasFooter = true;
-                    result.AddRange(blocksAtFooter);
+                    return true;
                 }
             }
 
-            return result;
+            return false;
         }
     }
 }

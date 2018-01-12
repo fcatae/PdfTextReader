@@ -34,12 +34,14 @@ namespace PdfTextReader
 
             string basename = "dou555-p1";
 
-            var artigos = Examples.GetTextLinesWithPipeline(basename, out Execution.Pipeline pipeline)
+            var artigos = Examples.GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                             .ConvertText<CreateStructures, TextStructure>()
+                                .PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
+                                .DebugPrint()
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                            .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
