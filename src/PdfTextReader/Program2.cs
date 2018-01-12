@@ -13,7 +13,7 @@ namespace PdfTextReader
     {
         public static void MainTest()
         {
-            ProcessSingleTextWithAnalytics("p40");
+            ProcessSingleTextWithAnalytics("p44");
         }
         
         static void ProcessSingleText(string page)

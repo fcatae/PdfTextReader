@@ -73,10 +73,18 @@ namespace PdfTextReader.Parser
                 {
                     writer.WriteStartElement("Artigo");
 
-                    writer.WriteElementString("Titulo", artigo.Titulo);
-                    writer.WriteElementString("Corpo", artigo.Corpo);
-                    writer.WriteElementString("Assinatura", artigo.Assinatura);
-                    writer.WriteElementString("Cargo", artigo.Cargo);
+                    if (artigo.Titulo != null)
+                        writer.WriteElementString("Titulo", artigo.Titulo);
+                    if (artigo.Caput != null)
+                        writer.WriteElementString("Caput", artigo.Caput);
+                    if (artigo.Corpo != null)
+                        writer.WriteElementString("Corpo", artigo.Corpo);
+                    if (artigo.Assinatura != null)
+                        writer.WriteElementString("Assinatura", artigo.Assinatura);
+                    if (artigo.Cargo != null)
+                        writer.WriteElementString("Cargo", artigo.Cargo);
+                    if (artigo.Data != null)
+                        writer.WriteElementString("Data", artigo.Data);
 
                     writer.WriteEndElement();
                 }
