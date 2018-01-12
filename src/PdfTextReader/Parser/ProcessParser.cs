@@ -85,6 +85,17 @@ namespace PdfTextReader.Parser
                 writer.WriteEndDocument();
             }
         }
+        public void XMLWriterMultiple(IEnumerable<Artigo> artigos, string doc)
+        {
+            int i = 1;
+            foreach(var artigo in artigos)
+            {
+                string doc_i = doc + (i++);
+                var artigo_i = new Artigo[] { artigo };
+
+                this.XMLWriter(artigo_i, doc_i);
+            }
+        }
 
         public IEnumerable<Artigo> BuildArticles(List<Conteudo> conteudos)
         {

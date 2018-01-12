@@ -18,9 +18,13 @@ namespace PdfTextReader.TextStructures
                 if (bset is ImageBlock || bset is TableSet)
                     continue;
 
-                // BUG
+                // TODO: fix this bug
                 if (blockArea.First() is TableCell)
-                    throw new InvalidOperationException();
+                {
+                    //throw new InvalidOperationException();
+                    Console.WriteLine("CRITICAL ERROR: CreateTextLines(): blockArea.First() is TableCell");
+                    continue;
+                }                    
 
                 var lines = ProcessLine(blockArea);
 
