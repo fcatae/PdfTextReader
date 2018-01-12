@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace PdfTextReader.ExecutionStats
+namespace PdfTextReader.TextStructures
 {
     class AnalyzeSegmentTitles : ILogStructure<TextSegment>
     {

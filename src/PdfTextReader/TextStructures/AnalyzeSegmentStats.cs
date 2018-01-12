@@ -5,7 +5,7 @@ using System.Text;
 using System.IO;
 using System.Linq;
 
-namespace PdfTextReader.ExecutionStats
+namespace PdfTextReader.TextStructures
 {
     class AnalyzeSegmentStats : ILogStructure<TextSegment>
     {
