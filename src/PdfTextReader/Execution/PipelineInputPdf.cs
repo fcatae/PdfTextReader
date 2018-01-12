@@ -20,6 +20,8 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfOutput;
         private List<object> _statsCollection = new List<object>();
 
+        public static PipelineInputPdf DebugCurrent;
+
         public PipelineInputPdfPage CurrentPage { get; private set; }
                 
         public PipelineInputPdf(string filename)
@@ -30,6 +32,8 @@ namespace PdfTextReader.Execution
 
             this._input = filename;
             this._pdfDocument = pdfDocument;
+
+            PipelineInputPdf.DebugCurrent = this;
         }
         
         public PipelineInputPdfPage Page(int pageNumber)

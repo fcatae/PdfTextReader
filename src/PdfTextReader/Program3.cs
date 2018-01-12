@@ -20,7 +20,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555-p1";
+            string basename = "dou555-p5";
 
             Examples.FollowText(basename);
 
@@ -53,6 +53,7 @@ namespace PdfTextReader
                                     .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
                                 .ParseBlock<RemoveOverlapedImages>()
                             .ParsePdf<ProcessPdfText>()
+                                .Show(Color.Orange)
                                 .Validate<RemoveSmallFonts>().ShowErrors(p => p.Show(Color.Green))
                                 //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                 .ParseBlock<MergeTableText>()
@@ -60,7 +61,7 @@ namespace PdfTextReader
                                 .ParseBlock<HighlightTextTable>()
                                 .ParseBlock<RemoveTableText>()
                                 .ParseBlock<GroupLines>()
-                                    .Show(Color.Orange)
+                                    //.Show(Color.Orange)
                                     .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                 .ParseBlock<RemoveHeaderImage>()
                                 .ParseBlock<FindInitialBlocksetWithRewind>()

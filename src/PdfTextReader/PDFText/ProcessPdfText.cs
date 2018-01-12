@@ -49,9 +49,15 @@ namespace PdfTextReader.PDFText
                     WordSpacing = textInfo.GetWordSpacing()
                 };
 
+                if (block.Width <= 0 || block.Height <= 0)
+                    throw new InvalidOperationException();
+
+                if (block.FontSize <= 0)
+                    throw new InvalidOperationException();
+
                 // valuable log information: sometimes FontStyle is wrong!
                 // var workfont = WorkFont(font);
-                                
+
                 float dbgWordSpacing = textInfo.GetWordSpacing();
                 
                 if(dbgWordSpacing==0)

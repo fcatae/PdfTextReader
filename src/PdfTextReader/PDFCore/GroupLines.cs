@@ -7,12 +7,14 @@ namespace PdfTextReader.PDFCore
 {
     class GroupLines : IProcessBlock
     {
-        const float statSameLine = 0.1f;
+        const float MINIMUM_CHARACTER_DISTANCE = 5f;
+        const float SAME_LINE_DISTANCE = 0.1f;
+
         int statSubfonts = 0;
         int statBackspace = 0;
 
         public BlockPage Process(BlockPage page)
-        {
+        {            
             BlockLine line = null;
             IBlock last = null;
             var result = new BlockPage();
@@ -25,10 +27,20 @@ namespace PdfTextReader.PDFCore
                     {
                         bool isBackspace = CheckBackspace(line, block);
 
+                        float endofblock = block.GetX() + block.GetWidth();
+                        float endofline = line.GetX() + line.GetWidth();
+
+                        if ( endofblock > endofline )
+                        {
+                            line.Width = block.GetX() + block.GetWidth() - line.GetX();
+                        }
+
+                        if (line.Width <= 0)
+                            throw new InvalidOperationException();
+                        
                         // conside same line: update text and Width
-                        // convention: do not add space here
+                        // we dont add space character (should we?)
                         line.Text += block.GetText();
-                        line.Width = block.GetX() + block.GetWidth() - line.GetX();
 
                         // gather statistics
                         statBackspace += (isBackspace) ? 1 : 0;
@@ -60,6 +72,9 @@ namespace PdfTextReader.PDFCore
                         FontStyle = b.FontStyle
                     };
 
+                    if (line.Width <= 0 || line.Height <= 0)
+                        throw new InvalidOperationException();
+
                     result.Add(line);
                 }
                 else                
@@ -67,8 +82,13 @@ namespace PdfTextReader.PDFCore
                     string separator = (ShouldAddSpace(last, block)) ? " " : "";
 
                     // same line: update text and Width
+                    float endOfBlock = block.GetX() + block.GetWidth();
+
                     line.Text += separator + block.GetText();
                     line.Width = block.GetX() + block.GetWidth() - line.GetX();
+                    
+                    if (line.Width <= 0)
+                        throw new InvalidOperationException();
                 }
 
                 last = block;
@@ -81,7 +101,7 @@ namespace PdfTextReader.PDFCore
         {
             float diff = a.GetH() - b.GetH();
 
-            if (Math.Abs(diff) < statSameLine)
+            if (Math.Abs(diff) < SAME_LINE_DISTANCE)
                 return 0;
 
             return (diff > 0) ? 1 : -1;
@@ -106,13 +126,18 @@ namespace PdfTextReader.PDFCore
 
         bool CheckSubfonts(Block normal, Block sub)
         {
+            float subX1 = sub.GetX();
             float subH1 = sub.GetH();
             float subH2 = sub.GetH() + sub.GetHeight();
+            float norX2 = normal.GetX() + normal.GetWidth();
             float norH1 = normal.GetH();
             float norH2 = normal.GetH() + normal.GetHeight();
 
-            // return ((norH1 < subH1) && (norH2 > subH2)); // subH2 > norH2
-            return ((norH1 < subH1) && (norH2 > subH1)) && (normal.FontSize > sub.FontSize);
+            bool baselineSlightlyHigher = (norH1 < subH1) && (norH2 > subH1);
+            bool fontSizeIsSmaller = (normal.FontSize > sub.FontSize);
+            bool charactersAreClose = Math.Abs(subX1 - norX2) < MINIMUM_CHARACTER_DISTANCE;
+            
+            return baselineSlightlyHigher && fontSizeIsSmaller && charactersAreClose;
         }
 
         bool CheckBackspace(IBlock line, IBlock block)
