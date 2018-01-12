@@ -12,6 +12,9 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Process(BlockPage page)
         {
+            if (page.AllBlocks.Count() == 0)
+                return page;
+
             float err = 1f;
             float maxH = page.AllBlocks.Max(b => b.GetH()) - err;
 
@@ -26,6 +29,9 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Validate(BlockPage page)
         {
+            if (page.AllBlocks.Count() == 0)
+                return page;
+
             float err = 1f;
             float maxH = page.AllBlocks.Max(b => b.GetH()) - err;
 
