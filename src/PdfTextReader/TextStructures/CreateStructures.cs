@@ -8,6 +8,8 @@ namespace PdfTextReader.TextStructures
 {
     class CreateStructures : IAggregateStructure<TextLine, TextStructure>
     {
+        const float difference_margin_center_text = 1F;
+
         TextStructure _structure;
 
         public void Init(TextLine line)
@@ -101,16 +103,7 @@ namespace PdfTextReader.TextStructures
                 
         bool IsZero(float? value)
         {
-            float error = 0.1F;
-
-            return ((value > -error) && (value < error));                
-        }
-
-        bool IsAlmostZero(decimal value)
-        {
-            decimal error = 4M;
-
-            return ((value > -error) && (value < error));
+            return ((value > -difference_margin_center_text) && (value < difference_margin_center_text));                
         }
 
         bool IsUpperCase(string text)
