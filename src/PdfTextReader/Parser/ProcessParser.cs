@@ -104,29 +104,5 @@ namespace PdfTextReader.Parser
                 this.XMLWriter(artigo_i, doc_i);
             }
         }
-
-        public IEnumerable<Artigo> BuildArticles(List<Conteudo> conteudos)
-        {
-            List<Artigo> artigos = new List<Artigo>();
-
-
-            int CutPosition = conteudos.IndexOf(conteudos.Where(c => c.ContentType == TipoDoConteudo.Setor).ToList().FirstOrDefault());
-
-            List<Conteudo> p1 = conteudos.GetRange(0, CutPosition - 1);
-            List<Conteudo> p2 = conteudos.GetRange(CutPosition, conteudos.Count - 1);
-
-            {//FORÇADO
-             //No caso p1 a lista se divide pela data
-
-                int cutDate = p1.IndexOf(p1.Where(p => p.ContentType == TipoDoConteudo.Data).ToList().FirstOrDefault());
-
-                List<Conteudo> pp1 = p1.GetRange(0, cutDate - 1);
-                List<Conteudo> pp2 = p1.GetRange(cutDate, p1.Count - 1);
-
-            }
-
-
-            return artigos;
-        }
     }
 }
