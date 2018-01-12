@@ -93,7 +93,7 @@ namespace PdfTextReader.PDFText
             // ref https://developers.itextpdf.com/question/what-are-extra-characters-font-name-my-pdf
 
             if (name.IndexOf("+") == 6)
-                return name.Substring(6);
+                return name.Substring(7);
 
             return name;
         }
