@@ -86,6 +86,11 @@ namespace PdfTextReader.PDFCore
                             if (wdiff < 10f && xdiff < 10f)
                                 continue;
 
+                            // breakcolumns have a poor performance when
+                            // tables and images get removed.
+                            // we could retry after adding them back to the doc
+                            // so far it is not supported yet
+
                             // very likely to have A contains B in Y axis, but not in X
                             // in this case, we need to break both blocks at the same operation
                             throw new NotImplementedException("true overlap");

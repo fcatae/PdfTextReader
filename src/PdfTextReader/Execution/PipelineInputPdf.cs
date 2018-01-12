@@ -111,6 +111,18 @@ namespace PdfTextReader.Execution
             }
         }
 
+        public PipelineText<TextLine> AllPagesExcept<T>(IEnumerable<int> exceptPages, Action<PipelineInputPdfPage> callback)
+            where T : IConvertBlock, new()
+        {
+            var pageList = Enumerable.Range(1, _pdfDocument.GetNumberOfPages()).Except(exceptPages);
+
+            var textLines = StreamConvert<T>(pageList, callback);
+
+            var pipeText = new PipelineText<TextLine>(this, textLines, this);
+
+            return pipeText;
+        }
+
         public PipelineText<TextLine> AllPages<T>(Action<PipelineInputPdfPage> callback)
             where T : IConvertBlock, new()
         {
@@ -119,6 +131,30 @@ namespace PdfTextReader.Execution
             var pipeText = new PipelineText<TextLine>(this, textLines, this);
             
             return pipeText;
+        }
+
+        public IEnumerable<TextLine> StreamConvert<T>(IEnumerable<int> pageList, Action<PipelineInputPdfPage> callback)
+            where T : IConvertBlock, new()
+        {
+            var processor = new T();
+
+            int totalPages = _pdfDocument.GetNumberOfPages();
+
+            foreach (int i in pageList)
+            {
+                System.Diagnostics.Debug.WriteLine("Processing page " + i);
+
+                var pdfPage = Page(i);
+
+                callback(pdfPage);
+
+                var textSet = processor.ProcessPage(CurrentPage.GetLastResult());
+
+                foreach (var t in textSet)
+                {
+                    yield return t;
+                }
+            }
         }
 
         public IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
@@ -170,6 +206,7 @@ namespace PdfTextReader.Execution
 
             private PipelineSingletonFactory _factory = new PipelineSingletonFactory();
 
+            public int GetPageNumber() => _pageNumber;
             public BlockPage GetLastResult() => _page.LastResult;
 
             public PipelineInputPdfPage(PipelineInputPdf pipelineInputContext, int pageNumber)
