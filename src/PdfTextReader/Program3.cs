@@ -14,22 +14,6 @@ namespace PdfTextReader
 {
     class Program3
     {
-        public static void ProcessTextLines()
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - ProcessTextLines");
-            Console.WriteLine();
-
-            string basename = "p40";
-
-            var artigos = Examples.GetTextLines(basename)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
-                                .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
-                            .ToList();
-        }
         public static void ProcessStats()
         {
             Console.WriteLine();
@@ -63,19 +47,19 @@ namespace PdfTextReader
                     .AllPages<CreateTextLines>(page =>
                             page.ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
-                                .Show(Color.Red)
                             .ParsePdf<PreProcessImages>()
                                     .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
                                 .ParseBlock<RemoveOverlapedImages>()
                             .ParsePdf<ProcessPdfText>()
                                 //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                 .ParseBlock<MergeTableText>()
-                                .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                                //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                                 .ParseBlock<HighlightTextTable>()
                                 .ParseBlock<RemoveTableText>()
                                 .ParseBlock<GroupLines>()
+                                    .Show(Color.Orange)
                                     .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                                    .ParseBlock<RemoveHeaderImage>()
+                                .ParseBlock<RemoveHeaderImage>()
                                 .ParseBlock<FindInitialBlocksetWithRewind>()
                                 .ParseBlock<BreakColumnsLight>()
                                     .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
@@ -86,8 +70,8 @@ namespace PdfTextReader
                                 .ParseBlock<ResizeBlocksets>()
                                     .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                                 .ParseBlock<OrderBlocksets>()
-                                //.Show(Color.Orange)
-                                .ShowLine(Color.Black)
+                                .Show(Color.Orange)
+                                //.ShowLine(Color.Black)
                     );
 
             return result;

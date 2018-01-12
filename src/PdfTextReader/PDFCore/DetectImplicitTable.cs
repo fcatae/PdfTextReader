@@ -6,7 +6,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class DetectInvisibleTable : IProcessBlock, IValidateBlock
+    class DetectImplicitTable : IProcessBlock, IValidateBlock
     {
         public BlockPage Process(BlockPage page)
         {

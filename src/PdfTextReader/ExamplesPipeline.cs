@@ -495,9 +495,9 @@ namespace PdfTextReader
                         .ParseBlock<GroupLines>()
                         .ParseBlock<FindInitialBlockset>()
                         .Show(Color.Yellow)
-                        .ParseBlock<DetectInvisibleTable>()
+                        .ParseBlock<DetectImplicitTable>()
                         .Show(Color.Green)
-                        .Validate<DetectInvisibleTable>().ShowErrors(p => p.Show(Color.Red))
+                        .Validate<DetectImplicitTable>().ShowErrors(p => p.Show(Color.Red))
                         .ShowLine(Color.Black);
 
             pipeline.Done();
