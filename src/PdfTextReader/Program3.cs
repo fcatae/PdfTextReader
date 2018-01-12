@@ -21,7 +21,8 @@ namespace PdfTextReader
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-segments.txt")
+                            .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ToList();            
         }
