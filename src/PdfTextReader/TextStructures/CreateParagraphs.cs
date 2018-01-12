@@ -66,9 +66,26 @@ namespace PdfTextReader.TextStructures
                 }
             }
 
+            // this is slightly wrong... needs to work on this later
+            if (lineset[0].MarginRight < lineset[0].MarginLeft / 2)
+            {
+                if (lineset.Count == 1)
+                {
+                    _structure.TextAlignment = TextAlignment.RIGHT;
+                }
+                else if (lineset.Count >= 2)
+                {
+                    bool marginRightLine1 = IsZero(lineset[0].MarginRight);
+                    bool marginLeftLine2 = !IsZero(lineset[1].MarginLeft);
+
+                    if(marginRightLine1 && marginLeftLine2)
+                        _structure.TextAlignment = TextAlignment.RIGHT;
+                } 
+            }
+
             // this is quite accurate
             bool isCentered = (lineset.All(t => IsZero(t.MarginLeft - t.MarginRight))
-                                && lineset.Any(t => !IsZero(t.MarginLeft)));
+                            && lineset.Any(t => !IsZero(t.MarginLeft)));
 
             if ( isCentered )
             {
