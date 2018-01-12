@@ -6,9 +6,10 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveFooter : IProcessBlock, IValidateBlock
+    class RemoveFooter : IProcessBlock, IValidateBlock, IRetrieveStatistics
     {
         const float statRegionTooLarge = 200f;
+        StatsPageFooter _stats = new StatsPageFooter();
 
         public BlockPage Process(BlockPage page)
         {
@@ -24,6 +25,11 @@ namespace PdfTextReader.PDFCore
             return result;
         }
 
+        public object RetrieveStatistics()
+        {
+            return _stats;
+        }
+
         public BlockPage Validate(BlockPage page)
         {
             float err = 1f;
@@ -33,12 +39,19 @@ namespace PdfTextReader.PDFCore
 
             var result = new BlockPage();
 
-            result.AddRange(blocksAtFooter);
+            if( result.AllBlocks.Count() > 0 )
+            {
+                float height = result.AllBlocks.GetHeight();
 
-            float height = result.AllBlocks.GetHeight();
+                _stats.FooterHeight = height;
 
-            if (height > statRegionTooLarge)
-                throw new InvalidOperationException();
+                // ignore footer too large
+                if (height < statRegionTooLarge)
+                {
+                    _stats.HasFooter = true;
+                    result.AddRange(blocksAtFooter);
+                }
+            }
 
             return result;
         }

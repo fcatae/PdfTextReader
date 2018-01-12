@@ -26,6 +26,24 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ToList();
         }
+        public static void ProcessStats()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Program3 - ProcessTextLines");
+            Console.WriteLine();
+
+            string basename = "dou555-p1";
+
+            var artigos = Examples.GetTextLinesWithPipeline(basename, out Execution.Pipeline pipeline)
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                            .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
+                                .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                            .ToList();
+
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+        }
 
         public static void TesteArtigo()
         {

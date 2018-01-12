@@ -24,6 +24,8 @@ namespace PdfTextReader.Execution
             this.PageNumber = pageNumber;
         }
 
+        PipelineInputPdf ParentContext => (PipelineInputPdf) this.Context;
+
         public PipelinePage Debug(Color Color)
         {
             throw new NotImplementedException();
@@ -89,8 +91,16 @@ namespace PdfTextReader.Execution
 
             var result = processor.Process(initial);
 
+            // Get result
             if (result == null)
                 throw new InvalidOperationException();
+
+            // Get statistics
+            var stats = processor as IRetrieveStatistics;
+            if (stats != null)
+            {
+                CollectStatistics(stats);
+            }
 
             this.LastResult = result;
 
@@ -98,6 +108,16 @@ namespace PdfTextReader.Execution
                 Console.WriteLine($"Warning: {typeof(T).Name} returned no data");
 
             return this;
+        }
+
+        void CollectStatistics(IRetrieveStatistics process)
+        {
+            if (process == null)
+                throw new ArgumentNullException();
+
+            var stats = process.RetrieveStatistics();
+
+            this.ParentContext.StoreStatistics(stats);
         }
 
         public PipelinePage ShowErrors(Action<PipelinePage> callback)

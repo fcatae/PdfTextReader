@@ -18,6 +18,7 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfDocument;
         private string _output;
         private PdfDocument _pdfOutput;
+        private List<object> _statsCollection = new List<object>();
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
                 
@@ -137,6 +138,23 @@ namespace PdfTextReader.Execution
                 }
             }
         }
+
+        public void StoreStatistics(object stats)
+        {
+            _statsCollection.Add(stats);
+        }
+
+        public IEnumerable<T> RetrieveStatistics<T>()
+            where T: class
+        {
+            var availableStats = _statsCollection
+                                    .Select(s => s as T)
+                                    .Where(s => s != null);
+
+            return availableStats;
+        }
+
+        public PipelineStats Statistics => new PipelineStats(_statsCollection);
 
         public class PipelineInputPdfPage : IDisposable
         {

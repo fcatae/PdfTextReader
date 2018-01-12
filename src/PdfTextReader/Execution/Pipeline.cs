@@ -19,6 +19,8 @@ namespace PdfTextReader.Execution
             return context;
         }
 
+        public PipelineStats Statistics => _activeContext.Statistics;
+
         public void EnumFiles(string input, Action<string> callback)
         {
             var inputDirectory = new DirectoryInfo(".");
