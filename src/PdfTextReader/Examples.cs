@@ -37,6 +37,19 @@ namespace PdfTextReader
             return result;
         }
 
+        public static PipelineText<TextLine> GetTextLinesWithPipeline(string basename, out Execution.Pipeline pipeline)
+        {
+            pipeline = new Execution.Pipeline();
+
+            var result =
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-test-output.pdf")
+                    .AllPages<CreateTextLines>(ProcessPage);
+
+
+            return result;
+        }
+
         public static PipelineText<TextStructure> GetTextParagraphs(string basename)
         {
             var pipeline = new Execution.Pipeline();
