@@ -1,3 +1,8 @@
+# Block Hierarchy #
+
+BlockPage -> BlockSet -> BlockLine -> Block
+
+
 # Pipeline #
 
 Execution pipeline to run listeners and block processors.
@@ -29,12 +34,15 @@ Stream:
                                             .Log("bin/{page}-step-2-stat"))
                                 .Stat<FontStats>("bin/{page}-step-2-stat")
 
+.Log("bin/{page}-step-3", p => p)
                                 .Run(
                                     a => {},
                                     b => {},
                                     c => {}
                                 )
-                                
+
+                                .Process( s => new DebugLog("", s) )
+
                                 LogXml/LogJson/Log<T>ToString
                                 Text(Serialize)
                                 Block(Show) => true/false

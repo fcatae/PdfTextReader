@@ -16,7 +16,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "pg20";
+            string basename = "p40";
 
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
@@ -25,6 +25,20 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ToList();            
+        }
+
+        public static void TesteArtigo()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Program3 - ProcessTextLines");
+            Console.WriteLine();
+
+            string basename = "p40";
+
+            var artigos = Examples.GetTextLines(basename)
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<TransformArtigo, Artigo>()
+                            .ToList();
         }
     }
 }
