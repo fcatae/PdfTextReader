@@ -6,6 +6,10 @@ namespace PdfTextReader.Base
 {
     class TableCell : IBlock
     {
+        const float DARKCOLOR_THRESHOLD = 0.5f;
+        public static bool HasDarkColor(TableCell t) => (t.BgColor < DARKCOLOR_THRESHOLD);
+        public static bool HasWhiteColor(TableCell t) => (t.BgColor == 1);
+        
         public string Text { get; set; }
         public float X { get; set; }
         public float B { get; set; }
@@ -20,6 +24,7 @@ namespace PdfTextReader.Base
         public float GetHeight() => Height;
         public float GetWordSpacing() => X;
         public float LineWidth { get; set; }
-        public float BgColor { get; set; }        
+        public float BgColor { get; set; }
+
     }
 }

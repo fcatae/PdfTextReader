@@ -5,6 +5,10 @@ using PdfTextReader.Base;
 using PdfTextReader.Parser;
 using PdfTextReader.ExecutionStats;
 using PdfTextReader.TextStructures;
+using PdfTextReader.Execution;
+using PdfTextReader.PDFText;
+using System.Drawing;
+using PdfTextReader.PDFCore;
 
 namespace PdfTextReader
 {
@@ -16,7 +20,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555-p1";
+            string basename = "p40";
 
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
@@ -34,7 +38,7 @@ namespace PdfTextReader
 
             string basename = "dou555-p1";
 
-            var artigos = Examples.GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
+            var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateStructures, TextStructure>()
                                 //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
@@ -48,6 +52,47 @@ namespace PdfTextReader
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
         }
 
+
+        static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
+        {
+            pipeline = new Execution.Pipeline();
+
+            var result =
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-test-output.pdf")
+                    .AllPages<CreateTextLines>(page =>
+                            page.ParsePdf<PreProcessTables>()
+                                .ParseBlock<IdentifyTables>()
+                                .Show(Color.Red)
+                            .ParsePdf<PreProcessImages>()
+                                    .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                                .ParseBlock<RemoveOverlapedImages>()
+                            .ParsePdf<ProcessPdfText>()
+                                //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
+                                .ParseBlock<MergeTableText>()
+                                .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                                .ParseBlock<HighlightTextTable>()
+                                .ParseBlock<RemoveTableText>()
+                                .ParseBlock<GroupLines>()
+                                    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                    .ParseBlock<RemoveHeaderImage>()
+                                .ParseBlock<FindInitialBlocksetWithRewind>()
+                                .ParseBlock<BreakColumnsLight>()
+                                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                                    .ParseBlock<RemoveFooter>()
+                                .ParseBlock<AddTableSpace>()
+                                .ParseBlock<AddImageSpace>()
+                                .ParseBlock<BreakInlineElements>()
+                                .ParseBlock<ResizeBlocksets>()
+                                    .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                                .ParseBlock<OrderBlocksets>()
+                                //.Show(Color.Orange)
+                                .ShowLine(Color.Black)
+                    );
+
+            return result;
+        }
+    
         public static void TesteArtigo()
         {
             Console.WriteLine();

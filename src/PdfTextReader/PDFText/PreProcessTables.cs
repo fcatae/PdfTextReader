@@ -13,8 +13,6 @@ namespace PdfTextReader.PDFText
 {
     class PreProcessTables : IEventListener, IPipelineResults<BlockPage>
     {
-        const float DARKCOLOR = 0.5f;
-
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_PATH };
 
         private BlockSet<TableCell> _blockSet = new BlockSet<TableCell>();
@@ -23,12 +21,24 @@ namespace PdfTextReader.PDFText
         {
             float[] components = color.GetColorValue();
             int size = components.Length;
-
             // 1=Gray, 3=RGB, 4=CMYK
-            if (size == 1 || size == 3 || size == 4)
+
+            if (size == 1)
             {
-                // return Gray, Blue or BlacK
-                return components[size - 1];
+                // 0=black, 1=white
+                return components[0];
+            }
+
+            if(size == 3)
+            {
+                // RGB
+                return (components[0] + components[1] + components[2]) / 3;
+            }
+                        
+            if (size == 4)
+            {
+                // CMYK = Cyan Magenta Yellow blacK
+                return (1 - components[3]);
             }
 
             throw new InvalidOperationException("invalid color space");
@@ -50,13 +60,7 @@ namespace PdfTextReader.PDFText
                 var ctm = line.GetCtm();
                 var dx = ctm.Get(6);
                 var dy = ctm.Get(7);
-
-                var bgcolor2 = (op == 2) ? GetColor(line.GetFillColor()) : 0;
-                if( bgcolor2 > 0 && bgcolor2 < 1 || fgcolor > 0 && fgcolor < 1)
-                {
-
-                }
-
+                
                 if (op == 0)
                     return;
                                 

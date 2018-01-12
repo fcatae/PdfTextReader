@@ -9,7 +9,7 @@ namespace PdfTextReader.PDFCore
 {
     class IdentifyTables : IProcessBlock
     {
-        const float DARKCOLOR = 0.5f;
+        const float MINIMUM_BACKGROUND_SIZE = 5f;
 
         private BlockPage _pageResult;
         private BlockPage _pageLines;
@@ -32,7 +32,7 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {
             // try to improve processing time
-            var cellList = page.AllBlocks.Where(b => ((TableCell)b).BgColor < DARKCOLOR).ToList();
+            var cellList = page.AllBlocks.Where(b => TableCell.HasDarkColor((TableCell)b)).ToList();
 
             var blockArray = new TableSet[cellList.Count];
             
@@ -158,7 +158,8 @@ namespace PdfTextReader.PDFCore
 
             // add background
             var dark = page.AllBlocks
-                        .Where(b => ((TableCell)b).BgColor >= DARKCOLOR)
+                        .Where(b => !TableCell.HasDarkColor((TableCell)b))
+                        .Where(b => b.GetWidth() > MINIMUM_BACKGROUND_SIZE && b.GetHeight() > MINIMUM_BACKGROUND_SIZE)
                         .Select(b => new TableSet() { b });
 
             background.AddRange(dark);

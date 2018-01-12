@@ -9,7 +9,7 @@ namespace PdfTextReader.PDFCore
 {
     class HighlightTextTable : IProcessBlock, IValidateBlock, IPipelineDependency
     {
-        const float DARKCOLOR = 0.5f;
+        const float MINIMUM_BACKGROUND_SIZE = 5f;
 
         private List<IBlock> _region;
 
@@ -47,11 +47,22 @@ namespace PdfTextReader.PDFCore
                         float bgcolor = cell.BgColor;
                         int op = cell.Op;
 
+                        // a stroke must be thick
                         if (op == 1 && width < block.GetHeight() / 2)
-                            continue; // throw new InvalidOperationException("not expected");
-                        
-                        if (bgcolor == 0 || bgcolor > DARKCOLOR)
                             continue;
+
+                        if (TableCell.HasWhiteColor(cell))
+                            continue;
+
+                        if (TableCell.HasDarkColor(cell))
+                        {
+                            // very likely it is just a line
+                            if (width < MINIMUM_BACKGROUND_SIZE)
+                                continue;
+
+                            // check identify table
+                            throw new InvalidOperationException(); // not expected
+                        }
 
                         result.Add(block);
                         break;
