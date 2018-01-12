@@ -12,12 +12,12 @@ namespace PdfTextReader.TextStructures
 
         public IEnumerable<TO> Transform(IEnumerable<TI> lines)
         {
-            T transform = null;
+            T transform = new T();
 
             foreach (var line in lines)
             {
                 // process all the lines
-                if ( transform != null )
+                if (_input != null )
                 {
                     bool agg = transform.Aggregate(line);
 
@@ -40,7 +40,6 @@ namespace PdfTextReader.TextStructures
                 _input = new List<TI>();
                 _input.Add(line);
 
-                transform = new T();
                 transform.Init(line);
             }
 
