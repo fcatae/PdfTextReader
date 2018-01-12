@@ -50,7 +50,13 @@ namespace PdfTextReader.PDFText
                 var ctm = line.GetCtm();
                 var dx = ctm.Get(6);
                 var dy = ctm.Get(7);
-                
+
+                var bgcolor2 = (op == 2) ? GetColor(line.GetFillColor()) : 0;
+                if( bgcolor2 > 0 && bgcolor2 < 1 || fgcolor > 0 && fgcolor < 1)
+                {
+
+                }
+
                 if (op == 0)
                     return;
                                 
@@ -82,7 +88,7 @@ namespace PdfTextReader.PDFText
                     Width = x2 - x1,
                     Height = y2 - y1,
                     LineWidth = linewidth,
-                    BgColor = bgcolor
+                    BgColor = (op == 1) ?  fgcolor : bgcolor
                 };
 
                 if (tableCell.Width < 0 || tableCell.Height < 0)

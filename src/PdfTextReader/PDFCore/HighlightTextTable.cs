@@ -49,9 +49,9 @@ namespace PdfTextReader.PDFCore
 
                         if (op == 1 && width < block.GetHeight() / 2)
                             continue; // throw new InvalidOperationException("not expected");
-
-                        if (op == 2 && bgcolor < DARKCOLOR)
-                            continue; // throw new InvalidOperationException("not expected");
+                        
+                        if (bgcolor == 0 || bgcolor > DARKCOLOR)
+                            continue;
 
                         result.Add(block);
                         break;
