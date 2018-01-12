@@ -668,7 +668,7 @@ namespace PdfTextReader
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Extract($"bin/{basename}-table-output.pdf", 1, pages);
+                    .Extract($"bin/{basename}-p{pages}.pdf", 1, pages);
         }
 
         public static void ExtractPage(string basename, int page)

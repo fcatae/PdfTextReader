@@ -10,9 +10,9 @@ namespace PdfTextReader
         {
             Console.WriteLine("PDF Text Reader");
 
-            //Program3.TesteArtigo();
+            Program3.ProcessTextLines();
 
-            Program2.MainTest();
+            //Program2.MainTest();
         }
     }
 }
