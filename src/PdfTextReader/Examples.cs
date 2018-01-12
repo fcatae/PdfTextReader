@@ -13,6 +13,18 @@ namespace PdfTextReader
 {
     class Examples
     {
+        public static void FollowText(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-follow-text-output.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                    .ShowLine(Color.Orange);
+
+            pipeline.Done();
+        }
         public static IEnumerable<TextLine> GetEnumerableLines(string basename)
         {
             var pipeline = new Execution.Pipeline();

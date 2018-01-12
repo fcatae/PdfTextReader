@@ -22,6 +22,8 @@ namespace PdfTextReader
 
             string basename = "dou555-p1";
 
+            Examples.FollowText(basename);
+
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateStructures, TextStructure>()
@@ -63,6 +65,7 @@ namespace PdfTextReader
                                 .ParseBlock<RemoveHeaderImage>()
                                 .ParseBlock<FindInitialBlocksetWithRewind>()
                                 .ParseBlock<BreakColumnsLight>()
+                                .ParseBlock<BreakColumns>()
                                     .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                     .ParseBlock<RemoveFooter>()
                                 .ParseBlock<AddTableSpace>()

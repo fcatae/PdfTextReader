@@ -78,7 +78,7 @@ namespace PdfTextReader.PDFCore
                         
                         if ( k == -1 )
                         {
-                            Console.WriteLine("BreakColumnsLight:k == -1");
+                            Console.WriteLine("CRITICAL ERROR: BreakColumnsLight:k == -1");
 
                             continue;
 

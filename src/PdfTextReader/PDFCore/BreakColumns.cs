@@ -86,7 +86,11 @@ namespace PdfTextReader.PDFCore
                             if (wdiff < 10f && xdiff < 10f)
                                 continue;
 
-                            throw new NotImplementedException("merge blockLines");
+                            // very likely to have A contains B in Y axis, but not in X
+                            // in this case, we need to break both blocks at the same operation
+                            throw new NotImplementedException("true overlap");
+
+                            // throw new NotImplementedException("merge blockLines");
 
                             // cannot break the blocks ?!?!?!?!
                             throw new InvalidOperationException("should be handled previously in precheck");
