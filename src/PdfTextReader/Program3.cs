@@ -20,9 +20,9 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555";
+            string basename = "dou555-p75";
 
-            //Extract(21);
+            Extract(75);
 
             Examples.FollowText(basename);
 
@@ -48,7 +48,7 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-test-output.pdf")
-                    .AllPagesExcept<CreateTextLines>(new int[] { 19,21,75},page =>
+                    .AllPagesExcept<CreateTextLines>(new int[] {},page =>
                             page.ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
                             .ParsePdf<PreProcessImages>()
@@ -56,6 +56,7 @@ namespace PdfTextReader
                                 .ParseBlock<RemoveOverlapedImages>()
                             .ParsePdf<ProcessPdfText>()
                                 .Validate<RemoveSmallFonts>().ShowErrors(p => p.Show(Color.Green))
+                                .ParseBlock<RemoveSmallFonts>()
                                 //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                 .ParseBlock<MergeTableText>()
                                 //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))

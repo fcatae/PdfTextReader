@@ -82,12 +82,22 @@ namespace PdfTextReader.PDFCore
                     string separator = (ShouldAddSpace(last, block)) ? " " : "";
 
                     // same line: update text and Width
+                    float startOfBlock = block.GetX();
                     float endOfBlock = block.GetX() + block.GetWidth();
+                    float endOfLine = line.GetX() + line.GetWidth();
 
                     line.Text += separator + block.GetText();
                     line.Width = block.GetX() + block.GetWidth() - line.GetX();
                     
                     if (line.Width <= 0)
+                        throw new InvalidOperationException();
+
+                    // walking backwards
+                    // very strict check: sometimes the start overlaps with the ending
+                    //if (startOfBlock < endOfLine)
+                    //    throw new InvalidOperationException();
+                    // soft check: end of block should never that low unless it is an overlap
+                    if (endOfBlock < endOfLine)
                         throw new InvalidOperationException();
                 }
 
