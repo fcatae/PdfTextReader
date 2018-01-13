@@ -20,9 +20,9 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555-p75";
+            string basename = "p40";
 
-            Extract(75);
+            // Extract(1);
 
             Examples.FollowText(basename);
 
@@ -66,7 +66,9 @@ namespace PdfTextReader
                                     .Show(Color.Yellow)
                                     .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                 .ParseBlock<RemoveHeaderImage>()
+
                                 .ParseBlock<FindInitialBlocksetWithRewind>()
+                                    .Show(Color.Gray)
                                 .ParseBlock<BreakColumnsLight>()
                                 //.ParseBlock<BreakColumns>()
                                     .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
@@ -122,12 +124,12 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - Extract");
             Console.WriteLine();
 
-            string basename = "dou555";
+            string basename = "dou1212";
 
-            ExamplesPipeline.ExtractPage(basename, page);
+            //ExamplesPipeline.ExtractPage(basename, page);
 
-            //ExamplesPipeline.Extract(basename, 1);
-            //ExamplesPipeline.Extract(basename, 5);
+            ExamplesPipeline.Extract(basename, 1);
+            ExamplesPipeline.Extract(basename, 5);
             //ExamplesPipeline.Extract(basename, 10);
             //ExamplesPipeline.Extract(basename, 20);
             //ExamplesPipeline.Extract(basename, 50);
