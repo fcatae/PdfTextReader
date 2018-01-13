@@ -48,7 +48,7 @@ namespace PdfTextReader.PDFCore
                         int op = cell.Op;
 
                         // a stroke must be thick
-                        if (op == 1 && width < block.GetHeight() / 2)
+                        if (op == 1 && width > block.GetHeight() / 2)
                             continue;
 
                         if (TableCell.HasWhiteColor(cell))
