@@ -63,7 +63,7 @@ namespace PdfTextReader.Parser
             if (idxSigna > 0 && idxSigna < _structures.Count)
             {
                 resultProcess.Clear();
-                resultProcess = processSignatureAndRole(_structures[idxSigna]);
+                resultProcess = ProcessSignatureAndRole(_structures[idxSigna].Lines);
             }
 
             return new Artigo()
@@ -77,33 +77,36 @@ namespace PdfTextReader.Parser
             };
         }
 
-        List<string> processSignatureAndRole(TextStructure structure)
-        {
-            string[] data = structure.Text.Split("\n");
 
+        List<string> ProcessSignatureAndRole(List<TextLine> lines)
+        {
 
             string signature = null;
             string role = null;
             string date = null;
 
 
-            foreach (string item in data)
+            foreach (var item in lines)
             {
-                if (item.ToUpper() == item)
+                if (item.Text.ToUpper() == item.Text)
                 {
-                    signature = signature + "\n" + item;
+                    signature = signature + "\n" + item.Text;
                 }
-                else if (item.All(Char.IsDigit))
+                else if (item.FontStyle == "Italic")
                 {
-                    date = item;
+                    signature = signature + "\n" + item.Text;
+                }
+                else if (item.Text.All(Char.IsDigit))
+                {
+                    date = item.Text;
                 }
                 else
                 {
-                    role = role + "\n" + item;
+                    role = role + "\n" + item.Text;
                 }
             }
 
-            return new List<string>() {signature, role, date };
+            return new List<string>() { signature, role, date };
         }
 
         public void Init(TextStructure line)
