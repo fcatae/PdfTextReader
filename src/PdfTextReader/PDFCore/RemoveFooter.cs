@@ -57,7 +57,8 @@ namespace PdfTextReader.PDFCore
 
             if (!HasFooter(result))
             {
-                return page;
+                var emptyResult = new BlockPage();
+                return emptyResult;
             }
 
             return result;

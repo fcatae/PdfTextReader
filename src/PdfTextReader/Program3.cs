@@ -27,6 +27,7 @@ namespace PdfTextReader
             // Extract(1);
 
             Examples.FollowText(basename);
+            Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>(Console.Out)
