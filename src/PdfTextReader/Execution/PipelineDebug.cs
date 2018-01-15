@@ -44,8 +44,9 @@ namespace PdfTextReader.Execution
 
             foreach (var b in blocks)
             {
-                pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
-                pdf.CurrentPage.DrawText(b.GetX(), b.GetH(), b.GetText(), b.GetHeight()/2, color);
+                float diff = 2f;
+                pdf.CurrentPage.DrawRectangle(b.GetX()+diff/2, b.GetH()+diff/2, b.GetWidth()-diff, b.GetHeight()-diff, color);
+                pdf.CurrentPage.DrawText(b.GetX(), b.GetH()+ b.GetHeight(), b.GetText(), b.GetHeight()/2, color);
             }
         }
 
