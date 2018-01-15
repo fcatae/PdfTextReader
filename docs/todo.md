@@ -1,11 +1,9 @@
 
-done: ignore small fonts (invisible char)
-done: alinhamento a direito: caput (index depois)
+get page num
+show in pdf
 
 linetset nao intersectam palavras
 crash: bset != table
-get page num
-show in pdf
 
 
 

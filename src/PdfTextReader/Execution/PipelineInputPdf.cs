@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PdfTextReader.Base;
+using iText.Kernel.Font;
+using iText.IO.Font.Constants;
 
 namespace PdfTextReader.Execution
 {
@@ -280,6 +282,22 @@ namespace PdfTextReader.Execution
                 canvas.SetStrokeColor(pdfColor);
                 canvas.Rectangle(x, h, width, height);
                 canvas.Stroke();
+            }
+            public void DrawText(double x, double h, string text, float size, System.Drawing.Color color)
+            {
+                var canvas = GetCanvas();
+
+                var pdfColor = GetColor(color);
+                
+                canvas.SetColor(pdfColor, true);
+                //canvas.Rectangle(x, h, width, height);
+                canvas.BeginText();
+                canvas.MoveText(x, h);
+                var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+                canvas.SetFontAndSize(font, size);
+                canvas.ShowText(text);
+                canvas.EndText();
+                //canvas.Stroke();
             }
             public void DrawLine(double x1, double h1, double x2, double h2, System.Drawing.Color color)
             {

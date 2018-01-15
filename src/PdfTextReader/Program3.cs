@@ -16,21 +16,24 @@ namespace PdfTextReader
     {
         public static void ProcessStats()
         {
+            //PdfWriteText.Test();
+            //return;
             Console.WriteLine();
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555-p75";
+            string basename = "dou555-p21";
 
-            Extract(75);
+            // Extract(1);
 
             Examples.FollowText(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateStructures, TextStructure>()
-                                //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
-                                //.Log<AnalyzeStructures>(Console.Out)
+                                .Log<AnalyzeStructures>(Console.Out)
+                                .Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
+                            //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
@@ -55,7 +58,7 @@ namespace PdfTextReader
                                     .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
                                 .ParseBlock<RemoveOverlapedImages>()
                             .ParsePdf<ProcessPdfText>()
-                                .Validate<RemoveSmallFonts>().ShowErrors(p => p.Show(Color.Green))
+                                .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
                                 .ParseBlock<RemoveSmallFonts>()
                                 //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                 .ParseBlock<MergeTableText>()
@@ -66,7 +69,9 @@ namespace PdfTextReader
                                     .Show(Color.Yellow)
                                     .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                 .ParseBlock<RemoveHeaderImage>()
+
                                 .ParseBlock<FindInitialBlocksetWithRewind>()
+                                    .Show(Color.Gray)
                                 .ParseBlock<BreakColumnsLight>()
                                 //.ParseBlock<BreakColumns>()
                                     .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
@@ -122,12 +127,12 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - Extract");
             Console.WriteLine();
 
-            string basename = "dou555";
+            string basename = "dou1212";
 
-            ExamplesPipeline.ExtractPage(basename, page);
+            //ExamplesPipeline.ExtractPage(basename, page);
 
-            //ExamplesPipeline.Extract(basename, 1);
-            //ExamplesPipeline.Extract(basename, 5);
+            ExamplesPipeline.Extract(basename, 1);
+            ExamplesPipeline.Extract(basename, 5);
             //ExamplesPipeline.Extract(basename, 10);
             //ExamplesPipeline.Extract(basename, 20);
             //ExamplesPipeline.Extract(basename, 50);

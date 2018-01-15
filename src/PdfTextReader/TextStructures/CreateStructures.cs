@@ -98,6 +98,9 @@ namespace PdfTextReader.TextStructures
 
             _structure.Text = String.Join("\n", textArray);
 
+            _structure.MarginLeft = lineset.Min(l => l.MarginLeft);
+            _structure.MarginRight = lineset.Min(l => l.MarginRight);
+
             return _structure;            
         }
                 

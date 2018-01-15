@@ -39,7 +39,8 @@ namespace PdfTextReader.PDFCore
                         X = block.GetX() - boxSize,
                         H = block.GetH() - boxSize,
                         Width = block.GetWidth() + 2*boxSize,
-                        Height = block.GetHeight() + 2*boxSize
+                        Height = block.GetHeight() + 2*boxSize,
+                        Text = block.GetText()
                     };
                     result.Add(box);
                 }

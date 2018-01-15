@@ -37,7 +37,18 @@ namespace PdfTextReader.Execution
                 pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
             }
         }
-        
+
+        static public void ShowText(PipelineInputPdf pdf, BlockPage blockPage, Color color)
+        {
+            var blocks = blockPage.AllBlocks;
+
+            foreach (var b in blocks)
+            {
+                pdf.CurrentPage.DrawRectangle(b.GetX(), b.GetH(), b.GetWidth(), b.GetHeight(), color);
+                pdf.CurrentPage.DrawText(b.GetX(), b.GetH(), b.GetText(), b.GetHeight()/2, color);
+            }
+        }
+
         static public void Show(PipelineInputPdf pdf, System.Collections.IEnumerable objectList, Color color)
         {
             foreach (var t in objectList)
@@ -86,6 +97,11 @@ namespace PdfTextReader.Execution
         static public PipelinePage Show(this PipelinePage page, Color color)
         {            
             PipelineDebug.Show((PipelineInputPdf)page.Context, page.LastResult, color);
+            return page;
+        }
+        static public PipelinePage ShowText(this PipelinePage page, Color color)
+        {
+            PipelineDebug.ShowText((PipelineInputPdf)page.Context, page.LastResult, color);
             return page;
         }
 
