@@ -13,7 +13,7 @@ namespace PdfTextReader
     {
         public static void MainTest()
         {
-            ProcessSingleTextWithAnalytics("p44");
+            ProcessPage("p44");
         }
         
         static void ProcessSingleText(string page)
@@ -26,24 +26,36 @@ namespace PdfTextReader
             var procParser = new ProcessParser();
             procParser.XMLWriter(artigos, $"bin/{page}-out");
         }
-        static void ProcessSingleTextWithAnalytics(string page)
+        static void ProcessPage(string basename)
         {
-            var artigos = Examples.GetTextLines(page)
-                            .PrintAnalytics($"bin/{page}-out-print-analytics-line.xml")
+            var artigos = Examples.GetTextLines(basename)
+                            .PrintAnalytics($"bin/{basename}-out-print-analytics-line.xml")
 
                             // TextLine -> TextStructure
                             .ConvertText<CreateStructures, TextStructure>()
-                            .PrintAnalytics($"bin/{page}-out-print-analytics-struct.xml")
+                            .PrintAnalytics($"bin/{basename}-out-print-analytics-struct.xml")
+                            .Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
 
+                            //TextStructure -> TextSegment
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
+                                .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                            
                             // convert to artigos
-                            .ConvertText<TransformArtigo, Artigo>()
+                            .ConvertText<TransformArtigo2, Artigo>()
 
                             // array
                             .ToList();
 
+            //Validation
+            //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+
+
             var procParser = new ProcessParser();
-            procParser.XMLWriter(artigos, $"bin/{page}-out");
+            procParser.XMLWriter(artigos, $"bin/{basename}-out");
         }
+
+
 
         static void ProcessSingle(string page)
         {

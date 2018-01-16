@@ -67,11 +67,14 @@ namespace PdfTextReader.Parser
             using (XmlWriter writer = XmlWriter.Create($"{doc}.xml", settings))
             {
                 writer.WriteStartDocument();
-                writer.WriteStartElement("Pagina");
+                writer.WriteStartElement("Metadados");
 
                 foreach (Artigo artigo in artigos)
                 {
-                    writer.WriteStartElement("Artigo");
+                    if (artigo.Hierarquia != null)
+                        writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(artigo.Hierarquia));
+
+                    writer.WriteStartElement("Conteudo");
 
                     if (artigo.Titulo != null)
                         writer.WriteElementString("Titulo", artigo.Titulo);
@@ -92,6 +95,11 @@ namespace PdfTextReader.Parser
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
             }
+        }
+
+        string ConvertBreakline2Space(string input)
+        {
+            return input.Replace("\n", " ").Substring(0,input.Length - 1);
         }
         public void XMLWriterMultiple(IEnumerable<Artigo> artigos, string doc)
         {
