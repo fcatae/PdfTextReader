@@ -65,7 +65,10 @@ namespace PdfTextReader.PDFCore
 
                     result.Add(box);
 
-                    last_box = box;
+                    if (box.Text != "")
+                    {
+                        last_box = box;
+                    }
                 }
             }
 
