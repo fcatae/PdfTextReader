@@ -125,16 +125,23 @@ namespace PdfTextReader
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
-                                .Show(Color.Red)
                             .ParsePdf<PreProcessImages>()
+                                    .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
                                 .ParseBlock<RemoveOverlapedImages>()
                             .ParsePdf<ProcessPdfText>()
+                                .ParseBlock<RemoveSmallFonts>()
+                                .ParseBlock<MergeTableText>()
+                                .ParseBlock<HighlightTextTable>()
+                                .ParseBlock<RemoveTableText>()
                                 .ParseBlock<GroupLines>()
                                     .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                 .ParseBlock<RemoveHeaderImage>()
                                 .ParseBlock<FindInitialBlocksetWithRewind>()
                                 .ParseBlock<BreakColumnsLight>()
-                            .Show(Color.Orange);
+                                .ParseBlock<AddTableSpace>()
+                                .ParseBlock<BreakInlineElements>()
+                                    .Show(Color.Red);
+
 
             pipeline.Done();
         }

@@ -10,6 +10,7 @@ namespace PdfTextReader.PDFCore
     class MergeTableText : IProcessBlock, IValidateBlock, IPipelineDependency
     {
         private List<IBlock> _tables;
+        private List<IBlock> _tableLines;
         private IdentifyTables _parser;
 
         public void SetPage(PipelinePage p)
@@ -22,6 +23,7 @@ namespace PdfTextReader.PDFCore
                 throw new InvalidOperationException("MergeTableText requires IdentifyTables");
 
             this._tables = page.AllBlocks.ToList();
+            this._tableLines = parserTable.PageLines.AllBlocks.ToList();
             this._parser = parserTable;
         }
 
@@ -30,7 +32,7 @@ namespace PdfTextReader.PDFCore
             if (this._tables == null)
                 throw new InvalidOperationException("MergeTableText requires IdentifyTables");
 
-            var tables = LoopMergeTables(page, _tables);
+            var tables = LoopMergeTables(page, _tables, _tableLines);
             
             _parser.SetPageTables(tables);
 
@@ -52,7 +54,7 @@ namespace PdfTextReader.PDFCore
             return result;
         }
 
-        public IEnumerable<IBlock> LoopMergeTables(BlockPage page, IEnumerable<IBlock> initialTables)
+        public IEnumerable<IBlock> LoopMergeTables(BlockPage page, IEnumerable<IBlock> initialTables, IEnumerable<IBlock> initialTables2)
         {
             var tables = initialTables;
 
