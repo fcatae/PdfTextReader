@@ -70,8 +70,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
-
-
+        
         public static void BreakColumn(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -81,6 +80,52 @@ namespace PdfTextReader
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
+                            .ParsePdf<PreProcessImages>()
+                                .ParseBlock<RemoveOverlapedImages>()
+                            .ParsePdf<ProcessPdfText>()
+                                .ParseBlock<GroupLines>()
+                                    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                .ParseBlock<RemoveHeaderImage>()
+                                .ParseBlock<FindInitialBlocksetWithRewind>()
+                                .ParseBlock<BreakColumnsLight>()
+                            .Show(Color.Orange);
+
+            pipeline.Done();
+        }
+
+        public static void Tables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-06-tables-{basename}-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                                .ParseBlock<IdentifyTables>()
+                                .Show(Color.Red)
+                            .ParsePdf<PreProcessImages>()
+                                .ParseBlock<RemoveOverlapedImages>()
+                            .ParsePdf<ProcessPdfText>()
+                                .ParseBlock<GroupLines>()
+                                    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                .ParseBlock<RemoveHeaderImage>()
+                                .ParseBlock<FindInitialBlocksetWithRewind>()
+                                .ParseBlock<BreakColumnsLight>()
+                            .Show(Color.Orange);
+
+            pipeline.Done();
+        }
+
+        public static void FindTables(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-07-findtables-{basename}-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                                .ParseBlock<IdentifyTables>()
+                                .Show(Color.Red)
                             .ParsePdf<PreProcessImages>()
                                 .ParseBlock<RemoveOverlapedImages>()
                             .ParsePdf<ProcessPdfText>()

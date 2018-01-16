@@ -22,9 +22,12 @@ namespace PdfTextReader
             //ExamplesWork.BlockSets("dou555-p1"); 
             //ExamplesWork.FollowLine("p40");
             //ExamplesWork.FollowLine("dou555-p1");
+            //ExamplesWork.BreakColumn("p40");
+            //ExamplesWork.BreakColumn("dou555-p1");
 
-            ExamplesWork.BreakColumn("p40");
-            ExamplesWork.BreakColumn("dou555-p1");
+            ExamplesWork.Tables("DO1_2016_12_20-p75");
+
+            ExamplesWork.Tables("dz088");
         }
 
         public static void ProcessStats()
