@@ -7,7 +7,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    class TransformArtigo : IAggregateStructure<TextStructure, Artigo>
+    class TransformArtigo : IAggregateStructure<TextStructure, Conteudo>
     {
         bool _title = true;
 
@@ -28,7 +28,7 @@ namespace PdfTextReader.Parser
             return (newTitle == false);
         }
 
-        public Artigo Create(List<TextStructure> _structures)
+        public Conteudo Create(List<TextStructure> _structures)
         {
             string body = null;
             string signa = null;
@@ -66,7 +66,7 @@ namespace PdfTextReader.Parser
                 resultProcess = ProcessSignatureAndRole(_structures[idxSigna].Lines);
             }
 
-            return new Artigo()
+            return new Conteudo()
             {
                 Titulo = titulo,
                 Caput = caput,

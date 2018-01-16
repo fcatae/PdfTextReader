@@ -19,7 +19,7 @@ namespace PdfTextReader.ExecutionStats
             return pipelineText.Log<PrintAnalytics.ShowTextStructure>(filename);
         }
 
-        public static PipelineText<Conteudo> PrintAnalytics(this PipelineText<Conteudo> pipelineText, string filename)
+        public static PipelineText<Content> PrintAnalytics(this PipelineText<Content> pipelineText, string filename)
         {
             return pipelineText.Log<PrintAnalytics.ShowConteudo>(filename);
         }

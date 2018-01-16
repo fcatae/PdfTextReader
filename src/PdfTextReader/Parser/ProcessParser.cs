@@ -9,55 +9,6 @@ namespace PdfTextReader.Parser
 {
     class ProcessParser
     {
-        float Tolerance = 3;
-        public List<Conteudo> ProcessStructures(IEnumerable<TextStructure> structures)
-        {
-            List<Conteudo> contents = new List<Conteudo>();
-            foreach (TextStructure structure in structures)
-            {
-                if (structure.CountLines() == 1 && structure.TextAlignment == TextAlignment.RIGHT && structure.MarginRight > Tolerance && structure.Text.ToUpper() == structure.Text)
-                {
-                    contents.Add(new Conteudo(structure, TipoDoConteudo.Assinatura));
-                }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == TextAlignment.RIGHT && structure.MarginRight > Tolerance)
-                {
-                    contents.Add(new Conteudo(structure, TipoDoConteudo.Cargo));
-                }
-                else if (structure.CountLines() > 1 && structure.TextAlignment == TextAlignment.JUSTIFY)
-                {
-                    contents.Add(new Conteudo(structure, TipoDoConteudo.Corpo));
-                }
-                else if (structure.CountLines() == 1 && structure.TextAlignment == TextAlignment.RIGHT && structure.MarginRight < Tolerance)
-                {
-                    contents.Add(new Conteudo(structure, TipoDoConteudo.Caput));
-                }
-                else if (structure.TextAlignment == TextAlignment.CENTER && structure.FontStyle == "Bold")
-                {
-                    if (ExecutionStats.ProcessStats.GetGridStyle() != null && structure.FontName == ExecutionStats.ProcessStats.GetGridStyle().FontName)
-                    {
-                        contents.Add(new Conteudo(structure, TipoDoConteudo.Grade));
-                    }
-                    else if (structure.FontSize > 9) // Preciso pegar do Stats
-                    {
-                        contents.Add(new Conteudo(structure, TipoDoConteudo.Setor));
-                    }
-                    else
-                    {
-                        contents.Add(new Conteudo(structure, TipoDoConteudo.Título));
-                    }
-                }
-                else if (structure.TextAlignment == TextAlignment.CENTER && structure.Text.ToUpper() != structure.Text)
-                {
-                    contents.Add(new Conteudo(structure, TipoDoConteudo.Data));
-                }
-                else if (structure.TextAlignment == TextAlignment.CENTER)
-                {
-                    contents.Add(new Conteudo(structure, TipoDoConteudo.Departamento));
-                }
-            }
-            return contents;
-        }
-
         public void XMLWriter(IEnumerable<Artigo> artigos, string doc)
         {
             var settings = new XmlWriterSettings()
@@ -71,37 +22,41 @@ namespace PdfTextReader.Parser
 
                 foreach (Artigo artigo in artigos)
                 {
+                    Conteudo conteudo = artigo.Conteudo;
+                    Metadados metadados = artigo.Metadados;
+
+
                     //Writing Metadata
                     writer.WriteStartElement("Metadados");
 
-                    if (artigo.Hierarquia != null)
-                        writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(artigo.Hierarquia));
+                    //if (artigo.Hierarquia != null)
+                    //    writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(artigo.Hierarquia));
 
                     writer.WriteEndElement();
 
                     //Writing Body
                     writer.WriteStartElement("Conteudo");
 
-                    if (artigo.Titulo != null)
-                        writer.WriteElementString("Titulo", ConvertBreakline2Space(artigo.Titulo));
-                    if (artigo.Caput != null)
-                        writer.WriteElementString("Caput", artigo.Caput);
-                    if (artigo.Corpo != null)
-                        writer.WriteElementString("Corpo", artigo.Corpo);
-                    if (artigo.Assinatura != null)
+                    if (conteudo.Titulo != null)
+                        writer.WriteElementString("Titulo", ConvertBreakline2Space(conteudo.Titulo));
+                    if (conteudo.Caput != null)
+                        writer.WriteElementString("Caput", conteudo.Caput);
+                    if (conteudo.Corpo != null)
+                        writer.WriteElementString("Corpo", conteudo.Corpo);
+                    if (conteudo.Assinatura != null)
                     {
                         writer.WriteStartElement("Autores");
-                        foreach (var ass in artigo.Assinatura)
+                        foreach (var ass in conteudo.Assinatura)
                         {
                             if (ass.Length > 3)
                                 writer.WriteElementString("Assinatura", ass);
                         }
                         writer.WriteEndElement();
                     }
-                    if (artigo.Cargo != null)
-                        writer.WriteElementString("Cargo", ConvertBreakline2Space(artigo.Cargo));
-                    if (artigo.Data != null)
-                        writer.WriteElementString("Data", artigo.Data);
+                    if (conteudo.Cargo != null)
+                        writer.WriteElementString("Cargo", ConvertBreakline2Space(conteudo.Cargo));
+                    if (conteudo.Data != null)
+                        writer.WriteElementString("Data", conteudo.Data);
 
                     writer.WriteEndElement();
                 }
@@ -120,6 +75,7 @@ namespace PdfTextReader.Parser
             }
             return output;
         }
+
         public void XMLWriterMultiple(IEnumerable<Artigo> artigos, string doc)
         {
             int i = 1;

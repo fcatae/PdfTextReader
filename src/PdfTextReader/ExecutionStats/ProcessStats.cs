@@ -46,7 +46,7 @@ namespace PdfTextReader.ExecutionStats
             }
         }
 
-        public static void PrintAnalytics(string pdfname, IEnumerable<TextLine> lines, IEnumerable<TextStructure> structures, IEnumerable<Parser.Conteudo> contents)
+        public static void PrintAnalytics(string pdfname, IEnumerable<TextLine> lines, IEnumerable<TextStructure> structures, IEnumerable<Parser.Content> contents)
         {
             using (System.IO.StreamWriter file = new System.IO.StreamWriter($"bin/{pdfname}-Analytics.txt"))
             {
@@ -104,7 +104,7 @@ namespace PdfTextReader.ExecutionStats
                 file.WriteLine("<<<<<>>>>>>>>>>>>>");
                 file.WriteLine("");
                 file.WriteLine("");
-                foreach (Parser.Conteudo content in contents)
+                foreach (Parser.Content content in contents)
                 {
                     file.WriteLine($"TextAlignment: {content.TextAlignment}");
                     file.WriteLine($"FontName: {content.FontName}");

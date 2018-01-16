@@ -626,7 +626,7 @@ namespace PdfTextReader
         //}
 
 
-        public static IEnumerable<Artigo> CreateArtigos(string basename)
+        public static IEnumerable<Conteudo> CreateArtigos(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
@@ -649,14 +649,14 @@ namespace PdfTextReader
                         .Show(Color.Blue)
                     .Text<CreateTextLines>()
                         .ConvertText<CreateStructures, TextStructure>()
-                        .ConvertText<TransformArtigo, Artigo>()
+                        .ConvertText<TransformArtigo, Conteudo>()
                         //.Show(Color.Orange)
                         ;
 
             var artigos = textOutput.ToList();
 
-            var procParser = new ProcessParser();
-            procParser.XMLWriter(artigos, $"bin/{basename}");
+            //var procParser = new ProcessParser();
+            //procParser.XMLWriter(artigos, $"bin/{basename}");
 
             pipeline.Done();
 
@@ -706,7 +706,7 @@ namespace PdfTextReader
             pipeline.Done();
         }
         
-        public static IEnumerable<Artigo> MultipageCreateArtigos(string basename)
+        public static IEnumerable<Conteudo> MultipageCreateArtigos(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
@@ -726,16 +726,16 @@ namespace PdfTextReader
                     .ConvertText<CreateStructures, TextStructure>()
                         .DebugCount()
                         .DebugPrint()
-                    .ConvertText<TransformArtigo, Artigo>()
-                        .Log<PrintDebugCount<Artigo>>(Console.Out)
+                    .ConvertText<TransformArtigo, Conteudo>()
+                        .Log<PrintDebugCount<Conteudo>>(Console.Out)
                         .DebugCount()
                         .DebugPrint()
                     .ToList();
                     
             pipeline.Done();
 
-            var procParser = new ProcessParser();
-            procParser.XMLWriter(result, $"bin/{basename}");
+            //var procParser = new ProcessParser();
+            //procParser.XMLWriter(result, $"bin/{basename}");
             
             return result;
         }

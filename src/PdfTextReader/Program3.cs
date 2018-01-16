@@ -100,7 +100,7 @@ namespace PdfTextReader
 
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<TransformArtigo, Artigo>()
+                            .ConvertText<TransformArtigo, Conteudo>()
                             .ToList();
         }
 
@@ -114,12 +114,12 @@ namespace PdfTextReader
 
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<TransformArtigo, Artigo>()
+                            .ConvertText<TransformArtigo, Conteudo>()
                                 .DebugPrint()
                             .ToList();            
 
-            var procParser = new ProcessParser();
-            procParser.XMLWriterMultiple(artigos, $"bin/{basename}/{basename}-artigo");
+            //var procParser = new ProcessParser();
+            //procParser.XMLWriterMultiple(artigos, $"bin/{basename}/{basename}-artigo");
         }
 
         public static void Extract(int page)

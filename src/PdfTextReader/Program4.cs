@@ -27,7 +27,7 @@ namespace PdfTextReader
             Examples.FollowText(basename);
             Examples.ShowHeaderFooter(basename);
 
-            var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
+            var conteudos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"bin/{basename}-lines.txt")
                             .ConvertText<CreateStructures, TextStructure>()
                                 .Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
@@ -36,15 +36,20 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
-                            .ConvertText<TransformArtigo2, Artigo>()
+                            .ConvertText<TransformConteudo, Conteudo>()
+                            .ToList();
+
+            var metadados = Examples.GetTextLines(basename)
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                            .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
 
             //Create XML
-            var procParser = new ProcessParser();
-            procParser.XMLWriterMultiple(artigos, $"bin/{basename}-artigo");
-
+            var parserXML = new TransformArtigo2();
+            parserXML.Create(conteudos, metadados, basename);
         }
 
 
@@ -103,7 +108,7 @@ namespace PdfTextReader
 
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<TransformArtigo, Artigo>()
+                            .ConvertText<TransformArtigo, Conteudo>()
                             .ToList();
         }
 
@@ -117,12 +122,12 @@ namespace PdfTextReader
 
             var artigos = Examples.GetTextLines(basename)
                             .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<TransformArtigo, Artigo>()
+                            .ConvertText<TransformArtigo, Conteudo>()
                                 .DebugPrint()
                             .ToList();            
 
-            var procParser = new ProcessParser();
-            procParser.XMLWriterMultiple(artigos, $"bin/{basename}/{basename}-artigo");
+            //var procParser = new ProcessParser();
+            //procParser.XMLWriterMultiple(artigos, $"bin/{basename}/{basename}-artigo");
         }
 
         public static void Extract(int page)

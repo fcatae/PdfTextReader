@@ -80,7 +80,7 @@ namespace PdfTextReader.ExecutionStats
             }
         }
         
-        public class ShowConteudo : PrintAnalytics, ILogStructure<Conteudo>
+        public class ShowConteudo : PrintAnalytics, ILogStructure<Content>
         {
             public override void StartLog(TextWriter analytics)
             {
@@ -93,7 +93,7 @@ namespace PdfTextReader.ExecutionStats
                 analytics.WriteLine("");
             }
 
-            public void Log(TextWriter file, Conteudo content)
+            public void Log(TextWriter file, Content content)
             {
                 file.WriteLine($"TextAlignment: {content.TextAlignment}");
                 file.WriteLine($"FontName: {content.FontName}");
