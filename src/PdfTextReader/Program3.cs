@@ -14,6 +14,11 @@ namespace PdfTextReader
 {
     class Program3
     {
+        public static void ProcessWork()
+        {
+            ExamplesWork.Blocks("p40");
+        }
+
         public static void ProcessStats()
         {
             //PdfWriteText.Test();
