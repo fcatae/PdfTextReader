@@ -66,7 +66,7 @@ namespace PdfTextReader.Parser
                 Titulo = titulo,
                 Caput = caput,
                 Corpo = body,
-                Assinatura = resultProcess[0],
+                Assinatura = ProcessListOfSignatures(resultProcess[0]),
                 Cargo = resultProcess[1],
                 Data = resultProcess[2]
             };
@@ -102,6 +102,22 @@ namespace PdfTextReader.Parser
             }
 
             return new List<string>() { signature, role, date };
+        }
+
+        string[] ProcessListOfSignatures(string signature)
+        {
+            if (signature != null)
+            {
+                if (signature.Contains("\n"))
+                {
+                    return signature.Split("\n");
+                }
+                else
+                {
+                    return new string[] { signature };
+                }
+            }
+            return null;
         }
 
         public void Init(TextSegment line)

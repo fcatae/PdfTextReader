@@ -67,13 +67,19 @@ namespace PdfTextReader.Parser
             using (XmlWriter writer = XmlWriter.Create($"{doc}.xml", settings))
             {
                 writer.WriteStartDocument();
-                writer.WriteStartElement("Metadados");
+                writer.WriteStartElement("Artigo");
 
                 foreach (Artigo artigo in artigos)
                 {
+                    //Writing Metadata
+                    writer.WriteStartElement("Metadados");
+
                     if (artigo.Hierarquia != null)
                         writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(artigo.Hierarquia));
 
+                    writer.WriteEndElement();
+
+                    //Writing Body
                     writer.WriteStartElement("Conteudo");
 
                     if (artigo.Titulo != null)
@@ -83,7 +89,15 @@ namespace PdfTextReader.Parser
                     if (artigo.Corpo != null)
                         writer.WriteElementString("Corpo", artigo.Corpo);
                     if (artigo.Assinatura != null)
-                        writer.WriteElementString("Assinatura", artigo.Assinatura);
+                    {
+                        writer.WriteStartElement("Autores");
+                        foreach (var a in artigo.Assinatura)
+                        {
+                            if (a.Length > 3)
+                                writer.WriteElementString("Assinatura", a);
+                        }
+                        writer.WriteEndElement();
+                    }
                     if (artigo.Cargo != null)
                         writer.WriteElementString("Cargo", artigo.Cargo);
                     if (artigo.Data != null)

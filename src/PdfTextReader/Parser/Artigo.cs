@@ -14,7 +14,7 @@ namespace PdfTextReader.Parser
         //BODY
         public string Titulo { get; set; }
         public string Corpo { get; set; }
-        public string Assinatura { get; set; }
+        public string[] Assinatura { get; set; }
         public string Cargo { get; set; }
         public string Caput { get; set; }
         public string Grade { get; set; }
