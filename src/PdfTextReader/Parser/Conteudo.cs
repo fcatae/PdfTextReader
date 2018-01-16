@@ -7,6 +7,7 @@ namespace PdfTextReader.Parser
 {
     class Conteudo
     {
+        public string Hierarquia { get; set; }
         public string Titulo { get; set; }
         public string Corpo { get; set; }
         public string[] Assinatura { get; set; }

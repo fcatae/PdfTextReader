@@ -19,6 +19,7 @@ namespace PdfTextReader.Parser
         {
             TextSegment segment = segments[0];
             string titulo = null;
+            string hierarchy = null;
             string body = null;
             string caput = null;
             List<string> resultProcess = new List<string>() { null, null, null };
@@ -33,6 +34,10 @@ namespace PdfTextReader.Parser
             }
             else if (idxTitle > 0)
             {
+                for (int i = 0; i < segment.Title.Count() - 1; i++)
+                {
+                    hierarchy = hierarchy + segment.Title[i].Text + ":";
+                }
                 titulo = segment.Title[idxTitle].Text;
             }
 
@@ -60,6 +65,7 @@ namespace PdfTextReader.Parser
 
             return new Conteudo()
             {
+                Hierarquia = hierarchy,
                 Titulo = titulo,
                 Caput = caput,
                 Corpo = body,
