@@ -83,7 +83,7 @@ namespace PdfTextReader.Parser
                     writer.WriteStartElement("Conteudo");
 
                     if (artigo.Titulo != null)
-                        writer.WriteElementString("Titulo", artigo.Titulo);
+                        writer.WriteElementString("Titulo", ConvertBreakline2Space(artigo.Titulo));
                     if (artigo.Caput != null)
                         writer.WriteElementString("Caput", artigo.Caput);
                     if (artigo.Corpo != null)
@@ -91,15 +91,15 @@ namespace PdfTextReader.Parser
                     if (artigo.Assinatura != null)
                     {
                         writer.WriteStartElement("Autores");
-                        foreach (var a in artigo.Assinatura)
+                        foreach (var ass in artigo.Assinatura)
                         {
-                            if (a.Length > 3)
-                                writer.WriteElementString("Assinatura", a);
+                            if (ass.Length > 3)
+                                writer.WriteElementString("Assinatura", ass);
                         }
                         writer.WriteEndElement();
                     }
                     if (artigo.Cargo != null)
-                        writer.WriteElementString("Cargo", artigo.Cargo);
+                        writer.WriteElementString("Cargo", ConvertBreakline2Space(artigo.Cargo));
                     if (artigo.Data != null)
                         writer.WriteElementString("Data", artigo.Data);
 
@@ -113,7 +113,12 @@ namespace PdfTextReader.Parser
 
         string ConvertBreakline2Space(string input)
         {
-            return input.Replace("\n", " ").Substring(0,input.Length - 1);
+            string output = input.Replace("\n", " ");
+            if (output.Contains(":"))
+            {
+                output = output.Substring(0, output.Length - 1);
+            }
+            return output;
         }
         public void XMLWriterMultiple(IEnumerable<Artigo> artigos, string doc)
         {
