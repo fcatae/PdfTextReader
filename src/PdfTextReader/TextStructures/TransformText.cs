@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using PdfTextReader.Base;
+using System.Linq;
 
 namespace PdfTextReader.TextStructures
 {
@@ -9,6 +10,9 @@ namespace PdfTextReader.TextStructures
         where T: class, IAggregateStructure<TI,TO>, new()
     {
         List<TI> _input;
+        TransformIndex<TI,TO> _index = new TransformIndex<TI,TO>();
+
+        public TransformIndex<TI, TO> GetIndexRef() => _index;
 
         public IEnumerable<TO> Transform(IEnumerable<TI> lines)
         {
@@ -28,10 +32,15 @@ namespace PdfTextReader.TextStructures
                     }
 
                     var result = transform.Create(_input);
+                    var indexEntry = CreateIndexEntry(result, _input);
 
                     // caller returns null when the object should be ignored
                     if (result != null)
                     {
+                        // add to index
+                        _index.Add(indexEntry);
+
+                        // return result
                         yield return result;
                     }
                 }
@@ -54,5 +63,20 @@ namespace PdfTextReader.TextStructures
             }
         }
 
+        TransformIndexEntry<TI, TO> CreateIndexEntry(TO key, List<TI> list)
+        {
+            return CreateIndexEntry(key, list[0], list[list.Count - 1], list);
+        }
+
+        TransformIndexEntry<TI,TO> CreateIndexEntry(TO key, TI start, TI end, List<TI> list)
+        {
+            return new TransformIndexEntry<TI, TO>()
+            {
+                Key = key,
+                Start = start,
+                End = end,
+                Items = list
+            };
+        }
     }
 }

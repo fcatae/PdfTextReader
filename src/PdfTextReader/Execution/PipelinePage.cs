@@ -134,18 +134,18 @@ namespace PdfTextReader.Execution
             return this;
         }
 
-        public PipelineText<TextLine> Text<T>()
-            where T: IConvertBlock, new()
-        {
-            var proc2 = new T();
-            var lines = proc2.ProcessPage(this.LastResult);
+        //public PipelineText<TextLine> Text<T>()
+        //    where T: IConvertBlock, new()
+        //{
+        //    var proc2 = new T();
+        //    var lines = proc2.ProcessPage(this.LastResult);
 
-            var pipe = new PipelineText<TextLine>(Context, lines, (PipelineInputPdf)Context);
+        //    var pipe = new PipelineText<TextLine>(Context, lines, (PipelineInputPdf)Context);
 
-            pipe.CurrentStream = lines;
+        //    pipe.CurrentStream = lines;
 
-            return pipe;
-        }
+        //    return pipe;
+        //}
 
         public PipelinePage ParsePdf<T>()
             where T : IEventListener, IPipelineResults<BlockPage>, new()

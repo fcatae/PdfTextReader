@@ -14,8 +14,9 @@ namespace PdfTextReader.Execution
         public IPipelineContext Context { get; }
         public IEnumerable<TT> CurrentStream;
         private PipelineFactory _factory = new PipelineFactory();
+        private TransformIndexTree _indexTree;
 
-        public PipelineText(IPipelineContext context, IEnumerable<TT> stream, IDisposable chain)
+        public PipelineText(IPipelineContext context, IEnumerable<TT> stream, TransformIndexTree indexTree, IDisposable chain)
         {
             this.Context = context;
             this.CurrentStream = stream;
@@ -37,29 +38,21 @@ namespace PdfTextReader.Execution
             
             var processor = _factory.CreateInstance( ()=> new TransformText<P,TT,TO>());
 
+            var index = processor.GetIndexRef();
+            _indexTree.AddRef(index);
+
             var result = processor.Transform(initial);
 
-            var pipe = new PipelineText<TO>(this.Context, result, this);
+            var pipe = new PipelineText<TO>(this.Context, result, _indexTree, this);
             
             return pipe;
         }
 
-        PipelineText<TT> CreateNewPipelineText(IEnumerable<TT> stream)
+        PipelineText<TT> CreateNewPipelineTextForLogging(IEnumerable<TT> stream)
         {
-            return new PipelineText<TT>(this.Context, stream, this);
+            return new PipelineText<TT>(this.Context, stream, _indexTree, this);
         }
-
-        //public PipelineText<TT> Process<T>()
-        //    where T : IProcessStructure<TT>, new()
-        //{
-        //    var processor = CreateInstance<T>();
-
-        //    var stream = from data in ((IEnumerable<TT>)this.CurrentStream)
-        //                 select processor.Process(data);
-
-        //    return CreateNewPipelineText(stream);
-        //}
-
+        
         public PipelineText<TT> Log<TL>(string filename)
             where TL : ILogStructure<TT>, new()
         {
@@ -71,7 +64,7 @@ namespace PdfTextReader.Execution
         public PipelineText<TT> Log<TL>(TextWriter writer)
             where TL : ILogStructure<TT>, new()
         {
-            return CreateNewPipelineText(PipelineTextLog<TL>(writer, this.CurrentStream));
+            return CreateNewPipelineTextForLogging(PipelineTextLog<TL>(writer, this.CurrentStream));
         }
 
         public IEnumerable<TT> ToEnumerable()

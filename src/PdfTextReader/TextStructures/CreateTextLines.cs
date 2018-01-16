@@ -9,11 +9,18 @@ namespace PdfTextReader.TextStructures
 {
     class CreateTextLines : IConvertBlock
     {
-        public IEnumerable<TextLine> ProcessPage(BlockPage page)
+        public IEnumerable<TextLine> ProcessPage(int pageNumber, BlockPage page)
         {
+            int blockId = 0;
+
             foreach (var bset in page.AllBlocks)
-            {
+            {                
                 var blockArea = bset as IBlockSet<IBlock>;
+                var pageInfo = new TextPageInfo()
+                {
+                    PageNumber = pageNumber,
+                    BlockId = blockId
+                };
 
                 if (bset is ImageBlock || bset is TableSet)
                     continue;
@@ -26,16 +33,18 @@ namespace PdfTextReader.TextStructures
                     continue;
                 }                    
 
-                var lines = ProcessLine(blockArea);
+                var lines = ProcessLine(blockArea, pageInfo);
 
                 foreach(var l in lines)
                 {
                     yield return l;
-                }                
+                }
+
+                blockId++;
             }
         }
 
-        List<TextLine> ProcessLine(IBlockSet<IBlock> bset)
+        List<TextLine> ProcessLine(IBlockSet<IBlock> bset, TextPageInfo pageInfo)
         {
             var items = bset;
 
@@ -61,7 +70,8 @@ namespace PdfTextReader.TextStructures
                     BeforeSpace = (last_tl != null) ? (float?)(last_y - bl.GetH() - bl.FontSize) : null,
                     AfterSpace = null,
                     Block = bl,
-                    HasBackColor = bl.HasBackColor 
+                    HasBackColor = bl.HasBackColor,
+                    PageInfo = pageInfo
                 };
 
                 lines.Add(tl);
