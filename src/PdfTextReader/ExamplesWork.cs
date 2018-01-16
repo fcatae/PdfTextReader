@@ -26,5 +26,33 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
+        public static void BlockLines(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-02-blockline-{basename}-output.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<GroupLines>()
+                    .Show(Color.Red);
+
+            pipeline.Done();
+        }
+        public static void BlockSets(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-03-blocksets-{basename}-output.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<GroupLines>()
+                        .ParseBlock<FindInitialBlockset>()
+                    .Show(Color.Orange);
+
+            pipeline.Done();
+        }
     }
 }

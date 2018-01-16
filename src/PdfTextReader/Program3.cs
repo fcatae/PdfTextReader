@@ -16,7 +16,10 @@ namespace PdfTextReader
     {
         public static void ProcessWork()
         {
-            ExamplesWork.Blocks("p40");
+            //ExamplesWork.Blocks("p40");
+            //ExamplesWork.BlockLines("p40");
+            ExamplesWork.BlockSets("p40");
+            ExamplesWork.BlockSets("dou555-p1");            
         }
 
         public static void ProcessStats()
