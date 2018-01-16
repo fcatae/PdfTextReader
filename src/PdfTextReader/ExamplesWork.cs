@@ -215,6 +215,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
         public static void FindIds(string basename)
         {
             var pipeline = new Execution.Pipeline();
@@ -229,5 +230,43 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+        
+        public static void ParseFinal(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-11-final-{basename}-output.pdf")
+                    .AllPages(page =>
+                    {
+                        page.ParsePdf<PreProcessTables>()
+                                .ParseBlock<IdentifyTables>()
+                            .ParsePdf<PreProcessImages>()
+                                .ParseBlock<RemoveOverlapedImages>()
+                            .ParsePdf<ProcessPdfText>()
+                                    .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
+                                .ParseBlock<RemoveSmallFonts>()
+                                .ParseBlock<MergeTableText>()
+                                .ParseBlock<HighlightTextTable>()
+                                .ParseBlock<RemoveTableText>()
+                                .ParseBlock<GroupLines>()
+                                    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                .ParseBlock<RemoveHeaderImage>()
+                                .ParseBlock<FindInitialBlocksetWithRewind>()
+                                .ParseBlock<BreakColumnsLight>()
+                                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                                    .ParseBlock<RemoveFooter>()
+                                .ParseBlock<AddTableSpace>()
+                                .ParseBlock<AddImageSpace>()
+                                .ParseBlock<BreakInlineElements>()
+                                .ParseBlock<ResizeBlocksets>()
+                                .ParseBlock<OrderBlocksets>()
+                                    .Show(Color.Orange)
+                                .ShowLine(Color.Black);
+                    });                    
+
+            pipeline.Done();
+        }
+
     }
 }

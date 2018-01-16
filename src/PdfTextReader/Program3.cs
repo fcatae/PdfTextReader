@@ -30,7 +30,8 @@ namespace PdfTextReader
             //ExamplesWork.FindTables("dz088");
             //ExamplesWork.BadOrder("p40");
             //ExamplesWork.CorrectOrder("p40");
-            ExamplesWork.FindIds("dou555-p10");
+            //ExamplesWork.FindIds("dou555-p10");
+            ExamplesWork.ParseFinal("dou555-p10");
         }
 
         public static void ProcessStats()
