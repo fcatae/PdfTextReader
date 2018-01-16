@@ -111,7 +111,9 @@ namespace PdfTextReader
                                 .ParseBlock<RemoveHeaderImage>()
                                 .ParseBlock<FindInitialBlocksetWithRewind>()
                                 .ParseBlock<BreakColumnsLight>()
-                            .Show(Color.Orange);
+                                .ParseBlock<AddTableSpace>()
+                            .Show(Color.Orange)
+                            .ShowLine(Color.Black);
 
             pipeline.Done();
         }
@@ -141,8 +143,7 @@ namespace PdfTextReader
                                 .ParseBlock<AddTableSpace>()
                                 .ParseBlock<BreakInlineElements>()
                                     .Show(Color.Red);
-
-
+            
             pipeline.Done();
         }
     }
