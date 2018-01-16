@@ -12,7 +12,7 @@ namespace PdfTextReader
 
             //Program3.ProcessStats();
 
-            Program4.ProcessStats("Done/p40");
+            Program4.ProcessStats("Done/2016-1");
 
             //Program2.MainTest();
         }

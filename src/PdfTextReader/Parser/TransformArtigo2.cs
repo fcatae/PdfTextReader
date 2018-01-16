@@ -71,7 +71,7 @@ namespace PdfTextReader.Parser
                 Regex r = new Regex(@"(\d{4})", RegexOptions.CultureInvariant);
                 Match m = r.Match(input);
                 if (m.Success)
-                    output = output + $"- {m.Groups[0].ToString()}";
+                    output = output + $"-{m.Groups[0].ToString()}";
             }
 
             return output;
@@ -83,10 +83,24 @@ namespace PdfTextReader.Parser
 
             if (input != null)
             {
-                Regex number = new Regex(@"(.+?(?= No)|(?= N°))", RegexOptions.CultureInvariant);
-                Match mNumber = number.Match(input);
-                if (mNumber.Success)
-                    output = mNumber.Groups[0].ToString();
+                if (input.Contains("No") || input.Contains("N°"))
+                {
+                    Regex number = new Regex(@"(.+?(?= No)|(?= N°))", RegexOptions.CultureInvariant);
+                    Match mNumber = number.Match(input);
+                    if (mNumber.Success)
+                        output = mNumber.Groups[0].ToString();
+                }
+                else if (input.Contains("DE"))
+                {
+                    Regex number = new Regex(@"(.+?((?= DE)|(?= DA)))", RegexOptions.CultureInvariant);
+                    Match mNumber = number.Match(input);
+                    if (mNumber.Success)
+                        output = mNumber.Groups[0].ToString();
+                }
+                else
+                {
+                    output = input;
+                }
             }
 
             return output;
