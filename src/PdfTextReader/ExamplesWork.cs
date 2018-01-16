@@ -54,5 +54,21 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+
+        public static void FollowLine(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-04-followline-{basename}-output.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                        .ParseBlock<GroupLines>()
+                            .ShowLine(Color.Green)
+                        .ParseBlock<FindInitialBlockset>()
+                            .Show(Color.Orange);
+
+            pipeline.Done();
+        }
     }
 }
