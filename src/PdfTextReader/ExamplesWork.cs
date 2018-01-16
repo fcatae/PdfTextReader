@@ -215,5 +215,19 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+        public static void FindIds(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-10-ids-{basename}-output.pdf")
+                    .AllPages(page =>
+                    {
+                        page.ParsePdf<ProcessPdfText>()
+                            .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green));
+                    });
+
+            pipeline.Done();
+        }
     }
 }

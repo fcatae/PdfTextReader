@@ -28,8 +28,9 @@ namespace PdfTextReader
             //ExamplesWork.Tables("dz088");
             //ExamplesWork.FindTables("DO1_2016_12_20-p75");
             //ExamplesWork.FindTables("dz088");
-            ExamplesWork.BadOrder("p40");
-            ExamplesWork.CorrectOrder("p40");
+            //ExamplesWork.BadOrder("p40");
+            //ExamplesWork.CorrectOrder("p40");
+            ExamplesWork.FindIds("dou555-p10");
         }
 
         public static void ProcessStats()
