@@ -29,8 +29,15 @@ namespace PdfTextReader.Parser
                     //Writing Metadata
                     writer.WriteStartElement("Metadados");
 
-                    //if (artigo.Hierarquia != null)
-                    //    writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(artigo.Hierarquia));
+                    writer.WriteAttributeString("ID", conteudo.IntenalId.ToString());
+                    if (metadados.Nome != null)
+                        writer.WriteAttributeString("Nome", ConvertBreakline2Space(metadados.Nome));
+                    if (metadados.TipoDoArtigo != null)
+                        writer.WriteAttributeString("TipoDoArtigo", ConvertBreakline2Space(metadados.TipoDoArtigo));
+                    if (conteudo.Hierarquia != null)
+                        writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
+                    if (metadados.Grade != null)
+                        writer.WriteAttributeString("Grade", ConvertBreakline2Space(metadados.Grade));
 
                     writer.WriteEndElement();
 

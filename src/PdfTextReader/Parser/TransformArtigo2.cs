@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace PdfTextReader.Parser
 {
@@ -18,7 +19,9 @@ namespace PdfTextReader.Parser
 
                 Metadados metadados = new Metadados()
                 {
-                   
+                    TipoDoArtigo = GetType(conteudo.Titulo),
+                    Nome = GetName(conteudo.Titulo),
+                    Grade = GetGrade(conteudo.Hierarquia)
                 };
 
 
@@ -36,7 +39,57 @@ namespace PdfTextReader.Parser
 
         private string GetGrade(string input)
         {
-            return null;
+            string output = null;
+            if (input != null && input.Contains(":"))
+            {
+                int idxGrade = input.IndexOf(":", 0);
+                output = input.Substring(0, idxGrade);
+            }
+
+            return output;
+        }
+
+        private string GetName(string input)
+        {
+            string output = null;
+            if (input != null)
+            {
+                string p1 = input.Split(",")[0];
+                //Get Type
+                output = GetType(input);
+
+                //Get Number
+                if (p1 != null)
+                {
+                    Regex number = new Regex(@"([0-9]+\.?(\/)?[0-9]?)", RegexOptions.CultureInvariant);
+                    Match mNumber = number.Match(input);
+                    if (mNumber.Success)
+                        output = output + $" {mNumber.Groups[0].ToString()}";
+                }
+
+                //Get Year
+                Regex r = new Regex(@"(\d{4})", RegexOptions.CultureInvariant);
+                Match m = r.Match(input);
+                if (m.Success)
+                    output = output + $"- {m.Groups[0].ToString()}";
+            }
+
+            return output;
+        }
+
+        private string GetType(string input)
+        {
+            string output = null;
+
+            if (input != null)
+            {
+                Regex number = new Regex(@"(.+?(?= No)|(?= N°))", RegexOptions.CultureInvariant);
+                Match mNumber = number.Match(input);
+                if (mNumber.Success)
+                    output = mNumber.Groups[0].ToString();
+            }
+
+            return output;
         }
 
         public void CreateXML(IEnumerable<Artigo> artigos, string basename)

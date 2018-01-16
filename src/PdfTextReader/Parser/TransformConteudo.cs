@@ -61,10 +61,9 @@ namespace PdfTextReader.Parser
                 resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
             }
 
-            GetYear(titulo);
-
             return new Conteudo()
             {
+                IntenalId = 0,
                 Hierarquia = hierarchy,
                 Titulo = titulo,
                 Caput = caput,
@@ -121,16 +120,6 @@ namespace PdfTextReader.Parser
                 }
             }
             return null;
-        }
-
-        void GetYear(string titulo)
-        {
-            Regex r = new Regex(@"(\d{4})", RegexOptions.CultureInvariant);
-            Match m = r.Match(titulo);
-            if (m.Success)
-            {
-                var year = m.Groups[0].ToString();
-            }
         }
 
         public void Init(TextSegment line)

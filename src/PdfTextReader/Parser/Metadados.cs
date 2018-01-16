@@ -6,7 +6,6 @@ namespace PdfTextReader.Parser
 {
     class Metadados
     {
-        public string Hierarquia { get; set; }
         public string Nome { get; set; }
         public string SecaoDoDiario { get; set; }
         public string DataPublicacao { get; set; }
