@@ -21,7 +21,8 @@ namespace PdfTextReader.Execution
             this.Context = context;
             this.CurrentStream = stream;
             _factory = new PipelineFactory();
-            _factory.AddReference(chain);            
+            _factory.AddReference(chain);
+            _indexTree = indexTree;
         }
                 
         public PipelineText<TT> Show(Color Color)

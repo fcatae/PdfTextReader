@@ -7,28 +7,99 @@ namespace PdfTextReader.TextStructures
 {
     class TransformIndexTree
     {
-        Dictionary<Type, ITransformIndex> _indexes = new Dictionary<Type, ITransformIndex>();
+        List<ITransformIndex> _indexes = new List<ITransformIndex>();
+        List<Type> _indexOutputType = new List<Type>();
 
         public void AddRef<TI,TO>(TransformIndex<TI,TO> index)
         {
-            // currently does not allow duplicates
-            _indexes.Add(typeof(TO), index);
+            _indexes.Add(index);
+            _indexOutputType.Add(typeof(TO));
         }
 
-        ITransformIndex Get(Type objType)
+        ITransformIndex GetIndex(Type objType)
         {
-            return (ITransformIndex)_indexes[objType];
+            int index_end = _indexes.Count - 1;
+
+            for (int i=index_end; i>=0; i--)
+            {
+                if (_indexOutputType[i] == objType)
+                    return _indexes[i];
+            }
+
+            throw new InvalidOperationException();
         }
 
-        public int FindPageStart<TO>(TO instance)
+        public int FindIndex<T>(T instance)
+        {
+            int index_end = _indexes.Count - 1;
+
+            object last_instance = instance;
+            for (int i = index_end; i >= 0; i--)
+            {
+                if (last_instance is T)
+                    break;
+
+                Type objType = last_instance.GetType();
+
+                // validate type
+                if (_indexOutputType[i] != objType)
+                    continue;
+
+                var index = _indexes[i];
+
+                object childInstance = index.GetStart(last_instance);
+
+                last_instance = childInstance;
+            }
+
+            var text = last_instance as TextLine;
+
+            if (text == null)
+                throw new InvalidOperationException();
+
+            return text.PageInfo.PageNumber;
+        }
+
+        public int FindPageStart(object instance)
+        {
+            int index_end = _indexes.Count - 1;
+
+            object last_instance = instance;
+            for (int i = index_end; i >= 0; i--)
+            {
+                if( last_instance is TextLine )
+                    break;
+
+                Type objType = last_instance.GetType();
+
+                // validate type
+                if (_indexOutputType[i] != objType)
+                    throw new InvalidOperationException();
+
+                var index = _indexes[i];
+
+                object childInstance = index.GetStart(last_instance);
+
+                last_instance = childInstance;
+            }
+
+            var text = last_instance as TextLine;
+
+            if (text == null)
+                throw new InvalidOperationException();
+
+            return text.PageInfo.PageNumber;
+        }
+
+        public int FindPageStart2<TO>(TO instance)
         {
             TextLine textLine = null;
             object searchObject = instance;
 
             while(searchObject != null)
             {
-                var index = Get(instance.GetType());
-
+                var index = GetIndex(instance.GetType());
+                
                 textLine = searchObject as TextLine;
 
                 if (textLine != null)

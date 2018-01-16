@@ -8,6 +8,7 @@ namespace PdfTextReader.TextStructures
     interface ITransformIndex
     {
         object GetStart(object instance);
+        object FindObject(object instance);
     }
 
     class TransformIndex<TI,TO> : ITransformIndex
@@ -34,6 +35,12 @@ namespace PdfTextReader.TextStructures
             var entry = Lookup(instance);
 
             return entry.Start;
+        }
+        public object FindObject(object instance)
+        {
+            var entry = Lookup(instance);
+
+            return entry.Key;
         }
 
         TransformIndexEntry<TI, TO> Lookup(object instance)

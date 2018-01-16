@@ -22,7 +22,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555-p21";
+            string basename = "dou555-p20";
 
             // Extract(1);
 
@@ -40,6 +40,8 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
+
+            int p = pipeline.Index.FindPageStart(artigos[20]);
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
         }

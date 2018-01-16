@@ -26,6 +26,7 @@ namespace PdfTextReader.Execution
         public static PipelineInputPdf DebugCurrent;
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
+        public TransformIndexTree Index => _indexTree;
                 
         public PipelineInputPdf(string filename)
         {

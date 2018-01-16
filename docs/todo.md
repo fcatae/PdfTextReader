@@ -1,3 +1,12 @@
+Bugs:
+
+* Merge Table is broken
+* full (2017) : breakinline
+
+done-1) determinar o SegmentTree
+
+2) interface
+
 1) Create Index
 get page num: testar
 show in pdf: testar
@@ -21,3 +30,6 @@ Show(artigo[10])
 Show(artigo[10], (IEnum<TextStructure>)p => p.Title)
 
 Index<>.ForEach()
+
+
+4- validacao da grade
