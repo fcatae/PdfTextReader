@@ -147,12 +147,12 @@ namespace PdfTextReader
             pipeline.Done();
         }
         
-        public static void Order(string basename)
+        public static void BadOrder(string basename)
         {
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-08-orders-{basename}-output.pdf")
+                    .Output($"bin/work/work-08-badorders-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
@@ -175,6 +175,41 @@ namespace PdfTextReader
                                 .ParseBlock<BreakInlineElements>()
                                 .ParseBlock<ResizeBlocksets>()
                                     .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                                .Show(Color.Orange)
+                                .ShowLine(Color.Black);
+
+            pipeline.Done();
+        }
+
+        public static void CorrectOrder(string basename)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/work/work-09-orders-{basename}-output.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                                .ParseBlock<IdentifyTables>()
+                            .ParsePdf<PreProcessImages>()
+                                .ParseBlock<RemoveOverlapedImages>()
+                            .ParsePdf<ProcessPdfText>()
+                                .ParseBlock<RemoveSmallFonts>()
+                                .ParseBlock<MergeTableText>()
+                                .ParseBlock<HighlightTextTable>()
+                                .ParseBlock<RemoveTableText>()
+                                .ParseBlock<GroupLines>()
+                                    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                .ParseBlock<RemoveHeaderImage>()
+                                .ParseBlock<FindInitialBlocksetWithRewind>()
+                                .ParseBlock<BreakColumnsLight>()
+                                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                                    .ParseBlock<RemoveFooter>()
+                                .ParseBlock<AddTableSpace>()
+                                .ParseBlock<AddImageSpace>()
+                                .ParseBlock<BreakInlineElements>()
+                                .ParseBlock<ResizeBlocksets>()
+                                    .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                                .ParseBlock<OrderBlocksets>()
                                 .Show(Color.Orange)
                                 .ShowLine(Color.Black);
 
