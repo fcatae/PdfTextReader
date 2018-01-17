@@ -43,7 +43,32 @@ namespace PdfTextReader.Execution
                 callback(name);
             }
         }
-        
+        public void EnumFolders(string input, Action<string> callback)
+        {
+            var inputDirectory = new DirectoryInfo(input);
+
+            foreach (var d in inputDirectory.EnumerateDirectories())
+            {
+                foreach(var f in d.EnumerateFiles("*.pdf"))
+                {
+                    string inputfile = f.FullName;
+                    string foldername = f.DirectoryName;
+                    string filename = Path.GetFileNameWithoutExtension(inputfile);
+
+                    if (filename.StartsWith("~"))
+                        continue;
+
+                    if (filename.EndsWith("-output"))
+                        continue;
+
+                    string name = Path.Combine(foldername, filename);
+
+                    callback(name);
+                }
+
+            }
+        }
+
         public void Done()
         {
             Dispose();
