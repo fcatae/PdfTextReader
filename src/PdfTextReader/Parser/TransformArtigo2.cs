@@ -61,7 +61,7 @@ namespace PdfTextReader.Parser
                 //Get Number
                 if (p1 != null)
                 {
-                    Regex number = new Regex(@"([0-9]+\.?(\/)?[0-9]?[0-9]?[0-9]?[0-9]?[0-9]?[0-9]?[0-9])", RegexOptions.CultureInvariant);
+                    Regex number = new Regex(@"([0-9]+\.?(\/)?[0-9]*)", RegexOptions.CultureInvariant);
                     Match mNumber = number.Match(input);
                     if (mNumber.Success)
                         output = output + $" {mNumber.Groups[0].ToString()}";
