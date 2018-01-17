@@ -42,9 +42,9 @@ namespace PdfTextReader
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
 
             //Create XML
-            var parserXML = new TransformArtigo2();
-            var artigos = parserXML.Create(conteudos, basename);
-            parserXML.CreateXML(artigos, basename);
+            var createArticle = new TransformArtigo2();
+            var artigos = createArticle.Create(conteudos, basename);
+            createArticle.CreateXML(artigos, basename);
         }
 
 

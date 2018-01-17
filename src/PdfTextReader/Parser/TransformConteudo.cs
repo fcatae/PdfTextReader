@@ -43,8 +43,11 @@ namespace PdfTextReader.Parser
             }
 
             //Definindo Caput
-            if (segment.Body[0].TextAlignment == TextAlignment.RIGHT && segment.Body[1].TextAlignment == TextAlignment.JUSTIFY)
-                caput = segment.Body[0].Text;
+            if (segment.Body.Count() > 1)
+            {
+                if (segment.Body[0].TextAlignment == TextAlignment.RIGHT && segment.Body[1].TextAlignment == TextAlignment.JUSTIFY)
+                    caput = segment.Body[0].Text;
+            }
         
             //Definindo Assinatura, Cargo e Data
             int idxSigna = segment.Body.ToList().FindLastIndex(s => s.TextAlignment == TextAlignment.JUSTIFY) + 1;
