@@ -31,7 +31,7 @@ namespace PdfTextReader
             //ExamplesWork.BadOrder("p40");
             //ExamplesWork.CorrectOrder("p40");
             //ExamplesWork.FindIds("dou555-p10");
-            ExamplesWork.ParseFinal("dou555-p10");
+            //ExamplesWork.ParseFinal("dou555-p10");
         }
 
         public static void ProcessStats()
@@ -42,7 +42,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "dou555-p21";
+            string basename = "DO1_2017_01_06";
 
             // Extract(1);
 
