@@ -17,12 +17,14 @@ namespace PdfTextReader.TextStructures
             input.WriteLine("-----------------------------------");
 
             float? afterSpace = line.AfterSpace;
+            float? beforeSpace = line.BeforeSpace;
 
-            input.WriteLine($"Margins: ({line.MarginLeft}, {line.MarginRight})");
+            input.WriteLine($"Margins: (LEFT: {line.MarginLeft}, RIGHT: {line.MarginRight})");
 
-            input.Write(line.Text);
+            input.Write($"TEXT: {line.Text}");
             input.WriteLine($" ({line.FontName}, {line.FontSize.ToString("0.00")}, {line.FontStyle})");
-            input.WriteLine($" ({afterSpace})");
+            input.WriteLine($" (AfterSpace: {afterSpace})");
+            input.WriteLine($" (BeforeSpace: {afterSpace})");
             input.WriteLine();
 
             input.WriteLine("");
