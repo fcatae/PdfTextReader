@@ -18,8 +18,13 @@ namespace PdfTextReader.TextStructures
         {
             T transform = new T();
 
+            int startId = 0;
+            int endId = -1;
+
             foreach (var line in lines)
             {
+                endId++;
+
                 // process all the lines
                 if (_input != null )
                 {
@@ -33,12 +38,13 @@ namespace PdfTextReader.TextStructures
 
                     var result = transform.Create(_input);
                     var indexEntry = CreateIndexEntry(result, _input);
-
+                    var indexEntry2 = CreateIndexEntry2(result, startId, endId);
+                    startId = endId;
                     // caller returns null when the object should be ignored
                     if (result != null)
                     {
                         // add to index
-                        _index.Add(indexEntry);
+                        _index.Add(indexEntry, indexEntry2);
 
                         // return result
                         yield return result;
@@ -56,8 +62,13 @@ namespace PdfTextReader.TextStructures
             if( _input != null )
             {
                 var result_value = transform.Create(_input);
+
                 if (result_value != null)
                 {
+                    var indexEntry = CreateIndexEntry(result_value, _input);
+                    var indexEntry2 = CreateIndexEntry2(result_value, startId, endId+1);
+                    _index.Add(indexEntry, indexEntry2);
+
                     yield return result_value;
                 }
             }
@@ -68,7 +79,7 @@ namespace PdfTextReader.TextStructures
             return CreateIndexEntry(key, list[0], list[list.Count - 1], list);
         }
 
-        TransformIndexEntry<TI,TO> CreateIndexEntry(TO key, TI start, TI end, List<TI> list)
+        TransformIndexEntry<TI, TO> CreateIndexEntry(TO key, TI start, TI end, List<TI> list)
         {
             return new TransformIndexEntry<TI, TO>()
             {
@@ -76,6 +87,16 @@ namespace PdfTextReader.TextStructures
                 Start = start,
                 End = end,
                 Items = list
+            };
+        }
+        
+        TransformIndexEntry2<TO> CreateIndexEntry2(TO key, int start, int end)
+        {
+            return new TransformIndexEntry2<TO>()
+            {
+                Key = key,
+                StartId = start,
+                EndId = end
             };
         }
     }

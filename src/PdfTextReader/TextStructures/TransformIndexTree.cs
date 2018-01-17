@@ -60,14 +60,49 @@ namespace PdfTextReader.TextStructures
             return text.PageInfo.PageNumber;
         }
 
-        public int FindPageStart(object instance)
+        public int FindPageStart<T>(T instance)
+        {
+            if (_indexOutputType[0] != typeof(TextLine))
+                throw new InvalidOperationException("requires CreateTextLineIndex pipeline");
+
+            int index_end = _indexes.Count - 1;
+
+            if (_indexOutputType[index_end] != typeof(T))
+                throw new InvalidOperationException();
+
+            int last_instanceId = _indexes[index_end].GetObjectId(instance);
+            TextLine line = null;
+
+            for (int i = index_end; i >= 0; i--)
+            {
+                var index = _indexes[i];
+
+                if (_indexOutputType[i] == typeof(TextLine))
+                {
+                    line = (TextLine)index.GetInstance(last_instanceId);
+                    break;
+                }
+
+                int childInstanceId = index.GetStartId(last_instanceId);
+
+                last_instanceId = childInstanceId;
+            }
+            
+            if (line == null)
+                throw new InvalidOperationException();
+
+            return line.PageInfo.PageNumber;
+        }
+
+        public int FindPageStartOld(object instance)
         {
             int index_end = _indexes.Count - 1;
 
+            int last_instanceId = 0;
             object last_instance = instance;
             for (int i = index_end; i >= 0; i--)
             {
-                if( last_instance is TextLine )
+                if (last_instance is TextLine)
                     break;
 
                 Type objType = last_instance.GetType();
@@ -78,6 +113,7 @@ namespace PdfTextReader.TextStructures
 
                 var index = _indexes[i];
 
+                int childInstanceId = index.GetStartId(last_instanceId);
                 object childInstance = index.GetStart(last_instance);
 
                 last_instance = childInstance;
