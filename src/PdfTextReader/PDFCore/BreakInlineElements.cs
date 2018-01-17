@@ -70,7 +70,13 @@ namespace PdfTextReader.PDFCore
 
                     if (OverlapContains(blocks[i], blocks[j]))
                     {
-                        //if(blocks[i])
+                        bool doesntApply = !(blocks[i] is BlockSet<IBlock>);
+
+                        if (doesntApply)
+                        {
+                            Console.WriteLine("BreakinlineElements: try to break image/table");
+                            continue;
+                        }
 
                         var elems = BreakElements(blocks[i], blocks[j]);
 
