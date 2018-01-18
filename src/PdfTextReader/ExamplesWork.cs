@@ -14,6 +14,20 @@ namespace PdfTextReader
 {
     class ExamplesWork
     {
+        public static void PrintAllSteps(string name)
+        {
+            ExamplesWork.Blocks(name);
+            ExamplesWork.BlockLines(name);
+            ExamplesWork.BlockSets(name);
+            ExamplesWork.FollowLine(name);
+            ExamplesWork.BreakColumn(name);
+            ExamplesWork.Tables(name);
+            ExamplesWork.FindTables(name);
+            ExamplesWork.BadOrder(name);
+            ExamplesWork.CorrectOrder(name);
+            ExamplesWork.FindIds(name);
+        }
+
         public static void Blocks(string basename)
         {
             var pipeline = new Execution.Pipeline();

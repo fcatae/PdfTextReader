@@ -26,6 +26,7 @@ namespace PdfTextReader
 
             Examples.FollowText(basename);
             Examples.ShowHeaderFooter(basename);
+            ExamplesWork.PrintAllSteps(basename);
 
             var conteudos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"bin/{basename}-lines.txt")
