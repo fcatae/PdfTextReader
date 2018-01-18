@@ -31,10 +31,13 @@ namespace PdfTextReader
 
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-header-footer-output.pdf")
-                    .Page(1)
-                    .ParsePdf<PreProcessTables>()
+                    .AllPages(page =>
+                    {
+                        page.ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()
+                        .Show(Color.Red)
                     .ParsePdf<PreProcessImages>()
+                        .Show(Color.Green)
                         .ParseBlock<RemoveOverlapedImages>()
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<RemoveSmallFonts>()
@@ -50,7 +53,8 @@ namespace PdfTextReader
                             //.ParseBlock<BreakColumns>()
                             .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                             .ParseBlock<RemoveFooter>();
-            
+                    });
+
             pipeline.Done();
         }
         public static IEnumerable<TextLine> GetEnumerableLines(string basename)

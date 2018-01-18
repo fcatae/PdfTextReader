@@ -22,19 +22,27 @@ namespace PdfTextReader
             //ExamplesWork.BlockSets("dou555-p1"); 
             //ExamplesWork.FollowLine("p40");
             //ExamplesWork.FollowLine("dou555-p1");
-            //ExamplesWork.BreakColumn("p40");
+            //ExamplesWork.BreakColuc:mn("p40");
             //ExamplesWork.BreakColumn("dou555-p1");
             //ExamplesWork.Tables("DO1_2016_12_20-p75");
             //ExamplesWork.Tables("dz088");
             //ExamplesWork.FindTables("DO1_2016_12_20-p75");
             //ExamplesWork.FindTables("dz088");
-            //ExamplesWork.BadOrder("p40");
+            //ExamplesWork.BadOrder("p40"); 
             //ExamplesWork.CorrectOrder("p40");
             //ExamplesWork.FindIds("dou555-p10");
             //ExamplesWork.ParseFinal("dou555-p10");
         }
 
         public static void ProcessStats()
+       {
+            var folders = new Execution.Pipeline();
+            folders.EnumFolders(@"c:\pdf\2017", f => {
+                ProcessStatsManyFolders(f);
+            });
+        }
+
+        public static void ProcessStats2(string basename = "DO1_2017_01_06")
         {
             //PdfWriteText.Test();
             //return;
@@ -42,22 +50,20 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            string basename = "DO1_2017_01_06";
-
             // Extract(1);
 
-            Examples.FollowText(basename);
-            Examples.ShowHeaderFooter(basename);
+            //Examples.FollowText(basename);
+            //Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
-                                .Log<AnalyzeLines>(Console.Out)
+                            //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateStructures, TextStructure>()
-                                .Log<AnalyzeStructures>(Console.Out)
-                                .Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
+                            //.Log<AnalyzeStructures>(Console.Out)
+                            //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
                             //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
-                                .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                            //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
+                            //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
 
@@ -72,44 +78,107 @@ namespace PdfTextReader
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-test-output.pdf")
-                    .AllPagesExcept<CreateTextLines>(new int[] {},page =>
-                            page.ParsePdf<PreProcessTables>()
-                                .ParseBlock<IdentifyTables>()
-                            .ParsePdf<PreProcessImages>()
-                                    .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
-                                .ParseBlock<RemoveOverlapedImages>()
-                            .ParsePdf<ProcessPdfText>()
-                                .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
-                                .ParseBlock<RemoveSmallFonts>()
-                                //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
-                                .ParseBlock<MergeTableText>()
-                                //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
-                                .ParseBlock<HighlightTextTable>()
-                                .ParseBlock<RemoveTableText>()
-                                .ParseBlock<GroupLines>()
-                                    .Show(Color.Yellow)
-                                    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                                .ParseBlock<RemoveHeaderImage>()
+                    .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
+                              page.ParsePdf<PreProcessTables>()
+                                  .ParseBlock<IdentifyTables>()
+                              .ParsePdf<PreProcessImages>()
+                                      .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                                  .ParseBlock<RemoveOverlapedImages>()
+                              .ParsePdf<ProcessPdfText>()
+                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
+                                  .ParseBlock<RemoveSmallFonts>()
+                                  //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
+                                  .ParseBlock<MergeTableText>()
+                                  //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                                  .ParseBlock<HighlightTextTable>()
+                                  .ParseBlock<RemoveTableText>()
+                                  .ParseBlock<GroupLines>()
+                                      .Show(Color.Yellow)
+                                      .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                  .ParseBlock<RemoveHeaderImage>()
 
-                                .ParseBlock<FindInitialBlocksetWithRewind>()
-                                    .Show(Color.Gray)
-                                .ParseBlock<BreakColumnsLight>()
-                                //.ParseBlock<BreakColumns>()
-                                    .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                                    .ParseBlock<RemoveFooter>()
-                                .ParseBlock<AddTableSpace>()
-                                .ParseBlock<AddImageSpace>()
-                                .ParseBlock<BreakInlineElements>()
-                                .ParseBlock<ResizeBlocksets>()
-                                    .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
-                                .ParseBlock<OrderBlocksets>()
-                                .Show(Color.Orange)
-                                .ShowLine(Color.Black)
+                                  .ParseBlock<FindInitialBlocksetWithRewind>()
+                                      .Show(Color.Gray)
+                                  .ParseBlock<BreakColumnsLight>()
+                                      //.ParseBlock<BreakColumns>()
+                                      .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                                      .ParseBlock<RemoveFooter>()
+                                  .ParseBlock<AddTableSpace>()
+                                  .ParseBlock<AddImageSpace>()
+                                  .ParseBlock<BreakInlineElements>()
+                                  .ParseBlock<ResizeBlocksets>()
+                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                                  .ParseBlock<OrderBlocksets>()
+                                  .Show(Color.Orange)
+                                  .ShowLine(Color.Black)
                     );
 
             return result;
         }
-    
+
+        public static void ProcessStatsManyFolders(string basename)
+        {
+            Console.WriteLine();
+            Console.WriteLine("Program3 - ProcessStatsManyFolders");
+            Console.WriteLine();
+            
+            var artigos = GetTextManyFolders(basename, out Execution.Pipeline pipeline)
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                            .ConvertText<CreateTreeSegments, TextSegment>()
+                            .ToList();
+
+            pipeline.Done();
+
+            //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+        }
+
+
+        static PipelineText<TextLine> GetTextManyFolders(string basename, out Execution.Pipeline pipeline)
+        {
+            pipeline = new Execution.Pipeline();
+
+            var result =
+            pipeline.Input($"{basename}.pdf")
+                    .Output($"{basename}-output.pdf")
+                    .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
+                              page.ParsePdf<PreProcessTables>()
+                                  .ParseBlock<IdentifyTables>()
+                              .ParsePdf<PreProcessImages>()
+                                      .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                                  .ParseBlock<RemoveOverlapedImages>()
+                              .ParsePdf<ProcessPdfText>()
+                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
+                                  .ParseBlock<RemoveSmallFonts>()
+                                  //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
+                                  .ParseBlock<MergeTableText>()
+                                  //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                                  .ParseBlock<HighlightTextTable>()
+                                  .ParseBlock<RemoveTableText>()
+                                  .ParseBlock<GroupLines>()
+                                      .Show(Color.Yellow)
+                                      .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                                  .ParseBlock<RemoveHeaderImage>()
+
+                                  .ParseBlock<FindInitialBlocksetWithRewind>()
+                                      .Show(Color.Gray)
+                                  .ParseBlock<BreakColumnsLight>()
+                                      //.ParseBlock<BreakColumns>()
+                                      .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                                      .ParseBlock<RemoveFooter>()
+                                  .ParseBlock<AddTableSpace>()
+                                  .ParseBlock<AddImageSpace>()
+                                  .ParseBlock<BreakInlineElements>()
+                                  .ParseBlock<ResizeBlocksets>()
+                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                                  .ParseBlock<OrderBlocksets>()
+                                  .Show(Color.Orange)
+                                  .ShowLine(Color.Black)
+                    );
+
+            return result;
+        }
+
         public static void TesteArtigo()
         {
             Console.WriteLine();
