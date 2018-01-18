@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader", "PdfTextRea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Tests", "..\test\PdfTextReader.Test\PdfTextReader.Tests.csproj", "{D171E691-DC64-427C-9A9D-E0C76EA93271}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Validator", "Validator\Validator.csproj", "{0483385A-7E68-4680-8E7C-C465EB65E426}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D171E691-DC64-427C-9A9D-E0C76EA93271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D171E691-DC64-427C-9A9D-E0C76EA93271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D171E691-DC64-427C-9A9D-E0C76EA93271}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0483385A-7E68-4680-8E7C-C465EB65E426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0483385A-7E68-4680-8E7C-C465EB65E426}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0483385A-7E68-4680-8E7C-C465EB65E426}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0483385A-7E68-4680-8E7C-C465EB65E426}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
