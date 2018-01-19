@@ -40,13 +40,21 @@ namespace PdfTextReader.TextStructures
             if( line.BeforeSpace != null )
             {
                 // too far
-                if ((float)line.BeforeSpace > (float)line.FontSize / 2)
+                if ((float)line.BeforeSpace > (float)line.FontSize * 0.75)
                     return false;
 
                 // same spacing as structure
                 if (!IsZero(_structure.AfterSpace - line.BeforeSpace))
                     return false;
-            }
+
+                //has margin at second line
+                //if (!IsZero(line.MarginLeft))
+                //{
+                //    //has not the same margin
+                //    if (!IsZero(_structure.MarginLeft - line.MarginLeft))
+                //        return false;
+                //}
+            }   
 
 
             return true;

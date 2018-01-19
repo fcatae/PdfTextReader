@@ -62,7 +62,7 @@ namespace PdfTextReader.Parser
             //Definindo Body
             if (caput != null)
             {
-                body = String.Join("\n", segment.Body.Take(idxSigna - 1).Select(s => s.Text));
+                body = String.Join("\n", segment.Body.Skip(1).Take(idxSigna - 1).Select(s => s.Text));
             }
             
 

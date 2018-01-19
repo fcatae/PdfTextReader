@@ -36,6 +36,7 @@ namespace PdfTextReader
                             .ConvertText<CreateTextSegments, TextSegment>()
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 .Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                                .Log<AnalyzeSegments2>($"bin/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ConvertText<TransformConteudo, Conteudo>()
                             .ToList();
@@ -44,8 +45,11 @@ namespace PdfTextReader
 
             //Create XML
             var createArticle = new TransformArtigo2();
-            var artigos = createArticle.Create(conteudos, basename);
+            var artigos = createArticle.Create(conteudos);
             createArticle.CreateXML(artigos, basename);
+
+            var validator = new ProgramValidatorXML();
+            validator.ValidateArticle("bin");
         }
 
 
