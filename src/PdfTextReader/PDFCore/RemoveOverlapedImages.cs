@@ -20,8 +20,10 @@ namespace PdfTextReader.PDFCore
             var page = parseImage.Images;
 
             if (page == null)
-                throw new InvalidOperationException("RemoveHeaderImage requires PreProcessImages");
-
+            {
+                PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
+            }
+            
             this._images = page.AllBlocks.ToList();
 
             this._parse = parseImage;

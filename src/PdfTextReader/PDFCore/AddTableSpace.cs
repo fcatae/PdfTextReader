@@ -18,7 +18,9 @@ namespace PdfTextReader.PDFCore
             var page = parserTable.PageTables;
 
             if (page == null)
-                throw new InvalidOperationException("AddTableSpace requires IdentifyTables");
+            {
+                PdfReaderException.AlwaysThrow("AddTableSpace requires IdentifyTables");
+            }
 
             this._tables = page.AllBlocks.ToList();
         }
@@ -26,7 +28,9 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {
             if(this._tables == null)
-                throw new InvalidOperationException("AddTableSpace requires IdentifyTables");
+            {
+                PdfReaderException.AlwaysThrow("AddTableSpace requires IdentifyTables");
+            }
 
             var result = new BlockPage();
 

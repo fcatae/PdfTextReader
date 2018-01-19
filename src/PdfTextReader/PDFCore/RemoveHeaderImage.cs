@@ -21,7 +21,9 @@ namespace PdfTextReader.PDFCore
             var page = parseImage.Images;
 
             if (page == null)
-                throw new InvalidOperationException("RemoveHeaderImage requires PreProcessImages");
+            {
+                PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
+            }
 
             this._images = page.AllBlocks.ToList();
 
@@ -31,7 +33,9 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {
             if (this._images == null)
-                throw new InvalidOperationException("RemoveHeaderImage requires PreProcessImages");
+            {
+                PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
+            }
 
             var header = FindBlocksAtHeader(page);
 

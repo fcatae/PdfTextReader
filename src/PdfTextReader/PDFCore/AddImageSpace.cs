@@ -19,7 +19,9 @@ namespace PdfTextReader.PDFCore
             var page = parserImage.Images;
 
             if (page == null)
-                throw new InvalidOperationException("AddImageSpace requires PreProcessImages");
+            {
+                PdfReaderException.AlwaysThrow("AddImageSpace requires PreProcessImages");
+            }
 
             this._images = page.AllBlocks.ToList();
         }
@@ -27,7 +29,9 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {
             if(this._images == null)
-                throw new InvalidOperationException("AddImageSpace requires PreProcessImages");
+            {
+                PdfReaderException.AlwaysThrow("AddImageSpace requires PreProcessImages");
+            }
 
             var result = new BlockPage();
 

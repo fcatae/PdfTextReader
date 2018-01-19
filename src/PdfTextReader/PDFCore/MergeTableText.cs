@@ -20,8 +20,10 @@ namespace PdfTextReader.PDFCore
             var page = parserTable.PageTables;
 
             if (page == null)
-                throw new InvalidOperationException("MergeTableText requires IdentifyTables");
-
+            {
+                PdfReaderException.AlwaysThrow("MergeTableText requires IdentifyTables");
+            }
+            
             this._tables = page.AllBlocks.ToList();
             this._tableLines = parserTable.PageLines.AllBlocks.ToList();
             this._parser = parserTable;
@@ -30,7 +32,9 @@ namespace PdfTextReader.PDFCore
         public BlockPage Process(BlockPage page)
         {            
             if (this._tables == null)
-                throw new InvalidOperationException("MergeTableText requires IdentifyTables");
+            {
+                PdfReaderException.AlwaysThrow("MergeTableText requires IdentifyTables");
+            }
 
             var tables = LoopMergeTables(page, _tables, _tableLines);
             

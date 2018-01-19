@@ -21,8 +21,10 @@ namespace PdfTextReader.PDFCore
             var backgrounds = parserTable.PageBackground.AllBlocks;
 
             if ((lines == null)|| (backgrounds == null))
-                throw new InvalidOperationException("HighlightTextTable requires IdentifyTables");
-
+            {
+                PdfReaderException.AlwaysThrow("HighlightTextTable requires IdentifyTables");
+            }
+            
             var region = new List<IBlock>();
             region.AddRange(lines.AsEnumerable());
             region.AddRange(backgrounds.AsEnumerable());
@@ -32,7 +34,9 @@ namespace PdfTextReader.PDFCore
         public BlockPage FindHighlightBlocks(BlockPage page)
         {
             if(this._region == null)
-                throw new InvalidOperationException("HighlightTextTable requires IdentifyTables");
+            {
+                PdfReaderException.AlwaysThrow("HighlightTextTable requires IdentifyTables");
+            }
 
             var result = new BlockPage();
 

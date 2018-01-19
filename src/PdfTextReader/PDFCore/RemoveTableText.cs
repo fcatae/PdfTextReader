@@ -18,15 +18,19 @@ namespace PdfTextReader.PDFCore
             var page = parserTable.PageTables;
 
             if (page == null)
-                throw new InvalidOperationException("RemoveTableText requires IdentifyTables");
-
+            {
+                PdfReaderException.AlwaysThrow("RemoveTableText requires IdentifyTables");
+            }
+            
             this._tables = page.AllBlocks.ToList();
         }
 
         public BlockPage Process(BlockPage page)
         {
             if(this._tables == null)
-                throw new InvalidOperationException("RemoveTableText requires IdentifyTables");
+            {
+                PdfReaderException.AlwaysThrow("RemoveTableText requires IdentifyTables");
+            }
 
             var result = new BlockPage();
 

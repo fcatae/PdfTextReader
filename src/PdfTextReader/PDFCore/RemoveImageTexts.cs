@@ -19,15 +19,19 @@ namespace PdfTextReader.PDFCore
             var page = parseImage.Images;
 
             if (page == null)
-                throw new InvalidOperationException("RemoveImageTexts requires PreProcessImages");
-
+            {
+                PdfReaderException.AlwaysThrow("RemoveImageTexts requires PreProcessImages");
+            }
+            
             this._images = page.AllBlocks.ToList();
         }
 
         public BlockPage Process(BlockPage page)
         {
             if (this._images == null)
-                throw new InvalidOperationException("RemoveImageTexts requires PreProcessImages");
+            {
+                PdfReaderException.AlwaysThrow("RemoveImageTexts requires PreProcessImages");
+            }
 
             var result = new BlockPage();
 
