@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Validator
 {
-    class Process2010 : IRunner
+    class Validate2010 : IRunner
     {
         int _totalProcessed = 0;
 
@@ -15,9 +15,9 @@ namespace Validator
         {            
             string inputFolder = file.Folder;
             string basename = file.Filename;
-            
-            // CMD C:\PDF\2010\ c:\pdf\output 2010
-            PdfTextReader.ProgramValidator2010.Process(basename, inputFolder, outputname);
+
+            // CMD c:\pdf\output_6 c:\pdf\valid valid2010 
+            PdfTextReader.ValidatorPipeline.ProcessPage1(basename, inputFolder, outputname);
             _totalProcessed++;
         }
     }
