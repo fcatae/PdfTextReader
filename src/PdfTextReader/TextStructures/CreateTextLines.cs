@@ -21,8 +21,10 @@ namespace PdfTextReader.TextStructures
                 // TODO: fix this bug
                 if (blockArea.First() is TableCell)
                 {
+                    PdfReaderException.Throw("blockArea.First() is TableCell");
+
                     //throw new InvalidOperationException();
-                    Console.WriteLine("CRITICAL ERROR: CreateTextLines(): blockArea.First() is TableCell");
+                    //Console.WriteLine("CRITICAL ERROR: CreateTextLines(): blockArea.First() is TableCell");
                     continue;
                 }                    
 

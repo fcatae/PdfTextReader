@@ -11,14 +11,14 @@ namespace PdfTextReader.Base
         {
         }
 
-        private static bool g_ContinueOnException = false;
+        private static bool g_ContinueOnException = true;
 
         public static void ContinueOnException()
         {
             g_ContinueOnException = true;
         }
 
-        public static void Throw(string message, string details, [CallerMemberName]string source = null)
+        public static void Throw(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             try
             {
@@ -29,14 +29,15 @@ namespace PdfTextReader.Base
                 if (g_ContinueOnException)
                 {
                     Console.WriteLine("=======================================");
-                    Console.WriteLine($"CRITICAL EXCEPTION: {source} ({message})");
+                    Console.WriteLine($"{source}");
+                    Console.WriteLine($"CRITICAL EXCEPTION: {sourceMethod}");
                     Console.WriteLine();
-                    Console.WriteLine($"    {details}");
+                    Console.WriteLine($"    {message}");
                     Console.WriteLine();
-                    Console.WriteLine("=======================================");
-                    Console.WriteLine(ex.StackTrace);
+                    //Console.WriteLine("=======================================");
                     return;
                 }
+                throw;
             }
         }
     }
