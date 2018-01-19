@@ -105,7 +105,7 @@ namespace PdfTextReader.Execution
             this.LastResult = result;
 
             if (result.AllBlocks.Count() == 0)
-                Console.WriteLine($"Warning: {typeof(T).Name} returned no data");
+                PdfReaderException.Warning($"{typeof(T).Name} returned no data");
 
             return this;
         }

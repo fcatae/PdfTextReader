@@ -11,6 +11,7 @@ namespace PdfTextReader.Base
         {
         }
 
+        private static bool g_ShowWarnings = true;
         private static bool g_ContinueOnException = false;
 
         public static void ContinueOnException()
@@ -18,9 +19,17 @@ namespace PdfTextReader.Base
             g_ContinueOnException = true;
         }
 
+        public static void DisableWarnings()
+        {
+            g_ShowWarnings = false;
+        }
+
         public static void Warning(string message, [CallerMemberName]string sourceMethod = null)
         {
-            Console.WriteLine($"WARNING: {sourceMethod}: {message}");
+            if(g_ShowWarnings)
+            {
+                Console.WriteLine($"WARNING: {sourceMethod}: {message}");
+            }
         }
 
         public static void Throw(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
