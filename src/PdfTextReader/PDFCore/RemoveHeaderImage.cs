@@ -42,7 +42,7 @@ namespace PdfTextReader.PDFCore
             var image = FindImageOverlap(header);
 
             if (image == null)
-                throw new NotImplementedException();
+                PdfReaderException.AlwaysThrow("image == null");
 
             var result = RemoveHeaderImageWithText(page, image);
 

@@ -93,7 +93,7 @@ namespace PdfTextReader.PDFCore
 
                             // very likely to have A contains B in Y axis, but not in X
                             // in this case, we need to break both blocks at the same operation
-                            PdfReaderException.Throw("true overlap?");
+                            PdfReaderException.AlwaysThrow("true overlap?");
 
                             // throw new NotImplementedException("merge blockLines");
 
@@ -176,7 +176,7 @@ namespace PdfTextReader.PDFCore
                 return j;
 
             if( goodCandidate1 && goodCandidate2 )
-                throw new NotImplementedException("can it happen?");
+                PdfReaderException.AlwaysThrow("can it happen?");
 
             // else
             // NOTHING FOUND

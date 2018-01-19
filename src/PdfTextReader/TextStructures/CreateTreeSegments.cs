@@ -64,7 +64,7 @@ namespace PdfTextReader.Parser
         TextStructure[] MergeSegments(TextStructure[] current, TextStructure[] next)
         {
             if ((current == null) || (next == null) || (next.Length == 0))
-                throw new ArgumentException();
+                PdfReaderException.AlwaysThrow("(current == null) || (next == null) || (next.Length == 0)");
 
             var headNext = next[0];
             int remainingTreeSize = -1;
