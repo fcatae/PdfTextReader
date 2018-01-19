@@ -74,7 +74,7 @@ namespace PdfTextReader.PDFCore
 
                         if (doesntApply)
                         {
-                            Console.WriteLine("BreakinlineElements: try to break image/table");
+                            PdfReaderException.Throw("BreakinlineElements: try to break image/table");
                             continue;
                         }
 
