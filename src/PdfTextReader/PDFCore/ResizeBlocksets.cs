@@ -100,6 +100,13 @@ namespace PdfTextReader.PDFCore
                     {
                         // may receive multiples
                         var original = (IEnumerable<IBlock>)blsearch.B;
+
+                        if (original is TableSet)
+                            PdfReaderException.AlwaysThrow("TableSet");
+
+                        if (original is ImageBlock)
+                            PdfReaderException.AlwaysThrow("ImageBlock");
+
                         var replace = new BlockSet2<IBlock>(original, block.GetX(), block.GetH(), block.GetX()+block.GetWidth(), block.GetH()+block.GetHeight());
                         repls.Add(replace);
                     }
