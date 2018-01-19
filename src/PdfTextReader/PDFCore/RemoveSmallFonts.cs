@@ -56,7 +56,7 @@ namespace PdfTextReader.PDFCore
                         {
                             // we dont expect to have last after the current
                             if (last_box.GetX() > box.GetX())
-                                throw new InvalidOperationException();
+                                PdfReaderException.AlwaysThrow("last_box.GetX() > box.GetX()");
 
                             last_box.Text += box.GetText();
                             box.Text = "";

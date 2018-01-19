@@ -41,7 +41,7 @@ namespace PdfTextReader.PDFText
                 return (1 - components[3]);
             }
 
-            throw new InvalidOperationException("invalid color space");
+            PdfReaderException.AlwaysThrow("invalid color space");
         }
 
         public void EventOccurred(IEventData data, EventType type)
@@ -96,7 +96,7 @@ namespace PdfTextReader.PDFText
                 };
 
                 if (tableCell.Width < 0 || tableCell.Height < 0)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("tableCell.Width < 0 || tableCell.Height < 0");
 
                 if (tableCell.X >= 0 || tableCell.H >= 0)
                 {

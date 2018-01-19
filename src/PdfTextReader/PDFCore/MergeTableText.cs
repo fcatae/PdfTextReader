@@ -49,7 +49,7 @@ namespace PdfTextReader.PDFCore
             var result = new BlockPage();
 
             if (this._tables == null)
-                throw new InvalidOperationException("MergeTableText requires IdentifyTables");
+                PdfReaderException.AlwaysThrow("MergeTableText requires IdentifyTables");
 
             var tables = MergeTables(page, _tables);
 
@@ -109,7 +109,7 @@ namespace PdfTextReader.PDFCore
 
             // cannot increase the number of tables
             if (tables.Count > initialTables.Count())
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("tables.Count > initialTables.Count()");
 
             return tables;
         }

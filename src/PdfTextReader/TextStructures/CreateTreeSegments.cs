@@ -27,8 +27,8 @@ namespace PdfTextReader.Parser
                     var current = _current.Title;
                     var next = segment.Title;
 
-                    if (next == null )
-                        throw new InvalidOperationException();
+                    if (next == null)
+                        PdfReaderException.AlwaysThrow("next == null ");
 
                     // The last structure may be broken
                     if (next.Length == 0)
@@ -58,7 +58,7 @@ namespace PdfTextReader.Parser
         public void Init(TextSegment line)
         {
             if (_shouldNotContinue)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("_shouldNotContinue");
         }
 
         TextStructure[] MergeSegments(TextStructure[] current, TextStructure[] next)

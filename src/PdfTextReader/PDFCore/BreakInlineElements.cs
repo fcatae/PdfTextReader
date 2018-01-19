@@ -105,7 +105,7 @@ namespace PdfTextReader.PDFCore
             int size = SelectSize((BlockSet<IBlock>)a, middle);
 
             if (size == -1)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("size == -1");
 
             var blocks = CreateNewBlocks((BlockSet<IBlock>)a, size);
 
@@ -113,7 +113,7 @@ namespace PdfTextReader.PDFCore
             bool overlap2 = OverlapContains(b, blocks[1]);
 
             if (overlap1 || overlap2)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("overlap1 || overlap2");
 
             return blocks;
         }
@@ -166,7 +166,7 @@ namespace PdfTextReader.PDFCore
         static bool OverlapContains(float a1, float a2, float b1, float b2)
         {
             if ((b1 > b2) || (a1 > a2))
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("(b1 > b2) || (a1 > a2)");
 
             bool contains = (a1 <= b1) && (a2 >= b2);
 
@@ -175,7 +175,7 @@ namespace PdfTextReader.PDFCore
         static bool HasOverlap(float a1, float a2, float b1, float b2)
         {
             if ((b1 > b2) || (a1 > a2))
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("(b1 > b2) || (a1 > a2)");
 
             bool separated = ((a1 < b1) && (a2 < b1)) ||
                              ((a1 > b2) && (a2 > b2));

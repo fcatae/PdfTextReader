@@ -11,6 +11,7 @@ namespace PdfTextReader.Base
         {
         }
 
+        private static bool g_IgnoreEverything = true;
         private static bool g_ShowWarnings = true;
         private static bool g_ContinueOnException = false;
 
@@ -26,6 +27,9 @@ namespace PdfTextReader.Base
 
         public static void Warning(string message, [CallerMemberName]string sourceMethod = null)
         {
+            if (g_IgnoreEverything)
+                return;
+
             if(g_ShowWarnings)
             {
                 Console.WriteLine($"WARNING: {sourceMethod}: {message}");
@@ -34,6 +38,9 @@ namespace PdfTextReader.Base
 
         public static void Throw(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
+            if (g_IgnoreEverything)
+                return;
+
             try
             {
                 throw new PdfReaderException(message);
@@ -57,6 +64,9 @@ namespace PdfTextReader.Base
 
         public static void AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
+            if (g_IgnoreEverything)
+                return;
+
             throw new PdfReaderException(message);
         }
     }

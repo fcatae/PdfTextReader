@@ -23,7 +23,9 @@ namespace PdfTextReader.ExecutionStats
                     float height = (float)stat.FooterHeight;
 
                     if (height > statRegionTooLarge)
-                        throw new InvalidOperationException();
+                    {
+                        PdfReaderException.AlwaysThrow("height > statRegionTooLarge");
+                    }
 
                     total += height;
                     count++;

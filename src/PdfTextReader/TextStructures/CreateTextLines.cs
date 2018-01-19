@@ -22,9 +22,6 @@ namespace PdfTextReader.TextStructures
                 if (blockArea.First() is TableCell)
                 {
                     PdfReaderException.Throw("blockArea.First() is TableCell");
-
-                    //throw new InvalidOperationException();
-                    //Console.WriteLine("CRITICAL ERROR: CreateTextLines(): blockArea.First() is TableCell");
                     continue;
                 }                    
 
@@ -71,7 +68,7 @@ namespace PdfTextReader.TextStructures
                 if (last_tl != null)
                 {
                     if (float.IsNaN(last_y))
-                        throw new InvalidOperationException();
+                        PdfReaderException.AlwaysThrow("float.IsNaN(last_y)");
 
                     float a = bl.GetHeight();
                     float b = bl.FontSize;

@@ -78,7 +78,7 @@ namespace PdfTextReader.PDFCore
                         
                         if ( k == -1 )
                         {
-                            Console.WriteLine("CRITICAL ERROR: BreakColumnsLight:k == -1");
+                            PdfReaderException.Warning("BreakColumnsLight:k == -1");
 
                             continue;
 
@@ -118,13 +118,13 @@ namespace PdfTextReader.PDFCore
                         }
                         
                         if (size == 0)
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("size == 0");
 
                         if (size == -1)
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("size == -1");
 
                         if (size == ((BlockSet<IBlock>)selected_block).Count())
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("size > total_blocks");
 
                         var newblocks = CreateNewBlocks((BlockSet<IBlock>)selected_block, size);
                         
@@ -134,7 +134,7 @@ namespace PdfTextReader.PDFCore
                             bool checkOverlap = CheckOverlapCrossIntersection(newblocks, otherBlock);
 
                             if (checkOverlap)
-                                Console.WriteLine("BreakColumnsLight:checkOverlap");
+                                PdfReaderException.Warning("BreakColumnsLight:checkOverlap");
                         }
                         
                         // replace
@@ -309,7 +309,7 @@ namespace PdfTextReader.PDFCore
 
             // ensure the intersection ( expect to exists b > a , too)
             if (!(b_y2 > a_y1))
-                throw new InvalidOperationException("No intersection?");
+                PdfReaderException.AlwaysThrow("No intersection?");
 
             bool topContainsBottom = (b_y1 > a_y1);
 
@@ -361,7 +361,7 @@ namespace PdfTextReader.PDFCore
 
                 int count2 = blockA.Count() + blockB.Count();
                 if (count2 != blocks.Count)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("count2 != blocks.Count");
 
                 // VALIDATE
                 //System.Diagnostics.Debugger.Break();
@@ -385,7 +385,7 @@ namespace PdfTextReader.PDFCore
 
             int count3 = topBlock.Count() + coreBlock.Count() + bottomBlock.Count();
             if (count3 != blocks.Count)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("count3 != blocks.Count");
 
             // VALIDATE
             //System.Diagnostics.Debugger.Break();
@@ -427,14 +427,14 @@ namespace PdfTextReader.PDFCore
                 var b = getBlock(count++);
 
                 if (b == null)
-                    throw new InvalidOperationException("should not reach the end of the sequence");
+                    PdfReaderException.AlwaysThrow("should not reach the end of the sequence");
 
                 x1 = Math.Min(x1, b.GetX());
                 x2 = Math.Max(x2, b.GetX() + b.GetWidth());
             }
 
             if (count == 0)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("count == 0");
 
             return count-1;
         }

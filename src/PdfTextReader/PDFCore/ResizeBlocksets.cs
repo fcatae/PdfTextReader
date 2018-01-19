@@ -94,7 +94,7 @@ namespace PdfTextReader.PDFCore
                     float diff = block.GetWidth() - blsearch.B.GetWidth();
 
                     if (diff < 0)
-                        throw new InvalidOperationException("should never decrease the block size");
+                        PdfReaderException.AlwaysThrow("should never decrease the block size");
 
                     if (CheckBoundary(compareBlocks, block))
                     {

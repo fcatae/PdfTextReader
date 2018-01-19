@@ -16,7 +16,8 @@ namespace PdfTextReader
     {
         public static void Process(string basename, string inputfolder, string outputfolder)
         {
-            //PdfReaderException.ContinueOnException();
+            PdfReaderException.DisableWarnings();
+            PdfReaderException.ContinueOnException();
 
             var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                             .ConvertText<CreateStructures, TextStructure>()
@@ -58,7 +59,7 @@ namespace PdfTextReader
                                   .ParseBlock<FindInitialBlocksetWithRewind>()
                                       .Show(Color.Gray)
                                   .ParseBlock<BreakColumnsLight>()
-                                      //.ParseBlock<BreakColumns>()
+                                      .ParseBlock<BreakColumns>()
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
                                   .ParseBlock<AddTableSpace>()

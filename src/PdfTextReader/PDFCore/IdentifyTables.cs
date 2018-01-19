@@ -24,7 +24,7 @@ namespace PdfTextReader.PDFCore
             page.AddRange(tables);
 
             if (HasTableOverlap(page))
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("HasTableOverlap");
 
             _pageResult = page;
         }
@@ -86,7 +86,7 @@ namespace PdfTextReader.PDFCore
                         if( blockArray[j] != null )
                         {
                             if (currentBlockset == null)
-                                throw new InvalidOperationException();
+                                PdfReaderException.AlwaysThrow("currentBlockset == null");
 
                             bool bb = Block.HasOverlap(blockArray[j], currentBlockset);
 
@@ -105,7 +105,7 @@ namespace PdfTextReader.PDFCore
                             if (nextBlockset == null)
                             {
                                 if (nextBlockset == currentBlockset)
-                                    throw new InvalidOperationException("infinite loop?");
+                                    PdfReaderException.AlwaysThrow("infinite loop?");
 
                                 // assign the blockarray
                                 blockArray[j] = currentBlockset;
@@ -170,7 +170,7 @@ namespace PdfTextReader.PDFCore
 
             if(HasTableOverlap(result))
             {
-                throw new InvalidOperationException("cannot have overlapped table");
+                PdfReaderException.AlwaysThrow("cannot have overlapped table");
             }
 
             return result;

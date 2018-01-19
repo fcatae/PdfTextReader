@@ -43,7 +43,7 @@ namespace PdfTextReader.PDFCore
 
             float height = result.AllBlocks.GetHeight();
             if (height > statRegionTooLarge)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("height > statRegionTooLarge");
 
             return result;
         }

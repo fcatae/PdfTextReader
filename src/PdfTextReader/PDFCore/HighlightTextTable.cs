@@ -65,7 +65,7 @@ namespace PdfTextReader.PDFCore
                                 continue;
 
                             // check identify table
-                            throw new InvalidOperationException(); // not expected
+                            PdfReaderException.AlwaysThrow("not expected"); // not expected
                         }
 
                         result.Add(block);

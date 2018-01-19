@@ -36,7 +36,7 @@ namespace PdfTextReader.PDFCore
                         }
 
                         if (line.Width <= 0)
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("line.Width <= 0");
                         
                         // conside same line: update text and Width
                         // we dont add space character (should we?)
@@ -73,7 +73,7 @@ namespace PdfTextReader.PDFCore
                     };
 
                     if (line.Width <= 0 || line.Height <= 0)
-                        throw new InvalidOperationException();
+                        PdfReaderException.AlwaysThrow("line.Width <= 0 || line.Height <= 0");
 
                     result.Add(line);
                 }
@@ -90,7 +90,7 @@ namespace PdfTextReader.PDFCore
                     line.Width = block.GetX() + block.GetWidth() - line.GetX();
                     
                     if (line.Width <= 0)
-                        throw new InvalidOperationException();
+                        PdfReaderException.AlwaysThrow("line.Width <= 0");
 
                     // walking backwards
                     // very strict check: sometimes the start overlaps with the ending
@@ -98,7 +98,7 @@ namespace PdfTextReader.PDFCore
                     //    throw new InvalidOperationException();
                     // soft check: end of block should never that low unless it is an overlap
                     if (endOfBlock < endOfLine)
-                        throw new InvalidOperationException();
+                        PdfReaderException.AlwaysThrow("endOfBlock < endOfLine");
                 }
 
                 last = block;

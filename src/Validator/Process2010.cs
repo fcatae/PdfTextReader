@@ -13,7 +13,19 @@ namespace Validator
             string inputFolder = file.Folder;
             string basename = file.Filename;
 
-            PdfTextReader.ProgramValidator2010.Process(basename, inputFolder, outputname);
+            try
+            {
+                PdfTextReader.ProgramValidator2010.Process(basename, inputFolder, outputname);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                throw;
+            }
+            finally
+            {
+                Console.WriteLine();
+            }
         }
     }
 }

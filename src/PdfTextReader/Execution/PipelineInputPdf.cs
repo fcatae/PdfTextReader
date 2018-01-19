@@ -30,8 +30,6 @@ namespace PdfTextReader.Execution
         {
             var pdfDocument = new PdfDocument(new PdfReader(filename));
 
-            // Console.WriteLine($"Filename={filename}");
-
             this._input = filename;
             this._pdfDocument = pdfDocument;
 
@@ -40,8 +38,6 @@ namespace PdfTextReader.Execution
         
         public PipelineInputPdfPage Page(int pageNumber)
         {
-            // Console.WriteLine($"  page: {pageNumber}");
-
             var page = new PipelineInputPdfPage(this, pageNumber);
 
             if( CurrentPage != null )

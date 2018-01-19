@@ -21,7 +21,7 @@ namespace PdfTextReader.PDFText
         public void RemoveImage(IBlock block)
         {
             if (Images == null)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("Images == null");
 
             int before = Images.AllBlocks.Count();
 
@@ -33,7 +33,7 @@ namespace PdfTextReader.PDFText
             int after = Images.AllBlocks.Count();
 
             if (after == before)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("after == before");
         }
 
         public void EventOccurred(IEventData data, EventType type)
@@ -53,7 +53,7 @@ namespace PdfTextReader.PDFText
                 // ensure we have a simple transformation matrix
                 if ((ctm.Get(1) != 0) || (ctm.Get(2) != 0) || (ctm.Get(3) != 0)
                     || (ctm.Get(5) != 0) || (ctm.Get(8) != 1))
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("ensure we have a simple transformation matrix");
 
                 if ( height < 0 )
                 {
@@ -71,7 +71,7 @@ namespace PdfTextReader.PDFText
                 };
                                 
                 if (imageBlock.Width <= 0 || imageBlock.Height <= 0)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("imageBlock.Width <= 0 || imageBlock.Height <= 0");
 
                 _blockSet.Add(imageBlock);
             }

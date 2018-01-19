@@ -50,10 +50,10 @@ namespace PdfTextReader.PDFText
                 };
 
                 if (block.Width <= 0 || block.Height <= 0)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("block.Width <= 0 || block.Height <= 0");
 
                 if (block.FontSize <= 0)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("block.FontSize <= 0");
 
                 // valuable log information: sometimes FontStyle is wrong!
                 // var workfont = WorkFont(font);
@@ -131,7 +131,7 @@ namespace PdfTextReader.PDFText
             // bold may apply to inline text used for subscript texts
             if (style != "Bold" && IsFontBold(font))
             {
-                Console.WriteLine($"Font-style {fontname} may be bold");
+                PdfReaderException.Warning($"Font-style {fontname} may be bold");
             }
 
             return style;

@@ -91,7 +91,7 @@ namespace PdfTextReader.PDFCore
         {
             // why it would happen?
             if (a.Count() < 2)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("a.Count() < 2");
 
             var lastLines = a.TakeLast(2);
             var firstLine = b.Take(1).First();
@@ -136,7 +136,7 @@ namespace PdfTextReader.PDFCore
 
             // ensure the intersection ( expect to exists b > a , too)
             if (!(b_y2 > a_y1))
-                throw new InvalidOperationException("No intersection?");
+                PdfReaderException.AlwaysThrow("No intersection?");
 
             bool topContainsBottom = (b_y1 > a_y1);
 
@@ -188,7 +188,7 @@ namespace PdfTextReader.PDFCore
 
                 int count2 = blockA.Count() + blockB.Count();
                 if (count2 != blocks.Count)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("count2 != blocks.Count");
 
                 // VALIDATE
                 //System.Diagnostics.Debugger.Break();
@@ -212,7 +212,7 @@ namespace PdfTextReader.PDFCore
 
             int count3 = topBlock.Count() + coreBlock.Count() + bottomBlock.Count();
             if (count3 != blocks.Count)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("count3 != blocks.Count");
 
             // VALIDATE
             //System.Diagnostics.Debugger.Break();
@@ -254,14 +254,14 @@ namespace PdfTextReader.PDFCore
                 var b = getBlock(count++);
 
                 if (b == null)
-                    throw new InvalidOperationException("should not reach the end of the sequence");
+                    PdfReaderException.AlwaysThrow("should not reach the end of the sequence");
 
                 x1 = Math.Min(x1, b.GetX());
                 x2 = Math.Max(x2, b.GetX() + b.GetWidth());
             }
 
             if (count == 0)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("count == 0");
 
             return count-1;
         }

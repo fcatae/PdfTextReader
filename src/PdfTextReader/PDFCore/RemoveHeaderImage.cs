@@ -86,7 +86,7 @@ namespace PdfTextReader.PDFCore
         public BlockPage RemoveHeaderImageWithText(BlockPage page, IBlock table)
         {
             if (this._images == null)
-                throw new InvalidOperationException("RemoveImageTexts requires PreProcessImages");
+                PdfReaderException.AlwaysThrow("RemoveImageTexts requires PreProcessImages");
 
             var result = new BlockPage();
 
@@ -104,7 +104,7 @@ namespace PdfTextReader.PDFCore
         public BlockPage Validate(BlockPage page)
         {
             if (this._images == null)
-                throw new InvalidOperationException("RemoveHeaderImage requires PreProcessImages");
+                PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
 
             var header = FindBlocksAtHeader(page);
 

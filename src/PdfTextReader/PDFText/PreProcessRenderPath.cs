@@ -74,7 +74,7 @@ namespace PdfTextReader.PDFText
                 };
 
                 if (tableCell.Width < 0 || tableCell.Height < 0)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("tableCell.Width < 0 || tableCell.Height < 0");
 
                 if( tableCell.Op != 1 )
                 {

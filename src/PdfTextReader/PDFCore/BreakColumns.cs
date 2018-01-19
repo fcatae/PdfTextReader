@@ -93,12 +93,12 @@ namespace PdfTextReader.PDFCore
 
                             // very likely to have A contains B in Y axis, but not in X
                             // in this case, we need to break both blocks at the same operation
-                            throw new NotImplementedException("true overlap");
+                            PdfReaderException.Throw("true overlap?");
 
                             // throw new NotImplementedException("merge blockLines");
 
                             // cannot break the blocks ?!?!?!?!
-                            throw new InvalidOperationException("should be handled previously in precheck");
+                            //throw new InvalidOperationException("should be handled previously in precheck");
                             //continue;
                         }
 
@@ -123,13 +123,13 @@ namespace PdfTextReader.PDFCore
                         }
                         
                         if (size == 0)
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("size == 0");
 
                         if (size == -1)
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("size == -1");
 
                         if (size == ((BlockSet<IBlock>)selected_block).Count())
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("size > total_blocks");
 
                         var newblocks = CreateNewBlocks((BlockSet<IBlock>)selected_block, size);
                         
@@ -139,7 +139,7 @@ namespace PdfTextReader.PDFCore
                             bool checkOverlap = CheckOverlapCrossIntersection(newblocks, otherBlock);
 
                             if (checkOverlap)
-                                throw new InvalidOperationException();
+                                PdfReaderException.AlwaysThrow("checkOverlap");
                         }
                         
                         // replace
@@ -314,7 +314,7 @@ namespace PdfTextReader.PDFCore
 
             // ensure the intersection ( expect to exists b > a , too)
             if (!(b_y2 > a_y1))
-                throw new InvalidOperationException("No intersection?");
+                PdfReaderException.AlwaysThrow("No intersection?");
 
             bool topContainsBottom = (b_y1 > a_y1);
 
@@ -366,7 +366,7 @@ namespace PdfTextReader.PDFCore
 
                 int count2 = blockA.Count() + blockB.Count();
                 if (count2 != blocks.Count)
-                    throw new InvalidOperationException();
+                    PdfReaderException.AlwaysThrow("count2 != blocks.Count");
 
                 // VALIDATE
                 //System.Diagnostics.Debugger.Break();
@@ -390,7 +390,7 @@ namespace PdfTextReader.PDFCore
 
             int count3 = topBlock.Count() + coreBlock.Count() + bottomBlock.Count();
             if (count3 != blocks.Count)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("count3 != blocks.Count");
 
             // VALIDATE
             //System.Diagnostics.Debugger.Break();
@@ -432,14 +432,14 @@ namespace PdfTextReader.PDFCore
                 var b = getBlock(count++);
 
                 if (b == null)
-                    throw new InvalidOperationException("should not reach the end of the sequence");
+                    PdfReaderException.AlwaysThrow("should not reach the end of the sequence");
 
                 x1 = Math.Min(x1, b.GetX());
                 x2 = Math.Max(x2, b.GetX() + b.GetWidth());
             }
 
             if (count == 0)
-                throw new InvalidOperationException();
+                PdfReaderException.AlwaysThrow("count == 0");
 
             return count-1;
         }
