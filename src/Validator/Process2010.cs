@@ -8,16 +8,11 @@ namespace Validator
     {
         int _totalProcessed = 0;
 
+        // public string FilePattern => "DO1_2010_0?_10.pdf"; //6
         public string FilePattern => "*.pdf";
 
         public void Run(File file, string outputname)
-        {
-            if (_totalProcessed > 3)
-            {
-                Console.WriteLine("Too much load - ignoring file");
-                return;
-            }
-
+        {            
             string inputFolder = file.Folder;
             string basename = file.Filename;
 
@@ -29,11 +24,11 @@ namespace Validator
             catch(Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                Console.WriteLine();
                 throw;
             }
             finally
             {
-                Console.WriteLine();
             }
         }
     }

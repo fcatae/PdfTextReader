@@ -33,19 +33,10 @@ namespace PdfTextReader
             //ExamplesWork.FindIds("dou555-p10");
             //ExamplesWork.ParseFinal("dou555-p10");
         }
-
-        public static void ProcessStats()
-       {
-            var folders = new Execution.Pipeline();
-            folders.EnumFolders(@"c:\pdf\2017", f => {
-                ProcessStatsManyFolders(f);
-            });
-        }
-
+        
         public static void ProcessStats2(string basename = "DO1_2017_01_06")
         {
             PdfReaderException.ContinueOnException();
-            Examples.ShowTables(basename);
 
             //PdfWriteText.Test();
             //return;
@@ -53,10 +44,10 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            // Extract(1);
+            //Extract(basename, 173);
 
             //Examples.FollowText(basename);
-            //Examples.ShowHeaderFooter(basename);
+            Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                             //.Log<AnalyzeLines>(Console.Out)
@@ -84,8 +75,9 @@ namespace PdfTextReader
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
+                                  //.Show(Color.Blue)
                               .ParsePdf<PreProcessImages>()
-                                      .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
+                                  //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
                                   .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
@@ -99,21 +91,24 @@ namespace PdfTextReader
                                       .Show(Color.Yellow)
                                       .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                   .ParseBlock<RemoveHeaderImage>()
-
                                   .ParseBlock<FindInitialBlocksetWithRewind>()
                                       .Show(Color.Gray)
                                   .ParseBlock<BreakColumnsLight>()
                                   //.ParseBlock<BreakColumns>()
                                   .ParseBlock<AddTableSpace>()
+                                  .ParseBlock<RemoveTableOverImage>()
+                                  .ParseBlock<RemoveImageTexts>()
                                   .ParseBlock<AddImageSpace>()
+                                    .Show(Color.Red)
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
+                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Gray))
                                   .ParseBlock<OrderBlocksets>()
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
+                                  .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
             return result;
@@ -214,21 +209,13 @@ namespace PdfTextReader
             //procParser.XMLWriterMultiple(artigos, $"bin/{basename}/{basename}-artigo");
         }
 
-        public static void Extract(int page)
+        public static void Extract(string basename, int page)
         {
             Console.WriteLine();
             Console.WriteLine("Program3 - Extract");
             Console.WriteLine();
 
-            string basename = "dou1212";
-
-            //ExamplesPipeline.ExtractPage(basename, page);
-
-            ExamplesPipeline.Extract(basename, 1);
-            ExamplesPipeline.Extract(basename, 5);
-            //ExamplesPipeline.Extract(basename, 10);
-            //ExamplesPipeline.Extract(basename, 20);
-            //ExamplesPipeline.Extract(basename, 50);
+            ExamplesPipeline.ExtractPage(basename, page);
         }
     }
 }

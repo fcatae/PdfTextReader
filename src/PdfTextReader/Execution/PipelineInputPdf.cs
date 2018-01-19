@@ -34,6 +34,8 @@ namespace PdfTextReader.Execution
             this._pdfDocument = pdfDocument;
 
             PipelineInputPdf.DebugCurrent = this;
+
+            PdfReaderException.ClearContext();
         }
         
         public PipelineInputPdfPage Page(int pageNumber)
