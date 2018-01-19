@@ -16,33 +16,32 @@ namespace Validator
 
             const string DEFAULT_FOLDER = "bin/input";
             const string DEFAULT_OUTPUT = "bin/output";
+            const string DEFAULT_PROCESS = "default";
 
             string folder = (args.Length >= 1) ? args[0] : DEFAULT_FOLDER;
             string outputFolder = (args.Length >= 2) ? args[1] : DEFAULT_OUTPUT;
+            string processName = (args.Length >= 3) ? args[2] : DEFAULT_PROCESS;
 
-            var process = new GeneralProcess();
+            var processList = new Dictionary<string, IRunner>
+            {
+                { "default", new GeneralProcess() },
+                { "2010", new Process2010() }
+            };
+
+            // Get the runner
+            var process = processList[processName];
+
+            // Enumerate available files
             var filelist = new FileList(folder);
-
             var filenames = filelist.RecursiveEnumFiles();
-            long timeSpent = Run(process, filenames, outputFolder);
+
+            // Run the process for all files
+            var runner = new Runner();
+            long timeSpent = runner.Run(process, filenames, outputFolder);
 
             Console.WriteLine();
             Console.WriteLine($"Total files = {filenames.Length}");
             Console.WriteLine($"Total time = {timeSpent}");
-        }
-        
-        static long Run(IRunner runner, File[] files, string outputFolder)
-        {
-            var watch = Stopwatch.StartNew();
-
-            foreach(var file in files)
-            {
-                runner.Run(file, outputFolder);
-            }
-
-            watch.Stop();
-
-            return watch.ElapsedMilliseconds;
-        }
+        }        
     }
 }

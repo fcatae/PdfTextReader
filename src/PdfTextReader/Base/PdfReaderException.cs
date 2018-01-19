@@ -11,7 +11,7 @@ namespace PdfTextReader.Base
         {
         }
 
-        private static bool g_ContinueOnException = true;
+        private static bool g_ContinueOnException = false;
 
         public static void ContinueOnException()
         {

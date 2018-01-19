@@ -4,14 +4,14 @@ using System.Text;
 
 namespace Validator
 {
-    class GeneralProcess : IRunner
+    class Process2010 : IRunner
     {
         public void Run(File file, string outputname)
         {
             string inputFolder = file.Folder;
             string basename = file.Filename;
 
-            PdfTextReader.ProgramValidator.Process(basename, inputFolder, outputname);
+            PdfTextReader.ProgramValidator2010.Process(basename, inputFolder, outputname);
         }
     }
 }
