@@ -16,6 +16,8 @@ namespace PdfTextReader
     {
         public static void Process(string basename, string inputfolder, string outputfolder)
         {
+            PdfReaderException.ContinueOnException();
+
             var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()

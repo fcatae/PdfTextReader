@@ -14,8 +14,11 @@ namespace Validator
             Console.WriteLine("============");
             Console.WriteLine();
 
-            string folder = "bin/input";
-            string outputFolder = "bin/output";
+            const string DEFAULT_FOLDER = "bin/input";
+            const string DEFAULT_OUTPUT = "bin/output";
+
+            string folder = (args.Length >= 1) ? args[0] : DEFAULT_FOLDER;
+            string outputFolder = (args.Length >= 2) ? args[1] : DEFAULT_OUTPUT;
 
             var process = new GeneralProcess();
             var filelist = new FileList(folder);

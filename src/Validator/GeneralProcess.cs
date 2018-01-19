@@ -17,9 +17,10 @@ namespace Validator
             {
                 PdfTextReader.ProgramValidator.Process(basename, inputFolder, outputname);
             }
-            catch
+            catch(Exception ex)
             {
                 Console.WriteLine("CRITICAL ERROR: Unhandled Exception");
+                Console.WriteLine(ex.ToString());
             }
             
             Console.WriteLine($"File {basename}: End");
