@@ -11,6 +11,7 @@ namespace PdfTextReader.PDFCore
     class RemoveTableOverImage : IProcessBlock, IPipelineDependency
     {
         private List<IBlock> _images;
+        private IBlock _headerImage;
 
         public void SetPage(PipelinePage p)
         {
@@ -24,6 +25,16 @@ namespace PdfTextReader.PDFCore
             }
             
             this._images = page.AllBlocks.ToList();
+
+            var optionalHeaderImage = p.CreateInstance<RemoveHeaderImage>();
+
+            if( optionalHeaderImage != null )
+            {
+                // add header image to the collection -- tables will be removed as well
+                _headerImage = optionalHeaderImage.HeaderImage;
+
+                _images.Add(_headerImage);
+            }
         }
 
         public BlockPage Process(BlockPage page)
