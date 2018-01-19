@@ -1,6 +1,6 @@
 # Block Hierarchy #
 
-BlockPage -> BlockSet -> BlockLine -> Block
+BlockPage -> BlockColumn -> BlockLine -> Block
 
 
 # Pipeline #

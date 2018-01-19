@@ -9,7 +9,7 @@ namespace PdfTextReader.Base
         BlockSet<IBlock> _blocks;
 
         public BlockSet<IBlock> AllBlocks => _blocks;
-
+        
         public BlockPage()
         {
             _blocks = new BlockSet<IBlock>(this);
