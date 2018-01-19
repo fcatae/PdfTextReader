@@ -8,31 +8,23 @@ namespace Validator
 {
     class FileList
     {
-        private readonly string _foldername;
+        private readonly string _filePattern;
 
-        public FileList(string foldername)
+        public FileList(string pattern)
         {
-            _foldername = foldername;
-        }
-        public string GetFolderName()
-        {
-            var directory = new DirectoryInfo(_foldername);
-
-            return directory.FullName;
+            _filePattern = pattern;
         }
 
-        public File[] RecursiveEnumFiles()
+        public File[] EnumFiles(string foldername)
         {
-            return RecursiveEnumFiles(_foldername).ToArray();
+            return RecursiveEnumFiles(foldername).ToArray();
         }
 
         IEnumerable<File> RecursiveEnumFiles(string foldername)
         {
             var directory = new DirectoryInfo(foldername);
 
-            string filePattern = "*.pdf";
-
-            foreach (var file in directory.EnumerateFiles(filePattern))
+            foreach (var file in directory.EnumerateFiles(_filePattern))
             {
                 string filename = file.Name;
 

@@ -32,8 +32,8 @@ namespace Validator
             var process = processList[processName];
 
             // Enumerate available files
-            var filelist = new FileList(folder);
-            var filenames = filelist.RecursiveEnumFiles();
+            var filelist = new FileList(process.FilePattern);
+            var filenames = filelist.EnumFiles(folder);
 
             // Run the process for all files
             var runner = new Runner();

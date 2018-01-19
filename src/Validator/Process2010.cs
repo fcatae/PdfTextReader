@@ -6,6 +6,8 @@ namespace Validator
 {
     class Process2010 : IRunner
     {
+        public string FilePattern => "*.pdf";
+
         public void Run(File file, string outputname)
         {
             string inputFolder = file.Folder;
