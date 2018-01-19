@@ -25,6 +25,7 @@ namespace Validator
             var processList = new Dictionary<string, IRunner>
             {
                 { "default", new GeneralProcess() },
+                { "xml", new ProcessXml() },
                 { "2010", new Process2010() }
             };
 
