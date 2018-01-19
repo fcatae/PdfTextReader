@@ -38,13 +38,13 @@ namespace PdfTextReader.Execution
         
         public PipelineInputPdfPage Page(int pageNumber)
         {
-            var page = new PipelineInputPdfPage(this, pageNumber);
-
-            if( CurrentPage != null )
+            if (CurrentPage != null)
             {
                 CurrentPage.Dispose();
             }
 
+            var page = new PipelineInputPdfPage(this, pageNumber);
+            
             CurrentPage = page;
 
             return page;
@@ -214,6 +214,8 @@ namespace PdfTextReader.Execution
                 this._pdf = pipelineInputContext;
                 this._pageNumber = pageNumber;
                 this._pdfPage = pdfPage;
+
+                PdfReaderException.SetContext(_pdf._input, pageNumber);
             }
 
             public T CreateInstance<T>()
@@ -310,7 +312,9 @@ namespace PdfTextReader.Execution
 
             public void Dispose()
             {
-                if( _outputCanvas != null )
+                PdfReaderException.ClearContext();
+
+                if ( _outputCanvas != null )
                 {
                     _outputCanvas.Release();
                     _outputCanvas = null;
