@@ -18,13 +18,18 @@ namespace PdfTextReader.Base
             g_ContinueOnException = true;
         }
 
+        public static void Warning(string message, [CallerMemberName]string sourceMethod = null)
+        {
+            Console.WriteLine($"WARNING: {sourceMethod}: {message}");
+        }
+
         public static void Throw(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             try
             {
                 throw new PdfReaderException(message);
             }
-            catch(Exception ex)
+            catch
             {
                 if (g_ContinueOnException)
                 {
@@ -39,6 +44,11 @@ namespace PdfTextReader.Base
                 }
                 throw;
             }
+        }
+
+        public static void AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
+        {
+            throw new PdfReaderException(message);
         }
     }
 }
