@@ -15,6 +15,9 @@ namespace PdfTextReader.TextStructures
             {
                 var blockArea = bset as IBlockSet<IBlock>;
 
+                if (bset is TableCell)
+                    continue;
+
                 if (bset is ImageBlock || bset is TableSet)
                     continue;
 
