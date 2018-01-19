@@ -38,7 +38,7 @@ namespace Validator
 
                 if (!filename.ToLower().EndsWith("-output.pdf"))
                 {
-                    yield return new File(_foldername, filename);
+                    yield return new File(foldername, filename);
                 }
             }
 
