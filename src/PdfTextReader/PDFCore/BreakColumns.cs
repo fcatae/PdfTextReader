@@ -242,7 +242,7 @@ namespace PdfTextReader.PDFCore
                 result = total - bottom;
 
             if (result < 0)
-                throw new NotImplementedException();
+                PdfReaderException.AlwaysThrow("result < 0");
 
             return result;
         }

@@ -124,11 +124,6 @@ namespace PdfTextReader.PDFText
         public ICollection<EventType> GetSupportedEvents()
         {
             return _supportedEvents;
-        }
-
-        public BlockPage Process(BlockPage page)
-        {
-            throw new NotImplementedException();
-        }
+        }        
     }
 }

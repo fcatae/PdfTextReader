@@ -81,7 +81,7 @@ namespace PdfTextReader.PDFCore
                         var elems = BreakElements(blocks[i], blocks[j]);
 
                         if (elems == null)
-                            throw new InvalidOperationException();
+                            PdfReaderException.AlwaysThrow("(elems == null)");
 
                         // has to do replacement in place
                         blocks[i] = null;
