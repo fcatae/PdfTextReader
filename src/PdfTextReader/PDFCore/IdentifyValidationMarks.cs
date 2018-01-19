@@ -41,191 +41,32 @@ namespace PdfTextReader.PDFCore
 
         static bool IsColoredLine(TableCell l) => (l.BgColor > 2f);
 
+        static HashSet<int> _Colors = new HashSet<int>();
+
         public BlockPage ProcessColors(BlockPage page)
         {
             var result = new BlockPage();
 
-            var colored_lines = page.AllBlocks.Cast<TableCell>().Where(t => IsColoredLine(t));
-
-            TableCell last = null;
-            TableSet curTable = null;
-
+            var colored_lines = page.AllBlocks.Cast<MarkLine>();
+            
             foreach (var cur in colored_lines)
             {
-                if (cur.BgColor == 15)
-                    continue;
-
-                if (cur.BgColor == 8)
-                    result.Add(cur);
-                else
-                    System.Diagnostics.Debug.WriteLine($"color = {cur.BgColor}");
-
-                if ( last == null )
-                {
-                    curTable = new TableSet();
-                    last = cur;
-                    continue;
-                }
-
+                int color = cur.Color;
                 
+                if (cur.Color == MarkLine.PURPLE)
+                    result.Add(cur);
 
-                float b_x1 = last.GetX();
-                float b_x2 = last.GetX() + last.GetWidth();
-                float b_y1 = last.GetH();
-                float b_y2 = last.GetH() + last.GetHeight();
-
-                last = cur;
-            }
-
-            return result;
-        }
-
-        public BlockPage ProcessTable(BlockPage page)
-        {
-            // try to improve processing time
-            var cellList = page.AllBlocks.Where(b => TableCell.HasDarkColor((TableCell)b)).ToList();
-
-            var blockArray = new TableSet[cellList.Count];
-            
-            bool hasModification = true;
-            while (hasModification)
-            {
-                hasModification = false;
-
-                // iterate every line found
-                for (int i = 0; i < cellList.Count; i++)
+                if (!_Colors.Contains(color))
                 {
-                    var c = cellList[i];
-
-                    if (blockArray[i] == null)
-                    {
-                        // create a fresh blockset
-                        blockArray[i] = new TableSet();
-                        // add the current element to the blockset
-                        blockArray[i].Add(c);
-                    }
-
-                    var currentBlockset = blockArray[i];
-
-                    // assume that currentBlockset ALWAYS contains c
-                    // -- it was added during blockArray assignment
-
-                    // look for connected lines
-                    for (int j = i + 1; j < cellList.Count; j++)
-                    {
-                        // skip if it already has block array assigned
-                        if (blockArray[j] == currentBlockset)
-                            continue;
-
-                        var last = cellList[j];
-
-                        // check if blockSet contains c (two rectangles)
-                        float b_x1 = last.GetX();
-                        float b_x2 = last.GetX() + last.GetWidth();
-                        float b_y1 = last.GetH();
-                        float b_y2 = last.GetH() + last.GetHeight();
-
-                        var blockSet = currentBlockset;
-                        bool b1 = HasOverlap(blockSet, b_x1, b_y1);
-                        bool b2 = HasOverlap(blockSet, b_x1, b_y2);
-                        bool b3 = HasOverlap(blockSet, b_x2, b_y2);
-                        bool b4 = HasOverlap(blockSet, b_x2, b_y1);
-                        
-                        bool hasOverlap = b1 || b2 || b3 || b4;
-
-                        // for some reason, hasOverlap is not 100% guarantee to work
-                        if( blockArray[j] != null )
-                        {
-                            if (currentBlockset == null)
-                                PdfReaderException.AlwaysThrow("currentBlockset == null");
-
-                            bool bb = Block.HasOverlap(blockArray[j], currentBlockset);
-
-                            if ((!hasOverlap) && bb)
-                                hasOverlap = true;
-                        }
-
-                        // FOUND A CONNECTED LINE!
-                        if (hasOverlap)
-                        {
-                            hasModification = true;
-
-                            var nextBlockset = blockArray[j];
-
-
-                            if (nextBlockset == null)
-                            {
-                                if (nextBlockset == currentBlockset)
-                                    PdfReaderException.AlwaysThrow("infinite loop?");
-
-                                // assign the blockarray
-                                blockArray[j] = currentBlockset;
-                                // and add the element
-                                blockArray[j].Add(last);
-                            }
-                            else
-                            {
-                                // has to merge changes
-                                currentBlockset.MergeWith(nextBlockset);
-                                // assign the blockarray
-                                blockArray[j] = currentBlockset;
-                                // assume nextBlockset already contains j
-
-                                // remove all other references to nextBlockset
-                                for (int k = 0; k < blockArray.Length; k++)
-                                {
-                                    if (blockArray[k] == nextBlockset)
-                                        blockArray[k] = currentBlockset;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // do nothing
-                        }
-                    }
+                    _Colors.Add(color);
+                    System.Diagnostics.Debug.WriteLine($"color = {cur.Color}");
                 }
-
-                // infinite loop?
+                
             }
 
-            // transform blockArray into blockList
-            var blockList = blockArray.Distinct().ToList();
-            int count1 = blockArray.Length;
-            int count2 = blockList.Count;
-
-            var tables = new BlockPage();
-            var lines = new BlockPage();
-            var background = new BlockPage();
-            
-            foreach (var b in blockList)
-            {
-                // does not add line segments
-                if (b.Count() == 1)
-                    lines.Add(b);
-                else
-                    tables.Add(b);
-            }
-
-            // add background
-            var dark = page.AllBlocks
-                        .Where(b => !TableCell.HasDarkColor((TableCell)b))
-                        .Where(b => b.GetWidth() > MINIMUM_BACKGROUND_SIZE && b.GetHeight() > MINIMUM_BACKGROUND_SIZE)
-                        .Select(b => new TableSet() { b });
-
-            background.AddRange(dark);
-
-            this._pageResult = tables;
-            this._pageLines = lines;
-            this._pageBackground = background;
-
-            var result = new BlockPage();
-            result.AddRange(tables.AllBlocks);
-            result.AddRange(lines.AllBlocks);
-            
             return result;
         }
-
+        
         bool HasTableOverlap(BlockPage page)
         {
             foreach(var a in page.AllBlocks)

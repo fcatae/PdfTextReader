@@ -15,14 +15,9 @@ namespace PdfTextReader.PDFText
     {
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_PATH };
 
-        private BlockSet<TableCell> _blockSet = new BlockSet<TableCell>();
-
-        float GetBgColor(Color color)
-        {
-            return GetColorNumber(color);
-        }
-
-        float GetColorNumber(Color color)
+        private BlockSet<MarkLine> _blockSet = new BlockSet<MarkLine>();
+        
+        int GetColorNumber(Color color)
         {
             float[] components = color.GetColorValue();
             int size = components.Length;
@@ -35,16 +30,11 @@ namespace PdfTextReader.PDFText
                 int g = (int)(2 * components[1] + .01f);
                 int b = (int)(2 * components[2] + .01f);
 
-                // black
-                if (r + g + b == 0)
+                // black/white/gray = not important
+                if ((r == g) && (g == b))
                     return 0;
-
-                // white
-                if (r + g + b == 3)
-                    return 1;
-
-                // 8 = orange
-                return (4*r + 2*g + b) + 3;
+                                
+                return (100*r + 10*g + 1*b) + 10000;
             }
 
             return 0;
@@ -57,29 +47,22 @@ namespace PdfTextReader.PDFText
             if (line != null)
             {
                 int op = line.GetOperation();
-                var fgcolor = GetColorNumber(line.GetStrokeColor()); 
+                var color = GetColorNumber(line.GetStrokeColor()); 
                 float linewidth = line.GetLineWidth();
                 var path = line.GetPath();
                 var subpaths = path.GetSubpaths();
                 int count = subpaths.Count;
-                var ctm = line.GetCtm();
-                var dx = ctm.Get(6);
-                var dy = ctm.Get(7);
-                
+
+                // check for stroke 
                 if (op != 1)
                     return;
 
-                var cor = line.GetStrokeColor();
+                if (color < 2)
+                    return;
 
-                var segs = subpaths
-                                .SelectMany(p => p.GetSegments())
-                                .SelectMany(s => s.GetBasePoints())
-                                .ToArray();
-
-                int segcount = segs.Length;
+                // check the identity matrix (CTM)
+                var ctm = line.GetCtm();
                 
-                float minerr = .5f;
-
                 var sign_x = ctm.Get(0);
                 var rot_x = ctm.Get(1);
                 var zero_x = ctm.Get(2);
@@ -87,48 +70,50 @@ namespace PdfTextReader.PDFText
                 var sign_y = ctm.Get(4);
                 var zero_y = ctm.Get(5);
 
-                if (zero_x != 0 || zero_y != 0)
+                if (zero_x != 0 || zero_y != 0 || rot_x != 0 || rot_y != 0)
                     throw new InvalidOperationException();
 
-                //float x1 = (float)segs.Min(s => s.x) - minerr;
-                //float x2 = (float)segs.Max(s => s.x) + minerr;
-                //float y1 = (float)segs.Min(s => sign_y * s.y) - minerr;
-                //float y2 = (float)segs.Max(s => sign_y * s.y) + minerr;
-
-                float x1 = (float)segs.Min(s => sign_x * s.x + rot_x * s.y) - minerr;
-                float x2 = (float)segs.Max(s => sign_x * s.x + rot_x * s.y) + minerr;
-                float y1 = (float)segs.Min(s => rot_y * s.x + sign_y * s.y) - minerr;
-                float y2 = (float)segs.Max(s => rot_y * s.x + sign_y * s.y) + minerr;
-
-                float translate_x = dx;
-                float translate_y = dy;
+                if (sign_x != 1 || sign_y != 1)
+                    throw new InvalidOperationException();
                 
-                var tableCell = new TableCell()
+                foreach(var subp in subpaths)
                 {
-                    Op = op,
-                    X = x1 + translate_x,
-                    H = y1 + translate_y,
-                    Width = x2 - x1,
-                    Height = y2 - y1,
-                    LineWidth = linewidth,
-                    BgColor = fgcolor
-                };
+                    if (subp.IsEmpty() || subp.IsSinglePointOpen())
+                        continue;
 
-                if (tableCell.Width < 0 || tableCell.Height < 0)
-                    PdfReaderException.AlwaysThrow("tableCell.Width < 0 || tableCell.Height < 0");
+                    if (!subp.IsClosed())
+                        PdfReaderException.AlwaysThrow("!subp.IsClosed()");
 
+                    var segs = subp.GetSegments()
+                                    .SelectMany(s => s.GetBasePoints())
+                                    .ToArray();
 
-                if (tableCell.X >= 0 || tableCell.H >= 0)
-                {
-                    if (tableCell.Op != 0)
+                    float x1 = (float)segs.Min(s => s.x);
+                    float x2 = (float)segs.Max(s => s.x);
+                    float y1 = (float)segs.Min(s => s.y);
+                    float y2 = (float)segs.Max(s => s.y);
+                    
+                    float translate_x = ctm.Get(6);
+                    float translate_y = ctm.Get(7);
+
+                    var mark = new MarkLine()
                     {
-                        _blockSet.Add(tableCell);
-                    }
-                }
-                else
-                {
-                    // sometimes it draws a large rectangle to fill the background
-                }
+                        X = x1 + translate_x,
+                        H = y1 + translate_y,
+                        Width = x2 - x1,
+                        Height = y2 - y1,
+                        LineWidth = linewidth,
+                        Color = color
+                    };
+
+                    if ( color < 2 )
+                        PdfReaderException.AlwaysThrow("Invalid color");
+
+                    if (mark.X < 0 || mark.H < 0)
+                        PdfReaderException.AlwaysThrow("mark.X < 0 || mark.H < 0");
+
+                    _blockSet.Add(mark);
+                }                
             }
         }
 

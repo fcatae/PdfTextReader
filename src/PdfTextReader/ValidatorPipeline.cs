@@ -50,6 +50,6 @@ namespace PdfTextReader
                                   .Show(Color.Blue);
                     
             pipeline.Done();
-        }
+       }
     }
 }
