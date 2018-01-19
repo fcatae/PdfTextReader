@@ -64,9 +64,6 @@ namespace PdfTextReader.Base
 
         public static Exception AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
-            if (g_IgnoreEverything)
-                return;
-
             throw new PdfReaderException(message);
         }
     }
