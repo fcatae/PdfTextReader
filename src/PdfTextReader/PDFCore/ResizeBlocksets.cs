@@ -61,9 +61,12 @@ namespace PdfTextReader.PDFCore
                           select new { g.Key, size = g.Max(ta => ta.RW) }).ToDictionary( t => t.Key );
             
             foreach(var blsearch in values)
-            {
-                if (blsearch.B is ImageBlock)
+            { 
+                if (blsearch.B is TableSet)
                     continue;
+
+                if (blsearch.B is ImageBlock)
+                        continue;
 
                 // we could have used predefined blocks (w=6, w=3, etc)
                 var predefinedBlocks = values;
@@ -98,8 +101,12 @@ namespace PdfTextReader.PDFCore
 
                     if (CheckBoundary(compareBlocks, block))
                     {
-                        // may receive multiples
+                        // may receive multiples - confusing...
                         var original = (IEnumerable<IBlock>)blsearch.B;
+
+                        if ((original is TableSet) || (original is ImageBlock))
+                            PdfReaderException.AlwaysThrow("Block should not be resized");
+                        
                         var replace = new BlockSet2<IBlock>(original, block.GetX(), block.GetH(), block.GetX()+block.GetWidth(), block.GetH()+block.GetHeight());
                         repls.Add(replace);
                     }

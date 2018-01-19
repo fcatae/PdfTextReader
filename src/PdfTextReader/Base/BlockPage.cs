@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.Base
@@ -9,6 +10,11 @@ namespace PdfTextReader.Base
         BlockSet<IBlock> _blocks;
 
         public BlockSet<IBlock> AllBlocks => _blocks;
+        
+        public bool IsEmpty()
+        {
+            return (_blocks.Count() == 0);
+        }
 
         public BlockPage()
         {

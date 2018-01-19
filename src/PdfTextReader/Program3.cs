@@ -44,6 +44,9 @@ namespace PdfTextReader
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06")
         {
+            PdfReaderException.ContinueOnException();
+            Examples.ShowTables(basename);
+
             //PdfWriteText.Test();
             //return;
             Console.WriteLine();
@@ -100,11 +103,11 @@ namespace PdfTextReader
                                   .ParseBlock<FindInitialBlocksetWithRewind>()
                                       .Show(Color.Gray)
                                   .ParseBlock<BreakColumnsLight>()
-                                      //.ParseBlock<BreakColumns>()
-                                      .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                                      .ParseBlock<RemoveFooter>()
+                                  //.ParseBlock<BreakColumns>()
                                   .ParseBlock<AddTableSpace>()
                                   .ParseBlock<AddImageSpace>()
+                                      .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                                      .ParseBlock<RemoveFooter>()
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
                                       .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))

@@ -17,6 +17,11 @@ namespace PdfTextReader.PDFText
 
         private BlockSet<TableCell> _blockSet = new BlockSet<TableCell>();
 
+        float GetBgColor(Color color)
+        {
+            return GetColor(color);
+        }
+
         float GetColor(Color color)
         {
             float[] components = color.GetColorValue();
@@ -51,7 +56,7 @@ namespace PdfTextReader.PDFText
             if (line != null)
             {
                 int op = line.GetOperation();
-                var bgcolor = ( op == 2 ) ? GetColor(line.GetFillColor()) : 0;
+                var bgcolor = ( op == 2 ) ? GetBgColor(line.GetFillColor()) : 0;
                 var fgcolor = GetColor(line.GetStrokeColor()); 
                 float linewidth = line.GetLineWidth();
                 var path = line.GetPath();

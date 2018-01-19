@@ -24,12 +24,24 @@ namespace PdfTextReader.PDFCore
             page.AddRange(tables);
 
             if (HasTableOverlap(page))
-                PdfReaderException.AlwaysThrow("HasTableOverlap");
+                PdfReaderException.AlwaysThrow("blocks already have overlapped elements");
 
             _pageResult = page;
         }
 
         public BlockPage Process(BlockPage page)
+        {
+            var result = ProcessTable(page);
+
+            if (HasTableOverlap(result))
+            {
+                PdfReaderException.Throw("cannot have overlapped table");
+            }
+
+            return result;
+        }
+
+        public BlockPage ProcessTable(BlockPage page)
         {
             // try to improve processing time
             var cellList = page.AllBlocks.Where(b => TableCell.HasDarkColor((TableCell)b)).ToList();
@@ -143,7 +155,7 @@ namespace PdfTextReader.PDFCore
             int count1 = blockArray.Length;
             int count2 = blockList.Count;
 
-            var result = new BlockPage();
+            var tables = new BlockPage();
             var lines = new BlockPage();
             var background = new BlockPage();
             
@@ -153,7 +165,7 @@ namespace PdfTextReader.PDFCore
                 if (b.Count() == 1)
                     lines.Add(b);
                 else
-                    result.Add(b);
+                    tables.Add(b);
             }
 
             // add background
@@ -164,15 +176,14 @@ namespace PdfTextReader.PDFCore
 
             background.AddRange(dark);
 
-            this._pageResult = result;
+            this._pageResult = tables;
             this._pageLines = lines;
             this._pageBackground = background;
 
-            if(HasTableOverlap(result))
-            {
-                PdfReaderException.AlwaysThrow("cannot have overlapped table");
-            }
-
+            var result = new BlockPage();
+            result.AddRange(tables.AllBlocks);
+            result.AddRange(lines.AllBlocks);
+            
             return result;
         }
 
@@ -191,7 +202,7 @@ namespace PdfTextReader.PDFCore
             }
             return false;
         }
-
+                
         static bool HasOverlap(IBlock blockSet, float x, float h)
         {
             float a_x1 = blockSet.GetX();
@@ -202,6 +213,6 @@ namespace PdfTextReader.PDFCore
             bool hasOverlap = ((a_x1 <= x) && (a_x2 >= x) && (a_y1 <= h) && (a_y2 >= h));
 
             return hasOverlap;
-        }        
+        }
     }
 }
