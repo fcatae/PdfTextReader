@@ -62,7 +62,7 @@ namespace PdfTextReader.Base
             }
         }
 
-        public static void AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
+        public static Exception AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             if (g_IgnoreEverything)
                 return;

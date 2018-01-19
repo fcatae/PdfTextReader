@@ -41,7 +41,7 @@ namespace PdfTextReader.PDFText
                 return (1 - components[3]);
             }
 
-            PdfReaderException.AlwaysThrow("invalid color space");
+            throw PdfReaderException.AlwaysThrow("invalid color space");
         }
 
         public void EventOccurred(IEventData data, EventType type)
