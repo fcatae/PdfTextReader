@@ -23,13 +23,12 @@ namespace Validator
 
         void Run(IRunner runner, File file, string outputname)
         {
-            string inputFolder = file.Folder;
             string basename = file.Filename;
 
             try
             {
                 Console.WriteLine($"File {basename}: Start");
-                PdfTextReader.ProgramValidator.Process(basename, inputFolder, outputname);
+                runner.Run(file, outputname);
                 Console.WriteLine($"File {basename}: End");
             }
             catch (Exception ex)
