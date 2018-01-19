@@ -44,6 +44,9 @@ namespace PdfTextReader
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06")
         {
+            PdfReaderException.ContinueOnException();
+            Examples.ShowTables(basename);
+
             //PdfWriteText.Test();
             //return;
             Console.WriteLine();

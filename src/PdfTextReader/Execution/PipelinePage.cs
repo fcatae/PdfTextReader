@@ -102,9 +102,11 @@ namespace PdfTextReader.Execution
                 CollectStatistics(stats);
             }
 
+            int beforeCount = this.LastResult.AllBlocks.Count();
+
             this.LastResult = result;
 
-            if (result.AllBlocks.Count() == 0)
+            if (result.AllBlocks.Count() == 0 && beforeCount > 0)
                 PdfReaderException.Warning($"{typeof(T).Name} returned no data");
 
             return this;

@@ -25,6 +25,22 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
+        public static void ShowTables(string basename)
+        {            
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .Output($"bin/{basename}-tables.pdf")
+                    .Page(1)
+                    .ParsePdf<PreProcessTables>()
+                        .ParseBlock<IdentifyTables>()
+                        .Show(Color.Green)
+                        .Validate<ValidateOverlap>().ShowErrors( b => b.Show(Color.Red))
+                    ;
+
+            pipeline.Done();
+        }
+
         public static void ShowHeaderFooter(string basename)
         {
             var pipeline = new Execution.Pipeline();
