@@ -22,9 +22,12 @@ namespace PdfTextReader.PDFValidation
                 return result;
             }
 
-            var almostEmpty = new BlockPage();
+            // column
+            var bset = new BlockSet<IBlock>();
+            bset.Add(new BlockLine() { X = 1, H = 1, Width = 1, Height = 1, Text="MarkOrange" });
 
-            almostEmpty.Add(new Block() { X = 1, H = 1, Width = 1, Height = 1 });
+            var almostEmpty = new BlockPage();
+            almostEmpty.Add(bset);
 
             return almostEmpty;
         }

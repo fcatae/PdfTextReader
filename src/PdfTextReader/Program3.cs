@@ -46,8 +46,9 @@ namespace PdfTextReader
 
             //Extract(basename, 173);
 
+            ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
             //Examples.FollowText(basename);
-            Examples.ShowHeaderFooter(basename);
+            //Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                             //.Log<AnalyzeLines>(Console.Out)
