@@ -17,7 +17,7 @@ namespace Validator
             string basename = file.Filename;
 
             // CMD c:\pdf\output_6 c:\pdf\valid valid2010 
-            PdfTextReader.ValidatorPipeline.ProcessPage1(basename, inputFolder, outputname);
+            PdfTextReader.ValidatorPipeline.Process(basename, inputFolder, outputname);
             _totalProcessed++;
         }
     }

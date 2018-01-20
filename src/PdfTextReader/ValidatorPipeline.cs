@@ -9,6 +9,7 @@ using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System.Drawing;
 using PdfTextReader.PDFCore;
+using PdfTextReader.PDFValidation;
 
 namespace PdfTextReader
 {
@@ -28,6 +29,7 @@ namespace PdfTextReader
                               page.ParsePdf<ProcessPdfValidation>()
                                   .Show(Color.White)
                                   .ParseBlock<IdentifyValidationMarks>()
+                                  .ParseBlock<MarkOrangeNoOverlap>()
                                   .Show(Color.Blue)
                     ).ToList();
 
@@ -47,6 +49,7 @@ namespace PdfTextReader
                                 .ParsePdf<ProcessPdfValidation>()
                                   .Show(Color.White)
                                   .ParseBlock<IdentifyValidationMarks>()
+                                  .ParseBlock<MarkOrangeNoOverlap>()
                                   .Show(Color.Blue);
                     
             pipeline.Done();

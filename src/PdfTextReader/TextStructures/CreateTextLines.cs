@@ -15,7 +15,7 @@ namespace PdfTextReader.TextStructures
             {
                 var blockArea = bset as IBlockSet<IBlock>;
 
-                if (bset is TableCell)
+                if (bset is MarkLine)
                     continue;
 
                 if (bset is ImageBlock || bset is TableSet)
