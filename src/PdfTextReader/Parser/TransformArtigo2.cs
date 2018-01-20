@@ -31,10 +31,42 @@ namespace PdfTextReader.Parser
                     Conteudo = conteudo
                 };
 
-                artigos.Add(article);
+                if (IsArticle(article))
+                    artigos.Add(article);
             }
 
             return artigos;
+        }
+
+        bool IsArticle(Artigo article)
+        {
+            if (IsNullOrPeriod(article.Conteudo.Corpo) || ContainsExclusiveTitles(article.Conteudo.Titulo))
+                return false;
+            return true;
+        }
+
+        bool IsNullOrPeriod(string text)
+        {
+            if (text != null || text == ".")
+                return false;
+            return true;
+        }
+
+        bool ContainsExclusiveTitles(string text)
+        {
+            string[] list =
+                {
+                "sumario",
+                "sumário"
+            };
+
+            foreach (string s in list)
+            {
+                if (text.ToLower().Contains(s))
+                    return false;
+            }
+
+            return true;
         }
 
         private string GetGrade(string input)

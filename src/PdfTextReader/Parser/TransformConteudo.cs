@@ -18,11 +18,14 @@ namespace PdfTextReader.Parser
         public Conteudo Create(List<TextSegment> segments)
         {
             TextSegment segment = segments[0];
+            var idxAnexo = ProcessAnexo(segment.Body);
+            ProcessExclusiveText(segment.Body);
 
             string titulo = null;
             string hierarchy = null;
             string body = null;
             string caput = null;
+            string anexo = null;
             List<string> resultProcess = new List<string>() { null, null, null };
 
 
@@ -48,23 +51,43 @@ namespace PdfTextReader.Parser
                 if (segment.Body[0].TextAlignment == TextAlignment.RIGHT && segment.Body[1].TextAlignment == TextAlignment.JUSTIFY)
                     caput = segment.Body[0].Text;
             }
-        
-            //Definindo Assinatura, Cargo e Data
-            int idxSigna = segment.Body.ToList().FindLastIndex(s => s.TextAlignment == TextAlignment.JUSTIFY) + 1;
-            
-            if (idxSigna > 0 && idxSigna < segment.Body.Count())
-            {
-                resultProcess.Clear();
-                resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
-            }
 
+            //Definindo Assinatura, Cargo e Data
+            int idxSigna = 0;
+            //Se contiver anexo...
+            if (idxAnexo > 0)
+            {
+                idxSigna = segment.Body.ToList().FindIndex(2, s => s.TextAlignment == TextAlignment.RIGHT);
+            }
+            else //Caso não tenha anexo
+            {
+                idxSigna = segment.Body.ToList().FindLastIndex(s => s.TextAlignment == TextAlignment.JUSTIFY) + 1;
+
+                if (idxSigna > 0 && idxSigna < segment.Body.Count())
+                {
+                    resultProcess.Clear();
+                    resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
+                }
+            }
 
             //Definindo Body
             if (caput != null)
             {
                 body = String.Join("\n", segment.Body.Skip(1).Take(idxSigna - 1).Select(s => s.Text));
             }
-            
+            else if (idxSigna > 0 && idxSigna < segment.Body.Count())
+            {
+                body = String.Join("\n", segment.Body.Take(idxSigna - 1).Select(s => s.Text));
+            }
+            else
+            {
+                body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
+            }
+
+
+            //Definindo o Anexo se existir
+            if (idxAnexo != 0)
+                anexo = String.Join("\n", segment.Body.Skip(idxSigna).Take(segment.Body.Count() - idxSigna - 1).Select(s => s.Text));
 
             return new Conteudo()
             {
@@ -79,6 +102,27 @@ namespace PdfTextReader.Parser
             };
         }
 
+        int ProcessAnexo(TextStructure[] structures)
+        {
+            int index = 0;
+
+            foreach (TextStructure item in structures)
+            {
+                if (item.Text.ToLower() == "anexo")
+                    index = structures.ToList().FindIndex(i => i == item);
+            }
+
+            return index;
+        }
+
+        void ProcessExclusiveText(TextStructure[] structures)
+        {
+            foreach (TextStructure item in structures)
+            {
+                if (item.Text.ToLower() == "o presidente da república" || item.Text.ToLower() == "a presidenta da república")
+                    item.TextAlignment = TextAlignment.JUSTIFY;
+            }
+        }
 
         List<string> ProcessSignatureAndRole(List<TextLine> lines)
         {
