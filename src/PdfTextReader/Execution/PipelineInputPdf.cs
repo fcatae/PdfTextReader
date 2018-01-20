@@ -21,6 +21,7 @@ namespace PdfTextReader.Execution
         private string _output;
         private PdfDocument _pdfOutput;
         private List<object> _statsCollection = new List<object>();
+        private PipelinePdfLog _pdfLog = new PipelinePdfLog();
 
         public static PipelineInputPdf DebugCurrent;
 
@@ -34,20 +35,66 @@ namespace PdfTextReader.Execution
             this._pdfDocument = pdfDocument;
 
             PipelineInputPdf.DebugCurrent = this;
+
+            PdfReaderException.ClearContext();
         }
         
         public PipelineInputPdfPage Page(int pageNumber)
         {
-            var page = new PipelineInputPdfPage(this, pageNumber);
-
-            if( CurrentPage != null )
+            if (CurrentPage != null)
             {
                 CurrentPage.Dispose();
             }
 
+            var page = new PipelineInputPdfPage(this, pageNumber);
+            
             CurrentPage = page;
 
             return page;
+        }
+
+        public void LogCheck(int pageNumber, Type component, string message)
+        {
+            _pdfLog.LogCheck(pageNumber, component, message);
+        }
+
+        public void SaveOk(string outputfile)
+        {
+            string inputfile = this._input;
+
+            var errorPages = _pdfLog.GetErrors().OrderBy(t => t).ToList();            
+
+            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
+            {
+                int total = pdfInput.GetNumberOfPages();
+                var positivePages = Enumerable.Range(1, total).Except(errorPages).ToList();
+
+                if (positivePages.Count == 0)
+                    return;
+
+                using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+                {
+                    pdfInput.CopyPagesTo(positivePages, pdfOutput);
+                }
+            }
+        }
+
+        public int SaveErrors(string outputfile)
+        {
+            string inputfile = this._input;
+
+            var errorPages = _pdfLog.GetErrors().OrderBy(t=>t).ToList();
+
+            if (errorPages.Count == 0)
+                return 0;
+
+            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
+            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+            {
+                pdfInput.CopyPagesTo(errorPages, pdfOutput);
+            }
+
+            return errorPages.Count;
         }
 
         public PipelineInputPdf Output(string outfile)
@@ -214,6 +261,8 @@ namespace PdfTextReader.Execution
                 this._pdf = pipelineInputContext;
                 this._pageNumber = pageNumber;
                 this._pdfPage = pdfPage;
+
+                PdfReaderException.SetContext(_pdf._input, pageNumber);
             }
 
             public T CreateInstance<T>()
@@ -310,7 +359,9 @@ namespace PdfTextReader.Execution
 
             public void Dispose()
             {
-                if( _outputCanvas != null )
+                PdfReaderException.ClearContext();
+
+                if ( _outputCanvas != null )
                 {
                     _outputCanvas.Release();
                     _outputCanvas = null;

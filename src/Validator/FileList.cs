@@ -28,10 +28,7 @@ namespace Validator
             {
                 string filename = file.Name;
 
-                if (!filename.ToLower().EndsWith("-output.pdf"))
-                {
-                    yield return new File(foldername, filename);
-                }
+                yield return new File(foldername, filename);
             }
 
             foreach (var childDirectory in directory.EnumerateDirectories())

@@ -79,12 +79,24 @@ namespace PdfTextReader.PDFText
                 float minerr = .5f;
 
                 var sign_x = ctm.Get(0);
+                var rot_x = ctm.Get(1);
+                var zero_x = ctm.Get(2);
+                var rot_y = ctm.Get(3);
                 var sign_y = ctm.Get(4);
+                var zero_y = ctm.Get(5);
 
-                float x1 = (float)segs.Min(s => s.x) - minerr;
-                float x2 = (float)segs.Max(s => s.x) + minerr;
-                float y1 = (float)segs.Min(s => sign_y * s.y) - minerr;
-                float y2 = (float)segs.Max(s => sign_y * s.y) + minerr;
+                if (zero_x != 0 || zero_y != 0)
+                    throw new InvalidOperationException();
+
+                //float x1 = (float)segs.Min(s => s.x) - minerr;
+                //float x2 = (float)segs.Max(s => s.x) + minerr;
+                //float y1 = (float)segs.Min(s => sign_y * s.y) - minerr;
+                //float y2 = (float)segs.Max(s => sign_y * s.y) + minerr;
+
+                float x1 = (float)segs.Min(s => sign_x * s.x + rot_x * s.y) - minerr;
+                float x2 = (float)segs.Max(s => sign_x * s.x + rot_x * s.y) + minerr;
+                float y1 = (float)segs.Min(s => rot_y * s.x + sign_y * s.y) - minerr;
+                float y2 = (float)segs.Max(s => rot_y * s.x + sign_y * s.y) + minerr;
 
                 float translate_x = dx;
                 float translate_y = dy;
@@ -102,6 +114,7 @@ namespace PdfTextReader.PDFText
 
                 if (tableCell.Width < 0 || tableCell.Height < 0)
                     PdfReaderException.AlwaysThrow("tableCell.Width < 0 || tableCell.Height < 0");
+
 
                 if (tableCell.X >= 0 || tableCell.H >= 0)
                 {

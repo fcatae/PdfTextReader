@@ -10,9 +10,25 @@ namespace PdfTextReader.Base
         public PdfReaderException(string message) : base(message)
         {
         }
-        
+
         private static bool g_ShowWarnings = true;
         private static bool g_ContinueOnException = false;
+
+        [ThreadStatic]
+        private static PdfReaderExceptionContext g_threadContext;
+
+        public static void SetContext(string filename, int pageNumber)
+        {
+            if (g_threadContext != null)
+                throw new InvalidOperationException();
+
+            g_threadContext = new PdfReaderExceptionContext() { Filename = filename, PageNumber = pageNumber };
+        }
+
+        public static void ClearContext()
+        {
+            g_threadContext = null;
+        }
 
         public static void ContinueOnException()
         {
@@ -28,7 +44,7 @@ namespace PdfTextReader.Base
         {
             if(g_ShowWarnings)
             {
-                Console.WriteLine($"WARNING: {sourceMethod}: {message}");
+                Console.WriteLine($"WARNING: {sourceMethod}: {message} {GetAdditionalPageInformation()}");
             }
         }
 
@@ -44,7 +60,7 @@ namespace PdfTextReader.Base
                 {
                     Console.WriteLine("=======================================");
                     Console.WriteLine($"{source}");
-                    Console.WriteLine($"CRITICAL EXCEPTION: {sourceMethod}");
+                    Console.WriteLine($"CRITICAL EXCEPTION: {sourceMethod} {GetAdditionalPageInformation()}");
                     Console.WriteLine();
                     Console.WriteLine($"    {message}");
                     Console.WriteLine();
@@ -59,5 +75,20 @@ namespace PdfTextReader.Base
         {
             throw new PdfReaderException(message);
         }
+
+        public static string GetAdditionalPageInformation()
+        {
+            if (g_threadContext == null)
+                return "--- NOT AVAILABLE ---";
+
+            return $"({g_threadContext.Filename}, Page {g_threadContext.PageNumber})";
+        }
+
+        class PdfReaderExceptionContext
+        {
+            public string Filename { get; set; }
+            public int PageNumber { get; set; }
+        }
+
     }
 }

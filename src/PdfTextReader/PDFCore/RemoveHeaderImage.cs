@@ -13,6 +13,9 @@ namespace PdfTextReader.PDFCore
         const float statRegionTooLarge = 200f;
         private List<IBlock> _images;
         private PreProcessImages _parse;
+        private IBlock _headerImage = null;
+
+        public IBlock HeaderImage => _headerImage;
 
         public void SetPage(PipelinePage p)
         {
@@ -40,6 +43,8 @@ namespace PdfTextReader.PDFCore
             var header = FindBlocksAtHeader(page);
 
             var image = FindImageOverlap(header);
+
+            _headerImage = image;
 
             if (image == null)
                 PdfReaderException.AlwaysThrow("image == null");

@@ -30,6 +30,9 @@ namespace PdfTextReader.PDFCore
         {
             var blocksets = page.AllBlocks.ToList();
 
+            if (blocksets.Count == 0)
+                return page;
+
             float x1 = page.AllBlocks.GetX();
             float x2 = page.AllBlocks.GetX() + page.AllBlocks.GetWidth();
             float dx = page.AllBlocks.GetWidth() + 2;

@@ -8,33 +8,17 @@ namespace Validator
     {
         int _totalProcessed = 0;
 
-        public string FilePattern => "*.pdf";
+         public string FilePattern => "DO1_2010_0?_10.pdf"; //6
+        //public string FilePattern => "*.pdf";
 
         public void Run(File file, string outputname)
-        {
-            if (_totalProcessed > 3)
-            {
-                Console.WriteLine("Too much load - ignoring file");
-                return;
-            }
-
+        {            
             string inputFolder = file.Folder;
             string basename = file.Filename;
-
-            try
-            {
-                PdfTextReader.ProgramValidator2010.Process(basename, inputFolder, outputname);
-                _totalProcessed++;
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                throw;
-            }
-            finally
-            {
-                Console.WriteLine();
-            }
+            
+            // CMD C:\PDF\2010\ c:\pdf\output 2010
+            PdfTextReader.ProgramValidator2010.Process(basename, inputFolder, outputname);
+            _totalProcessed++;
         }
     }
 }
