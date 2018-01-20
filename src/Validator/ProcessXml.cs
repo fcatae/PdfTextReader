@@ -15,5 +15,10 @@ namespace Validator
 
             Console.WriteLine($"Output xml file = {basename}");
         }
+
+        void ValidateArticle()
+        {
+
+        }
     }
 }

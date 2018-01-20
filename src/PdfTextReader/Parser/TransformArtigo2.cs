@@ -9,7 +9,7 @@ namespace PdfTextReader.Parser
 {
     class TransformArtigo2
     {
-        public IEnumerable<Artigo> Create(IList<Conteudo> conteudos, string basename)
+        public IEnumerable<Artigo> Create(IList<Conteudo> conteudos)
         {
 
             List<Artigo> artigos = new List<Artigo>();
