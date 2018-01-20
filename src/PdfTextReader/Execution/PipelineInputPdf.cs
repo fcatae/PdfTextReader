@@ -79,20 +79,22 @@ namespace PdfTextReader.Execution
             }
         }
 
-        public void SaveErrors(string outputfile)
+        public int SaveErrors(string outputfile)
         {
             string inputfile = this._input;
 
             var errorPages = _pdfLog.GetErrors().OrderBy(t=>t).ToList();
 
             if (errorPages.Count == 0)
-                return;
+                return 0;
 
             using (var pdfInput = new PdfDocument(new PdfReader(_input)))
             using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
             {
                 pdfInput.CopyPagesTo(errorPages, pdfOutput);
             }
+
+            return errorPages.Count;
         }
 
         public PipelineInputPdf Output(string outfile)

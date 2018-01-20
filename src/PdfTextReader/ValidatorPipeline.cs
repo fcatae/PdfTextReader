@@ -15,7 +15,7 @@ namespace PdfTextReader
 {
     public class ValidatorPipeline
     {
-        public static void Process(string basename, string inputfolder, string outputfolder)
+        public static int Process(string basename, string inputfolder, string outputfolder)
         {
             //PdfReaderException.DisableWarnings();
             //PdfReaderException.ContinueOnException();
@@ -24,19 +24,21 @@ namespace PdfTextReader
 
             var result =
             pipeline.Input($"{inputfolder}/{basename}")
-                    .Output($"{outputfolder}/{basename}-invalid.pdf")
+                    //.Output($"{outputfolder}/{basename}-output.pdf")
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<ProcessPdfValidation>()
-                                  .Show(Color.White)
+                                  //.Show(Color.White)
                                   .ParseBlock<IdentifyValidationMarks>()
                                   .PdfCheck<CheckNoBlockSetOverlap>(Color.Orange)   
-                                  .Show(Color.Blue)
+                                  //.Show(Color.Blue)
                     ).ToList();
 
-            pipeline.SaveOk($"{outputfolder}/{basename}-ok.pdf");
-            pipeline.SaveErrors($"{outputfolder}/{basename}-errors.pdf");
+            //pipeline.SaveOk($"{outputfolder}/{basename}-ok.pdf");
+            int errors = pipeline.SaveErrors($"{outputfolder}/errors/{basename}-errors.pdf");
 
             pipeline.Done();
+
+            return errors;
         }
         public static void ProcessPage1(string basename, string inputfolder, string outputfolder)
         {

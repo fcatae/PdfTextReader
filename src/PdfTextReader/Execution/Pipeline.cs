@@ -73,9 +73,9 @@ namespace PdfTextReader.Execution
         {
             _activeContext.SaveOk(outputname);
         }
-        public void SaveErrors(string outputname)
+        public int SaveErrors(string outputname)
         {
-            _activeContext.SaveErrors(outputname);
+            return _activeContext.SaveErrors(outputname);
         }
 
         public void Done()
