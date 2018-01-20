@@ -47,7 +47,29 @@ namespace PdfTextReader.Execution
 
             return this;
         }
+        public PipelinePage LogCheck<T>(Color Color)
+            where T : IValidateMark, new()
+        {
+            if (Color != Color.Orange)
+                throw new InvalidOperationException();
 
+            int color = MarkLine.ORANGE;
+
+            var initialMarks = this.LastResult.AllBlocks.Cast<MarkLine>().Where(l => l.Color == color);
+            var marks = new BlockSet<MarkLine>();
+            marks.AddRange(initialMarks);
+
+            var processor = new T();
+
+            string message = processor.Validate(marks);
+
+            if( message != null)
+            {
+                ParentContext.LogCheck(PageNumber, typeof(T), message);
+            }
+
+            return this;
+        }
         public PipelinePage Validate<T>(Action<BlockSet<IBlock>> filter = null)
             where T : IValidateBlock, new()
         {

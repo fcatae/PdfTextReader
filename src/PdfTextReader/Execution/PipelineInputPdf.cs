@@ -21,6 +21,7 @@ namespace PdfTextReader.Execution
         private string _output;
         private PdfDocument _pdfOutput;
         private List<object> _statsCollection = new List<object>();
+        private PipelinePdfLog _pdfLog = new PipelinePdfLog();
 
         public static PipelineInputPdf DebugCurrent;
 
@@ -50,6 +51,40 @@ namespace PdfTextReader.Execution
             CurrentPage = page;
 
             return page;
+        }
+
+        public void LogCheck(int pageNumber, Type component, string message)
+        {
+            _pdfLog.LogCheck(pageNumber, component, message);
+        }
+
+        public void SaveOk(string outputfile)
+        {
+            string inputfile = this._input;
+
+            var errorPages = _pdfLog.GetErrors().OrderBy(t => t).ToList();            
+
+            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
+            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+            {
+                int total = pdfInput.GetNumberOfPages();
+                var positivePages = Enumerable.Range(1, total).Except(errorPages).ToList();
+
+                pdfInput.CopyPagesTo(positivePages, pdfOutput);
+            }
+        }
+
+        public void SaveErrors(string outputfile)
+        {
+            string inputfile = this._input;
+
+            var errorPages = _pdfLog.GetErrors().OrderBy(t=>t).ToList();
+
+            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
+            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+            {
+                pdfInput.CopyPagesTo(errorPages, pdfOutput);
+            }
         }
 
         public PipelineInputPdf Output(string outfile)

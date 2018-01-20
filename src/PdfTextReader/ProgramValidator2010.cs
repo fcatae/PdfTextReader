@@ -19,24 +19,15 @@ namespace PdfTextReader
             //PdfReaderException.DisableWarnings();
             PdfReaderException.ContinueOnException();
 
-            try
-            {
-                var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
+            var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                                 .ConvertText<CreateStructures, TextStructure>()
                                 .ConvertText<CreateTextSegments, TextSegment>()
                                 .ConvertText<CreateTreeSegments, TextSegment>()
                                 .ToList();
 
-                //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
 
-                pipeline.Done();
-            }
-            catch (PdfReaderException ex)
-            {
-                //Console.WriteLine("PdfReaderException Exception");
-                //Console.WriteLine(ex.ToString());
-                Console.WriteLine();
-            }
+            pipeline.Done();
         }
 
 

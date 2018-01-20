@@ -6,8 +6,15 @@ using System.Text;
 
 namespace PdfTextReader.PDFValidation
 {
-    class MarkOrangeNoOverlap : IProcessBlock
+    class MarkOrangeNoOverlap : IProcessBlock, IValidateMark
     {
+        public string Validate(BlockSet<MarkLine> marks)
+        {
+            bool overlap = HasTableOverlap(marks);
+
+            return (overlap) ? "mark orange no overlap" : null;
+        }
+
         public BlockPage Process(BlockPage page)
         {
             var orange = page.AllBlocks.Cast<MarkLine>().Where(l => l.Color == MarkLine.ORANGE);
@@ -30,6 +37,22 @@ namespace PdfTextReader.PDFValidation
             almostEmpty.Add(bset);
 
             return almostEmpty;
+        }
+
+        bool HasTableOverlap(BlockSet<MarkLine> marks)
+        {
+            foreach (var a in marks)
+            {
+                foreach (var b in marks)
+                {
+                    if (a == b)
+                        continue;
+
+                    if (Block.HasOverlap(a, b))
+                        return true;
+                }
+            }
+            return false;
         }
 
         bool HasTableOverlap(BlockPage page)
@@ -59,5 +82,6 @@ namespace PdfTextReader.PDFValidation
 
             return hasOverlap;
         }
+
     }
 }

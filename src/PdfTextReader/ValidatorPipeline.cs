@@ -29,9 +29,12 @@ namespace PdfTextReader
                               page.ParsePdf<ProcessPdfValidation>()
                                   .Show(Color.White)
                                   .ParseBlock<IdentifyValidationMarks>()
-                                  .ParseBlock<MarkOrangeNoOverlap>()
+                                  .LogCheck<MarkOrangeNoOverlap>(Color.Orange)   
                                   .Show(Color.Blue)
                     ).ToList();
+
+            pipeline.SaveOk($"{outputfolder}/{basename}-ok.pdf");
+            pipeline.SaveErrors($"{outputfolder}/{basename}-errors.pdf");
 
             pipeline.Done();
         }
