@@ -29,7 +29,7 @@ namespace PdfTextReader
                               page.ParsePdf<ProcessPdfValidation>()
                                   .Show(Color.White)
                                   .ParseBlock<IdentifyValidationMarks>()
-                                  .LogCheck<MarkOrangeNoOverlap>(Color.Orange)   
+                                  .PdfCheck<CheckNoBlockSetOverlap>(Color.Orange)   
                                   .Show(Color.Blue)
                     ).ToList();
 
@@ -52,7 +52,7 @@ namespace PdfTextReader
                                 .ParsePdf<ProcessPdfValidation>()
                                   .Show(Color.White)
                                   .ParseBlock<IdentifyValidationMarks>()
-                                  .ParseBlock<MarkOrangeNoOverlap>()
+                                  .ParseBlock<CheckNoBlockSetOverlap>()
                                   .Show(Color.Blue);
                     
             pipeline.Done();

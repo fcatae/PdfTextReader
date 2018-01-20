@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFValidation
 {
-    class MarkOrangeNoOverlap : IProcessBlock, IValidateMark
+    class CheckNoBlockSetOverlap : IProcessBlock, IValidateMark
     {
         public string Validate(BlockSet<MarkLine> marks)
         {

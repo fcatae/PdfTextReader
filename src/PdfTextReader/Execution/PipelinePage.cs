@@ -47,7 +47,7 @@ namespace PdfTextReader.Execution
 
             return this;
         }
-        public PipelinePage LogCheck<T>(Color Color)
+        public PipelinePage PdfCheck<T>(Color Color)
             where T : IValidateMark, new()
         {
             if (Color != Color.Orange)

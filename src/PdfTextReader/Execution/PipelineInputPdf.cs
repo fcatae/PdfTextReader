@@ -65,12 +65,17 @@ namespace PdfTextReader.Execution
             var errorPages = _pdfLog.GetErrors().OrderBy(t => t).ToList();            
 
             using (var pdfInput = new PdfDocument(new PdfReader(_input)))
-            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
             {
                 int total = pdfInput.GetNumberOfPages();
                 var positivePages = Enumerable.Range(1, total).Except(errorPages).ToList();
 
-                pdfInput.CopyPagesTo(positivePages, pdfOutput);
+                if (positivePages.Count == 0)
+                    return;
+
+                using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+                {
+                    pdfInput.CopyPagesTo(positivePages, pdfOutput);
+                }
             }
         }
 
@@ -79,6 +84,9 @@ namespace PdfTextReader.Execution
             string inputfile = this._input;
 
             var errorPages = _pdfLog.GetErrors().OrderBy(t=>t).ToList();
+
+            if (errorPages.Count == 0)
+                return;
 
             using (var pdfInput = new PdfDocument(new PdfReader(_input)))
             using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
