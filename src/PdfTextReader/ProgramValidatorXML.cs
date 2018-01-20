@@ -19,11 +19,37 @@ namespace PdfTextReader
 
         void Validate(FileInfo file)
         {
-            if (!CheckBody(file) || !CheckTitleAndHierarchy(file))
-                file.CopyTo($"bin/{file.Name.Replace(".xml","")}-ISSUE.xml");
+            if (!CheckBody(file) || !CheckTitle(file) || CheckHierarchy(file))
+                file.CopyTo($"bin/{file.Name.Replace(".xml", "")}-ISSUE.xml");
         }
 
-        bool CheckTitleAndHierarchy(FileInfo file)
+        bool CheckHierarchy(FileInfo file)
+        {
+            string text = null;
+            XDocument doc = XDocument.Load(file.FullName);
+            foreach (XElement el in doc.Root.Elements())
+            {
+                foreach (XAttribute item in el.Attributes())
+                {
+                    if (item.Name == "Hierarquia")
+                        text = item.Value;
+                }
+            }
+
+            if (text == null)
+            {
+                //Não tem hierarquia
+                return true;
+            }
+            else
+            {
+                if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
+                    return true;
+                return false;
+            }
+        }
+
+        bool CheckTitle(FileInfo file)
         {
             string text = null;
             XDocument doc = XDocument.Load(file.FullName);
@@ -33,7 +59,6 @@ namespace PdfTextReader
                 {
                     if (item.Name == "Titulo")
                         text = item.Value;
-
                 }
             }
 
@@ -60,7 +85,10 @@ namespace PdfTextReader
 
                 }
             }
-
+            if (text != null)
+            {
+                return true;
+            }
             return false;
         }
     }
