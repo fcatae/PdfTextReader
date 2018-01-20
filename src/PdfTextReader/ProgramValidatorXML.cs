@@ -8,6 +8,10 @@ namespace PdfTextReader
 {
     class ProgramValidatorXML
     {
+        bool bodyConditions = false;
+        bool titleConditions = false;
+        bool hierarchyConditions = false;
+
         public void ValidateArticle(string inputfolder)
         {
             var directory = new DirectoryInfo(inputfolder);
@@ -19,77 +23,54 @@ namespace PdfTextReader
 
         void Validate(FileInfo file)
         {
-            if (!CheckBody(file) || !CheckTitle(file) || CheckHierarchy(file))
-                file.CopyTo($"bin/{file.Name.Replace(".xml", "")}-ISSUE.xml");
-        }
-
-        bool CheckHierarchy(FileInfo file)
-        {
-            string text = null;
             XDocument doc = XDocument.Load(file.FullName);
+            //Elementos Metadado e Conteudo
             foreach (XElement el in doc.Root.Elements())
             {
                 foreach (XAttribute item in el.Attributes())
                 {
                     if (item.Name == "Hierarquia")
-                        text = item.Value;
+                        CheckHierarchy(item.Value);
                 }
-            }
 
-            if (text == null)
-            {
-                //Não tem hierarquia
-                return true;
-            }
-            else
-            {
-                if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
-                    return true;
-                return false;
-            }
-        }
-
-        bool CheckTitle(FileInfo file)
-        {
-            string text = null;
-            XDocument doc = XDocument.Load(file.FullName);
-            foreach (XElement el in doc.Root.Elements())
-            {
                 foreach (XElement item in el.Elements())
                 {
                     if (item.Name == "Titulo")
-                        text = item.Value;
+                        CheckTitle(item.Value);
+
+                    if (item.Name == "Corpo")
+                        CheckBody(item.Value);
                 }
             }
 
 
+
+            if (bodyConditions || titleConditions || hierarchyConditions)
+                file.CopyTo($"bin/{file.Name.Replace(".xml", "")}-ISSUE.xml");
+        }
+
+        void CheckHierarchy(string text)
+        {
             if (text != null)
             {
                 if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
-                    return true;
+                    hierarchyConditions = true;
             }
-
-            return false;
         }
 
-        bool CheckBody(FileInfo file)
+        void CheckTitle(string text)
         {
-            string text = null;
-            XDocument doc = XDocument.Load(file.FullName);
-            foreach (XElement el in doc.Root.Elements())
-            {
-                foreach (XElement item in el.Elements())
-                {
-                    if (item.Name == "Corpo")
-                        text = item.Value;
-
-                }
-            }
             if (text != null)
             {
-                return true;
+                if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
+                    titleConditions = true;
             }
-            return false;
+        }
+
+        void CheckBody(string text)
+        {
+            if (text != null)
+                bodyConditions = true;
         }
     }
 }
