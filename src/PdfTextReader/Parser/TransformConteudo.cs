@@ -141,7 +141,7 @@ namespace PdfTextReader.Parser
         {
             string result = null;
 
-            var match = Regex.Match(body, @"([a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
+            var match = Regex.Match(body, @"(.+?[a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
 
             if (match.Success)
                 return body;
