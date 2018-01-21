@@ -18,14 +18,20 @@ namespace PdfTextReader.Parser
         public Conteudo Create(List<TextSegment> segments)
         {
             TextSegment segment = segments[0];
-            var idxAnexo = ProcessAnexo(segment.Body);
+
             ProcessExclusiveText(segment.Body);
 
             string titulo = null;
             string hierarchy = null;
             string body = null;
             string caput = null;
+            string possibleData = null;
+            string assinatura = null;
+            string cargo = null;
+            string data = null;
             string anexo = null;
+            //just for process results
+            string assinaturaContinuação = null;
             List<string> resultProcess = new List<string>() { null, null, null };
 
 
@@ -52,42 +58,63 @@ namespace PdfTextReader.Parser
                     caput = segment.Body[0].Text;
             }
 
+
             //Definindo Assinatura, Cargo e Data
             int idxSigna = 0;
             //Se contiver anexo...
-            if (idxAnexo > 0)
+            if (caput != null)
             {
                 idxSigna = segment.Body.ToList().FindIndex(2, s => s.TextAlignment == TextAlignment.RIGHT);
             }
             else //Caso não tenha anexo
             {
                 idxSigna = segment.Body.ToList().FindLastIndex(s => s.TextAlignment == TextAlignment.JUSTIFY) + 1;
+            }
 
-                if (idxSigna > 0 && idxSigna < segment.Body.Count())
-                {
-                    resultProcess.Clear();
-                    resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
-                }
+
+            if (idxSigna > 0 && idxSigna < segment.Body.Count())
+            {
+                resultProcess.Clear();
+                resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
+                assinatura = resultProcess[0];
+                cargo = resultProcess[1];
+                data = resultProcess[2];
             }
 
             //Definindo Body
             if (caput != null)
             {
                 body = String.Join("\n", segment.Body.Skip(1).Take(idxSigna - 1).Select(s => s.Text));
+                if (idxSigna > 0 && idxSigna < segment.Body.Count())
+                    possibleData = segment.Body[idxSigna - 1].Text;
             }
             else if (idxSigna > 0 && idxSigna < segment.Body.Count())
             {
                 body = String.Join("\n", segment.Body.Take(idxSigna - 1).Select(s => s.Text));
+                if (idxSigna > 0 && idxSigna < segment.Body.Count())
+                    possibleData = segment.Body[idxSigna - 1].Text;
             }
             else
             {
                 body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
+                possibleData = segment.Body[segment.Body.Count() - 1].Text;
             }
 
+            //Definindo o Anexo se existir e verificando se necessita juntar as assinaturas
+            var resultSignAndAnexo = ProcessAnexoOrSign(segment.Body, idxSigna);
+            assinaturaContinuação = resultSignAndAnexo[0];
+            anexo = resultSignAndAnexo[1];
 
-            //Definindo o Anexo se existir
-            if (idxAnexo != 0)
-                anexo = String.Join("\n", segment.Body.Skip(idxSigna).Take(segment.Body.Count() - idxSigna - 1).Select(s => s.Text));
+            if (assinaturaContinuação != null)
+                assinatura = $"{assinatura} \n {assinaturaContinuação}";
+
+
+            //Verificando se Data ficou na assinatura
+            if (data == null)
+                if (possibleData != null)
+                    data = HasData(possibleData);
+            if (data != null)
+                body = RemoveDataFromBody(body, data);
 
             return new Conteudo()
             {
@@ -96,23 +123,52 @@ namespace PdfTextReader.Parser
                 Titulo = titulo,
                 Caput = caput,
                 Corpo = body,
-                Assinatura = ProcessListOfSignatures(resultProcess[0]),
-                Cargo = resultProcess[1],
-                Data = resultProcess[2]
+                Assinatura = ProcessListOfSignatures(assinatura),
+                Cargo = cargo,
+                Data = data
             };
         }
 
-        int ProcessAnexo(TextStructure[] structures)
+        string RemoveDataFromBody(string body, string data)
         {
-            int index = 0;
+            return body.Replace(data, "");
+        }
 
-            foreach (TextStructure item in structures)
+        string HasData(string body)
+        {
+            string result = null;
+
+            var match = Regex.Match(body, @"([\d\/] +)");
+
+            if (match.Success)
+                return body;
+
+            return result;
+        }
+
+        List<string> ProcessAnexoOrSign(TextStructure[] structures, int idxSigna)
+        {
+            string sign = null;
+            string anexo = null;
+            IEnumerable<TextStructure> discover;
+
+            if (structures.Count() > idxSigna)
             {
-                if (item.Text.ToLower() == "anexo")
-                    index = structures.ToList().FindIndex(i => i == item);
-            }
+                discover = structures.Skip(idxSigna + 1).Take(structures.Count() - idxSigna);
 
-            return index;
+                foreach (var item in discover)
+                {
+                    if (item.TextAlignment == TextAlignment.JUSTIFY)
+                    {
+                        anexo = $"{anexo} \n{item.Text}";
+                    }
+                    else
+                    {
+                        sign = $"{sign} \n{item.Text}";
+                    }
+                }
+            }
+            return new List<string>() { sign, anexo };
         }
 
         void ProcessExclusiveText(TextStructure[] structures)
@@ -121,6 +177,16 @@ namespace PdfTextReader.Parser
             {
                 if (item.Text.ToLower() == "o presidente da república" || item.Text.ToLower() == "a presidenta da república")
                     item.TextAlignment = TextAlignment.JUSTIFY;
+                if (item.Text.Contains("Parágrafo único"))
+                {
+                    if (item.Text.Substring(0, 15) == "Parágrafo único")
+                        item.TextAlignment = TextAlignment.JUSTIFY;
+                }
+                if (item.Text.Contains("Art."))
+                {
+                    if (item.Text.Substring(0, 4) == "Art.")
+                        item.TextAlignment = TextAlignment.JUSTIFY;
+                }
             }
         }
 
@@ -173,7 +239,7 @@ namespace PdfTextReader.Parser
 
         public void Init(TextSegment line)
         {
-           
+
         }
     }
 }

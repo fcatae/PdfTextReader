@@ -40,16 +40,18 @@ namespace PdfTextReader.Parser
 
         bool IsArticle(Artigo article)
         {
-            if (IsNullOrPeriod(article.Conteudo.Corpo) || ContainsExclusiveTitles(article.Conteudo.Titulo))
+            if (IsNullOrPeriod(article.Conteudo.Corpo))
+                return false;
+            if (ContainsExclusiveTitles(article.Conteudo.Titulo))
                 return false;
             return true;
         }
 
         bool IsNullOrPeriod(string text)
         {
-            if (text != null || text == ".")
-                return false;
-            return true;
+            if (text == null || text == ".")
+                return true;
+            return false;
         }
 
         bool ContainsExclusiveTitles(string text)
@@ -63,10 +65,10 @@ namespace PdfTextReader.Parser
             foreach (string s in list)
             {
                 if (text.ToLower().Contains(s))
-                    return false;
+                    return true;
             }
 
-            return true;
+            return false;
         }
 
         private string GetGrade(string input)
