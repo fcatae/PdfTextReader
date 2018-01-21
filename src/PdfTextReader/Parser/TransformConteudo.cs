@@ -207,7 +207,7 @@ namespace PdfTextReader.Parser
                 {
                     signature = signature + "\n" + item.Text;
                 }
-                else if (item.FontStyle == "Italic")
+                else if (item.FontStyle == "Italic" || item.FontName.ToLower().Contains("italic"))
                 {
                     signature = signature + "\n" + item.Text;
                 }
