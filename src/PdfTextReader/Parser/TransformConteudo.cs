@@ -90,8 +90,11 @@ namespace PdfTextReader.Parser
             }
             else if (idxSigna > 0 && idxSigna < segment.Body.Count())
             {
-                body = String.Join("\n", segment.Body.Take(idxSigna - 1).Select(s => s.Text));
-                if (idxSigna > 0 && idxSigna < segment.Body.Count())
+                var valueToTake = idxSigna - 1;
+                if (valueToTake == 0)
+                    valueToTake = 1;
+                body = String.Join("\n", segment.Body.Take(valueToTake).Select(s => s.Text));
+                if (idxSigna > 1 && idxSigna < segment.Body.Count())
                     possibleData = segment.Body[idxSigna - 1].Text;
             }
             else
@@ -138,7 +141,7 @@ namespace PdfTextReader.Parser
         {
             string result = null;
 
-            var match = Regex.Match(body, @"([\d\/] +)");
+            var match = Regex.Match(body, @"([a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
 
             if (match.Success)
                 return body;

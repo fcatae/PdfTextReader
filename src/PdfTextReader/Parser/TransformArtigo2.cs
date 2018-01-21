@@ -62,10 +62,13 @@ namespace PdfTextReader.Parser
                 "sumário"
             };
 
-            foreach (string s in list)
+            if (text != null)
             {
-                if (text.ToLower().Contains(s))
-                    return true;
+                foreach (string s in list)
+                {
+                    if (text.ToLower().Contains(s))
+                        return true;
+                }
             }
 
             return false;
