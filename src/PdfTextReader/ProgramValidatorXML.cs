@@ -12,8 +12,8 @@ namespace PdfTextReader
         bool titleConditions = false;
         bool hierarchyConditions = false;
         bool anexoConditions = false;
-        bool roleConditions = false;
-        bool signConditions = false;
+        bool roleConditions = true;
+        bool signConditions = true;
         float DocumentsCount = 0;
         float DocumentsCountWithError = 0;
 
@@ -31,7 +31,7 @@ namespace PdfTextReader
         void CalculatePrecision(float docs, float error)
         {
             float result = (1 - (error / docs)) * 100;
-            string text = $"Article precision: {result.ToString("000.00")}%";
+            string text = $"Article precision: {result.ToString("00.00")}%";
             File.WriteAllText("bin/ArticlePrecision.txt", text);
         }
 
@@ -82,7 +82,7 @@ namespace PdfTextReader
 
         void CheckHierarchy(string text)
         {
-            if (text != null)
+            if (!String.IsNullOrWhiteSpace(text))
             {
                 if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
                     hierarchyConditions = true;
@@ -91,7 +91,7 @@ namespace PdfTextReader
 
         void CheckTitle(string text)
         {
-            if (text != null)
+            if (!String.IsNullOrWhiteSpace(text))
             {
                 titleConditions = false;
                 if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
@@ -107,18 +107,19 @@ namespace PdfTextReader
 
         void CheckBody(string text)
         {
-            if (text != null)
+            if (!String.IsNullOrWhiteSpace(text))
                 bodyConditions = true;
         }
 
         void CheckAnexo(string text)
         {
-            if (text != null)
+            if (!String.IsNullOrWhiteSpace(text))
                 anexoConditions = true;
         }
 
         void CheckSigns(string text)
         {
+            signConditions = false;
             foreach (string item in ExclusiveWords)
             {
                 if (!text.ToLower().Contains(item))
@@ -128,7 +129,8 @@ namespace PdfTextReader
 
         void CheckRoles(string text)
         {
-            if (text != null)
+            roleConditions = false;
+            if (!String.IsNullOrWhiteSpace(text))
             {
                 if (text.Replace("o", "O").ToUpper() != text.Replace("o", "O"))
                     roleConditions = true;
