@@ -28,7 +28,7 @@ namespace PdfTextReader
 
         void CalculatePrecision(float docs, float error)
         {
-            float result = (error / docs) * 100;
+            float result = (1 - (error / docs)) * 100;
             string text = $"Article precision: {result.ToString("000.00")}%";
             File.WriteAllText("bin/ArticlePrecision.txt", text);
         }
