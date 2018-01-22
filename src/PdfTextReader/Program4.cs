@@ -28,6 +28,8 @@ namespace PdfTextReader
             Examples.ShowHeaderFooter(basename);
             ExamplesWork.PrintAllSteps(basename);
 
+            PdfReaderException.ContinueOnException();
+
             var conteudos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"bin/{basename}-lines.txt")
                             .ConvertText<CreateStructures, TextStructure>()

@@ -114,7 +114,7 @@ namespace PdfTextReader.Parser
             //Definindo o Anexo se existir e verificando se necessita juntar as assinaturas
             var resultSignAndAnexo = ProcessAnexoOrSign(segment.Body, idxSigna);
             assinaturaContinuação = resultSignAndAnexo[0];
-            anexo = resultSignAndAnexo[1] != null ? new Anexo(resultSignAndAnexo[1]) : null;
+            //anexo = resultSignAndAnexo[1] != null ? new Anexo(resultSignAndAnexo[1]) : null;
 
             if (assinaturaContinuação != null)
                 assinatura = $"{assinatura} \n {assinaturaContinuação}";
