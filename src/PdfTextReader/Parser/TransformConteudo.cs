@@ -82,7 +82,7 @@ namespace PdfTextReader.Parser
             }
 
             //Definindo Body
-            if (caput != null)
+            if (caput != null && idxSigna > 0 && idxSigna < segment.Body.Count())
             {
                 body = String.Join("\n", segment.Body.Skip(1).Take(idxSigna - 1).Select(s => s.Text));
                 if (idxSigna > 0 && idxSigna < segment.Body.Count())
@@ -99,14 +99,22 @@ namespace PdfTextReader.Parser
             }
             else
             {
-                body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
-                possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                if (caput != null)
+                {
+                    body = String.Join("\n", segment.Body.Skip(1).Take(segment.Body.Count()).Select(s => s.Text));
+                    possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                }
+                else
+                {
+                    body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
+                    possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                }
             }
 
             //Definindo o Anexo se existir e verificando se necessita juntar as assinaturas
             var resultSignAndAnexo = ProcessAnexoOrSign(segment.Body, idxSigna);
             assinaturaContinuação = resultSignAndAnexo[0];
-            anexo = resultSignAndAnexo[1] != null ? new Anexo(resultSignAndAnexo[1]) : null;
+            //anexo = resultSignAndAnexo[1] != null ? new Anexo(resultSignAndAnexo[1]) : null;
 
             if (assinaturaContinuação != null)
                 assinatura = $"{assinatura} \n {assinaturaContinuação}";
@@ -156,19 +164,22 @@ namespace PdfTextReader.Parser
             string anexo = null;
             IEnumerable<TextStructure> discover;
 
-            if (structures.Count() > idxSigna)
+            if (idxSigna > 0)
             {
-                discover = structures.Skip(idxSigna + 1).Take(structures.Count() - idxSigna);
-
-                foreach (var item in discover)
+                if (structures.Count() > idxSigna)
                 {
-                    if (item.TextAlignment == TextAlignment.JUSTIFY)
+                    discover = structures.Skip(idxSigna + 1).Take(structures.Count() - idxSigna);
+
+                    foreach (var item in discover)
                     {
-                        anexo = $"{anexo} \n{item.Text}";
-                    }
-                    else
-                    {
-                        sign = $"{sign} \n{item.Text}";
+                        if (item.TextAlignment == TextAlignment.JUSTIFY)
+                        {
+                            anexo = $"{anexo} \n{item.Text}";
+                        }
+                        else
+                        {
+                            sign = $"{sign} \n{item.Text}";
+                        }
                     }
                 }
             }
