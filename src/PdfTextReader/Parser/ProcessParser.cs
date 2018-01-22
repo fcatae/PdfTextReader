@@ -66,6 +66,16 @@ namespace PdfTextReader.Parser
                         writer.WriteElementString("Data", conteudo.Data);
 
                     writer.WriteEndElement();
+
+                    //Writing Anexo
+                    writer.WriteStartElement("Anexo");
+                    if (conteudo.Anexo.HierarquiaTitulo != null)
+                        writer.WriteElementString("Hierarquia", conteudo.Anexo.HierarquiaTitulo);
+                    if (conteudo.Anexo.Titulo != null)
+                        writer.WriteElementString("Titulo Anexo", conteudo.Anexo.Titulo);
+                    if (conteudo.Anexo.Texto != null)
+                        writer.WriteElementString("Texto", conteudo.Anexo.Texto);
+                    writer.WriteEndElement();
                 }
 
                 writer.WriteEndElement();

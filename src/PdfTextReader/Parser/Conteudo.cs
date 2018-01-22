@@ -20,6 +20,10 @@ namespace PdfTextReader.Parser
         public string Data { get; set; }
         public string Setor { get; set; }
         public string Departamento { get; set; }
+
+        //Just for while
+        public Anexo Anexo { get; set; }
+
         public override string ToString() => Titulo;
     }
 }

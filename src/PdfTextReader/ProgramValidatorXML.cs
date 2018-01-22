@@ -11,6 +11,7 @@ namespace PdfTextReader
         bool bodyConditions = false;
         bool titleConditions = false;
         bool hierarchyConditions = false;
+        bool anexoConditions = false;
         float DocumentsCount = 0;
         float DocumentsCountWithError = 0;
 
@@ -28,7 +29,7 @@ namespace PdfTextReader
         void CalculatePrecision(float docs, float error)
         {
             float result = (error / docs) * 100;
-            string text = $"Article precision: {result.ToString("0.00")}%";
+            string text = $"Article precision: {result.ToString("000.00")}%";
             File.WriteAllText("bin/ArticlePrecision.txt", text);
         }
         
@@ -51,6 +52,10 @@ namespace PdfTextReader
 
                     if (item.Name == "Corpo")
                         CheckBody(item.Value);
+
+                    //Checagem do Anexo
+                    //if (item.Name == "Text")
+                    //    CheckAnexo(item.Value);
                 }
             }
 
@@ -85,6 +90,12 @@ namespace PdfTextReader
         {
             if (text != null)
                 bodyConditions = true;
+        }
+
+        void CheckAnexo(string text)
+        {
+            if (text != null)
+                anexoConditions = true;
         }
     }
 }

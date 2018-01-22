@@ -28,7 +28,8 @@ namespace PdfTextReader.Parser
                 var article = new Artigo
                 {
                     Metadados = metadados,
-                    Conteudo = conteudo
+                    Conteudo = conteudo,
+                    Anexo = conteudo.Anexo
                 };
 
                 if (IsArticle(article))

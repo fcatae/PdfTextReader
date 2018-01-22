@@ -29,7 +29,7 @@ namespace PdfTextReader.Parser
             string assinatura = null;
             string cargo = null;
             string data = null;
-            string anexo = null;
+            Anexo anexo = null;
             //just for process results
             string assinaturaContinuação = null;
             List<string> resultProcess = new List<string>() { null, null, null };
@@ -106,7 +106,7 @@ namespace PdfTextReader.Parser
             //Definindo o Anexo se existir e verificando se necessita juntar as assinaturas
             var resultSignAndAnexo = ProcessAnexoOrSign(segment.Body, idxSigna);
             assinaturaContinuação = resultSignAndAnexo[0];
-            anexo = resultSignAndAnexo[1];
+            anexo = resultSignAndAnexo[1] != null ? new Anexo(resultSignAndAnexo[1]) : null;
 
             if (assinaturaContinuação != null)
                 assinatura = $"{assinatura} \n {assinaturaContinuação}";
@@ -128,7 +128,8 @@ namespace PdfTextReader.Parser
                 Corpo = body,
                 Assinatura = ProcessListOfSignatures(assinatura),
                 Cargo = cargo,
-                Data = data
+                Data = data,
+                Anexo = anexo
             };
         }
 
