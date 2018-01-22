@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 
@@ -14,12 +15,18 @@ namespace PdfTextReader
         bool anexoConditions = false;
         bool roleConditions = true;
         bool signConditions = true;
+        bool tipoArtigoConditions = true;
         float DocumentsCount = 0;
         float DocumentsCountWithError = 0;
+        string logDir;
+        string XMLErrorsDir;
 
-        public void ValidateArticle(string inputfolder)
+        public void ValidateArticle(string folder)
         {
-            var directory = new DirectoryInfo(inputfolder);
+            logDir = Directory.CreateDirectory($"{folder}/Log").FullName;
+            XMLErrorsDir = Directory.CreateDirectory($"{folder}/XML-Errors").FullName;
+            folder = folder + "/XMLs";
+            var directory = new DirectoryInfo(folder);
             foreach (var file in directory.EnumerateFiles("*.xml"))
             {
                 DocumentsCount++;
@@ -32,7 +39,7 @@ namespace PdfTextReader
         {
             float result = (1 - (error / docs)) * 100;
             string text = $"Article precision: {result.ToString("00.00")}%";
-            File.WriteAllText("bin/ArticlePrecision.txt", text);
+            File.WriteAllText($"{logDir}/ArticlePrecision.txt", text);
         }
 
         void Validate(FileInfo file)
@@ -73,10 +80,14 @@ namespace PdfTextReader
             }
 
 
-            if (!bodyConditions || !titleConditions || !roleConditions || !signConditions)
+            if (!bodyConditions 
+                || !titleConditions 
+                || !roleConditions 
+                || !signConditions 
+                || !tipoArtigoConditions)
             {
                 DocumentsCountWithError++;
-                file.CopyTo($"bin/{file.Name.Replace(".xml", "")}-ISSUE.xml");
+                file.CopyTo($"{XMLErrorsDir}/{file.Name.Replace(".xml", "")}-ISSUE.xml");
             }
         }
 
@@ -135,6 +146,12 @@ namespace PdfTextReader
                 if (text.Replace("o", "O").ToUpper() != text.Replace("o", "O"))
                     roleConditions = true;
             }
+        }
+
+        void CheckTipoArtigo(string text)
+        {
+            if (text.All(Char.IsDigit))
+                tipoArtigoConditions = false;
         }
 
         string[] ExclusiveWords =

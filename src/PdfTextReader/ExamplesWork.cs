@@ -8,14 +8,21 @@ using PdfTextReader.TextStructures;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Text;
 
 namespace PdfTextReader
 {
     class ExamplesWork
     {
-        public static void PrintAllSteps(string name)
+        static string pdfsDir;
+        static string _inputFolder;
+
+        public static void PrintAllSteps(string name, string inputfolder, string outputfolder)
         {
+            pdfsDir = Directory.CreateDirectory($"{outputfolder}/PDFs-Steps").FullName;
+            _inputFolder = inputfolder;
+
             ExamplesWork.Blocks(name);
             ExamplesWork.BlockLines(name);
             ExamplesWork.BlockSets(name);
@@ -32,8 +39,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-01-blocks-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/01-blocks-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
                     .Show(Color.Orange);
@@ -45,8 +52,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-02-blockline-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/02-blockline-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<GroupLines>()
@@ -58,8 +65,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-03-blocksets-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/03-blocksets-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<GroupLines>()
@@ -73,8 +80,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-04-followline-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/04-followline-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<ProcessPdfText>()
                         .ParseBlock<GroupLines>()
@@ -89,8 +96,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-05-breakcolumn-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/05-breakcolumn-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
@@ -111,8 +118,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-06-tables-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/06-tables-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
@@ -136,8 +143,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-07-findtables-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/07-findtables-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
@@ -165,8 +172,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-08-badorders-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/08-badorders-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
@@ -199,8 +206,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-09-orders-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/09-orders-{basename}-output.pdf")
                     .Page(1)
                     .ParsePdf<PreProcessTables>()
                                 .ParseBlock<IdentifyTables>()
@@ -234,8 +241,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-10-ids-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/10-ids-{basename}-output.pdf")
                     .AllPages(page =>
                     {
                         page.ParsePdf<ProcessPdfText>()
@@ -249,8 +256,8 @@ namespace PdfTextReader
         {
             var pipeline = new Execution.Pipeline();
 
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/work/work-11-final-{basename}-output.pdf")
+            pipeline.Input($"{_inputFolder}/{basename}.pdf")
+                    .Output($"{pdfsDir}/11-final-{basename}-output.pdf")
                     .AllPages(page =>
                     {
                         page.ParsePdf<PreProcessTables>()

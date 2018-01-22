@@ -53,10 +53,10 @@ namespace PdfTextReader.Parser
                     if (conteudo.Assinatura != null)
                     {
                         writer.WriteStartElement("Autores");
-                        foreach (var ass in conteudo.Assinatura)
+                        foreach (var assign in conteudo.Assinatura)
                         {
-                            if (ass.Length > 3)
-                                writer.WriteElementString("Assinatura", ass);
+                            if (assign.Length > 3)
+                                writer.WriteElementString("Assinatura", assign);
                         }
                         writer.WriteEndElement();
                     }
