@@ -23,7 +23,7 @@ namespace PdfTextReader
             var pipeline = new Execution.Pipeline();
 
             var result =
-            pipeline.Input($"{inputfolder}/{basename}")
+            pipeline.Input($"{inputfolder}/{basename}.pdf")
                     //.Output($"{outputfolder}/{basename}-output.pdf")
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<ProcessPdfValidation>()
@@ -33,7 +33,7 @@ namespace PdfTextReader
                                   //.Show(Color.Blue)
                     ).ToList();
 
-            //pipeline.SaveOk($"{outputfolder}/{basename}-ok.pdf");
+            pipeline.SaveOk($"{outputfolder}/{basename}-ok.pdf");
             int errors = pipeline.SaveErrors($"{outputfolder}/errors/{basename}-errors.pdf");
 
             pipeline.Done();
