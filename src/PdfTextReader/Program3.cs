@@ -110,6 +110,7 @@ namespace PdfTextReader
                                   .ParseBlock<OrderBlocksets>()
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
+                                  .ParseBlock<OrganizePageLayout>()
                                   .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
