@@ -47,6 +47,7 @@ namespace Validator
             Console.WriteLine();
             Console.WriteLine($"Total files = {filenames.Length}");
             Console.WriteLine($"Total time = {timeSpent}");
+            Console.ReadLine();
         }        
     }
 }
