@@ -28,7 +28,8 @@ namespace Validator
                 { "xml", new ProcessXml() },
                 { "2010", new Process2010() },
                 { "valid2010", new Validate2010() },
-                { "process", new ProcessDefault() }
+                { "process", new ProcessDefault() },
+                { "2016", new Process2016() }
             };
 
             // Get the runner
