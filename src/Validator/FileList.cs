@@ -15,6 +15,15 @@ namespace Validator
             _filePattern = pattern;
         }
 
+        public static string CreateOutputFolder(string outputFolder, string basename)
+        {
+            string outpath = Path.Combine(outputFolder, basename);
+
+            Directory.CreateDirectory(outpath);
+
+            return outpath;
+        }
+
         public File[] EnumFiles(string foldername)
         {
             return RecursiveEnumFiles(foldername).ToArray();
@@ -27,8 +36,9 @@ namespace Validator
             foreach (var file in directory.EnumerateFiles(_filePattern))
             {
                 string filename = file.Name;
-
-                yield return new File(foldername, filename);
+                string basename = Path.GetFileNameWithoutExtension(filename);
+                
+                yield return new File(foldername, basename);
             }
 
             foreach (var childDirectory in directory.EnumerateDirectories())
