@@ -456,6 +456,7 @@ namespace PdfTextReader
             "Representação para Declaração de Indignidade ou de Incompatibilidade",
             "Republicação",
             "Resolução",
+            "Resolucão",
             "Resolução do Senado Federal",
             "Restauração de Autos ",
             "Resultado de Análise",
