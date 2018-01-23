@@ -9,44 +9,46 @@ using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System.Drawing;
 using PdfTextReader.PDFCore;
+using System.IO;
 
 namespace PdfTextReader
 {
     public class ProgramValidator2016
     {
+        static string logDir;
+        static string xmlDir;
+
         public static void Process(string basename, string inputfolder, string outputfolder)
         {
+            logDir = Directory.CreateDirectory($"{outputfolder}/Log").FullName;
+            xmlDir = Directory.CreateDirectory($"{outputfolder}/XMLs").FullName;
+
             PdfReaderException.ContinueOnException();
 
+            ExamplesWork.PrintAllSteps(basename, inputfolder, outputfolder);
+
             var conteudos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
-                                .Log<AnalyzeLines>($"{outputfolder}/{basename}-lines.txt")
+                                .Log<AnalyzeLines>($"{logDir}/{basename}-lines.txt")
                             .ConvertText<CreateStructures, TextStructure>()
-                                .Log<AnalyzeStructuresCentral>($"{outputfolder}/{basename}-central.txt")
-                            //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
+                                .Log<AnalyzeStructuresCentral>($"{logDir}/{basename}-central.txt")
+                            .PrintAnalytics($"{logDir}/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"{outputfolder}/{basename}-tree.txt")
-                                .Log<AnalyzeSegmentStats>($"{outputfolder}/{basename}-segments-stats.txt")
-                                .Log<AnalyzeSegments2>($"{outputfolder}/{basename}-segments.csv")
+                                .Log<AnalyzeSegmentTitles>($"{logDir}/{basename}-tree.txt")
+                                .Log<AnalyzeSegmentStats>($"{logDir}/{basename}-segments-stats.txt")
+                                .Log<AnalyzeSegments2>($"{logDir}/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ConvertText<TransformConteudo, Conteudo>()
                             .ToList();
-            
             //Create XML
             var createArticle = new TransformArtigo2();
             var artigos = createArticle.Create(conteudos);
-            createArticle.CreateXML(artigos, outputfolder, basename);
+            createArticle.CreateXML(artigos, xmlDir, basename);
             
             pipeline.Done();
 
             var validator = new ProgramValidatorXML();
             validator.ValidateArticle(outputfolder);
         }
-
-        public static void Validate(string basename, string inputfolder, string outputfolder)
-        {
-            var validator = new ProgramValidatorXML();
-            validator.ValidateArticle($"{inputfolder}");
-        }   
         
         static PipelineText<TextLine> GetTextLines(string basename, string inputfolder, string outputfolder, out Execution.Pipeline pipeline)
         {

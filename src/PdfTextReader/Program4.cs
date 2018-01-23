@@ -26,7 +26,7 @@ namespace PdfTextReader
 
             Examples.FollowText(basename);
             Examples.ShowHeaderFooter(basename);
-            ExamplesWork.PrintAllSteps(basename);
+            ExamplesWork.PrintAllSteps(basename, "bin", "bin");
 
             PdfReaderException.ContinueOnException();
 
