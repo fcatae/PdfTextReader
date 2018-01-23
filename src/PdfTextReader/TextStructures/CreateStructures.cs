@@ -56,8 +56,10 @@ namespace PdfTextReader.TextStructures
                 //    if (!IsZero(_structure.MarginLeft - line.MarginLeft))
                 //        return false;
                 //}
-            }   
+            }
 
+            // update the current space        
+            _structure.AfterSpace = line.AfterSpace;
 
             return true;
         }
