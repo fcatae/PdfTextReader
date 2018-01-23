@@ -317,7 +317,7 @@ namespace PdfTextReader.Parser
                 }
             }
 
-            //Caso seja 
+
             var match2 = Regex.Match(segment.Body[0].Text, @"(.*? [a-zA-Z]* [0-9]* [a-zA-Z]* [a-zA-Z]* [a-zA-Z]* [0-9]*)");
 
             if (match2.Success)
@@ -331,6 +331,17 @@ namespace PdfTextReader.Parser
                     segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
                 }
             }
+
+            //If doc is PAUTA DE JULGAMENTO
+            if (segment.Body[0].Text.Substring(0, 19) == "PAUTA DE JULGAMENTO")
+            {
+                segment.Body[0].TextAlignment = TextAlignment.CENTER;
+                List<TextStructure> newTitle = segment.Title.ToList();
+                newTitle.Add(segment.Body[0]);
+                segment.Title = newTitle.ToArray();
+                segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+            }
+
             return segment;
         }
 
