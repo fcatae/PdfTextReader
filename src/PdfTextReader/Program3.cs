@@ -56,6 +56,7 @@ namespace PdfTextReader
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
+                            //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
                             //.Log<AnalyzeStructures>(Console.Out)
                             //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
                             //.PrintAnalytics($"bin/{basename}-print-analytics.txt")

@@ -67,6 +67,16 @@ namespace PdfTextReader.TextStructures
 
             int index_end = _indexes.Count - 1;
 
+            while(index_end >= 0)
+            {
+                if (_indexOutputType[index_end] == typeof(T))
+                    break;
+                index_end--;
+            }
+
+            if (index_end < 0)
+                throw new InvalidOperationException();
+            
             if (_indexOutputType[index_end] != typeof(T))
                 throw new InvalidOperationException();
 
