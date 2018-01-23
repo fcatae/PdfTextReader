@@ -22,7 +22,7 @@ namespace PdfTextReader.Parser
         public string Departamento { get; set; }
 
         //Just for while
-        public Anexo Anexo { get; set; }
+        public List<Anexo> Anexos { get; set; }
 
         public override string ToString() => Titulo;
     }

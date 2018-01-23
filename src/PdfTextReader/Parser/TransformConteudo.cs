@@ -17,7 +17,7 @@ namespace PdfTextReader.Parser
 
         public Conteudo Create(List<TextSegment> segments)
         {
-            TextSegment segment = segments[0];
+            TextSegment segment = ProcessSingularBodyBehaviors(segments[0]);
 
             ProcessExclusiveText(segment.Body);
 
@@ -29,7 +29,7 @@ namespace PdfTextReader.Parser
             string assinatura = null;
             string cargo = null;
             string data = null;
-            Anexo anexo = null;
+            List<Anexo> anexos = null;
             //just for process results
             string assinaturaContinuação = null;
             List<string> resultProcess = new List<string>() { null, null, null };
@@ -48,7 +48,7 @@ namespace PdfTextReader.Parser
                 {
                     hierarchy = hierarchy + segment.Title[i].Text + ":";
                 }
-                titulo = segment.Title[idxTitle].Text;
+                titulo = ProcessSingularTitles(segment.Title, segment.Title[idxTitle].Text);
             }
 
             //Definindo Caput
@@ -114,7 +114,11 @@ namespace PdfTextReader.Parser
             //Definindo o Anexo se existir e verificando se necessita juntar as assinaturas
             var resultSignAndAnexo = ProcessAnexoOrSign(segment.Body, idxSigna);
             assinaturaContinuação = resultSignAndAnexo[0];
-            //anexo = resultSignAndAnexo[1] != null ? new Anexo(resultSignAndAnexo[1]) : null;
+            anexos = new List<Anexo>();
+            if (resultSignAndAnexo[1] != null)
+            {
+                anexos.Add(new Anexo(resultSignAndAnexo[1]));
+            }
 
             if (assinaturaContinuação != null)
                 assinatura = $"{assinatura} \n {assinaturaContinuação}";
@@ -137,7 +141,7 @@ namespace PdfTextReader.Parser
                 Assinatura = ProcessListOfSignatures(assinatura),
                 Cargo = cargo,
                 Data = data,
-                Anexo = anexo
+                Anexos = anexos
             };
         }
 
@@ -247,6 +251,48 @@ namespace PdfTextReader.Parser
                 }
             }
             return null;
+        }
+
+        string ProcessSingularTitles(TextStructure[] segmentTitles, string title)
+        {
+            string newTitle = null;
+
+            //If title was single data (e.g. "Em 25 de Dezembro de 2016")
+            var match = Regex.Match(title, @"(Em \d\d de [a-zA-Z]+ de \d{4})");
+            //Get the last position before title and concat with it.
+            if (match.Success)
+                newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
+
+
+            //If title is specific like "Relação N°"
+            var match2 = Regex.Match(title, @"(RELAÇÃO (No|N°|Nº)- [0-9]*\/[0-9]*)");
+            //Get the last position before title and concat with it.
+            if (match2.Success)
+                newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
+
+            if (newTitle == null)
+            {
+                return title;
+            }
+            else
+            {
+                return newTitle;
+            }
+        }
+
+        TextSegment ProcessSingularBodyBehaviors(TextSegment segment)
+        {
+            var match = Regex.Match(segment.Body[0].Text, @"(.*? (No|N°|Nº) ([0-9]+\.?(\/)?[0-9]*), [a-zA-Z]* [0-9]* [a-zA-Z]* [a-zA-Z]* [a-zA-Z]* [0-9]*)");
+
+            if (match.Success)
+            {
+                segment.Body[0].TextAlignment = TextAlignment.CENTER;
+                List<TextStructure> newTitle = segment.Title.ToList();
+                newTitle.Add(segment.Body[0]);
+                segment.Title = newTitle.ToArray();
+                segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+            }
+            return segment;
         }
 
         public void Init(TextSegment line)

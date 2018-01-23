@@ -29,7 +29,7 @@ namespace PdfTextReader.Parser
                 {
                     Metadados = metadados,
                     Conteudo = conteudo,
-                    Anexo = conteudo.Anexo
+                    Anexos = conteudo.Anexos
                 };
 
                 if (IsArticle(article))
