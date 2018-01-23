@@ -116,70 +116,7 @@ namespace PdfTextReader
 
             return result;
         }
-
-        public static void ProcessStatsManyFolders(string basename)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - ProcessStatsManyFolders");
-            Console.WriteLine();
-            
-            var artigos = GetTextManyFolders(basename, out Execution.Pipeline pipeline)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
-                            .ToList();
-
-            pipeline.Done();
-
-            //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
-        }
-
-
-        static PipelineText<TextLine> GetTextManyFolders(string basename, out Execution.Pipeline pipeline)
-        {
-            pipeline = new Execution.Pipeline();
-
-            var result =
-            pipeline.Input($"{basename}.pdf")
-                    .Output($"{basename}-output.pdf")
-                    .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
-                              page.ParsePdf<PreProcessTables>()
-                                  .ParseBlock<IdentifyTables>()
-                              .ParsePdf<PreProcessImages>()
-                                      .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
-                                  .ParseBlock<RemoveOverlapedImages>()
-                              .ParsePdf<ProcessPdfText>()
-                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
-                                  .ParseBlock<RemoveSmallFonts>()
-                                  //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
-                                  .ParseBlock<MergeTableText>()
-                                  //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
-                                  .ParseBlock<HighlightTextTable>()
-                                  .ParseBlock<RemoveTableText>()
-                                  .ParseBlock<GroupLines>()
-                                      .Show(Color.Yellow)
-                                      .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                                  .ParseBlock<RemoveHeaderImage>()
-
-                                  .ParseBlock<FindInitialBlocksetWithRewind>()
-                                      .Show(Color.Gray)
-                                  .ParseBlock<BreakColumnsLight>()
-                                      //.ParseBlock<BreakColumns>()
-                                      .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                                      .ParseBlock<RemoveFooter>()
-                                  .ParseBlock<AddTableSpace>()
-                                  .ParseBlock<AddImageSpace>()
-                                  .ParseBlock<BreakInlineElements>()
-                                  .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
-                                  .ParseBlock<OrderBlocksets>()
-                                  .Show(Color.Orange)
-                                  .ShowLine(Color.Black)
-                    );
-
-            return result;
-        }
-
+        
         public static void TesteArtigo()
         {
             Console.WriteLine();
