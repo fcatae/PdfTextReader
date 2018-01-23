@@ -70,7 +70,7 @@ namespace PdfTextReader.PDFCore
                         // might be inaccurate 
                         FontFullName = b.FontFullName,
                         FontName = b.FontName,
-                        FontSize = b.FontSize,
+                        FontSize = b.FontSize, // BE CAREFUL!
                         FontStyle = b.FontStyle
                         // now the settings are done in GroupFontLineHelper
                     };
@@ -138,7 +138,7 @@ namespace PdfTextReader.PDFCore
             float x1 = before.GetX() + before.GetWidth();
             float x2 = after.GetX();
             float distance = x2 - x1;
-
+            
             if (wordSpacing == 0)
             {
                 // WEIRD, but assume it is at the end of the line?

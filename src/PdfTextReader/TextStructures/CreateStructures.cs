@@ -160,11 +160,14 @@ namespace PdfTextReader.TextStructures
             // this is quite accurate
             bool isCentered = (lineset.All(t => IsZeroCenter(t.MarginLeft - t.MarginRight))
                             && lineset.Any(t => !IsZeroCenter(t.MarginLeft)));
-
+            
             if ( isCentered )
             {
                 _structure.TextAlignment = TextAlignment.CENTER;
             }
+
+            
+
 
             var textArray = lineset.Select(t => t.Text);
 
