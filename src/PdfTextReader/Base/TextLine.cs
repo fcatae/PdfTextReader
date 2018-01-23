@@ -11,6 +11,7 @@ namespace PdfTextReader.Base
         public string Text { get; set; }
         public float MarginRight { get; set; }
         public float MarginLeft { get; set; }
+        public float CenteredAt { get; set; }        
         public float? AfterSpace { get; set; }
         public float? BeforeSpace { get; set; }
         public string FontStyle { get; set; }

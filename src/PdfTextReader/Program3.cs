@@ -46,6 +46,7 @@ namespace PdfTextReader
             Console.WriteLine();
 
             //Extract(basename, 173);
+            ExamplesPipeline.Extract(basename, 10);
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
@@ -56,6 +57,7 @@ namespace PdfTextReader
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
+                            //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
                             //.Log<AnalyzeStructures>(Console.Out)
                             //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
                             //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
@@ -184,38 +186,6 @@ namespace PdfTextReader
             return result;
         }
         
-        public static void TesteArtigo()
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - TesteArtigo");
-            Console.WriteLine();
-
-            string basename = "p40";
-
-            var artigos = Examples.GetTextLines(basename)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<TransformArtigo, Conteudo>()
-                            .ToList();
-        }
-
-        public static void SaveXml()
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - SaveXml");
-            Console.WriteLine();
-
-            string basename = "pgfull";
-
-            var artigos = Examples.GetTextLines(basename)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<TransformArtigo, Conteudo>()
-                                .DebugPrint()
-                            .ToList();            
-
-            //var procParser = new ProcessParser();
-            //procParser.XMLWriterMultiple(artigos, $"bin/{basename}/{basename}-artigo");
-        }
-
         public static void Extract(string basename, int page)
         {
             Console.WriteLine();

@@ -76,6 +76,8 @@ namespace PdfTextReader.TextStructures
                     PageInfo = pageInfo
                 };
 
+                tl.CenteredAt = 0.5f * (tl.MarginLeft - tl.MarginRight);
+
                 lines.Add(tl);
 
                 if (last_tl != null)
