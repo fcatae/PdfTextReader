@@ -42,22 +42,13 @@ namespace Validator
             {
                 Console.WriteLine($"XML OK  --------- {_basename}");
                 successcounter++;
-
             }
-
 
             ValidateAnexoArticles(article);
 
-
-
-
-
-
-
-
+           
 
             Console.WriteLine($"Output xml file = {_basename}");
-
 
         }
 
@@ -65,8 +56,6 @@ namespace Validator
         {
 
             var xmlFile = _inputFolder + "\\" + _basename + ".xml";
-
-          
 
             using (StreamReader sr = new StreamReader(xmlFile))
             {
@@ -77,6 +66,8 @@ namespace Validator
                 var caput = FindCaputArticles(article);
                 var body = FindBodyArticles(article);
 
+
+                FindSignatureArticles(article);
 
                 return new Article()
                 {
@@ -181,8 +172,48 @@ namespace Validator
 
         }
 
+        void FindSignatureArticles(string article)
+        {
+            var pattern = @"<Assinatura>.*?(?=</Assinatura>)";
+            Regex rgx = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
-       static void ValidateAnexoArticles(Article article)
+            MatchCollection matches = rgx.Matches(article);
+
+
+            if (matches.Count > 0)
+            {
+             foreach (Match match in matches)
+                {
+                    var signature = match.Value;
+                    signature = signature.Replace("<Assinatura>", "");
+                    signature = signature.Replace("</Assinatura>", "");
+
+                    var sigA = signature.Substring(1,2);
+                    var sigB = signature.Substring(1,2);
+                    sigB = sigB.ToLower();
+
+                    if (sigA == sigB)
+                    {
+                        errorcounter++;
+                        ErrorLogFile($"Signature is wrong -------- {_xmlFile}");
+                    }
+                 }
+
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+        static void ValidateAnexoArticles(Article article)
         {
 
             if (article.Title.ToLower().Contains("anexo") == true)
