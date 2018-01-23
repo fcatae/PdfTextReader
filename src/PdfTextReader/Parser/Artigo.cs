@@ -8,6 +8,6 @@ namespace PdfTextReader.Parser
     {
         public Metadados Metadados { get; set; }
         public Conteudo Conteudo { get; set; }
-        public Anexo Anexo { get; set; }
+        public List<Anexo> Anexos { get; set; }
     }
 }

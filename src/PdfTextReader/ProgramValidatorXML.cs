@@ -12,7 +12,7 @@ namespace PdfTextReader
         bool bodyConditions = false;
         bool titleConditions = false;
         bool hierarchyConditions = false;
-        bool anexoConditions = false;
+        bool anexoConditions = true;
         bool roleConditions = true;
         bool signConditions = true;
         bool tipoArtigoConditions = true;
@@ -73,9 +73,14 @@ namespace PdfTextReader
                         }
 
                     }
-                    //Checagem do Anexo
-                    //if (item.Name == "Text")
-                    //    CheckAnexo(item.Value);
+
+                    if (item.Name == "Anexos")
+                    {
+                        foreach (var anexo in item.Elements())
+                        {
+                            //CheckAnexo();
+                        }
+                    }
                 }
             }
 
@@ -124,8 +129,8 @@ namespace PdfTextReader
 
         void CheckAnexo(string text)
         {
-            if (!String.IsNullOrWhiteSpace(text))
-                anexoConditions = true;
+            if (String.IsNullOrWhiteSpace(text))
+                anexoConditions = false;
         }
 
         void CheckSigns(string text)
@@ -279,6 +284,7 @@ namespace PdfTextReader
             "Convênio",
             "Correição Parcial",
             "Decisão",
+            "Decisões",
             "Decisão Executiva",
             "Decisão Normativa",
             "Decisão/Despacho",
@@ -292,6 +298,7 @@ namespace PdfTextReader
             "Demonstração Contábil",
             "Desaforamento",
             "Despacho",
+            "Despachos",
             "Despacho Interministerial",
             "Edital",
             "Edital da Justiça Gratuita (Art. 32 Portaria 268/2009-IN)",
@@ -463,6 +470,7 @@ namespace PdfTextReader
             "Resultado de Proposta Técnica",
             "Resultado de Qualificação",
             "Retificação",
+            "Retificações",
             "Retificação (de Edital)",
             "Retificação de Pauta",
             "Retificação e Título de Outorga de Delegação",

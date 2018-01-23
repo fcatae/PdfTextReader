@@ -24,6 +24,7 @@ namespace PdfTextReader.Parser
                 {
                     Conteudo conteudo = artigo.Conteudo;
                     Metadados metadados = artigo.Metadados;
+                    List<Anexo> anexos = artigo.Anexos;
 
 
                     //Writing Metadata
@@ -67,18 +68,23 @@ namespace PdfTextReader.Parser
 
                     writer.WriteEndElement();
 
-                    //Writing Anexo
-                    writer.WriteStartElement("Anexo");
-                    if (conteudo.Anexo != null)
+                    //Writing Anexos
+                    if (anexos.Count > 0)
                     {
-                        if (conteudo.Anexo.HierarquiaTitulo != null)
-                            writer.WriteElementString("Hierarquia", conteudo.Anexo.HierarquiaTitulo);
-                        if (conteudo.Anexo.Titulo != null)
-                            writer.WriteElementString("Titulo Anexo", conteudo.Anexo.Titulo);
-                        if (conteudo.Anexo.Texto != null)
-                            writer.WriteElementString("Texto", conteudo.Anexo.Texto);
+                        writer.WriteStartElement("Anexos");
+                        foreach (Anexo item in anexos)
+                        {
+                            writer.WriteStartElement("Anexo");
+                            if (item.HierarquiaTitulo != null)
+                                writer.WriteElementString("Hierarquia", item.HierarquiaTitulo);
+                            if (item.Titulo != null)
+                                writer.WriteElementString("Titulo", item.Titulo);
+                            if (item.Texto != null)
+                                writer.WriteElementString("Texto", item.Texto);
+                            writer.WriteEndElement();
+                        }
+                        writer.WriteEndElement();
                     }
-                    writer.WriteEndElement();
                 }
 
                 writer.WriteEndElement();

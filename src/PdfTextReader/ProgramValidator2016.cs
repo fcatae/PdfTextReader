@@ -38,18 +38,19 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegments2>($"{logDir}/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ConvertText<TransformConteudo, Conteudo>()
+                            .ConvertText<AggregateAnexo, Conteudo>()
                             .ToList();
             //Create XML
             var createArticle = new TransformArtigo2();
             var artigos = createArticle.Create(conteudos);
             createArticle.CreateXML(artigos, xmlDir, basename);
-            
+
             pipeline.Done();
 
             var validator = new ProgramValidatorXML();
             validator.ValidateArticle(outputfolder);
         }
-        
+
         static PipelineText<TextLine> GetTextLines(string basename, string inputfolder, string outputfolder, out Execution.Pipeline pipeline)
         {
             pipeline = new Execution.Pipeline();
@@ -92,6 +93,6 @@ namespace PdfTextReader
                     );
 
             return result;
-        }        
+        }
     }
 }

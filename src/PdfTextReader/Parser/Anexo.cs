@@ -17,9 +17,11 @@ namespace PdfTextReader.Parser
             lines = CleanVoids(lines);
 
             HierarquiaTitulo = GetTitleTree(lines);
-            Titulo = lines[GetTitleIndex(lines)];
+            Titulo = GetTitleIndex(lines) >= 0 ? lines[GetTitleIndex(lines)] : null;
             Texto = GetBody(lines);
         }
+
+        public Anexo() { }
 
         string[] CleanVoids(string[] lines)
         {
@@ -36,8 +38,11 @@ namespace PdfTextReader.Parser
             int idxTitle = -1;
             foreach (string line in lines)
             {
-                if (line.Substring(0, 5).ToLower() == "anexo")
-                    idxTitle = lines.ToList().IndexOf(line);
+                if (line.Count() > 5)
+                {
+                    if (line.Substring(0, 5).ToLower() == "anexo")
+                        idxTitle = lines.ToList().IndexOf(line);
+                }
             }
             return idxTitle;
         }
