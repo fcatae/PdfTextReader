@@ -63,11 +63,12 @@ namespace PdfTextReader
                             //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                             //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
+                            .Log<AnalyzeTreeStructure>(Console.Out)
                             .ToList();
             
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
-            ShowTextSegmentHierarquia(artigos, pipeline);
+            //ShowTextSegmentHierarquia(artigos, pipeline);
             //ShowTextSegmentTitulos(artigos, pipeline);
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();                        
@@ -82,6 +83,7 @@ namespace PdfTextReader
                 Console.WriteLine($" P.{p}: {artigos[i].Title.LastOrDefault()?.Text}");
             }
         }
+
         static void ShowTextSegmentHierarquia(IList<TextSegment> artigos, Execution.Pipeline pipeline)
         {
             Stack<string> tree = new Stack<string>();
