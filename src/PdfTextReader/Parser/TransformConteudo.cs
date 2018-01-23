@@ -26,12 +26,10 @@ namespace PdfTextReader.Parser
             string body = null;
             string caput = null;
             string possibleData = null;
-            string assinatura = null;
-            string cargo = null;
+            List<Autor> autores = null;
             string data = null;
             List<Anexo> anexos = null;
             //just for process results
-            string assinaturaContinuação = null;
             List<string> resultProcess = new List<string>() { null, null, null };
 
 
@@ -71,13 +69,12 @@ namespace PdfTextReader.Parser
                 idxSigna = segment.Body.ToList().FindLastIndex(s => s.TextAlignment == TextAlignment.JUSTIFY) + 1;
             }
 
-
+            autores = new List<Autor>();
             if (idxSigna > 0 && idxSigna < segment.Body.Count())
             {
                 resultProcess.Clear();
                 resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
-                assinatura = resultProcess[0];
-                cargo = resultProcess[1];
+                autores.Add(new Autor() { Assinatura = resultProcess[0], Cargo = resultProcess[1] });  
                 data = resultProcess[2];
             }
 
@@ -113,15 +110,20 @@ namespace PdfTextReader.Parser
 
             //Definindo o Anexo se existir e verificando se necessita juntar as assinaturas
             var resultSignAndAnexo = ProcessAnexoOrSign(segment.Body, idxSigna);
-            assinaturaContinuação = resultSignAndAnexo[0];
             anexos = new List<Anexo>();
-            if (resultSignAndAnexo[1] != null)
+            if (resultSignAndAnexo[1].Count() > 0)
             {
-                anexos.Add(new Anexo(resultSignAndAnexo[1]));
+                anexos.Add(ConcatAnexo(resultSignAndAnexo[1]));
             }
 
-            if (assinaturaContinuação != null)
-                assinatura = $"{assinatura} \n {assinaturaContinuação}";
+            if (resultSignAndAnexo[0].Count() > 0)
+            {
+                var result = ProcessListOfSignatures(resultSignAndAnexo[0].ToList());
+                foreach (Autor item in result)
+                {
+                    autores.Add(item);
+                }
+            }
 
 
             //Verificando se Data ficou na assinatura
@@ -138,8 +140,7 @@ namespace PdfTextReader.Parser
                 Titulo = titulo,
                 Caput = caput,
                 Corpo = body,
-                Assinatura = ProcessListOfSignatures(assinatura),
-                Cargo = cargo,
+                Autor = autores,
                 Data = data,
                 Anexos = anexos
             };
@@ -162,10 +163,10 @@ namespace PdfTextReader.Parser
             return result;
         }
 
-        List<string> ProcessAnexoOrSign(TextStructure[] structures, int idxSigna)
+        List<TextStructure[]> ProcessAnexoOrSign(TextStructure[] structures, int idxSigna)
         {
-            string sign = null;
-            string anexo = null;
+            List<TextStructure> sign = new List<TextStructure>();
+            List<TextStructure> anexo = new List<TextStructure>();
             IEnumerable<TextStructure> discover;
 
             if (idxSigna > 0 && structures.Count() > idxSigna)
@@ -176,15 +177,15 @@ namespace PdfTextReader.Parser
                 {
                     if (item.TextAlignment == TextAlignment.JUSTIFY)
                     {
-                        anexo = $"{anexo} \n{item.Text}";
+                        anexo.Add(item);
                     }
                     else
                     {
-                        sign = $"{sign} \n{item.Text}";
+                        sign.Add(item);
                     }
                 }
             }
-            return new List<string>() { sign, anexo };
+            return new List<TextStructure[]>() { sign.ToArray(), anexo.ToArray() };
         }
 
         void ProcessExclusiveText(TextStructure[] structures)
@@ -237,20 +238,35 @@ namespace PdfTextReader.Parser
             return new List<string>() { signature, role, date };
         }
 
-        string[] ProcessListOfSignatures(string signature)
+        List<Autor> ProcessListOfSignatures(List<TextStructure> signatures)
         {
-            if (signature != null)
+            List<Autor> autores = new List<Autor>();
+            foreach (TextStructure item in signatures)
             {
-                if (signature.Contains("\n"))
+                Autor autor = new Autor();
+                foreach (var line in item.Lines)
                 {
-                    return signature.Split("\n");
-                }
-                else
-                {
-                    return new string[] { signature };
+                    if (line.Text.ToUpper() == line.Text)
+                    {
+                        if (!String.IsNullOrWhiteSpace(autor.Assinatura))
+                        {
+                            autor.Assinatura = line.Text;
+                        }
+                        else
+                        {
+                            autor = new Autor() { Assinatura = line.Text };
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        autor.Cargo = line.Text;
+                    }
+
+                    autores.Add(autor);
                 }
             }
-            return null;
+            return autores;
         }
 
         string ProcessSingularTitles(TextStructure[] segmentTitles, string title)
@@ -308,6 +324,11 @@ namespace PdfTextReader.Parser
                 }
             }
             return segment;
+        }
+
+        Anexo ConcatAnexo(TextStructure[] structures)
+        {
+            return new Anexo(String.Join("\n", structures.Take(structures.Count()).Select(t => t.Text))) { };
         }
 
         public void Init(TextSegment line)

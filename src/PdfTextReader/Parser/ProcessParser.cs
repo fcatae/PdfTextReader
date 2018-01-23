@@ -51,18 +51,38 @@ namespace PdfTextReader.Parser
                         writer.WriteElementString("Caput", conteudo.Caput);
                     if (conteudo.Corpo != null)
                         writer.WriteElementString("Corpo", conteudo.Corpo);
-                    if (conteudo.Assinatura != null)
+                    if (conteudo.Autor.Count > 0)
                     {
                         writer.WriteStartElement("Autores");
-                        foreach (var assign in conteudo.Assinatura)
+                        foreach (Autor autor in conteudo.Autor)
                         {
-                            if (assign.Length > 3)
-                                writer.WriteElementString("Assinatura", assign);
+                            writer.WriteStartElement("Autor");
+                            if (autor.Cargo != null)
+                            {
+                                if (autor.Assinatura == null)
+                                {
+                                    writer.WriteString(ConvertBreakline2Space(autor.Cargo));
+                                }
+                                else
+                                {
+                                    writer.WriteAttributeString("Cargo", ConvertBreakline2Space(autor.Cargo));
+                                    writer.WriteString(ConvertBreakline2Space(autor.Assinatura));
+                                }
+                            }
+                            else
+                            {
+                                writer.WriteString(ConvertBreakline2Space(autor.Assinatura));
+                            }
+                                
+                            writer.WriteEndElement();
+
+                            //if (autor.Assinatura != null && autor.Assinatura.Length > 3)
+                            //    writer.WriteElementString("Assinatura", autor.Assinatura);
+                            //if (autor.Cargo != null)
+                            //    writer.WriteElementString("Cargo", ConvertBreakline2Space(autor.Cargo));
                         }
                         writer.WriteEndElement();
                     }
-                    if (conteudo.Cargo != null)
-                        writer.WriteElementString("Cargo", ConvertBreakline2Space(conteudo.Cargo));
                     if (conteudo.Data != null)
                         writer.WriteElementString("Data", conteudo.Data);
 

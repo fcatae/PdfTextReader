@@ -13,8 +13,7 @@ namespace PdfTextReader.Parser
         public string Hierarquia { get; set; }
         public string Titulo { get; set; }
         public string Corpo { get; set; }
-        public string[] Assinatura { get; set; }
-        public string Cargo { get; set; }
+        public List<Autor> Autor { get; set; }
         public string Caput { get; set; }
         public string Grade { get; set; }
         public string Data { get; set; }

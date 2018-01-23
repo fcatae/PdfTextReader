@@ -71,8 +71,6 @@ namespace PdfTextReader.Parser
                 Titulo = titulo,
                 Caput = caput,
                 Corpo = body,
-                //Assinatura = resultProcess[0],
-                Cargo = resultProcess[1],
                 Data = resultProcess[2]
             };
         }
