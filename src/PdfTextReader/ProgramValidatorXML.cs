@@ -74,7 +74,7 @@ namespace PdfTextReader
 
                     }
 
-                    if (item.Name == "Anexos")
+                    if (item.Name == "Anexo")
                     {
                         foreach (var anexo in item.Elements())
                         {
