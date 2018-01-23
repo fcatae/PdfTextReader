@@ -4,8 +4,9 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    interface IConvertBlock
+    class TextPageInfo
     {
-        IEnumerable<TextLine> ProcessPage(int pageNumber, BlockPage page);
+        public int PageNumber { get; set; }
+        public int BlockId { get; set; }
     }
 }

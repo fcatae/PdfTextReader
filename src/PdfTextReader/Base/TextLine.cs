@@ -15,6 +15,7 @@ namespace PdfTextReader.Base
         public float? BeforeSpace { get; set; }
         public string FontStyle { get; set; }
         public bool HasBackColor { get; set; }
+        public TextPageInfo PageInfo { get; set; }
 
         public IBlock Block { get; set; }
 
