@@ -487,6 +487,8 @@ namespace PdfTextReader
             "Resolução",
             "Resolucão",
             "Resolução do Senado Federal",
+            "Resoluções",
+            "Resolucões",
             "Restauração de Autos ",
             "Resultado de Análise",
             "Resultado de Avaliação Técnica",
