@@ -71,6 +71,7 @@ namespace PdfTextReader.TextStructures
                     MarginRight = maxx - (bl.GetX() + bl.GetWidth()),
                     BeforeSpace = (last_tl != null) ? (float?)(last_y - bl.GetH() - bl.FontSize) : null,
                     AfterSpace = null,
+                    HasLargeSpace = bl.HasLargeSpace,
                     Block = bl,
                     HasBackColor = bl.HasBackColor,
                     PageInfo = pageInfo

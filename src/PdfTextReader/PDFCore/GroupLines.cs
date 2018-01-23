@@ -8,6 +8,7 @@ namespace PdfTextReader.PDFCore
 {
     class GroupLines : IProcessBlock
     {
+        const float LARGE_SPACE_BETWEEN_WORDS = 10f;
         const float MINIMUM_CHARACTER_DISTANCE = 5f;
         const float SAME_LINE_DISTANCE = 0.1f;
 
@@ -67,6 +68,8 @@ namespace PdfTextReader.PDFCore
 
                         HasBackColor = b.HasBackColor,
 
+                        HasLargeSpace = false,
+
                         // might be inaccurate 
                         FontFullName = b.FontFullName,
                         FontName = b.FontName,
@@ -102,6 +105,11 @@ namespace PdfTextReader.PDFCore
                     if (line.Width <= 0)
                         PdfReaderException.AlwaysThrow("line.Width <= 0");
 
+                    bool couldBeTable = ShouldAddLargeSpace(last, block);
+
+                    if (couldBeTable)
+                        line.HasLargeSpace = true;
+
                     // walking backwards
                     // very strict check: sometimes the start overlaps with the ending
                     //if (startOfBlock < endOfLine)
@@ -130,6 +138,15 @@ namespace PdfTextReader.PDFCore
                 return 0;
 
             return (diff > 0) ? 1 : -1;
+        }
+
+        bool ShouldAddLargeSpace(IBlock before, IBlock after)
+        {
+            float x1 = before.GetX() + before.GetWidth();
+            float x2 = after.GetX();
+            float distance = x2 - x1;
+            
+            return (distance > LARGE_SPACE_BETWEEN_WORDS);
         }
 
         bool ShouldAddSpace(IBlock before, IBlock after)
