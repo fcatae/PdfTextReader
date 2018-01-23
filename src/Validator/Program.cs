@@ -8,8 +8,6 @@ namespace Validator
 {
     public class Program
     {
-      public  static double errorcounter { get; set; } = 0.00;
-      public  static double successcounter { get; set; } = 0.00;
 
         static void Main(string[] args)
         {
@@ -53,11 +51,11 @@ namespace Validator
             Console.WriteLine($"Total files = {filenames.Length}");
             Console.WriteLine($"Total time = {timeSpent}");
 
-            var totalcounter = successcounter + errorcounter;
+            var totalcounter = ProcessXml.successcounter + ProcessXml.errorcounter;
 
             double result = 0.00;
 
-            result = ((totalcounter - errorcounter) / totalcounter);
+            result = ((totalcounter - ProcessXml.errorcounter) / totalcounter);
 
             Console.WriteLine(@"Success Rate ----- {0:N2}", result);
             Console.ReadLine();

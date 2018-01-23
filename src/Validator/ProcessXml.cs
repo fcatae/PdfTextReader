@@ -13,7 +13,9 @@ namespace Validator
         public string _inputFolder { get; set; }
         public string _basename { get; set; }
 
-        public static string _xmlFile { get; set; } 
+        public static string _xmlFile { get; set; }
+        public static double errorcounter { get; set; } = 0.00;
+        public static double successcounter { get; set; } = 0.00;
 
 
 
@@ -33,13 +35,13 @@ namespace Validator
             if (article.Body == null || article.Title == null || article.Caput == null)
             {
 
-                Program.errorcounter++;
+                errorcounter++;
                 ErrorLogFile($"Article Title or Body or Caput are null ------- File: +  {xmlFile}");
             }
             else
             {
                 Console.WriteLine($"XML OK  --------- {_basename}");
-                Program.successcounter++;
+                successcounter++;
 
             }
 
@@ -55,6 +57,11 @@ namespace Validator
 
 
             Console.WriteLine($"Output xml file = {_basename}");
+
+            if(Program.errorcounter > 0)
+            {
+
+            }
 
         }
 
@@ -166,7 +173,7 @@ namespace Validator
 
                 if(body.Length < 55)
                 {
-                    Program.errorcounter++;
+                    errorcounter++;
                     ErrorLogFile($"Body content are less than 55 words -------- {_xmlFile}");
                 }
 
