@@ -58,10 +58,6 @@ namespace Validator
 
             Console.WriteLine($"Output xml file = {_basename}");
 
-            if(Program.errorcounter > 0)
-            {
-
-            }
 
         }
 
@@ -211,9 +207,9 @@ namespace Validator
 
                     if (matchResult.Success == true)
                     {
-                    Program.errorcounter++;
-                    ErrorLogFile($"In the ANEXO article was found another Title Article at the end of the BODY structure ------- File: +  {_xmlFile}");
-
+                        errorcounter++;
+                        ErrorLogFile($"In the ANEXO article was found another Title Article at the end of the BODY structure ------- File: +  {_xmlFile}");
+            
                     }
 
             }
