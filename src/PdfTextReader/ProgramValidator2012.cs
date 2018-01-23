@@ -32,7 +32,7 @@ namespace PdfTextReader
                             .ToList();
             
             //Create XML
-            var createArticle = new TransformArtigo2();
+            var createArticle = new TransformArtigo();
             var artigos = createArticle.Create(conteudos);
             createArticle.CreateXML(artigos, outputfolder, basename);
             

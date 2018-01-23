@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace PdfTextReader.Parser
 {
-    class TransformArtigo2
+    class TransformArtigo
     {
         public IEnumerable<Artigo> Create(IList<Conteudo> conteudos)
         {
@@ -21,7 +21,8 @@ namespace PdfTextReader.Parser
                 {
                     TipoDoArtigo = GetType(conteudo.Titulo),
                     Nome = GetName(conteudo.Titulo),
-                    Grade = GetGrade(conteudo.Hierarquia)
+                    Grade = GetGrade(conteudo.Hierarquia),
+                    NumeroDaPagina = conteudo.Page
                 };
 
 

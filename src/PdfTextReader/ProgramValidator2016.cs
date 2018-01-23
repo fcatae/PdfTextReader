@@ -29,6 +29,7 @@ namespace PdfTextReader
 
             var conteudos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"{logDir}/{basename}-lines.txt")
+                            .ConvertText<CreateTextLineIndex, TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
                                 .Log<AnalyzeStructuresCentral>($"{logDir}/{basename}-central.txt")
                             .PrintAnalytics($"{logDir}/{basename}-print-analytics.txt")
@@ -37,11 +38,12 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentStats>($"{logDir}/{basename}-segments-stats.txt")
                                 .Log<AnalyzeSegments2>($"{logDir}/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeTreeStructure>($"{logDir}/{basename}-tree-data.txt")
                             .ConvertText<TransformConteudo, Conteudo>()
                             .ConvertText<AggregateAnexo, Conteudo>()
                             .ToList();
             //Create XML
-            var createArticle = new TransformArtigo2();
+            var createArticle = new TransformArtigo();
             var artigos = createArticle.Create(conteudos);
             createArticle.CreateXML(artigos, xmlDir, basename);
 
@@ -72,7 +74,9 @@ namespace PdfTextReader
                                   //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
+                                  .ParseBlock<ReplaceCharacters>()
                                   .ParseBlock<GroupLines>()
+                                      .ParseBlock<RemoveTableDotChar>()
                                       .Show(Color.Yellow)
                                       .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                   .ParseBlock<RemoveHeaderImage>()

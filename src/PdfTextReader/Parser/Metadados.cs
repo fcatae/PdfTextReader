@@ -11,7 +11,7 @@ namespace PdfTextReader.Parser
         public string DataPublicacao { get; set; }
         public string TipoDoArtigo { get; set; }
         public string Grade { get; set; }
-        public string NumeroDaPagina { get; set; }
+        public int NumeroDaPagina { get; set; }
         public string PdfLink { get; set; }
         public string IdMateria { get; set; }
         public string NumeroDaEdicao { get; set; }
