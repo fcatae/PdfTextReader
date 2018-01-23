@@ -74,7 +74,7 @@ namespace PdfTextReader.PDFCore
                 column.AddBlock(block);
             }
 
-            Console.WriteLine($"Page type = {newpage.ToString()}");
+            //Console.WriteLine($"Page type = {newpage.ToString()}");
 
             return newpage;
         }
