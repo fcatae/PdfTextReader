@@ -11,6 +11,7 @@ namespace PdfTextReader
     {
         public int errors;
         public int total;
+        public string text;
     }
 
     public class ProgramValidatorXML
@@ -27,9 +28,12 @@ namespace PdfTextReader
         int DocumentsCountWithError = 0;
         string logDir;
         string XMLErrorsDir;
+        string currentName;
 
         public void ValidateArticle(string folder)
         {
+            currentName =  new DirectoryInfo(folder).Name;
+
             logDir = Directory.CreateDirectory($"{folder}/Log").FullName;
             XMLErrorsDir = Directory.CreateDirectory($"{folder}/XML-Errors").FullName;
             folder = folder + "/XMLs";
@@ -48,8 +52,10 @@ namespace PdfTextReader
             GlobalStats.total += docs;
 
             float result = (1.0f - ((float) error /(float) docs)) * 100;
-            string text = $"Article precision: {result.ToString("00.00")}%  \n  Articles processed: {docs}  \n  Articles With Error: {error}";
+            string text = $"Article precision: {result.ToString("00.00")}%  \nArticles processed: {docs}  \nArticles With Error: {error}";
             File.WriteAllText($"{logDir}/ArticlePrecision.txt", text);
+
+            GlobalStats.text += $" \n\n{currentName} - {text}";
         }
 
         public static float CreateFinalStats(string filename)
@@ -58,7 +64,7 @@ namespace PdfTextReader
             int docs = GlobalStats.total;
 
             float result = (1.0f - ((float)error / (float)docs)) * 100;
-            string text = $"Article precision: {result.ToString("00.00")}%  \n  Articles processed: {docs}  \n  Articles With Error: {error}";
+            string text = $"Article precision: {result.ToString("00.00")}%  \nArticles processed: {docs}  \nArticles With Error: {error} \n\n{GlobalStats.text}";
             File.WriteAllText(filename, text);
 
             return result;
