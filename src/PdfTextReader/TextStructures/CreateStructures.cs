@@ -80,23 +80,64 @@ namespace PdfTextReader.TextStructures
                 }
             }
 
-            if( lineset.Count > 1 )
+            bool isFloatingLine = false;
+
+            // ONE line with zero margin LEFT and RIGHT
+            // Can be considered CENTERED if it is Bold or Uppercase
+            if (lineset.Count == 1)
             {
-                int firstValidCenter = 0;
+                bool lineMarginLeft = IsZero(lineset[0].MarginLeft);
+                bool lineMarginRight = IsZero(lineset[0].MarginRight);
+                bool titleBold = lineset[0].FontStyle == "Bold";
+                bool titleUpper = IsUpperCase(lineset[0].Text);
 
-                float structureCenterAt = lineset[firstValidCenter].CenteredAt;
-
-                _structure.CenteredAt = structureCenterAt;
-                
-                foreach (var line in lineset)
+                if(lineMarginLeft && lineMarginRight)
                 {
-                    if( Math.Abs(line.CenteredAt - structureCenterAt) > MAXIMUM_CENTER_DIFFERENCE )
+                    if( titleBold || titleUpper )
                     {
-                        _structure.CenteredAt = null;
-                        break;
+                        _structure.TextAlignment = TextAlignment.CENTER;
                     }
                 }
             }
+
+            if ( lineset.Count > 1 )
+            {
+                bool firstLineMarginLeft = IsZero(lineset[0].MarginLeft);
+                bool secondLineMarginLeft = IsZero(lineset[1].MarginLeft);
+
+                bool checkFloatingLine = !(firstLineMarginLeft && secondLineMarginLeft);
+
+                if (checkFloatingLine)
+                {
+                    bool firstLineMarginZero = IsZero(lineset[0].MarginLeft) && IsZero(lineset[0].MarginRight);
+
+                    int firstValidCenter = 0;
+
+                    // if the first line has zero margin at RIGHT and LEFT, then consider the second line
+                    if (firstLineMarginZero)
+                    {
+                        firstValidCenter = 1;
+                    }
+
+                    float structureCenterAt = lineset[firstValidCenter].CenteredAt;
+
+                    isFloatingLine = true;
+                    _structure.CenteredAt = structureCenterAt;
+
+                    foreach (var line in lineset)
+                    {
+                        if (Math.Abs(line.CenteredAt - structureCenterAt) > MAXIMUM_CENTER_DIFFERENCE)
+                        {
+                            isFloatingLine = false;
+                            _structure.CenteredAt = null;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            if (isFloatingLine && (_structure.CenteredAt == null))
+                throw new InvalidOperationException();
 
             // this is slightly wrong... needs to work on this later
             if (lineset[0].MarginRight < lineset[0].MarginLeft / 2)
