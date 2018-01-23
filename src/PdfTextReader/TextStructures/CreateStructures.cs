@@ -8,7 +8,7 @@ namespace PdfTextReader.TextStructures
 {
     class CreateStructures : IAggregateStructure<TextLine, TextStructure>
     {
-        const float difference_margin_center_text = 4F;
+        const float difference_margin_center_text = 1F;
 
         TextStructure _structure;
 

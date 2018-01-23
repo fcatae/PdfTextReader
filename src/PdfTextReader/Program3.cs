@@ -84,21 +84,27 @@ namespace PdfTextReader
         }
         static void ShowTextSegmentHierarquia(IList<TextSegment> artigos, Execution.Pipeline pipeline)
         {
-            Queue<string> tree = new Queue<string>();
+            Stack<string> tree = new Stack<string>();
 
             for (int i = 0; i < artigos.Count; i++)
             {
                 var artigo = artigos[i];
                 var titles = artigos[i].Title;
                 int p = pipeline.Index.FindPageStart(artigo);
-                int nivel = 0;
 
-                while (tree.Count > 0)
+                while (tree.Count > titles.Length )
                 {
-                    if (titles[nivel].Text == tree.Peek())
+                    tree.Pop();
+                }
+
+                int nivel = tree.Count - 1;
+
+                while (tree.Count > 0 )
+                {
+                    if (titles[nivel--].Text == tree.Peek())
                         break;
 
-                    tree.Dequeue();
+                    tree.Pop();
                 }
 
                 while ( titles.Length > tree.Count )
@@ -114,10 +120,10 @@ namespace PdfTextReader
                     // print
                     string optPageInfo = "";
                     
-                    tree.Enqueue(titleText);
+                    tree.Push(titleText);
 
                     if ( titles.Length == tree.Count )
-                        optPageInfo = $" (Page {p})";
+                        optPageInfo = $" (Page {p}, ID={i})";
 
                     Console.WriteLine(titleText.Replace("\n"," ") + optPageInfo);
                 }
