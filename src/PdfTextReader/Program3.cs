@@ -9,6 +9,7 @@ using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System.Drawing;
 using PdfTextReader.PDFCore;
+using System.Linq;
 
 namespace PdfTextReader
 {
@@ -52,7 +53,8 @@ namespace PdfTextReader
             //Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
-                            //.Log<AnalyzeLines>(Console.Out)
+                                //.Log<AnalyzeLines>(Console.Out)
+                            .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
                             //.Log<AnalyzeStructures>(Console.Out)
                             //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
@@ -62,8 +64,17 @@ namespace PdfTextReader
                             //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
+            
+            Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
-            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            for(int i=0; i<artigos.Count; i++)
+            {
+                int p = pipeline.Index.FindPageStart(artigos[i]);
+                
+                Console.WriteLine($" P.{p}: {artigos[i].Title.LastOrDefault()?.Text}");
+            }
+
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();                        
         }
 
 
@@ -89,7 +100,9 @@ namespace PdfTextReader
                                   //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
+                                  .ParseBlock<ReplaceCharacters>()
                                   .ParseBlock<GroupLines>()
+                                  .ParseBlock<RemoveTableDotChar>()
                                       .Show(Color.Yellow)
                                       .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                   .ParseBlock<RemoveHeaderImage>()
@@ -110,75 +123,13 @@ namespace PdfTextReader
                                   .ParseBlock<OrderBlocksets>()
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
+                                  .ParseBlock<OrganizePageLayout>()
                                   .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
             return result;
         }
-
-        public static void ProcessStatsManyFolders(string basename)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - ProcessStatsManyFolders");
-            Console.WriteLine();
-            
-            var artigos = GetTextManyFolders(basename, out Execution.Pipeline pipeline)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
-                            .ToList();
-
-            pipeline.Done();
-
-            //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
-        }
-
-
-        static PipelineText<TextLine> GetTextManyFolders(string basename, out Execution.Pipeline pipeline)
-        {
-            pipeline = new Execution.Pipeline();
-
-            var result =
-            pipeline.Input($"{basename}.pdf")
-                    .Output($"{basename}-output.pdf")
-                    .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
-                              page.ParsePdf<PreProcessTables>()
-                                  .ParseBlock<IdentifyTables>()
-                              .ParsePdf<PreProcessImages>()
-                                      .Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Red))
-                                  .ParseBlock<RemoveOverlapedImages>()
-                              .ParsePdf<ProcessPdfText>()
-                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
-                                  .ParseBlock<RemoveSmallFonts>()
-                                  //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
-                                  .ParseBlock<MergeTableText>()
-                                  //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
-                                  .ParseBlock<HighlightTextTable>()
-                                  .ParseBlock<RemoveTableText>()
-                                  .ParseBlock<GroupLines>()
-                                      .Show(Color.Yellow)
-                                      .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                                  .ParseBlock<RemoveHeaderImage>()
-
-                                  .ParseBlock<FindInitialBlocksetWithRewind>()
-                                      .Show(Color.Gray)
-                                  .ParseBlock<BreakColumnsLight>()
-                                      //.ParseBlock<BreakColumns>()
-                                      .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                                      .ParseBlock<RemoveFooter>()
-                                  .ParseBlock<AddTableSpace>()
-                                  .ParseBlock<AddImageSpace>()
-                                  .ParseBlock<BreakInlineElements>()
-                                  .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
-                                  .ParseBlock<OrderBlocksets>()
-                                  .Show(Color.Orange)
-                                  .ShowLine(Color.Black)
-                    );
-
-            return result;
-        }
-
+        
         public static void TesteArtigo()
         {
             Console.WriteLine();

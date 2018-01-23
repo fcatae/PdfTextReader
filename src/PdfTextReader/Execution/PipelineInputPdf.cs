@@ -22,10 +22,12 @@ namespace PdfTextReader.Execution
         private PdfDocument _pdfOutput;
         private List<object> _statsCollection = new List<object>();
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
+        private TransformIndexTree _indexTree = new TransformIndexTree();
 
         public static PipelineInputPdf DebugCurrent;
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
+        public TransformIndexTree Index => _indexTree;
                 
         public PipelineInputPdf(string filename)
         {
@@ -163,7 +165,7 @@ namespace PdfTextReader.Execution
 
             var textLines = StreamConvert<T>(pageList, callback);
 
-            var pipeText = new PipelineText<TextLine>(this, textLines, this);
+            var pipeText = new PipelineText<TextLine>(this, textLines, _indexTree, this);
 
             return pipeText;
         }
@@ -173,7 +175,7 @@ namespace PdfTextReader.Execution
         {
             var textLines = StreamConvert<T>(callback);
             
-            var pipeText = new PipelineText<TextLine>(this, textLines, this);
+            var pipeText = new PipelineText<TextLine>(this, textLines, _indexTree, this);
             
             return pipeText;
         }
@@ -193,7 +195,7 @@ namespace PdfTextReader.Execution
 
                 callback(pdfPage);
 
-                var textSet = processor.ProcessPage(CurrentPage.GetLastResult());
+                var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
 
                 foreach (var t in textSet)
                 {
@@ -215,7 +217,7 @@ namespace PdfTextReader.Execution
 
                 callback(pdfPage);
 
-                var textSet = processor.ProcessPage(CurrentPage.GetLastResult());
+                var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
 
                 foreach(var t in textSet)
                 {

@@ -9,9 +9,9 @@ namespace PdfTextReader.Base
     {
         BlockSet<IBlock> _blocks;
 
-        public BlockSet<IBlock> AllBlocks => _blocks;
+        public virtual BlockSet<IBlock> AllBlocks => _blocks;
         
-        public bool IsEmpty()
+        public virtual bool IsEmpty()
         {
             return (_blocks.Count() == 0);
         }

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using PdfTextReader.Base;
+using PdfTextReader.TextStructures;
 
 namespace PdfTextReader.Execution
 {
     class Pipeline : IDisposable
     {
+        private string _inputFilename = null;
         private PipelineInputPdf _activeContext;
 
         public PipelineInputPdf Input(string filename)
@@ -15,11 +17,14 @@ namespace PdfTextReader.Execution
             var context = new PipelineInputPdf(filename);
 
             this._activeContext = context;
+            this._inputFilename = filename;
 
             return context;
         }
 
+        public string Filename => _inputFilename;
         public PipelineStats Statistics => _activeContext.Statistics;
+        public TransformIndexTree Index => _activeContext.Index;
 
         public void EnumFiles(string input, Action<string> callback)
         {
