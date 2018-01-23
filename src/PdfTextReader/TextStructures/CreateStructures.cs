@@ -8,6 +8,8 @@ namespace PdfTextReader.TextStructures
 {
     class CreateStructures : IAggregateStructure<TextLine, TextStructure>
     {
+        const float FLOATING_TEXT_RIGHT = 10f;
+        const float MAXIMUM_CENTER_DIFFERENCE = 1f;
         const float difference_margin_center_text = 1F;
 
         TextStructure _structure;
@@ -76,6 +78,24 @@ namespace PdfTextReader.TextStructures
                 }
             }
 
+            if( lineset.Count > 1 )
+            {
+                int firstValidCenter = 0;
+
+                float structureCenterAt = lineset[firstValidCenter].CenteredAt;
+
+                _structure.CenteredAt = structureCenterAt;
+                
+                foreach (var line in lineset)
+                {
+                    if( Math.Abs(line.CenteredAt - structureCenterAt) > MAXIMUM_CENTER_DIFFERENCE )
+                    {
+                        _structure.CenteredAt = null;
+                        break;
+                    }
+                }
+            }
+
             // this is slightly wrong... needs to work on this later
             if (lineset[0].MarginRight < lineset[0].MarginLeft / 2)
             {
@@ -108,6 +128,16 @@ namespace PdfTextReader.TextStructures
 
             _structure.MarginLeft = lineset.Min(l => l.MarginLeft);
             _structure.MarginRight = lineset.Min(l => l.MarginRight);
+
+            // if the text has a CENTER, but it is slightly to the right
+            // consider this a RIGHT ALIGNMENT
+            if(_structure.CenteredAt != null && _structure.TextAlignment == TextAlignment.JUSTIFY )
+            {
+                if (_structure.CenteredAt >  FLOATING_TEXT_RIGHT)
+                {
+                    _structure.TextAlignment = TextAlignment.RIGHT;
+                }
+            }
 
             return _structure;            
         }

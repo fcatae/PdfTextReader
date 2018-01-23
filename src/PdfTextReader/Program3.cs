@@ -46,6 +46,7 @@ namespace PdfTextReader
             Console.WriteLine();
 
             //Extract(basename, 173);
+            ExamplesPipeline.Extract(basename, 10);
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
