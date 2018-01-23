@@ -29,13 +29,13 @@ namespace PdfTextReader.Base
 
         public string GetColumnName()
         {
-            int columnId = this.X1 + 1;
+            string columnId = (this.X1 + 1).ToString();
             string suffix = "";
 
-            if (_columnType == 3)
-                suffix = (this.W > 3) ? "-" : "";
+            if ((_columnType == 3) && (this.W > 3))
+                return columnId + "X";
 
-            return columnId.ToString() + suffix;
+            return columnId;
         }
     }
 }

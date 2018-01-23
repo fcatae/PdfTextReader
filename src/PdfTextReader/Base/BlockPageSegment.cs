@@ -24,15 +24,38 @@ namespace PdfTextReader.Base
             string name = NumberOfColumns.ToString();
             string suffix = GetNameInternal();
 
-            if (suffix == "(1)" || suffix == "(12)" || suffix == "(123)")
-                suffix = "";
-
             return name + suffix;
         }
 
         string GetNameInternal()
         {
-            return "(" + String.Join("", this.Select(t => t.GetColumnName())) + ")";
+            string name = "(" + String.Join("", this.Select(t => t.GetColumnName())) + ")";
+
+            return ShortenName(name);
+        }
+
+        string ShortenName(string name)
+        {
+            if (name == "(1)" || name == "(12)" || name == "(123)")
+                return "";
+
+            if ( name.StartsWith("(1") )
+            {
+                string shortName = name.Replace("1", "");
+
+                if (shortName.Length == name.Length - 1)
+                    return "L" + shortName;
+            }
+
+            if( name.EndsWith("3)"))
+            {
+                string shortName = name.Replace("3", "");
+
+                if (shortName.Length == name.Length - 1)
+                    return "R" + shortName;
+            }
+
+            return name;
         }
     }
 }
