@@ -74,7 +74,7 @@ namespace PdfTextReader
 
                     }
 
-                    if (item.Name == "Anexos")
+                    if (item.Name == "Anexo")
                     {
                         foreach (var anexo in item.Elements())
                         {
@@ -177,6 +177,7 @@ namespace PdfTextReader
             "Ação Direta de Inconstitucionalidade e Ação Declaratória de Constitucionalidade",
             "Ação penal originária",
             "Acórdão",
+            "Acordão",
             "Acordo Coletivo de Trabalho",
             "Aditamento à Pauta",
             "Agenda Regulatória",
@@ -185,6 +186,7 @@ namespace PdfTextReader
             "Ajuste",
             "Alvará",
             "Apelação",
+            "Aresto",
             "Argüição de Descumprimento de Preceito Fundamental",
             "Arqüição de suspeição e/ou Impedimento",
             "Ata",

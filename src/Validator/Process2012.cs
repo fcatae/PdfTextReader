@@ -19,7 +19,14 @@ namespace Validator
 
             PdfTextReader.ProgramValidator2012.Process(basename, inputFolder, folderOutput);
             _totalProcessed++;
+
+
         }
+
+
+
+
+
 
     }
 }

@@ -6,8 +6,9 @@ using System.Linq;
 
 namespace Validator
 {
-    class Program
+    public class Program
     {
+
         static void Main(string[] args)
         {
             Console.WriteLine("Validator v1");
@@ -22,7 +23,9 @@ namespace Validator
             string outputFolder = (args.Length >= 2) ? args[1] : DEFAULT_OUTPUT;
             string processName = (args.Length >= 3) ? args[2] : DEFAULT_PROCESS;
 
-            var processList = new Dictionary<string, IRunner>
+      
+
+        var processList = new Dictionary<string, IRunner>
             {
                 { "default", new GeneralProcess() },
                 { "xml", new ProcessXml() },
@@ -47,6 +50,15 @@ namespace Validator
             Console.WriteLine();
             Console.WriteLine($"Total files = {filenames.Length}");
             Console.WriteLine($"Total time = {timeSpent}");
+
+            var totalcounter = ProcessXml.successcounter + ProcessXml.errorcounter;
+
+            double result = 0.00;
+
+            result = ((totalcounter - ProcessXml.errorcounter) / totalcounter);
+
+            Console.WriteLine(@"Success Rate ----- {0:N2}", result);
+            Console.ReadLine();
         }        
     }
 }

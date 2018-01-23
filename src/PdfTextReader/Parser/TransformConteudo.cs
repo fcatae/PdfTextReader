@@ -258,14 +258,14 @@ namespace PdfTextReader.Parser
             string newTitle = null;
 
             //If title was single data (e.g. "Em 25 de Dezembro de 2016")
-            var match = Regex.Match(title, @"(Em \d\d de [a-zA-Z]+ de \d{4})");
+            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]* (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
             //Get the last position before title and concat with it.
             if (match.Success)
                 newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
 
 
             //If title is specific like "Relação N°"
-            var match2 = Regex.Match(title, @"(RELAÇÃO (No|N°|Nº)- [0-9]*\/[0-9]*)");
+            var match2 = Regex.Match(title, @"(RELAÇÃO (No|N°|Nº)\-? [0-9]*\/[0-9]*)");
             //Get the last position before title and concat with it.
             if (match2.Success)
                 newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
@@ -282,7 +282,7 @@ namespace PdfTextReader.Parser
 
         TextSegment ProcessSingularBodyBehaviors(TextSegment segment)
         {
-            var match = Regex.Match(segment.Body[0].Text, @"(.*? (No|N°|Nº) ([0-9]+\.?(\/)?[0-9]*), [a-zA-Z]* [0-9]* [a-zA-Z]* [a-zA-Z]* [a-zA-Z]* [0-9]*)");
+            var match = Regex.Match(segment.Body[0].Text, @"(.*? (No|N°|Nº)\-? ([0-9]+\.?(\/)?[0-9]*), [a-zA-Z]* [0-9]* [a-zA-Z]* [a-zA-Z]* [a-zA-Z]* [0-9]*)");
 
             if (match.Success)
             {
@@ -291,6 +291,21 @@ namespace PdfTextReader.Parser
                 newTitle.Add(segment.Body[0]);
                 segment.Title = newTitle.ToArray();
                 segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+            }
+
+            //Caso seja 
+            var match2 = Regex.Match(segment.Body[0].Text, @"(.*? [a-zA-Z]* [0-9]* [a-zA-Z]* [a-zA-Z]* [a-zA-Z]* [0-9]*)");
+
+            if (match2.Success)
+            {
+                if (match2.Length == segment.Body[0].Text.Length)
+                {
+                    segment.Body[0].TextAlignment = TextAlignment.CENTER;
+                    List<TextStructure> newTitle = segment.Title.ToList();
+                    newTitle.Add(segment.Body[0]);
+                    segment.Title = newTitle.ToArray();
+                    segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                }
             }
             return segment;
         }
