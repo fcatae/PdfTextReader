@@ -7,8 +7,15 @@ using System.Xml.Linq;
 
 namespace PdfTextReader
 {
-    class ProgramValidatorXML
+    class ProgramValidatorXMLStats
     {
+        public int errors;
+        public int total;
+    }
+
+    public class ProgramValidatorXML
+    {
+        static ProgramValidatorXMLStats GlobalStats = new ProgramValidatorXMLStats();
         bool bodyConditions = false;
         bool titleConditions = false;
         bool hierarchyConditions = false;
@@ -16,8 +23,8 @@ namespace PdfTextReader
         bool roleConditions = true;
         bool signConditions = true;
         bool tipoArtigoConditions = true;
-        float DocumentsCount = 0;
-        float DocumentsCountWithError = 0;
+        int DocumentsCount = 0;
+        int DocumentsCountWithError = 0;
         string logDir;
         string XMLErrorsDir;
 
@@ -35,11 +42,26 @@ namespace PdfTextReader
             CalculatePrecision(DocumentsCount, DocumentsCountWithError);
         }
 
-        void CalculatePrecision(float docs, float error)
+        void CalculatePrecision(int docs, int error)
         {
-            float result = (1 - (error / docs)) * 100;
+            GlobalStats.errors += error;
+            GlobalStats.total += docs;
+
+            float result = (1.0f - ((float) error /(float) docs)) * 100;
             string text = $"Article precision: {result.ToString("00.00")}%  \n  Articles processed: {docs}  \n  Articles With Error: {error}";
             File.WriteAllText($"{logDir}/ArticlePrecision.txt", text);
+        }
+
+        public static float CreateFinalStats(string filename)
+        {
+            int error = GlobalStats.errors;
+            int docs = GlobalStats.total;
+
+            float result = (1.0f - ((float)error / (float)docs)) * 100;
+            string text = $"Article precision: {result.ToString("00.00")}%  \n  Articles processed: {docs}  \n  Articles With Error: {error}";
+            File.WriteAllText(filename, text);
+
+            return result;
         }
 
         void Validate(FileInfo file)

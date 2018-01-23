@@ -185,8 +185,8 @@ namespace Validator
              foreach (Match match in matches)
                 {
                     var signature = match.Value;
-                    signature = signature.Replace("<Assinatura>", "");
-                    signature = signature.Replace("</Assinatura>", "");
+                    signature = signature.Replace("<Autor>", "");
+                    signature = signature.Replace("</Autor>", "");
 
                     var sigA = signature.Substring(1,2);
                     var sigB = signature.Substring(1,2);
