@@ -64,6 +64,8 @@ namespace PdfTextReader
                             //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
+            
+            Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
             for(int i=0; i<artigos.Count; i++)
             {
