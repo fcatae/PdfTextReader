@@ -14,6 +14,7 @@ namespace PdfTextReader.Base
         public float CenteredAt { get; set; }        
         public float? AfterSpace { get; set; }
         public float? BeforeSpace { get; set; }
+        public bool HasLargeSpace { get; set; }
         public string FontStyle { get; set; }
         public bool HasBackColor { get; set; }
         public TextPageInfo PageInfo { get; set; }

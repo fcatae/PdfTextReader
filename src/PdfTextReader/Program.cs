@@ -10,9 +10,8 @@ namespace PdfTextReader
         {
             Console.WriteLine("PDF Text Reader");
             var watch = System.Diagnostics.Stopwatch.StartNew();
-            
-            Program3.ProcessStats2(@"DO1_2010_01_04");
 
+            Program3.ProcessStats2(@"DO1_2010_01_04");
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

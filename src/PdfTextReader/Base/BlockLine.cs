@@ -6,5 +6,6 @@ namespace PdfTextReader.Base
 {
     class BlockLine : Block
     {
+        public bool HasLargeSpace { get; set; }
     }
 }

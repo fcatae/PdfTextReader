@@ -20,9 +20,11 @@ namespace PdfTextReader
             PdfReaderException.ContinueOnException();
 
             var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
+                                .ConvertText<CreateTextLineIndex, TextLine>()
                                 .ConvertText<CreateStructures, TextStructure>()
                                 .ConvertText<CreateTextSegments, TextSegment>()
                                 .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeTreeStructure>(Console.Out)
                                 .ToList();
 
             //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
@@ -37,8 +39,8 @@ namespace PdfTextReader
 
 
             var result =
-            pipeline.Input($"{inputfolder}/{basename}")
-                    .Output($"{outputfolder}/{basename}")
+            pipeline.Input($"{inputfolder}/{basename}.pdf")
+                    .Output($"{outputfolder}/{basename}.pdf")
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
@@ -56,7 +58,9 @@ namespace PdfTextReader
                                   .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Purple))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
+                                  .ParseBlock<ReplaceCharacters>()
                                   .ParseBlock<GroupLines>()
+                                  .ParseBlock<RemoveTableDotChar>()
                                       .Show(Color.Yellow)
                                       .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<RemoveHeaderImage>()
