@@ -99,6 +99,13 @@ namespace PdfTextReader.Execution
         {
             TL logger = _factory.CreateInstance<TL>();
 
+            // v2: pass pipeline context
+            var loggerV2 = logger as ILogStructure2<TT>;
+            if( loggerV2 != null )
+            {
+                loggerV2.Init(_indexTree);
+            }
+
             logger.StartLog(file);
 
             foreach (var data in stream)

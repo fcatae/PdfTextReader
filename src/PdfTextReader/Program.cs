@@ -11,7 +11,7 @@ namespace PdfTextReader
             Console.WriteLine("PDF Text Reader");
             var watch = System.Diagnostics.Stopwatch.StartNew();
             
-            Program3.ProcessStats2("DO1_2017_01_06");
+            Program3.ProcessStats2(@"DO1_2016_01_04");
 
 
             watch.Stop();

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PdfTextReader.TextStructures
 {
-    class TransformIndexTree
+    class TransformIndexTree : ITransformIndexTree
     {
         List<ITransformIndex> _indexes = new List<ITransformIndex>();
         List<Type> _indexOutputType = new List<Type>();
