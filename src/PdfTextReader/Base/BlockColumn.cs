@@ -10,9 +10,9 @@ namespace PdfTextReader.Base
         public int X1;
         public int X2;
         public int W;
-        public int Y1;
-        public int Y2;
-        public int H;
+        //public int Y1;
+        //public int Y2;
+        //public int H;
 
         public BlockColumn(BlockPage page, int columnType, int x, int w) : base(page)
         {
@@ -30,7 +30,6 @@ namespace PdfTextReader.Base
         public string GetColumnName()
         {
             string columnId = (this.X1 + 1).ToString();
-            string suffix = "";
 
             if ((_columnType == 3) && (this.W > 3))
                 return columnId + "X";
