@@ -11,7 +11,7 @@ namespace PdfTextReader.Base
 
         public virtual BlockSet<IBlock> AllBlocks => _blocks;
         
-        public bool IsEmpty()
+        public virtual bool IsEmpty()
         {
             return (_blocks.Count() == 0);
         }

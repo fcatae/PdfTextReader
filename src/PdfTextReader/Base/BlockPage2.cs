@@ -14,6 +14,14 @@ namespace PdfTextReader.Base
             _segments.Add(segment);
         }
 
+        public override bool IsEmpty()
+        {
+            if (_segments.Count == 0)
+                return true;
+
+            return false;
+        }
+
         public override BlockSet<IBlock> AllBlocks
         {
             get
