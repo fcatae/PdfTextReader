@@ -705,41 +705,7 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
-        
-        public static IEnumerable<Conteudo> MultipageCreateArtigos(string basename)
-        {
-            var pipeline = new Execution.Pipeline();
-
-            var result =
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-page-output.pdf")
-                    .AllPages<CreateTextLines>(p =>
-                    {
-                        ProcessPage(p);
-                        //p.ParsePdf<PreProcessTables>()
-                        //        .ParseBlock<IdentifyTables>()
-                        //    .ParsePdf<ProcessPdfText>()
-                        //        .ParseBlock<RemoveTableText>()
-                        //        .ParseBlock<GroupLines>()
-                        //        .ParseBlock<FindInitialBlockset>();
-                    })
-                    .ConvertText<CreateStructures, TextStructure>()
-                        .DebugCount()
-                        .DebugPrint()
-                    .ConvertText<TransformArtigo, Conteudo>()
-                        .Log<PrintDebugCount<Conteudo>>(Console.Out)
-                        .DebugCount()
-                        .DebugPrint()
-                    .ToList();
-                    
-            pipeline.Done();
-
-            //var procParser = new ProcessParser();
-            //procParser.XMLWriter(result, $"bin/{basename}");
-            
-            return result;
-        }
-
+                
         public static PipelineText<TextStructure> GetTextStructures(string basename)
         {
             var pipeline = new Execution.Pipeline();
