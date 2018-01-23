@@ -279,7 +279,7 @@ namespace PdfTextReader.Parser
             string newTitle = null;
 
             //If title was single data (e.g. "Em 25 de Dezembro de 2016")
-            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]* (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
+            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]*(\°?|o?|\º?) (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
             //Get the last position before title and concat with it.
             if (match.Success)
                 newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
@@ -307,7 +307,8 @@ namespace PdfTextReader.Parser
 
             if (match.Success)
             {
-                if (match.Length == segment.Body[0].Text.Length)
+                int TOLERANCE_PERIOD_CHAR = 2;
+                if (segment.Body[0].Text.Length - match.Length < TOLERANCE_PERIOD_CHAR)
                 {
                     segment.Body[0].TextAlignment = TextAlignment.CENTER;
                     List<TextStructure> newTitle = segment.Title.ToList();
@@ -333,13 +334,16 @@ namespace PdfTextReader.Parser
             }
 
             //If doc is PAUTA DE JULGAMENTO
-            if (segment.Body[0].Text.Substring(0, 19) == "PAUTA DE JULGAMENTO")
+            if (segment.Body[0].Text.Count() > 20)
             {
-                segment.Body[0].TextAlignment = TextAlignment.CENTER;
-                List<TextStructure> newTitle = segment.Title.ToList();
-                newTitle.Add(segment.Body[0]);
-                segment.Title = newTitle.ToArray();
-                segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                if (segment.Body[0].Text.Substring(0, 19) == "PAUTA DE JULGAMENTO")
+                {
+                    segment.Body[0].TextAlignment = TextAlignment.CENTER;
+                    List<TextStructure> newTitle = segment.Title.ToList();
+                    newTitle.Add(segment.Body[0]);
+                    segment.Title = newTitle.ToArray();
+                    segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                }
             }
 
             return segment;
