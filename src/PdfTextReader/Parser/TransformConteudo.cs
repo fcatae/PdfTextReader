@@ -279,7 +279,7 @@ namespace PdfTextReader.Parser
             string newTitle = null;
 
             //If title was single data (e.g. "Em 25 de Dezembro de 2016")
-            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]* (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
+            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]*(\°?|o?|\º?) (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
             //Get the last position before title and concat with it.
             if (match.Success)
                 newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
