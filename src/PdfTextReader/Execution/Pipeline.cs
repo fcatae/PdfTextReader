@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using PdfTextReader.Base;
+using PdfTextReader.TextStructures;
 
 namespace PdfTextReader.Execution
 {
@@ -20,6 +21,7 @@ namespace PdfTextReader.Execution
         }
 
         public PipelineStats Statistics => _activeContext.Statistics;
+        public TransformIndexTree Index => _activeContext.Index;
 
         public void EnumFiles(string input, Action<string> callback)
         {

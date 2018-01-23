@@ -9,6 +9,7 @@ using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System.Drawing;
 using PdfTextReader.PDFCore;
+using System.Linq;
 
 namespace PdfTextReader
 {
@@ -52,7 +53,8 @@ namespace PdfTextReader
             //Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
-                            //.Log<AnalyzeLines>(Console.Out)
+                                .Log<AnalyzeLines>(Console.Out)
+                            .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
                             //.Log<AnalyzeStructures>(Console.Out)
                             //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
@@ -62,6 +64,12 @@ namespace PdfTextReader
                             //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                             .ToList();
+
+            for(int i=0; i<artigos.Count; i++)
+            {
+                int p = pipeline.Index.FindPageStart(artigos[i]);
+                Console.WriteLine($" P.{p}: {artigos[i].Title.Last().Text}");
+            }
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
                         

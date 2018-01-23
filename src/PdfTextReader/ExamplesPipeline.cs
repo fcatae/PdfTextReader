@@ -653,15 +653,15 @@ namespace PdfTextReader
                         //.Show(Color.Orange)
                         ;
 
-            var artigos = textOutput.ToList();
+        //    var artigos = textOutput.ToList();
 
             //var procParser = new ProcessParser();
             //procParser.XMLWriter(artigos, $"bin/{basename}");
 
-            pipeline.Done();
+        //    pipeline.Done();
 
-            return null;
-        }
+        //    return null;
+        //}
 
         public static void Extract(string basename, int pages)
         {
