@@ -333,13 +333,16 @@ namespace PdfTextReader.Parser
             }
 
             //If doc is PAUTA DE JULGAMENTO
-            if (segment.Body[0].Text.Substring(0, 19) == "PAUTA DE JULGAMENTO")
+            if (segment.Body[0].Text.Count() > 20)
             {
-                segment.Body[0].TextAlignment = TextAlignment.CENTER;
-                List<TextStructure> newTitle = segment.Title.ToList();
-                newTitle.Add(segment.Body[0]);
-                segment.Title = newTitle.ToArray();
-                segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                if (segment.Body[0].Text.Substring(0, 19) == "PAUTA DE JULGAMENTO")
+                {
+                    segment.Body[0].TextAlignment = TextAlignment.CENTER;
+                    List<TextStructure> newTitle = segment.Title.ToList();
+                    newTitle.Add(segment.Body[0]);
+                    segment.Title = newTitle.ToArray();
+                    segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                }
             }
 
             return segment;
