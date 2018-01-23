@@ -10,6 +10,7 @@ namespace PdfTextReader.TextStructures
     {
         const float FLOATING_TEXT_RIGHT = 10f;
         const float MAXIMUM_CENTER_DIFFERENCE = 1f;
+        const float MAXIMUM_CENTER_MARGIN = 1F;
         const float difference_margin_center_text = 1F;
 
         TextStructure _structure;
@@ -157,8 +158,8 @@ namespace PdfTextReader.TextStructures
             }
 
             // this is quite accurate
-            bool isCentered = (lineset.All(t => IsZero(t.MarginLeft - t.MarginRight))
-                            && lineset.Any(t => !IsZero(t.MarginLeft)));
+            bool isCentered = (lineset.All(t => IsZeroCenter(t.MarginLeft - t.MarginRight))
+                            && lineset.Any(t => !IsZeroCenter(t.MarginLeft)));
 
             if ( isCentered )
             {
@@ -197,6 +198,10 @@ namespace PdfTextReader.TextStructures
         bool IsZero(float? value)
         {
             return ((value > -difference_margin_center_text) && (value < difference_margin_center_text));                
+        }
+        bool IsZeroCenter(float? value)
+        {
+            return ((value > -MAXIMUM_CENTER_MARGIN) && (value < MAXIMUM_CENTER_MARGIN));
         }
 
         bool IsUpperCase(string text)

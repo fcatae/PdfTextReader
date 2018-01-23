@@ -68,10 +68,10 @@ namespace PdfTextReader.PDFCore
                         HasBackColor = b.HasBackColor,
 
                         // might be inaccurate 
-                        //FontFullName = b.FontFullName,
-                        //FontName = b.FontName,
-                        //FontSize = b.FontSize,
-                        //FontStyle = b.FontStyle
+                        FontFullName = b.FontFullName,
+                        FontName = b.FontName,
+                        FontSize = b.FontSize,
+                        FontStyle = b.FontStyle
                         // now the settings are done in GroupFontLineHelper
                     };
 
@@ -214,12 +214,16 @@ namespace PdfTextReader.PDFCore
                 }
             }
 
-            bool HasConflict(Block block)
+            bool HasFullConflict(Block block)
             {
                 return ((_currentFont.FontFullName != block.FontFullName) ||
                     (_currentFont.FontName != block.FontName) ||
                     (_currentFont.FontSize != block.FontSize) ||
                     (_currentFont.FontStyle != block.FontStyle));
+            }
+            bool HasConflict(Block block)
+            {
+                return (_currentFont.FontStyle != block.FontStyle);
             }
 
             GroupFontLineItem CreateFont(Block block)
