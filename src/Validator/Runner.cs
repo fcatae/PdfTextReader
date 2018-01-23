@@ -18,6 +18,12 @@ namespace Validator
 
             watch.Stop();
 
+            var runner2 = runner as IRunner2;
+            if( runner2 != null )
+            {
+                runner2.Close(outputFolder);
+            }
+
             return watch.ElapsedMilliseconds;
         }
 

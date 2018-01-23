@@ -9,4 +9,10 @@ namespace Validator
         string FilePattern { get; }
         void Run(File file, string outputname);
     }
+
+    interface IRunner2 : IRunner
+    {
+        void Close(string outputfolder);
+    }
+
 }
