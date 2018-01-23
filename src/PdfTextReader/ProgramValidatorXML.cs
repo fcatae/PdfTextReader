@@ -319,6 +319,7 @@ namespace PdfTextReader
             "Decisão Normativa",
             "Decisão/Despacho",
             "Declaração de Propósito",
+            "Decreto",
             "Decreto de Pessoal",
             "Decreto Legislativo",
             "Decreto não numerado",

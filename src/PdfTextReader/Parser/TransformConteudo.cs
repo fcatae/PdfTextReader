@@ -307,7 +307,8 @@ namespace PdfTextReader.Parser
 
             if (match.Success)
             {
-                if (match.Length == segment.Body[0].Text.Length)
+                int TOLERANCE_PERIOD_CHAR = 2;
+                if (segment.Body[0].Text.Length - match.Length < TOLERANCE_PERIOD_CHAR)
                 {
                     segment.Body[0].TextAlignment = TextAlignment.CENTER;
                     List<TextStructure> newTitle = segment.Title.ToList();
