@@ -94,6 +94,40 @@ namespace PdfTextReader.TextStructures
             return line.PageInfo.PageNumber;
         }
 
+        public int FindPageEnd<T>(T instance)
+        {
+            if (_indexOutputType[0] != typeof(TextLine))
+                throw new InvalidOperationException("requires CreateTextLineIndex pipeline");
+
+            int index_end = _indexes.Count - 1;
+
+            if (_indexOutputType[index_end] != typeof(T))
+                throw new InvalidOperationException();
+
+            int last_instanceId = _indexes[index_end].GetObjectId(instance);
+            TextLine line = null;
+
+            for (int i = index_end; i >= 0; i--)
+            {
+                var index = _indexes[i];
+
+                if (_indexOutputType[i] == typeof(TextLine))
+                {
+                    line = (TextLine)index.GetInstance(last_instanceId);
+                    break;
+                }
+
+                int childInstanceId = index.GetEndId(last_instanceId);
+
+                last_instanceId = childInstanceId;
+            }
+
+            if (line == null)
+                throw new InvalidOperationException();
+
+            return line.PageInfo.PageNumber;
+        }
+
         public int FindPageStartOld(object instance)
         {
             int index_end = _indexes.Count - 1;

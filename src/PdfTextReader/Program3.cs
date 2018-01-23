@@ -53,7 +53,7 @@ namespace PdfTextReader
             //Examples.ShowHeaderFooter(basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
-                                .Log<AnalyzeLines>(Console.Out)
+                                //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
                             //.Log<AnalyzeStructures>(Console.Out)
@@ -68,11 +68,11 @@ namespace PdfTextReader
             for(int i=0; i<artigos.Count; i++)
             {
                 int p = pipeline.Index.FindPageStart(artigos[i]);
-                Console.WriteLine($" P.{p}: {artigos[i].Title.Last().Text}");
+                
+                Console.WriteLine($" P.{p}: {artigos[i].Title.LastOrDefault()?.Text}");
             }
 
-            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
-                        
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();                        
         }
 
 

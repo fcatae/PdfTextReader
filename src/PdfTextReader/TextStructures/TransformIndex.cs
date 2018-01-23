@@ -10,6 +10,7 @@ namespace PdfTextReader.TextStructures
         object GetStart(object instance);
         object FindObject(object instance);
         int GetStartId(int instanceId);
+        int GetEndId(int instanceId);
         object GetInstance(int instanceId);
         int FindObjectId(int instanceId);
         int GetObjectId(object instance);
@@ -50,6 +51,13 @@ namespace PdfTextReader.TextStructures
             var entry = _entries2[instanceId];
 
             return entry.StartId;
+        }
+
+        public int GetEndId(int instanceId)
+        {
+            var entry = _entries2[instanceId];
+
+            return entry.EndId;
         }
 
         public object GetInstance(int instanceId)
