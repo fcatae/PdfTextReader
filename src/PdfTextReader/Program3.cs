@@ -100,6 +100,7 @@ namespace PdfTextReader
                                   //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
+                                  .ParseBlock<ReplaceCharacters>()
                                   .ParseBlock<GroupLines>()
                                   .ParseBlock<RemoveTableDotChar>()
                                       .Show(Color.Yellow)
