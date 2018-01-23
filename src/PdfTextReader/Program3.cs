@@ -64,6 +64,7 @@ namespace PdfTextReader
                             .ToList();
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+                        
         }
 
 
