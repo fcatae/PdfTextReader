@@ -39,6 +39,8 @@ namespace PdfTextReader.Parser
                         writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
                     if (metadados.Grade != null)
                         writer.WriteAttributeString("Grade", ConvertBreakline2Space(metadados.Grade));
+                    if (metadados.NumeroDaPagina >= 0)
+                        writer.WriteAttributeString("NumPagina", metadados.NumeroDaPagina.ToString());
 
                     writer.WriteEndElement();
 

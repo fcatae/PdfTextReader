@@ -9,6 +9,7 @@ namespace PdfTextReader.Parser
     {
         //For internal use
         public int IntenalId { get; set; }
+        public int Page { get; set; }
 
         public string Hierarquia { get; set; }
         public string Titulo { get; set; }

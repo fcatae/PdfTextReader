@@ -10,6 +10,7 @@ namespace PdfTextReader.Parser
 {
     class TransformConteudo : IAggregateStructure<TextSegment, Conteudo>
     {
+        int count = 0;
         public bool Aggregate(TextSegment line)
         {
             return false;
@@ -17,9 +18,12 @@ namespace PdfTextReader.Parser
 
         public Conteudo Create(List<TextSegment> segments)
         {
+            count++;
             TextSegment segment = ProcessSingularBodyBehaviors(segments[0]);
 
             ProcessExclusiveText(segment.Body);
+
+            int page = segment.Body[0].Lines[0].PageInfo.PageNumber;
 
             string titulo = null;
             string hierarchy = null;
@@ -135,7 +139,8 @@ namespace PdfTextReader.Parser
 
             return new Conteudo()
             {
-                IntenalId = 0,
+                IntenalId = count,
+                Page = page,
                 Hierarquia = hierarchy,
                 Titulo = titulo,
                 Caput = caput,
@@ -302,11 +307,14 @@ namespace PdfTextReader.Parser
 
             if (match.Success)
             {
-                segment.Body[0].TextAlignment = TextAlignment.CENTER;
-                List<TextStructure> newTitle = segment.Title.ToList();
-                newTitle.Add(segment.Body[0]);
-                segment.Title = newTitle.ToArray();
-                segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                if (match.Length == segment.Body[0].Text.Length)
+                {
+                    segment.Body[0].TextAlignment = TextAlignment.CENTER;
+                    List<TextStructure> newTitle = segment.Title.ToList();
+                    newTitle.Add(segment.Body[0]);
+                    segment.Title = newTitle.ToArray();
+                    segment.Body = segment.Body.Where(b => b != segment.Body[0]).ToArray();
+                }
             }
 
             //Caso seja 
