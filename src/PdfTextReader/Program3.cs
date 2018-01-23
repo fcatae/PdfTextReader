@@ -67,16 +67,62 @@ namespace PdfTextReader
             
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
-            for(int i=0; i<artigos.Count; i++)
-            {
-                int p = pipeline.Index.FindPageStart(artigos[i]);
-                
-                Console.WriteLine($" P.{p}: {artigos[i].Title.LastOrDefault()?.Text}");
-            }
+            ShowTextSegmentHierarquia(artigos, pipeline);
+            //ShowTextSegmentTitulos(artigos, pipeline);
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();                        
         }
 
+        static void ShowTextSegmentTitulos(IList<TextSegment> artigos, Execution.Pipeline pipeline)
+        {
+            for (int i = 0; i < artigos.Count; i++)
+            {
+                int p = pipeline.Index.FindPageStart(artigos[i]);
+
+                Console.WriteLine($" P.{p}: {artigos[i].Title.LastOrDefault()?.Text}");
+            }
+        }
+        static void ShowTextSegmentHierarquia(IList<TextSegment> artigos, Execution.Pipeline pipeline)
+        {
+            Queue<string> tree = new Queue<string>();
+
+            for (int i = 0; i < artigos.Count; i++)
+            {
+                var artigo = artigos[i];
+                var titles = artigos[i].Title;
+                int p = pipeline.Index.FindPageStart(artigo);
+                int nivel = 0;
+
+                while (tree.Count > 0)
+                {
+                    if (titles[nivel].Text == tree.Peek())
+                        break;
+
+                    tree.Dequeue();
+                }
+
+                while ( titles.Length > tree.Count )
+                {
+                    nivel = tree.Count;
+
+                    string titleText = titles[nivel].Text;
+
+                    // adjust the hierarchy
+                    for (int j = 0; j < nivel; j++)
+                        Console.Write("    ");
+
+                    // print
+                    string optPageInfo = "";
+                    
+                    tree.Enqueue(titleText);
+
+                    if ( titles.Length == tree.Count )
+                        optPageInfo = $" (Page {p})";
+
+                    Console.WriteLine(titleText.Replace("\n"," ") + optPageInfo);
+                }
+            }
+        }
 
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
         {
