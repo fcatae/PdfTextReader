@@ -24,8 +24,8 @@ namespace PdfTextReader
             Console.WriteLine();
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
-
-            //Extract(basename, 173);
+                        
+            // ExtractPages(basename, $"{basename}-ps", new int[] { 10, 32, 34, 35, 37, 40, 42, 60, 80 });
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 

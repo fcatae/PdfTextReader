@@ -1,4 +1,4 @@
-﻿// #define DEBUG_ORDERBLOCKSET
+﻿#define DEBUG_ORDERBLOCKSET
 
 using System;
 using System.Collections.Generic;
@@ -55,6 +55,24 @@ namespace PdfTextReader.PDFCore
             .OrderBy(p => 10000 * p.X - p.Y)
             .ToList();
 
+            var checkInvalidW = Values.Where(v => v.X2 - v.X != v.W).ToList();
+
+            // sometimes W is miscalculated - need to investigate
+            // it is related to smaller size than the expected
+            // check ResizeBlocksets as well
+            if (checkInvalidW.Count > 0)
+            {
+                // warn the issue
+                PdfReaderException.Warning("checkInvalidW failed");
+
+                // workaround: recalculate W in terms of X and X2
+                checkInvalidW.Select(t => { var inv = Values.Where(t1 => t1.ID == t.ID).First(); inv.W = inv.X2 - inv.X; return 0; }).ToList();
+                checkInvalidW = Values.Where(v => v.X2 - v.X != v.W).ToList();
+
+                if (checkInvalidW.Count > 0)
+                    PdfReaderException.Throw("checkInvalidW failed");
+            }
+            
             // Prepare the values order by Y
             this.ValuesY = Values.OrderBy(p => -100 * p.Y + p.X).ToList();
 
