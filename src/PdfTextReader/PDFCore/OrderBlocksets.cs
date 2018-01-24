@@ -93,6 +93,8 @@ namespace PdfTextReader.PDFCore
 
         void scan(int level=0, int x = 2, int min_y = -1, int max_x=6, int cur_w=-1)
         {
+            int max_loop = 100000;
+
             // Algorithm
             // 1. Scan the values in x=2..6
             // 2. Skip processed values
@@ -105,8 +107,21 @@ namespace PdfTextReader.PDFCore
 
             for (; x<= max_x; x+=2)
             {
-                for(int k=0; k<Values.Count; k++)                
+                for (int k=0; k<Values.Count; k++)
                 {
+                    if (0 > max_loop--)
+                    {
+                        PdfReaderException.Throw("Infinite loop detected");
+                        foreach (var val in Values)
+                        {
+                            if (val != null)
+                            {
+                                OrderedBlocks.Add((IBlock)val.B);
+                            }
+                        }
+                        return;
+                    }
+
                     var v = Values[k];
 
                     // skip if already processed
