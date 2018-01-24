@@ -22,7 +22,8 @@ namespace PdfTextReader
             var conteudos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                              .ConvertText<CreateTextLineIndex, TextLine>()
                                 .Log<AnalyzeLines>($"{outputfolder}/{basename}-lines.txt")
-                                .Log<AnalyzeCheckCenterRight>($"{outputfolder}/{basename}-check-center-right.txt")                                
+                                
+                                .Log<AnalyzeLinesCenterRight>($"{outputfolder}/{basename}-;lines-center-right.txt")                                
                             .ConvertText<CreateStructures, TextStructure>()
                                 .Log<AnalyzeStructuresCentral>($"{outputfolder}/{basename}-central.txt")
                             //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
@@ -32,13 +33,13 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegments2>($"{outputfolder}/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
                                 .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree-hier.txt")
-                            // .ConvertText<TransformConteudo, Conteudo>()
+                             .ConvertText<TransformConteudo, Conteudo>()
                             .ToList();
 
             //Create XML
-            //var createArticle = new TransformArtigo();
-            //var artigos = createArticle.Create(conteudos);
-            //createArticle.CreateXML(artigos, outputfolder, basename);
+            var createArticle = new TransformArtigo();
+            var artigos = createArticle.Create(conteudos);
+            createArticle.CreateXML(artigos, outputfolder, basename);
 
 
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
