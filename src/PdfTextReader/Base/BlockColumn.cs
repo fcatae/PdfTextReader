@@ -14,6 +14,8 @@ namespace PdfTextReader.Base
         //public int Y2;
         //public int H;
 
+        public int ColumnType => _columnType;
+
         public BlockColumn(BlockPage page, int columnType, int x, int w) : base(page)
         {
             this._columnType = columnType;

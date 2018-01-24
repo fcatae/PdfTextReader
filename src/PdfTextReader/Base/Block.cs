@@ -91,7 +91,18 @@ namespace PdfTextReader
 
             return ( diff_h1 < err && diff_h2 < err );
         }
+        public static bool SameHeight(IBlock a, IBlock b)
+        {
+            float err = 0.5f;
 
+            float ah = a.GetH() + a.GetHeight();
+            float bh = b.GetH() + b.GetHeight();
+
+            float diff = Math.Abs(ah - bh);
+
+            return (diff < err);
+        }
+        
         public static bool IsSuperscriptFont(Block a, Block b)
         {
             float a_y1 = a.GetH();

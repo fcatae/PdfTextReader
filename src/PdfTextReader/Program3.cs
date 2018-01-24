@@ -114,10 +114,13 @@ namespace PdfTextReader
                                     
                                     // Reorder the blocks
                                     .ParseBlock<OrderBlocksets>()
-                                  
-                                      .Show(Color.Orange)
-                                  .ShowLine(Color.Black)
+
                                   .ParseBlock<OrganizePageLayout>()
+                                  .ParseBlock<MergeSequentialLayout>()
+
+                                  .Show(Color.Orange)
+                                  .ShowLine(Color.Black)
+                                  
                                   .ParseBlock<CheckOverlap>()
 
                                       .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))

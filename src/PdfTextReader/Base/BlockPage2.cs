@@ -9,6 +9,8 @@ namespace PdfTextReader.Base
     {
         List<BlockPageSegment> _segments = new List<BlockPageSegment>();
 
+        public IEnumerable<BlockPageSegment> Segments => _segments;
+
         public void AddSegment(BlockPageSegment segment)
         {
             _segments.Add(segment);
