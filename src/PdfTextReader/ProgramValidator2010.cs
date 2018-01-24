@@ -22,6 +22,7 @@ namespace PdfTextReader
             var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                             .ConvertText<CreateTextLineIndex, TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
+                                .ShowPdf<ShowStructureCentral>($"{outputfolder}/{basename}-show-central.pdf")
                             .ConvertText<CreateTextSegments, TextSegment>()
                             .ConvertText<CreateTreeSegments, TextSegment>()
                                 .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree.txt")
@@ -49,8 +50,7 @@ namespace PdfTextReader
         static PipelineText<TextLine> GetTextLines(string basename, string inputfolder, string outputfolder, out Execution.Pipeline pipeline)
         {
             pipeline = new Execution.Pipeline();
-
-
+            
             var result =
             pipeline.Input($"{inputfolder}/{basename}.pdf")
                     .Output($"{outputfolder}/{basename}-parser.pdf")
@@ -97,10 +97,11 @@ namespace PdfTextReader
         
         static void ExtractPages(string basename, string outputname, IList<int> pages)
         {
-            var pipeline = new Execution.Pipeline();
-
-            pipeline.Input($"{basename}.pdf")
-                    .ExtractPages($"{outputname}.pdf", pages);
+            using (var pipeline = new Execution.Pipeline())
+            {
+                pipeline.Input($"{basename}.pdf")
+                        .ExtractPages($"{outputname}.pdf", pages);
+            }
         }
     }
 }

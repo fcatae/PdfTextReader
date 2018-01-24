@@ -26,14 +26,13 @@ namespace PdfTextReader
             Console.WriteLine();
 
             //Extract(basename, 173);
-            //ExamplesPipeline.Extract(basename, 10);
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
             //Examples.FollowText(basename);
             //Examples.ShowHeaderFooter(basename);
 
-            Examples.ProcessPipeline("bin/"  + basename);
+            //Examples.ProcessPipeline("bin/"  + basename);
 
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 //.Log<AnalyzeLines>(Console.Out)
@@ -61,7 +60,7 @@ namespace PdfTextReader
             var pagesOverlap = overlap.GetPageErrors().ToList();
             var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t =>t).ToList();
 
-            ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
+            //ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
         }
 
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
@@ -100,12 +99,16 @@ namespace PdfTextReader
                                   .ParseBlock<RemoveTableOverImage>()
                                   .ParseBlock<RemoveImageTexts>()
                                   .ParseBlock<AddImageSpace>()
-                                    .Show(Color.Red)
+                                    .Show(Color.LightGray)
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
+                                   
+                                      // Try to rewrite column
+                                      .ParseBlock<BreakColumnsRewrite>()
+
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Gray))
+                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                                   .ParseBlock<OrderBlocksets>()
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
