@@ -38,6 +38,12 @@ namespace PdfTextReader.PDFCore
                             var b1 = last as IBlockSet<IBlock>;
                             var b2 = block as IBlockSet<IBlock>;
 
+                            if (block is TableSet || block is ImageBlock || last is TableSet || last is ImageBlock)
+                            {
+                                last = block;
+                                continue;
+                            }
+
                             if (b1 == null || b2 == null)
                                 PdfReaderException.AlwaysThrow("not expected");
 

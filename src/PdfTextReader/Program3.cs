@@ -25,7 +25,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            //ExtractPages(basename, $"{basename}-p2345", new int[] { 2, 3, 4, 5 });
+            // ExtractPages(basename, $"{basename}-p34", new int[] { 3 });
             // ExtractPages(basename, $"{basename}-ps", new int[] { 10, 32, 34, 35, 37, 40, 42, 60, 80 });
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
@@ -100,8 +100,7 @@ namespace PdfTextReader
                                   .ParseBlock<AddTableSpace>()
                                   .ParseBlock<RemoveTableOverImage>()
                                   .ParseBlock<RemoveImageTexts>()
-                                  .ParseBlock<AddImageSpace>()
-                                    .Show(Color.LightGray)
+                                  .ParseBlock<AddImageSpace>()                                    
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
                                    
@@ -110,8 +109,9 @@ namespace PdfTextReader
 
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
-                                  .ParseBlock<ResizeBlocksetMagins>()
-                                    
+                                  //.ParseBlock<ResizeBlocksetMagins>()
+                                    .Show(Color.Blue)
+
                                     // Reorder the blocks
                                     .ParseBlock<OrderBlocksets>()
 
@@ -119,8 +119,8 @@ namespace PdfTextReader
                                   .ParseBlock<MergeSequentialLayout>()
                                   .ParseBlock<ResizeSequentialLayout>()
 
-                                  .Show(Color.Orange)
-                                  .ShowLine(Color.Black)
+                                      .Show(Color.Orange)
+                                      .ShowLine(Color.Black)
                                   
                                   .ParseBlock<CheckOverlap>()
 
