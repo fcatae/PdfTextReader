@@ -100,6 +100,16 @@ namespace PdfTextReader
 
             return ((a_y2 > b_y1) && (a_y1 < b_y1)) && (a.FontSize > b.FontSize);
         }
+
+        public static bool Contains(IBlock a, IBlock b)
+        {
+            float a_y1 = a.GetH();
+            float a_y2 = a.GetH() + a.GetHeight();
+            float b_y1 = b.GetH();
+            float b_y2 = b.GetH() + b.GetHeight();
+
+            return ((a_y2 > b_y2) && (a_y1 < b_y1));
+        }
     }
 
 }

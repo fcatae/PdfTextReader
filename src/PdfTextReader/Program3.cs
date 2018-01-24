@@ -24,7 +24,8 @@ namespace PdfTextReader
             Console.WriteLine();
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
-                        
+
+            //ExtractPages(basename, $"{basename}-p2345", new int[] { 2, 3, 4, 5 });
             // ExtractPages(basename, $"{basename}-ps", new int[] { 10, 32, 34, 35, 37, 40, 42, 60, 80 });
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
@@ -109,7 +110,6 @@ namespace PdfTextReader
 
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Red))
                                   .ParseBlock<ResizeBlocksetMagins>()
                                     
                                     // Reorder the blocks
@@ -119,7 +119,9 @@ namespace PdfTextReader
                                   .ShowLine(Color.Black)
                                   .ParseBlock<OrganizePageLayout>()
                                   .ParseBlock<CheckOverlap>()
-                                  .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
+
+                                      .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
+                                      .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
             return result;

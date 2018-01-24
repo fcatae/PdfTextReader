@@ -111,6 +111,16 @@ namespace PdfTextReader.PDFCore
                             PdfReaderException.AlwaysThrow("Block should not be resized");
                         
                         var replace = new BlockSet2<IBlock>(original, block.GetX(), block.GetH(), block.GetX()+block.GetWidth(), block.GetH()+block.GetHeight());
+
+                        bool isStillContained = Block.Contains(replace, blsearch.B);
+                        if (!isStillContained)
+                        {
+                            bool hasOverlap = Block.HasOverlap(replace, blsearch.B);
+
+                            PdfReaderException.Throw("Block was moved to another place -- ignore");
+                            continue;
+                        }
+
                         repls.Add(replace);
                     }
                 }
