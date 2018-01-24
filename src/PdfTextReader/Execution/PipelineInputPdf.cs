@@ -114,6 +114,11 @@ namespace PdfTextReader.Execution
             return this;
         }
 
+        public PipelineDebugContext CreatePipelineDebugContext(string outputname)
+        {
+            return new PipelineDebugContext(_input, outputname);
+        }
+
         public void Dispose()
         {
             if( CurrentPage != null )

@@ -37,6 +37,7 @@ namespace PdfTextReader
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
+                                .ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
                                 //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
                                 //.Log<AnalyzeStructures>(Console.Out)
                                 //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")

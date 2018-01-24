@@ -24,7 +24,9 @@ namespace PdfTextReader.Execution
             _factory.AddReference(chain);
             _indexTree = indexTree;
         }
-                
+
+        PipelineInputPdf ParentContext => (PipelineInputPdf)this.Context;
+
         public PipelineText<TT> Show(Color Color)
         {
             PipelineDebug.Show((PipelineInputPdf)Context, CurrentStream, Color);
@@ -61,6 +63,19 @@ namespace PdfTextReader.Execution
 
             return Log<TL>(file);
         }
+        public PipelineText<TT> ShowPdf<TL>(string filename)
+            where TL : ILogStructurePdf<TT>, new()
+        {
+            var pipeline = _factory.CreateInstance<PipelineDebugContext>(() => ParentContext.CreatePipelineDebugContext(filename));
+
+            return ShowPdf<TL>(pipeline);
+        }
+
+        public PipelineText<TT> ShowPdf<TL>(IPipelineDebug pipelineDebug)
+            where TL : ILogStructurePdf<TT>, new()
+        {
+            return CreateNewPipelineTextForLogging(PipelineTextLogPdf<TL>(pipelineDebug, this.CurrentStream));
+        }
 
         public PipelineText<TT> Log<TL>(TextWriter writer)
             where TL : ILogStructure<TT>, new()
@@ -92,6 +107,22 @@ namespace PdfTextReader.Execution
             }
 
             pipelineText.Dispose();
+        }
+        IEnumerable<TT> PipelineTextLogPdf<TL>(IPipelineDebug pipelineDebug, IEnumerable<TT> stream)
+            where TL : ILogStructurePdf<TT>, new()
+        {
+            TL logger = _factory.CreateInstance<TL>();
+            
+            logger.StartLogPdf(pipelineDebug);
+
+            foreach (var data in stream)
+            {
+                logger.LogPdf(pipelineDebug, data);
+
+                yield return data;
+            }
+
+            logger.EndLogPdf(pipelineDebug);
         }
 
         IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream)
