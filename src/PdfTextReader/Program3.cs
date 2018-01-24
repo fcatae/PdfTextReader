@@ -117,6 +117,7 @@ namespace PdfTextReader
 
                                   .ParseBlock<OrganizePageLayout>()
                                   .ParseBlock<MergeSequentialLayout>()
+                                  .ParseBlock<ResizeSequentialLayout>()
 
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
