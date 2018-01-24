@@ -9,6 +9,7 @@ using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System.Drawing;
 using PdfTextReader.PDFCore;
+using System.Linq;
 
 namespace PdfTextReader
 {
@@ -29,14 +30,29 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentStats>($"{outputfolder}/{basename}-segments-stats.txt")
                                 .Log<AnalyzeSegments2>($"{outputfolder}/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
-                           // .ConvertText<TransformConteudo, Conteudo>()
+                                .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree-hier.txt")
+                            // .ConvertText<TransformConteudo, Conteudo>()
                             .ToList();
-            
+
             //Create XML
             //var createArticle = new TransformArtigo();
             //var artigos = createArticle.Create(conteudos);
             //createArticle.CreateXML(artigos, outputfolder, basename);
-            
+
+
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
+            var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
+
+            var pagesLayout = layout.GetPageErrors().ToList();
+            var pagesOverlap = overlap.GetPageErrors().ToList();
+            var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t => t).ToList();
+
+            if (pages.Count > 0)
+            {
+                ExtractPages($"{outputfolder}/{basename}-parser", $"{outputfolder}/{basename}-parser-errors", pages);
+            }
+
             pipeline.Done();
         }
 
@@ -88,6 +104,13 @@ namespace PdfTextReader
                     );
 
             return result;
-        }        
+        }
+        static void ExtractPages(string basename, string outputname, IList<int> pages)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"{basename}.pdf")
+                    .ExtractPages($"{outputname}.pdf", pages);
+        }
     }
 }
