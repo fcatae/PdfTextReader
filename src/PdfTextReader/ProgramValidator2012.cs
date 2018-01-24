@@ -20,6 +20,7 @@ namespace PdfTextReader
             PdfReaderException.ContinueOnException();
 
             var conteudos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
+                             .ConvertText<CreateTextLineIndex, TextLine>()
                                 .Log<AnalyzeLines>($"{outputfolder}/{basename}-lines.txt")
                                 .Log<AnalyzeCheckCenterRight>($"{outputfolder}/{basename}-check-center-right.txt")                                
                             .ConvertText<CreateStructures, TextStructure>()
@@ -50,7 +51,7 @@ namespace PdfTextReader
 
             if (pages.Count > 0)
             {
-                ExtractPages($"{outputfolder}/{basename}-parser", $"{outputfolder}/{basename}-parser-errors", pages);
+                ExtractPages($"{outputfolder}/{basename}-output", $"{outputfolder}/{basename}-parser-errors", pages);
             }
 
             pipeline.Done();
