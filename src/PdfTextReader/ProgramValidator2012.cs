@@ -20,6 +20,7 @@ namespace PdfTextReader
 
             var conteudos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"{outputfolder}/{basename}-lines.txt")
+                                .Log<AnalyzeCheckLines>($"{outputfolder}/{basename}-check-lines.txt")                                
                             .ConvertText<CreateStructures, TextStructure>()
                                 .Log<AnalyzeStructuresCentral>($"{outputfolder}/{basename}-central.txt")
                             //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
