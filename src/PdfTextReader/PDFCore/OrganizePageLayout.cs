@@ -8,6 +8,8 @@ namespace PdfTextReader.PDFCore
 {
     class OrganizePageLayout : IProcessBlock, IRetrieveStatistics
     {
+        const float MAX_PAGE_WIDTH_DIFFERENCE = 8f;
+
         float _minX = float.NaN;
         float _maxX = float.NaN;
         float _pageWidth = float.NaN;
@@ -20,12 +22,31 @@ namespace PdfTextReader.PDFCore
             _minX = blocks.Min(b => b.GetX());
             _maxX = blocks.Max(b => b.GetX() + b.GetWidth());
             _pageWidth = _maxX - _minX;
+
+            CheckBasicStats();
+        }
+
+        void CheckBasicStats()
+        {
+            // sometimes the page width is shorter - should we use another source for page width?
+
+            float pageWidth = BasicFirstPageStats.Global.PageWidth;
+
+            float diff = Math.Abs(pageWidth - _pageWidth);
+
+            if( diff > MAX_PAGE_WIDTH_DIFFERENCE )
+            {
+                PdfReaderException.Warning("Large PageWidth difference -- using the BasicFirstPageStats");
+                _minX = BasicFirstPageStats.Global.MinX;
+                _maxX = BasicFirstPageStats.Global.MaxX;
+                _pageWidth = BasicFirstPageStats.Global.PageWidth;
+            }
         }
 
         public BlockPage Process(BlockPage page)
         {
             SetupPage(page);
-
+            
             BlockPage2 newpage = new BlockPage2();
 
             int last_columnType = -1;

@@ -58,6 +58,7 @@ namespace PdfTextReader
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
                               .ParsePdf<PreProcessImages>()
+                                  .ParseBlock<BasicFirstPageStats>()
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
                                   .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))

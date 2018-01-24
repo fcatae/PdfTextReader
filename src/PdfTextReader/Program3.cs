@@ -73,8 +73,9 @@ namespace PdfTextReader
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
-                                  //.Show(Color.Blue)
+                              //.Show(Color.Blue)
                               .ParsePdf<PreProcessImages>()
+                                  .ParseBlock<BasicFirstPageStats>()
                                   //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
