@@ -188,6 +188,11 @@ namespace PdfTextReader.TextStructures
             {
                 _structure.TextAlignment = TextAlignment.JUSTIFY;
 
+                if (_structure.FontStyle == "Bold" )
+                {
+                    PdfReaderException.Throw("It should be a title");
+                }
+
                 if (lineset.Count != 1)
                 {
                     PdfReaderException.Throw("We only tested for 1 line");
