@@ -14,27 +14,7 @@ using System.Linq;
 namespace PdfTextReader
 {
     class Program3
-    {
-        public static void ProcessWork()
-        {
-            //ExamplesWork.Blocks("p40");
-            //ExamplesWork.BlockLines("p40");
-            //ExamplesWork.BlockSets("p40");
-            //ExamplesWork.BlockSets("dou555-p1"); 
-            //ExamplesWork.FollowLine("p40");
-            //ExamplesWork.FollowLine("dou555-p1");
-            //ExamplesWork.BreakColuc:mn("p40");
-            //ExamplesWork.BreakColumn("dou555-p1");
-            //ExamplesWork.Tables("DO1_2016_12_20-p75");
-            //ExamplesWork.Tables("dz088");
-            //ExamplesWork.FindTables("DO1_2016_12_20-p75");
-            //ExamplesWork.FindTables("dz088");
-            //ExamplesWork.BadOrder("p40"); 
-            //ExamplesWork.CorrectOrder("p40");
-            //ExamplesWork.FindIds("dou555-p10");
-            //ExamplesWork.ParseFinal("dou555-p10");
-        }
-        
+    {        
         public static void ProcessStats2(string basename = "DO1_2017_01_06")
         {
             PdfReaderException.ContinueOnException();
@@ -78,7 +58,7 @@ namespace PdfTextReader
             var pagesOverlap = overlap.GetPageErrors().ToList();
             var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t =>t).ToList();
 
-            ExamplesPipeline.ExtractPages($"{basename}-test-output", $"{basename}-page-errors-output", pages);
+            ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
         }
 
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
@@ -87,7 +67,7 @@ namespace PdfTextReader
 
             var result =
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-test-output.pdf")
+                    .Output($"bin/{basename}-parser-output.pdf")
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
@@ -133,14 +113,13 @@ namespace PdfTextReader
 
             return result;
         }
-        
-        public static void Extract(string basename, int page)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - Extract");
-            Console.WriteLine();
 
-            ExamplesPipeline.ExtractPage(basename, page);
+        static void ExtractPages(string basename, string outputname, IList<int> pages)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .ExtractPages($"bin/{outputname}.pdf", pages);
         }
     }
 }
