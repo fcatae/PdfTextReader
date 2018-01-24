@@ -24,7 +24,7 @@ namespace PdfTextReader
                             .ConvertText<CreateStructures, TextStructure>()
                             .ConvertText<CreateTextSegments, TextSegment>()
                             .ConvertText<CreateTreeSegments, TextSegment>()
-                                .Log<AnalyzeTreeStructure>($"{basename}-tree.txt")
+                                .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree.txt")
                                 .ToList();
 
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
