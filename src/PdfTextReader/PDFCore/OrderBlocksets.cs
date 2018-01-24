@@ -73,7 +73,7 @@ namespace PdfTextReader.PDFCore
             return result;
         }
 
-        void scan(int x = 2, int min_y = -1, int max_x=6, int cur_w=-1)
+        void scan(int level=0, int x = 2, int min_y = -1, int max_x=6, int cur_w=-1)
         {
             // Algorithm
             // 1. Scan the values in x=2..6
@@ -113,10 +113,15 @@ namespace PdfTextReader.PDFCore
                         bool twoColumns2 = (v.W == 3);
                         bool threeColumns2 = (v.W == 2) || (v.W == 4);
 
-                        if(!(threeColumns && threeColumns2))
-                            scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: cur_w);
+                        if (!(threeColumns && threeColumns2))
+                        {
+                            scan(level + 1, x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: cur_w);
 
-                        //scan(x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: v.W);
+                            // reset to the new column W
+                            k = -1;
+                            cur_w = -1;
+                            continue;
+                        }
                     }
 
                     // consume all values < X2
@@ -125,8 +130,11 @@ namespace PdfTextReader.PDFCore
                         // take the parameter
                         OrderedBlocks.Add((IBlock)v.B);
 
+                        if ((v.W != cur_w) && (!((v.W == 2 && cur_w == 4)|| (v.W == 4 && cur_w == 2))))
+                            PdfReaderException.Warning($"v.W != cur_w: {v.W} != {cur_w}");
+
 #if DEBUG_ORDERBLOCKSET 
-                        Console.WriteLine($"[{v.ID}] X={v.X} Y={v.Y} X2={v.X2} W={v.W}");
+                        Console.WriteLine($"[{v.ID}] X={v.X} Y={v.Y} X2={v.X2} W={v.W} cur_w={cur_w} level={level}");
 #endif
                         Values[k] = null;
                         continue;
@@ -136,13 +144,16 @@ namespace PdfTextReader.PDFCore
                         continue;
 
                     // define a new goal
-                    scan(x: x+2, min_y: v.Y1 + 1, max_x: v.X2, cur_w: cur_w);
+                    scan(level + 1, x: x+2, min_y: v.Y1 + 1, max_x: v.X2, cur_w: cur_w);
+
+                    if ((v.W != cur_w) && (!((v.W == 2 && cur_w == 4) || (v.W == 4 && cur_w == 2))))
+                        PdfReaderException.Warning($"v.W != cur_w: {v.W} != {cur_w}");
 
                     // consume X2
                     OrderedBlocks.Add((IBlock)v.B);
 
 #if DEBUG_ORDERBLOCKSET
-                    Console.WriteLine($"[{v.ID}] X={v.X} Y={v.Y} X2={v.X2} W={v.W}");
+                    Console.WriteLine($"[{v.ID}] X={v.X} Y={v.Y} X2={v.X2} W={v.W} cur_w={cur_w} level={level}");
 #endif
 
                     Values[k] = null;
@@ -150,14 +161,20 @@ namespace PdfTextReader.PDFCore
                     // reset
                     k = -1;
 
-                    if( cur_w == 6 )
+                    if (cur_w == 6)
+                    {
                         cur_w = -1;
+                    }
 
                     if (cur_w == 3 && v.X == 3)
+                    {
                         cur_w = -1;
+                    }
 
                     if (cur_w == 2 && v.X == 4)
+                    {
                         cur_w = -1;
+                    }
                 }
             }
 

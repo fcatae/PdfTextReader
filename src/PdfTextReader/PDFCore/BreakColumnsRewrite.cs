@@ -117,6 +117,9 @@ namespace PdfTextReader.PDFCore
         {
             var block = new BlockSet<IBlock>(page);
 
+            if( blockList.Count == 0 )
+                PdfReaderException.AlwaysThrow("invalid block");
+
             block.AddRange(blockList);
 
             return block;
@@ -135,10 +138,13 @@ namespace PdfTextReader.PDFCore
 
         IList<IBlock> RewriteBlockBody(List<IBlock> blockList, int idxBottom, int idxTop)
         {
-            int total = blockList.Count;
+            int bodySize = idxBottom - idxTop - 1;
 
-            if ( idxBottom <= idxTop )
+            if (( idxBottom <= idxTop ) || (bodySize < 0))
                 PdfReaderException.AlwaysThrow("invalid index");
+
+            if (bodySize == 0)
+                return null;
 
             return blockList.Skip(idxTop + 1).Take( idxBottom - idxTop - 1 ).ToList();
         }
