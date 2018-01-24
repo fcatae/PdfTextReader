@@ -10,6 +10,8 @@ namespace PdfTextReader.Execution
     class PipelineDebugContext : IPipelineDebug, IDisposable
     {
         private PdfDocument _pdf;
+        private int _lastPageNumber = -1;
+        private PdfCanvas _currentCanvas = null;
 
         public PipelineDebugContext(string filename, string outputname)
         {
@@ -29,10 +31,18 @@ namespace PdfTextReader.Execution
         {
             int pageNumber = line.PageInfo.PageNumber;
 
-            var page = _pdf.GetPage(pageNumber);
-            var canvas = new PdfCanvas(page);
+            if (pageNumber == -1)
+                PdfReaderException.AlwaysThrow("invalid page number");
 
-            DrawRectangle(canvas, line.Block, color);
+            if( pageNumber != _lastPageNumber )
+            {
+                var page = _pdf.GetPage(pageNumber);
+                var canvas = new PdfCanvas(page);
+
+                _currentCanvas = canvas;
+            }
+
+            DrawRectangle(_currentCanvas, line.Block, color);
         }
 
         public void ShowLine(IEnumerable<TextLine> lines, System.Drawing.Color color)

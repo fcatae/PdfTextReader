@@ -33,11 +33,13 @@ namespace PdfTextReader
             //Examples.FollowText(basename);
             //Examples.ShowHeaderFooter(basename);
 
+            Examples.ProcessPipeline("bin/"  + basename);
+
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
-                                .ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
+                                //.ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
                                 //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
                                 //.Log<AnalyzeStructures>(Console.Out)
                                 //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
@@ -117,10 +119,11 @@ namespace PdfTextReader
 
         static void ExtractPages(string basename, string outputname, IList<int> pages)
         {
-            var pipeline = new Execution.Pipeline();
-
-            pipeline.Input($"bin/{basename}.pdf")
-                    .ExtractPages($"bin/{outputname}.pdf", pages);
+            using (var pipeline = new Execution.Pipeline())
+            {
+                pipeline.Input($"bin/{basename}.pdf")
+                        .ExtractPages($"bin/{outputname}.pdf", pages);
+            }
         }
     }
 }

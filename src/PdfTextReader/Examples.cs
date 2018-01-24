@@ -162,6 +162,7 @@ namespace PdfTextReader
             var artigos = GetTextLineFromPipeline(basename, out Execution.Pipeline pipeline)
                             .ConvertText<CreateTextLineIndex, TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
+                                .ShowPdf<ShowStructureCentral>($"{basename}-show-central.pdf")
                             .ConvertText<CreateTextSegments, TextSegment>()
                             .ConvertText<CreateTreeSegments, TextSegment>()
                                 .Log<AnalyzeTreeStructure>($"{basename}-tree.txt")
@@ -178,6 +179,8 @@ namespace PdfTextReader
             var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t => t).ToList();
 
             ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
+
+            pipeline.Done();
         }
 
         static PipelineText<TextLine> GetTextLineFromPipeline(string basename, out Execution.Pipeline pipeline)
@@ -230,10 +233,11 @@ namespace PdfTextReader
 
         static void ExtractPages(string basename, string outputname, IList<int> pages)
         {
-            var pipeline = new Execution.Pipeline();
-
-            pipeline.Input($"{basename}.pdf")
-                    .ExtractPages($"{outputname}.pdf", pages);
+            using (var pipeline = new Execution.Pipeline())
+            {
+                pipeline.Input($"{basename}.pdf")
+                        .ExtractPages($"{outputname}.pdf", pages);
+            }
         }
     }
 }
