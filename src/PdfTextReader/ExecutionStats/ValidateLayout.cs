@@ -16,7 +16,10 @@ namespace PdfTextReader.ExecutionStats
             {
                 bool error = false;
 
-                if(s.Layout.Contains("1(") || s.Layout.Contains("2("))
+                if (s.Layout.Contains("()"))
+                    error = true;
+
+                if (s.Layout.Contains("1(") || s.Layout.Contains("2("))
                 {
                     error = true;                    
                 }
