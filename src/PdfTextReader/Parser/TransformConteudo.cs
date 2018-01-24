@@ -21,7 +21,7 @@ namespace PdfTextReader.Parser
             count++;
             TextSegment segment = ProcessSingularBodyBehaviors(segments[0]);
 
-            ProcessExclusiveText(segment.Body);
+            segment = ProcessExclusiveText(segments[0]);
 
             int page = segment.Body[0].Lines[0].PageInfo.PageNumber;
 
@@ -193,11 +193,11 @@ namespace PdfTextReader.Parser
             return new List<TextStructure[]>() { sign.ToArray(), anexo.ToArray() };
         }
 
-        void ProcessExclusiveText(TextStructure[] structures)
+        TextSegment ProcessExclusiveText(TextSegment segment)
         {
-            foreach (TextStructure item in structures)
+            foreach (TextStructure item in segment.Body)
             {
-                if (item.Text.ToLower() == "o presidente da república" || item.Text.ToLower() == "a presidenta da república")
+                if (item.Text.ToLower().Contains("o presidente da república") || item.Text.ToLower().Contains("a presidenta da república"))
                     item.TextAlignment = TextAlignment.JUSTIFY;
                 if (item.Text.Contains("Parágrafo único"))
                 {
@@ -210,6 +210,7 @@ namespace PdfTextReader.Parser
                         item.TextAlignment = TextAlignment.JUSTIFY;
                 }
             }
+            return segment;
         }
 
         List<string> ProcessSignatureAndRole(List<TextLine> lines)
@@ -279,7 +280,7 @@ namespace PdfTextReader.Parser
             string newTitle = null;
 
             //If title was single data (e.g. "Em 25 de Dezembro de 2016")
-            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]*(\°?|o?|\º?) (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
+            var match = Regex.Match(title, @"((Em|EM|DIA|dia) [0-9]*(\°?) (de|DE) [a-zA-Z]+ (de|DE) \d{4})");
             //Get the last position before title and concat with it.
             if (match.Success)
                 newTitle = $"{segmentTitles[segmentTitles.Count() - 2].Text} - {title.ToUpper()}";
