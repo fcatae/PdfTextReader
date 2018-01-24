@@ -70,7 +70,8 @@ namespace PdfTextReader
             
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
             
-            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();                        
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            var layout = pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
         }
         
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)

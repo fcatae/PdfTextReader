@@ -6,11 +6,12 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class OrganizePageLayout : IProcessBlock
+    class OrganizePageLayout : IProcessBlock, IRetrieveStatistics
     {
         float _minX = float.NaN;
         float _maxX = float.NaN;
         float _pageWidth = float.NaN;
+        string _pageLayout;
 
         void SetupPage(BlockPage page)
         {
@@ -75,6 +76,7 @@ namespace PdfTextReader.PDFCore
             }
 
             //Console.WriteLine($"Page type = {newpage.ToString()}");
+            _pageLayout = newpage.ToString();
 
             return newpage;
         }
@@ -114,6 +116,11 @@ namespace PdfTextReader.PDFCore
             }
 
             throw PdfReaderException.AlwaysThrow("Invalid column width");
+        }
+
+        public object RetrieveStatistics()
+        {
+            return new StatsPageLayout { Layout = _pageLayout };
         }
     }
 }
