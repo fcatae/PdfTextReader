@@ -20,7 +20,7 @@ namespace PdfTextReader
 
             var conteudos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"{outputfolder}/{basename}-lines.txt")
-                                .Log<AnalyzeCheckLines>($"{outputfolder}/{basename}-check-lines.txt")                                
+                                .Log<AnalyzeCheckCenterRight>($"{outputfolder}/{basename}-check-center-right.txt")                                
                             .ConvertText<CreateStructures, TextStructure>()
                                 .Log<AnalyzeStructuresCentral>($"{outputfolder}/{basename}-central.txt")
                             //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
@@ -29,13 +29,13 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentStats>($"{outputfolder}/{basename}-segments-stats.txt")
                                 .Log<AnalyzeSegments2>($"{outputfolder}/{basename}-segments.csv")
                             .ConvertText<CreateTreeSegments, TextSegment>()
-                            .ConvertText<TransformConteudo, Conteudo>()
+                           // .ConvertText<TransformConteudo, Conteudo>()
                             .ToList();
             
             //Create XML
-            var createArticle = new TransformArtigo();
-            var artigos = createArticle.Create(conteudos);
-            createArticle.CreateXML(artigos, outputfolder, basename);
+            //var createArticle = new TransformArtigo();
+            //var artigos = createArticle.Create(conteudos);
+            //createArticle.CreateXML(artigos, outputfolder, basename);
             
             pipeline.Done();
         }
