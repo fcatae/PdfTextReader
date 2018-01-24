@@ -117,8 +117,12 @@ namespace PdfTextReader.PDFCore
                         {
                             bool hasOverlap = Block.HasOverlap(replace, blsearch.B);
 
-                            PdfReaderException.Throw("Block was moved to another place -- ignore");
-                            continue;
+                            // TODO: review this issue
+                            if( !hasOverlap )
+                            {
+                                PdfReaderException.Warning("Block was moved to another place -- ignore");
+                                continue;
+                            }
                         }
 
                         repls.Add(replace);
