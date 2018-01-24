@@ -78,23 +78,31 @@ namespace PdfTextReader.PDFCore
 
                         if( topBlock != null || bottomBlock != null )
                         {
-                            // replace the blocks
-                            blocks[i] = null;
+                            int total = 0;
 
                             if (topBlock != null)
                             {
                                 blocks.Add(CreateNewBlock(result, topBlock));
+                                total += topBlock.Count;
                             }
 
                             if (bodyBlock != null)
                             {
                                 blocks.Add(CreateNewBlock(result, bodyBlock));
+                                total += bodyBlock.Count;
                             }
 
                             if (bottomBlock != null)
                             {
                                 blocks.Add(CreateNewBlock(result, bottomBlock));
+                                total += bottomBlock.Count;
                             }
+
+                            if (total != blockList.Count)
+                                PdfReaderException.AlwaysThrow("incorrect number of blocks");
+
+                            // replace the blocks
+                            blocks[i] = null;
                         }
                         else
                         {
@@ -159,7 +167,7 @@ namespace PdfTextReader.PDFCore
             if ((idxBottom < 0) || (idxBottom > blockList.Count))
                 PdfReaderException.AlwaysThrow("invalid index");
 
-            return blockList.Skip(idxBottom+1).Take(total - idxBottom).ToList();
+            return blockList.Skip(idxBottom).Take(total - idxBottom).ToList();
         }
 
         int FindTop(List<IBlock> blockList, float top)

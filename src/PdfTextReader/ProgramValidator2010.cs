@@ -81,6 +81,7 @@ namespace PdfTextReader
                                   .ParseBlock<AddImageSpace>()
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
+                                      .ParseBlock<BreakColumnsRewrite>()
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
                                       .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Gray))
