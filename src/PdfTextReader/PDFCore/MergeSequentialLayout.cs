@@ -40,6 +40,7 @@ namespace PdfTextReader.PDFCore
 
                             if (block is TableSet || block is ImageBlock || last is TableSet || last is ImageBlock)
                             {
+                                newcolumn.Add(last);
                                 last = block;
                                 continue;
                             }

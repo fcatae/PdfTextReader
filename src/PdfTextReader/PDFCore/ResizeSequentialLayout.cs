@@ -34,6 +34,12 @@ namespace PdfTextReader.PDFCore
                     {
                         var bset = block as IBlockSet<IBlock>;
 
+                        if( block is TableSet || block is ImageBlock )
+                        {
+                            newcolumn.Add(block);
+                            continue;
+                        }
+
                         if (bset == null)
                             PdfReaderException.AlwaysThrow("not expected");
 

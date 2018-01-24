@@ -99,12 +99,12 @@ namespace PdfTextReader.PDFCore
             {
                 var blsearch = values[i];
 
-                if (blsearch.B is TableSet)
+                if (blsearch.B is TableSet || blsearch.B is ImageBlock)
+                {
+                    result.Add(blsearch.B);
                     continue;
-
-                if (blsearch.B is ImageBlock)
-                        continue;
-
+                }
+                
                 var bl = blsearch.B;
 
                 Block block = null;

@@ -109,8 +109,7 @@ namespace PdfTextReader
 
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
-                                  //.ParseBlock<ResizeBlocksetMagins>()
-                                    .Show(Color.Blue)
+                                  .ParseBlock<ResizeBlocksetMagins>()
 
                                     // Reorder the blocks
                                     .ParseBlock<OrderBlocksets>()
