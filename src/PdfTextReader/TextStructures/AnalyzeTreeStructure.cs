@@ -48,7 +48,7 @@ namespace PdfTextReader.TextStructures
 
                 // adjust the hierarchy
                 for (int j = 0; j < nivel; j++)
-                    Console.Write("    ");
+                    input.Write("    ");
 
                 // print
                 string optPageInfo = "";

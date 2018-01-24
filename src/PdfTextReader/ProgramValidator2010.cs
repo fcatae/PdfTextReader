@@ -9,6 +9,7 @@ using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System.Drawing;
 using PdfTextReader.PDFCore;
+using System.Linq;
 
 namespace PdfTextReader
 {
@@ -16,18 +17,30 @@ namespace PdfTextReader
     {
         public static void Process(string basename, string inputfolder, string outputfolder)
         {
-            //PdfReaderException.DisableWarnings();
             PdfReaderException.ContinueOnException();
 
             var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
-                                .ConvertText<CreateTextLineIndex, TextLine>()
-                                .ConvertText<CreateStructures, TextStructure>()
-                                .ConvertText<CreateTextSegments, TextSegment>()
-                                .ConvertText<CreateTreeSegments, TextSegment>()
-                                .Log<AnalyzeTreeStructure>(Console.Out)
+                            .ConvertText<CreateTextLineIndex, TextLine>()
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                            .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeTreeStructure>($"{basename}-tree.txt")
                                 .ToList();
 
-            //var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            Console.WriteLine($"FILENAME: {pipeline.Filename}");
+
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
+            var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
+
+            var pagesLayout = layout.GetPageErrors().ToList();
+            var pagesOverlap = overlap.GetPageErrors().ToList();
+            var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t => t).ToList();
+
+            if( pages.Count > 0 )
+            {
+                ExtractPages($"{outputfolder}/{basename}-parser", $"{outputfolder}/{basename}-parser-errors", pages);
+            }
 
             pipeline.Done();
         }
@@ -40,29 +53,23 @@ namespace PdfTextReader
 
             var result =
             pipeline.Input($"{inputfolder}/{basename}.pdf")
-                    .Output($"{outputfolder}/{basename}.pdf")
+                    .Output($"{outputfolder}/{basename}-parser.pdf")
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
-                                  //.Show(Color.Blue)
                               .ParsePdf<PreProcessImages>()
-                                  //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
-                                  //.Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
+                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
                                   .ParseBlock<RemoveSmallFonts>()
-                                  //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<MergeTableText>()
-                                  .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Blue))
-                                  .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Red))
-                                  .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Purple))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
                                   .ParseBlock<ReplaceCharacters>()
                                   .ParseBlock<GroupLines>()
                                   .ParseBlock<RemoveTableDotChar>()
                                       .Show(Color.Yellow)
-                                      .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Green))
+                                      .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                                   .ParseBlock<RemoveHeaderImage>()
                                   .ParseBlock<FindInitialBlocksetWithRewind>()
                                       .Show(Color.Gray)
@@ -80,10 +87,20 @@ namespace PdfTextReader
                                   .ParseBlock<OrderBlocksets>()
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
-                                  //.Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
+                                  .ParseBlock<OrganizePageLayout>()
+                                  .ParseBlock<CheckOverlap>()
+                                  .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
             return result;
-        }        
+        }
+        
+        static void ExtractPages(string basename, string outputname, IList<int> pages)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"{basename}.pdf")
+                    .ExtractPages($"{outputname}.pdf", pages);
+        }
     }
 }

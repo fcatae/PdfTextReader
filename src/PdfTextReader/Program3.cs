@@ -37,15 +37,15 @@ namespace PdfTextReader
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
-                            //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
-                            //.Log<AnalyzeStructures>(Console.Out)
-                            //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
-                            //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
+                                //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
+                                //.Log<AnalyzeStructures>(Console.Out)
+                                //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
+                                //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
-                            //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
-                            //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                                //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
+                                //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
-                            .Log<AnalyzeTreeStructure>(Console.Out)
+                                .Log<AnalyzeTreeStructure>(Console.Out)
                             .ToList();
             
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
