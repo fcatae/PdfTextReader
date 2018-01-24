@@ -35,7 +35,7 @@ namespace PdfTextReader
                     .ParsePdf<PreProcessTables>()
                         .ParseBlock<IdentifyTables>()
                         .Show(Color.Green)
-                        .Validate<ValidateOverlap>().ShowErrors( b => b.Show(Color.Red))
+                        .Validate<CheckOverlap>().ShowErrors( b => b.Show(Color.Red))
                     ;
 
             pipeline.Done();

@@ -6,9 +6,9 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class ValidateOverlap : IProcessBlock, IValidateBlock, IRetrieveStatistics
+    class CheckOverlap : IProcessBlock, IValidateBlock, IRetrieveStatistics
     {
-        StatsBlocksOverlapped _overlappedBlocks;
+        StatsBlocksOverlapped _overlappedBlocks = StatsBlocksOverlapped.Empty;
 
         public BlockPage Validate(BlockPage page)
         {
@@ -41,7 +41,7 @@ namespace PdfTextReader.PDFCore
                 }
             }
       
-            if(overlapped.Count>0)
+            if(overlapped.Count > 0)
             {
                 _overlappedBlocks = new StatsBlocksOverlapped()
                 {

@@ -72,8 +72,10 @@ namespace PdfTextReader
             
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
             var layout = pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
+            var overlap = pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
+
         }
-        
+
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
         {
             pipeline = new Execution.Pipeline();
@@ -120,6 +122,7 @@ namespace PdfTextReader
                                   .Show(Color.Orange)
                                   .ShowLine(Color.Black)
                                   .ParseBlock<OrganizePageLayout>()
+                                  .ParseBlock<CheckOverlap>()
                                   .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
