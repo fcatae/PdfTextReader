@@ -84,13 +84,21 @@ namespace PdfTextReader
                                       .ParseBlock<RemoveFooter>()
                                       .ParseBlock<BreakColumnsRewrite>()
                                   .ParseBlock<BreakInlineElements>()
-                                  .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Gray))
+                                      .ParseBlock<ResizeBlocksets>()
+                                      .ParseBlock<ResizeBlocksetMagins>()
+
                                   .ParseBlock<OrderBlocksets>()
-                                  .Show(Color.Orange)
-                                  .ShowLine(Color.Black)
+
                                   .ParseBlock<OrganizePageLayout>()
+                                  .ParseBlock<MergeSequentialLayout>()
+                                  .ParseBlock<ResizeSequentialLayout>()
+                                  
+                                       .Show(Color.Orange)
+                                       .ShowLine(Color.Black)
+
                                   .ParseBlock<CheckOverlap>()
+                                  
+                                  .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
                                   .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 

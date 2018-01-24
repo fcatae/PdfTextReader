@@ -133,7 +133,7 @@ namespace PdfTextReader.PDFCore
                 if( blsearch.X2 == 6 )
                 {
                     float diff = _MaxX - blsearch.B.GetX() - blsearch.B.GetWidth();
-                    if (diff < 0)
+                    if (diff < -MAX_PAGE_WIDTH_DIFFERENCE)
                         PdfReaderException.AlwaysThrow("invalid difference");
 
                     if (diff > error_othercolumn)
