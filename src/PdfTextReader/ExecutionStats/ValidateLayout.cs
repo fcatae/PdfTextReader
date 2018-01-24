@@ -8,6 +8,19 @@ namespace PdfTextReader.ExecutionStats
 {
     class ValidateLayout : ICalculateStats<StatsPageLayout>
     {
+        const string ERRORMSG = "ERROR: ";
+
+        public IList<string> Results { get; private set; }
+
+        public IEnumerable<int> GetPageErrors()
+        {
+            for(int i=0; i<Results.Count; i++)
+            {
+                if( Results[i].Contains(ERRORMSG) )
+                    yield return i+1;
+            }
+        }
+
         public object Calculate(IEnumerable<StatsPageLayout> stats)
         {
             var result = new List<string>();
@@ -33,7 +46,7 @@ namespace PdfTextReader.ExecutionStats
 
                 if( error )
                 {
-                    result.Add("ERROR: " + s.Layout);
+                    result.Add(ERRORMSG + s.Layout);
                 }
                 else
                 {
@@ -41,7 +54,9 @@ namespace PdfTextReader.ExecutionStats
                 }
             }
 
-            return result;
+            Results = result;
+
+            return this;
         }
     }
 }

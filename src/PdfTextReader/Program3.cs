@@ -71,9 +71,14 @@ namespace PdfTextReader
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
             
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
-            var layout = pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
-            var overlap = pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
+            var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
+            var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
 
+            var pagesLayout = layout.GetPageErrors().ToList();
+            var pagesOverlap = overlap.GetPageErrors().ToList();
+            var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t =>t).ToList();
+
+            ExamplesPipeline.ExtractPages($"{basename}-test-output", $"{basename}-page-errors-output", pages);
         }
 
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)

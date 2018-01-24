@@ -7,6 +7,17 @@ namespace PdfTextReader.ExecutionStats
 {
     class ValidateOverlap : ICalculateStats<StatsBlocksOverlapped>
     {
+        public IList<StatsBlocksOverlapped> Results { get; private set; }
+
+        public IEnumerable<int> GetPageErrors()
+        {
+            for (int i = 0; i < Results.Count; i++)
+            {
+                if ((Results[i] != null) && (Results[i] != StatsBlocksOverlapped.Empty))
+                    yield return i+1;
+            }
+        }
+
         public object Calculate(IEnumerable<StatsBlocksOverlapped> stats)
         {
             var result = new List<StatsBlocksOverlapped>();
@@ -18,7 +29,9 @@ namespace PdfTextReader.ExecutionStats
                 result.Add(r);
             }
 
-            return result;
+            Results = result;
+
+            return this;
         }
     }
 }
