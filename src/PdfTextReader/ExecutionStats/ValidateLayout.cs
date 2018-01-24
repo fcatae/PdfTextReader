@@ -38,7 +38,7 @@ namespace PdfTextReader.ExecutionStats
                 }
             }
 
-            return new List<string>(stats.Select(s => s.Layout));
+            return result;
         }
     }
 }
