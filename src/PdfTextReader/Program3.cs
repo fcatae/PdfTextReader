@@ -25,7 +25,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            //ExtractPages(basename, new int[] { 1 });
+            basename = ExtractPage(basename, 35);
             
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
@@ -63,14 +63,24 @@ namespace PdfTextReader
             //ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
         }
 
-        static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
+        static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline, int startPage=1)
+        {
+            if (startPage == 1)
+                return GetTextLines(basename, out pipeline, new int[] { });
+
+            var skipPages = Enumerable.Range(1, startPage - 1).ToArray();
+
+            return GetTextLines(basename, out pipeline, skipPages);
+        }
+
+        static PipelineText<TextLine> GetTextLines(string basename, out Execution.Pipeline pipeline, int[] exceptPages)
         {
             pipeline = new Execution.Pipeline();
 
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-parser-output.pdf")
-                    .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
+                    .AllPagesExcept<CreateTextLines>(exceptPages, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
                               .ParsePdf<PreProcessImages>()
@@ -101,7 +111,7 @@ namespace PdfTextReader
                                   .ParseBlock<AddImageSpace>()
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
-                                  .ParseBlock<AddTableLines>()
+                                  .ParseBlock<AddTableHorizontalLines>()
                                   .ParseBlock<RemoveBackgroundNonText>()
                                   
                                       // Try to rewrite column
@@ -145,6 +155,15 @@ namespace PdfTextReader
             {
                 ExtractPages(basename, $"{basename}-p{p}", new int[] { p });
             }
+        }
+        static string ExtractPage(string basename, int p, bool create = true)
+        {
+            string outputname = $"{basename}-p{p}";
+
+            if(create)
+                ExtractPages(basename, outputname, new int[] { p });
+
+            return outputname;
         }
     }
 }
