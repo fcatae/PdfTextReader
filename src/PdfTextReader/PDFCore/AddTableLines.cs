@@ -56,6 +56,9 @@ namespace PdfTextReader.PDFCore
                 if (IsBackgroundGrid(block))
                     continue;
 
+                if (HasOverlapWithBlockset(block, page))
+                    continue;
+
                 result.Add(block);
             }
 
@@ -78,6 +81,17 @@ namespace PdfTextReader.PDFCore
             foreach(var back in _background)
             {
                 if (Block.HasOverlap(back, line))
+                    return true;
+            }
+
+            return false;
+        }
+
+        bool HasOverlapWithBlockset(IBlock line, BlockPage page)
+        {
+            foreach(var block in page.AllBlocks)
+            {
+                if (Block.HasOverlap(block, line))
                     return true;
             }
 
