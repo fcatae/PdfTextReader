@@ -399,28 +399,6 @@ namespace PdfTextReader.Execution
                 canvas.Fill();
                 canvas.RestoreState();
             }
-            public void FillRectangle2(double x, double h, double width, double height, System.Drawing.Color color)
-            {
-                var canvas = GetCanvas();
-
-                var pdfColor = GetColor(color);
-
-                int opacity = color.A;
-
-                canvas.SaveState();
-                if (opacity < 250)
-                {
-                    PdfExtGState gstate = new PdfExtGState();
-                    gstate.SetFillOpacity(color.A / 255f);
-                    //gstate.SetBlendMode(PdfExtGState.BM_EXCLUSION);
-                    canvas.SetExtGState(gstate);
-                }
-
-                canvas.SetFillColor(pdfColor);
-                canvas.Rectangle(x, h, width, height);
-                canvas.Fill();
-                canvas.RestoreState();
-            }
             public void DrawText(double x, double h, string text, float size, System.Drawing.Color color)
             {
                 var canvas = GetCanvas();

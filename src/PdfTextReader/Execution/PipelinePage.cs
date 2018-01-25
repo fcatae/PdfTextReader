@@ -134,6 +134,18 @@ namespace PdfTextReader.Execution
             return this;
         }
 
+        public PipelinePage PrintWarnings()
+        {
+            var warnings = PdfReaderException.GetPageWarnings();
+
+            if(warnings.Count() > 0)
+            {
+                PipelineDebug.ShowWarnings(this.ParentContext, warnings);
+            }
+            
+            return this;
+        }
+
         void CollectStatistics(IRetrieveStatistics process)
         {
             if (process == null)

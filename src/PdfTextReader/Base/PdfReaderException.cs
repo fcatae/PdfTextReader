@@ -52,7 +52,8 @@ namespace PdfTextReader.Base
 
         public static void Warning(string message, [CallerMemberName]string sourceMethod = null)
         {
-            if(g_ShowWarnings)
+            AddWarningInformation("Warning", message);
+            if (g_ShowWarnings)
             {
                 Console.WriteLine($"WARNING: {sourceMethod}: {message} {GetAdditionalPageInformation()}");
             }
@@ -67,6 +68,7 @@ namespace PdfTextReader.Base
         {
             try
             {
+                AddWarningInformation("Throw", message);
                 throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}", debugBlocks);
             }
             catch
@@ -88,10 +90,12 @@ namespace PdfTextReader.Base
 
         public static Exception AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
+            AddWarningInformation("AlwaysThrow", message);
             throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}");
         }
         public static Exception AlwaysThrow(string message, IEnumerable<IBlock> debugBlocks, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
+            AddWarningInformation("AlwaysThrow", message);
             throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}", debugBlocks);
         }
 
@@ -102,11 +106,35 @@ namespace PdfTextReader.Base
 
             return $"({g_threadContext.Filename}, Page {g_threadContext.PageNumber})";
         }
+        public static void AddWarningInformation(string source, string message)
+        {
+            if (g_threadContext == null)
+                throw new InvalidOperationException(nameof(g_threadContext));
+
+            g_threadContext.AddWarning($"{source}: {message}");
+        }
+
+        public static IEnumerable<string> GetPageWarnings()
+        {
+            if (g_threadContext == null)
+                throw new InvalidOperationException(nameof(g_threadContext));
+
+            return g_threadContext.Warnings;
+        }
 
         class PdfReaderExceptionContext
         {
             public string Filename { get; set; }
             public int PageNumber { get; set; }
+
+            List<string> _warnings = new List<string>();
+
+            public IEnumerable<string> Warnings => _warnings;
+
+            public void AddWarning(string message)
+            {
+                _warnings.Add(message);
+            }
         }
 
     }

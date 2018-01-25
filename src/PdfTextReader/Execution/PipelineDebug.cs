@@ -49,6 +49,13 @@ namespace PdfTextReader.Execution
                 pdf.CurrentPage.DrawText(b.GetX(), b.GetH()+ b.GetHeight(), b.GetText(), b.GetHeight()/2, color);
             }
         }
+        static public void ShowWarnings(PipelineInputPdf pdf, IEnumerable<string> warnings)
+        {
+            string text = String.Join("\n", warnings);
+
+            pdf.CurrentPage.DrawWarning(text, 6, Color.Red);
+        }
+
         static public void ShowException(PipelineInputPdf pdf, Exception ex)
         {
             PdfReaderException pdfException = ex as PdfReaderException;
@@ -70,6 +77,7 @@ namespace PdfTextReader.Execution
 
                 var white = System.Drawing.Color.FromArgb(100, 200, 200, 200);
                 var yellow = System.Drawing.Color.FromArgb(100, 250, 250, 0);
+                var blue = System.Drawing.Color.FromArgb(100, 0, 0, 250);
 
                 pdf.CurrentPage.DrawBackground(white);
                 pdf.CurrentPage.DrawWarning(text, 12, Color.Red);
@@ -79,8 +87,24 @@ namespace PdfTextReader.Execution
                 {
                     foreach (var block in additionalInfo)
                     {
-                        pdf.CurrentPage.FillRectangle(block.GetX(), block.GetH(), block.GetWidth(), block.GetHeight(), yellow);
-                        pdf.CurrentPage.DrawRectangle(block.GetX(), block.GetH(), block.GetWidth(), block.GetHeight(), Color.DarkRed);
+                        float width = block.GetWidth();
+                        float height = block.GetHeight();
+                        
+                        bool invalidBoundary = false;
+
+                        if (width <= 3f) { width = 3f; invalidBoundary=true; }
+                        if (height <= 3f) { height = 3f; invalidBoundary = true; }
+
+                        if( invalidBoundary)
+                        {
+                            pdf.CurrentPage.FillRectangle(block.GetX(), block.GetH(), width, height, blue);
+                            pdf.CurrentPage.DrawRectangle(block.GetX(), block.GetH(), width, height, Color.DarkRed);
+}
+                        else
+                        {
+                            pdf.CurrentPage.FillRectangle(block.GetX(), block.GetH(), width, height, yellow);
+                            pdf.CurrentPage.DrawRectangle(block.GetX(), block.GetH(), width, height, Color.DarkRed);
+                        }
                     }
                 }                    
             }
