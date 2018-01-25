@@ -16,6 +16,7 @@ namespace PdfTextReader.PDFCore
         private float _MinX;
         private float _MaxX;
         private float _PageWidth;
+        private float _OriginalPageWidth;
 
         public bool[] ValuesB { get; private set; }
 
@@ -36,6 +37,7 @@ namespace PdfTextReader.PDFCore
             _MinX = page.AllBlocks.GetX();
             _MaxX = page.AllBlocks.GetX() + page.AllBlocks.GetWidth();
             _PageWidth = page.AllBlocks.GetWidth() + 2;
+            _OriginalPageWidth = _PageWidth;
 
             CheckBasicStats();
         }
@@ -49,11 +51,17 @@ namespace PdfTextReader.PDFCore
 
             float diff = pageWidth - _PageWidth;
 
-            if (diff > MAX_PAGE_WIDTH_DIFFERENCE)
+           if ( Math.Abs(diff) > MAX_PAGE_WIDTH_DIFFERENCE)
             {
                 PdfReaderException.Warning("Large PageWidth difference -- using the BasicFirstPageStats");
-                _MinX = Math.Min( BasicFirstPageStats.Global.MinX , _MinX);
-                _MaxX = Math.Max( BasicFirstPageStats.Global.MaxX , _MaxX);
+                float min = Math.Min( BasicFirstPageStats.Global.MinX , _MinX);
+                float max = Math.Max( BasicFirstPageStats.Global.MaxX , _MaxX);
+
+                bool wrongMin = Math.Abs(_MinX - BasicFirstPageStats.Global.MinX) > MAX_PAGE_WIDTH_DIFFERENCE;
+                bool wrongMax = Math.Abs(_MaxX - BasicFirstPageStats.Global.MaxX) > MAX_PAGE_WIDTH_DIFFERENCE;
+
+                _MinX = (wrongMin) ?  BasicFirstPageStats.Global.MinX : min;
+                _MaxX = (wrongMax) ? BasicFirstPageStats.Global.MaxX : max;
 
                 _PageWidth = _MaxX - _MinX;
             }
@@ -109,14 +117,23 @@ namespace PdfTextReader.PDFCore
 
                 Block block = null;
 
+                if (( blsearch.X < 0 ) || (blsearch.X2 > 6))
+                {
+                    PdfReaderException.Warning("page calculation error");
+                    blsearch.X = (blsearch.X < 0) ? 0 : blsearch.X;
+                    blsearch.X2 = (blsearch.X2 > 6) ? 6 : blsearch.X2;
+                }
+
                 // set min size
                 if ( blsearch.X == 0 )
                 {
                     float diff = blsearch.B.GetX() - _MinX;
-                    if( diff < 0 )
-                        PdfReaderException.AlwaysThrow("invalid difference");
+                    if( diff < -MAX_PAGE_WIDTH_DIFFERENCE)
+                    {
+                        PdfReaderException.Warning("invalid difference");
+                    }
 
-                    if( diff > error_othercolumn )
+                    if(Math.Abs(diff) > error_othercolumn )
                     {
                         float width = bl.GetX() + bl.GetWidth() - _MinX;
 
@@ -133,10 +150,11 @@ namespace PdfTextReader.PDFCore
                 if( blsearch.X2 == 6 )
                 {
                     float diff = _MaxX - blsearch.B.GetX() - blsearch.B.GetWidth();
-                    if (diff < -MAX_PAGE_WIDTH_DIFFERENCE)
-                        PdfReaderException.AlwaysThrow("invalid difference");
 
-                    if (diff > error_othercolumn)
+                    if (diff < -MAX_PAGE_WIDTH_DIFFERENCE)
+                        PdfReaderException.Warning("invalid difference");
+
+                    if (Math.Abs(diff) > error_othercolumn)
                     {
                         float width = _MaxX - bl.GetX();
                         float bx1 = _MaxX - width;
@@ -157,7 +175,10 @@ namespace PdfTextReader.PDFCore
                     float diff = block.GetWidth() - blsearch.B.GetWidth();
 
                     if (diff < 0)
-                        PdfReaderException.AlwaysThrow("should never decrease the block size");
+                    {
+                        if (_OriginalPageWidth == _PageWidth)
+                            PdfReaderException.Warning("invalid difference: still same page width?");
+                    }
 
                     // may receive multiples - confusing...
                     var original = (IEnumerable<IBlock>)blsearch.B;

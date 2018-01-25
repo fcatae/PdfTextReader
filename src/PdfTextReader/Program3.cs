@@ -26,7 +26,8 @@ namespace PdfTextReader
             Console.WriteLine();
 
             // ExtractPages(basename, $"{basename}-p34", new int[] { 3 });
-            // ExtractPages(basename, $"{basename}-ps", new int[] { 10, 32, 34, 35, 37, 40, 42, 60, 80 });
+            //ExtractPages(basename, $"{basename}-p16", new int[] { 16 });
+            //ExtractPages(basename, $"{basename}-p27", new int[] { 27 });
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
