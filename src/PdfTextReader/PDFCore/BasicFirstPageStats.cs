@@ -14,6 +14,11 @@ namespace PdfTextReader.PDFCore
 
         public static BasicFirstPageStats Global = null;
 
+        public static void Reset()
+        {
+            Global = null;
+        }
+
         void SetupPage(BlockPage page)
         {
             if (Global == null)

@@ -73,7 +73,7 @@ namespace PdfTextReader.Base
 
         public static Exception AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
-            throw new PdfReaderException(message);
+            throw new PdfReaderException($"{message} {GetAdditionalPageInformation()}");
         }
 
         public static string GetAdditionalPageInformation()
