@@ -226,8 +226,16 @@ namespace PdfTextReader.PDFCore
 
                 if ( _conflictItems != null )
                 {
-                    if (_conflictItems.Where(f => f.FontStyle == "Regular").FirstOrDefault() != null)
+                    var regularItem = _conflictItems.Where(f => f.FontStyle == "Regular").FirstOrDefault();
+                    if (regularItem != null)
+                    {
                         _line.FontStyle = "Regular";
+                        _line.FontName = regularItem.FontName;
+                        _line.FontSize = regularItem.FontSize;
+
+                        if (_conflictItems.Where(f => f.FontStyle == "Regular").Count() > 1)
+                            PdfReaderException.Warning("Multiple regular fonts");
+                    }
                 }
             }
 
