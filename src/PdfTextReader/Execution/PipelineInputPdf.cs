@@ -24,8 +24,12 @@ namespace PdfTextReader.Execution
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
 
-        private bool _continueOnException = false;
+        private static bool g_continueOnException = true;
 
+        public static void StopOnException()
+        {
+            g_continueOnException = false;
+        }
         public static PipelineInputPdf DebugCurrent;
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
@@ -245,7 +249,7 @@ namespace PdfTextReader.Execution
 
         bool ProtectCall(Action<PipelineInputPdfPage> callback, PipelineInputPdfPage pdfPage)
         {
-            if (!_continueOnException)
+            if (!g_continueOnException)
             {
                 callback(pdfPage);
                 return true;
