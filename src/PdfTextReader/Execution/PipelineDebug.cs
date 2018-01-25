@@ -58,7 +58,7 @@ namespace PdfTextReader.Execution
             if (pdfException == null)
             {
                 string text = component + "\n" + ex.Message + "\n" + ex.StackTrace;
-                
+
                 var white = System.Drawing.Color.FromArgb(230, 250, 250, 250);
 
                 pdf.CurrentPage.DrawBackground(white);
@@ -69,9 +69,20 @@ namespace PdfTextReader.Execution
                 string text = $"({component}) {pdfException.ShortMessage}";
 
                 var white = System.Drawing.Color.FromArgb(100, 200, 200, 200);
+                var yellow = System.Drawing.Color.FromArgb(100, 250, 250, 0);
 
                 pdf.CurrentPage.DrawBackground(white);
                 pdf.CurrentPage.DrawWarning(text, 12, Color.Red);
+
+                var additionalInfo = pdfException.Blocks;
+                if(additionalInfo != null )
+                {
+                    foreach (var block in additionalInfo)
+                    {
+                        pdf.CurrentPage.FillRectangle(block.GetX(), block.GetH(), block.GetWidth(), block.GetHeight(), yellow);
+                        pdf.CurrentPage.DrawRectangle(block.GetX(), block.GetH(), block.GetWidth(), block.GetHeight(), Color.DarkRed);
+                    }
+                }                    
             }
         }
 
