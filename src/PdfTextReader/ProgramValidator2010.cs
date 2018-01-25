@@ -31,30 +31,8 @@ namespace PdfTextReader
                                 .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree.txt")
                                 .ToList();
 
-            // pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/errors/{basename}-parser-errors.pdf");
-            //pipeline.ExtractOutput($"{outputfolder}/errors/{basename}-parser-errors.pdf");
-
-            Console.WriteLine($"FILENAME: {pipeline.Filename}");
-
-            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
-            var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
-            var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
-            var unhandled = (ValidateUnhandledExceptions)pipeline.Statistics.Calculate<ValidateUnhandledExceptions, StatsExceptionHandled>();
-
-            var pagesLayout = layout.GetPageErrors().ToList();
-            var pagesOverlap = overlap.GetPageErrors().ToList();
-            var pagesUnhandled = unhandled.GetPageErrors().ToList();
-
-            var pages = pagesLayout
-                            .Concat(pagesOverlap)
-                            .Concat(pagesUnhandled)
-                            .Distinct().OrderBy(t => t).ToList();
-
-            if( pages.Count > 0 )
-            {
-                ExtractPages($"{outputfolder}/{basename}-parser", $"{outputfolder}/errors/{basename}-parser-errors", pages);
-            }
-
+            pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/errors/{basename}-parser-errors.pdf");
+            
             pipeline.Done();
         }
 

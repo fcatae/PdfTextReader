@@ -17,7 +17,7 @@ namespace PdfTextReader
     {        
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
         {
-            PipelineInputPdf.StopOnException();
+            //PipelineInputPdf.StopOnException();
             //PdfReaderException.ContinueOnException();
             
             Console.WriteLine();
@@ -28,9 +28,7 @@ namespace PdfTextReader
             {
                 basename = ExtractPage(basename, 35);
             }
-            
-            //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
-            
+
             var artigos = GetTextLines(basename, out Execution.Pipeline pipeline)
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
@@ -46,29 +44,12 @@ namespace PdfTextReader
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-segment-titles-tree.txt")
                                 .Log<AnalyzeTreeStructure>(Console.Out)
                             .ToList();
-            
+
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
-            
-            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
-            var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
-            var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
-            var unhandled = (ValidateUnhandledExceptions)pipeline.Statistics.Calculate<ValidateUnhandledExceptions, StatsExceptionHandled>();
 
-            var pagesLayout = layout.GetPageErrors().ToList();
-            var pagesOverlap = overlap.GetPageErrors().ToList();
-            var pagesUnhandled = unhandled.GetPageErrors().ToList();
-
-            var pages = pagesLayout
-                            .Concat(pagesOverlap)
-                            .Concat(pagesUnhandled)
-                            .Distinct().OrderBy(t => t).ToList();
-
-            if (pages.Count > 0)
-            {
-                ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
-            }
+            pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
         }
-        
+
         static PipelineText<TextLine> GetTextLines(string basename, out Execution.Pipeline pipeline)
         {
             pipeline = new Execution.Pipeline();

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using PdfTextReader.Base;
 using PdfTextReader.TextStructures;
+using System.Linq;
 
 namespace PdfTextReader.Execution
 {
@@ -83,29 +84,17 @@ namespace PdfTextReader.Execution
             return _activeContext.SaveErrors(outputname);
         }
 
-        //public void ExtractOutput(string filename)
-        //{
-        //    var pipeline = this;
-            
-        //    var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
-        //    var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
-        //    var unhandled = (ValidateUnhandledExceptions)pipeline.Statistics.Calculate<ValidateUnhandledExceptions, StatsExceptionHandled>();
+        public void ExtractOutput<T>(string filename)
+        {
+            var showParserWarnings = new ExecutionStats.ShowParserWarnings();
 
-        //    var pagesLayout = layout.GetPageErrors().ToList();
-        //    var pagesOverlap = overlap.GetPageErrors().ToList();
-        //    var pagesUnhandled = unhandled.GetPageErrors().ToList();
+            var pages = showParserWarnings.GetPages(this.Statistics);
 
-        //    var pages = pagesLayout
-        //                    .Concat(pagesOverlap)
-        //                    .Concat(pagesUnhandled)
-        //                    .Distinct().OrderBy(t => t).ToList();
-
-        //    if (pages.Count > 0)
-        //    {
-        //        _activeContext.ExtractPages("outputfilenae", filename, pages);
-        //    }
-
-        //}
+            if (pages.Count() > 0)
+            {
+                _activeContext.ExtractOutputPages(filename, pages);
+            }
+        }
 
         public void Done()
         {

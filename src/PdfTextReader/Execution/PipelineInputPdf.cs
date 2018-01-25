@@ -88,6 +88,25 @@ namespace PdfTextReader.Execution
             }
         }
 
+        
+        public int ExtractOutputPages(string outputfile, IEnumerable<int> pages)
+        {
+            string inputfile = this._input;
+
+            var pageList = pages.OrderBy(t => t).ToList();
+
+            if (pageList.Count == 0)
+                return 0;
+
+            using (var pdfInput = new PdfDocument(new PdfReader(_output)))
+            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+            {
+                pdfInput.CopyPagesTo(pageList, pdfOutput);
+            }
+
+            return pageList.Count;
+        }
+
         public int SaveErrors(string outputfile)
         {
             string inputfile = this._input;
