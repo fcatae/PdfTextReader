@@ -437,6 +437,15 @@ namespace PdfTextReader.Execution
                 canvas.EndText();
                 //canvas.Stroke();
             }
+
+            public void DrawBackground(System.Drawing.Color color)
+            {
+                float page_width = _pdfPage.GetPageSize().GetWidth();
+                float page_height = _pdfPage.GetPageSize().GetHeight();
+
+                FillRectangle(0, 0, page_width, page_height, color);
+            }
+
             public void DrawWarning(string message, float size, System.Drawing.Color color)
             {
                 int MAXTEXTSIZE = (int)(1.2*_pdfPage.GetPageSize().GetHeight()/size);
@@ -444,15 +453,9 @@ namespace PdfTextReader.Execution
                 float linespace = size*1.15f;
                 float paragraph = size * 2f;
                 
-                var white = System.Drawing.Color.FromArgb(200, 250, 250, 250);
-
                 float x = margin;
                 float h = _pdfPage.GetPageSize().GetHeight() - size - margin;
-                float page_width = _pdfPage.GetPageSize().GetWidth();
-                float page_height = _pdfPage.GetPageSize().GetHeight();
                 
-                FillRectangle(0, 0, page_width, page_height, white);
-
                 string[] lines = message.Split("\n");
 
                 foreach (var line in lines)

@@ -7,9 +7,19 @@ namespace PdfTextReader.Base
 {
     class PdfReaderException : Exception
     {
-        public PdfReaderException(string message) : base(message)
+        public PdfReaderException(string message, string detailed) : base(detailed)
         {
+            ShortMessage = message;
         }
+
+        public PdfReaderException(string message, string detailed, IEnumerable<IBlock> debugBlocks) : base(detailed)
+        {
+            ShortMessage = message;
+            Blocks = debugBlocks;
+        }
+
+        public IEnumerable<IBlock> Blocks = null;
+        public string ShortMessage;
 
         private static bool g_ShowWarnings = true;
         private static bool g_ContinueOnException = false;
@@ -50,9 +60,14 @@ namespace PdfTextReader.Base
 
         public static void Throw(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
+            Throw(message, null, source, sourceMethod);
+        }
+
+        public static void Throw(string message, IEnumerable<IBlock> debugBlocks, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
+        {
             try
             {
-                throw new PdfReaderException(message);
+                throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}", debugBlocks);
             }
             catch
             {
@@ -73,7 +88,11 @@ namespace PdfTextReader.Base
 
         public static Exception AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
-            throw new PdfReaderException($"{message} {GetAdditionalPageInformation()}");
+            throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}");
+        }
+        public static Exception AlwaysThrow(string message, IEnumerable<IBlock> debugBlocks, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
+        {
+            throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}", debugBlocks);
         }
 
         public static string GetAdditionalPageInformation()

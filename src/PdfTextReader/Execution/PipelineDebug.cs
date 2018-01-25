@@ -51,11 +51,50 @@ namespace PdfTextReader.Execution
         }
         static public void ShowException(PipelineInputPdf pdf, Exception ex)
         {
-            string text = ex.Message + "\n" + ex.StackTrace;
+            PdfReaderException pdfException = ex as PdfReaderException;
 
-            pdf.CurrentPage.DrawWarning(text, 20, Color.Red);            
+            string component = FindPdfCoreComponent(ex.StackTrace);
+
+            if (pdfException == null)
+            {
+                string text = component + "\n" + ex.Message + "\n" + ex.StackTrace;
+                
+                var white = System.Drawing.Color.FromArgb(230, 250, 250, 250);
+
+                pdf.CurrentPage.DrawBackground(white);
+                pdf.CurrentPage.DrawWarning(text, 20, Color.Red);
+            }
+            else
+            {
+                string text = $"({component}) {pdfException.ShortMessage}";
+
+                var white = System.Drawing.Color.FromArgb(100, 200, 200, 200);
+
+                pdf.CurrentPage.DrawBackground(white);
+                pdf.CurrentPage.DrawWarning(text, 12, Color.Red);
+            }
         }
-        
+
+        static string FindPdfCoreComponent(string stackTrace)
+        {
+            const string PDFCORE_NAMESPACE = "PdfTextReader.PDFCore.";
+            const string PDFCORE_METHODEND = "(";
+            const string UNKNOWN_COMPONENT = "Component Unknown";
+
+            int idxPdfCore = stackTrace.IndexOf(PDFCORE_NAMESPACE) + PDFCORE_NAMESPACE.Length;
+
+            if (idxPdfCore < PDFCORE_NAMESPACE.Length)
+                return UNKNOWN_COMPONENT;
+            
+            int idxPdfCore2 = stackTrace.IndexOf(PDFCORE_METHODEND, idxPdfCore);
+            
+            if (idxPdfCore2 < 0)
+                return UNKNOWN_COMPONENT;
+
+            return stackTrace.Substring(idxPdfCore, idxPdfCore2 - idxPdfCore);
+        }
+
+
         static public void Show(PipelineInputPdf pdf, System.Collections.IEnumerable objectList, Color color)
         {
             foreach (var t in objectList)

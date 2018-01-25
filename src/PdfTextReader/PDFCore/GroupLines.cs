@@ -116,7 +116,7 @@ namespace PdfTextReader.PDFCore
                     //    throw new InvalidOperationException();
                     // soft check: end of block should never that low unless it is an overlap
                     if (endOfBlock < endOfLine)
-                        PdfReaderException.AlwaysThrow("endOfBlock < endOfLine");
+                        PdfReaderException.AlwaysThrow("endOfBlock < endOfLine", new IBlock[] { last, block });
 
                     groupFont.MergeFont((Block)block);
                 }
