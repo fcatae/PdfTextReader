@@ -250,6 +250,9 @@ namespace PdfTextReader.TextStructures
                 GetAligmnent(lineset);
             }
 
+            _structure.TabStop = lineset[0].MarginLeft;
+            _structure.MarginLeft = lineset.Min(t => t.MarginLeft);
+
             return _structure;            
         }
 

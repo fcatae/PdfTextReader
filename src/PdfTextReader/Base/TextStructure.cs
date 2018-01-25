@@ -13,6 +13,7 @@ namespace PdfTextReader.Base
         public float MarginRight { get; set; }
         public float MarginLeft { get; set; }
         public float? CenteredAt { get; set; }
+        public float TabStop { get; set; }
         public float? AfterSpace { get; set; }
         public TextAlignment TextAlignment { get; set; }
         public bool HasBackColor { get; set; }
