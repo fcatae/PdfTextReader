@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using PdfTextReader.Base;
 using PdfTextReader.TextStructures;
+using System.Linq;
 
 namespace PdfTextReader.Execution
 {
@@ -81,6 +82,18 @@ namespace PdfTextReader.Execution
         public int SaveErrors(string outputname)
         {
             return _activeContext.SaveErrors(outputname);
+        }
+
+        public void ExtractOutput<T>(string filename)
+        {
+            var showParserWarnings = new ExecutionStats.ShowParserWarnings();
+
+            var pages = showParserWarnings.GetPages(this.Statistics);
+
+            if (pages.Count() > 0)
+            {
+                _activeContext.ExtractOutputPages(filename, pages);
+            }
         }
 
         public void Done()

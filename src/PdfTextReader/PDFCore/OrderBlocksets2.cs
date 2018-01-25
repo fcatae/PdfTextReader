@@ -161,7 +161,6 @@ namespace PdfTextReader.PDFCore
                 case 2:
                 case 4:
                     return 3;
-                    break;
             }
 
             throw PdfReaderException.AlwaysThrow("invalid W width");
