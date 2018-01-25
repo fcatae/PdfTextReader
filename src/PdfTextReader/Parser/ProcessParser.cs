@@ -121,6 +121,8 @@ namespace PdfTextReader.Parser
             {
                 output = output.Substring(0, output.Length - 1);
             }
+            if (output != null && output.Length > 1 && output.Substring(0,1) == " ")
+                output = output.Substring(1, output.Length - 1);
             return output;
         }
 
