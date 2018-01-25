@@ -25,7 +25,7 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            // ExtractPages(basename, $"{basename}-p34", new int[] { 3 });
+            //ExtractPages(basename, $"{basename}-p14", new int[] { 14 });
             //ExtractPages(basename, $"{basename}-p16", new int[] { 16 });
             //ExtractPages(basename, $"{basename}-p27", new int[] { 27 });
 
@@ -104,7 +104,8 @@ namespace PdfTextReader
                                   .ParseBlock<AddImageSpace>()                                    
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
-                                   
+                                  .ParseBlock<AddTableLines>()
+
                                       // Try to rewrite column
                                       .ParseBlock<BreakColumnsRewrite>()
 
