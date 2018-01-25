@@ -23,7 +23,9 @@ namespace PdfTextReader.Parser
 
             segment = ProcessExclusiveText(segments[0]);
 
-            int page = segment.Body[0].Lines[0].PageInfo.PageNumber;
+            int page = -1;
+            if (segment.Body.Count() > 0)
+                page = segment.Body[0].Lines[0].PageInfo.PageNumber;
 
             string titulo = null;
             string hierarchy = null;
@@ -100,15 +102,18 @@ namespace PdfTextReader.Parser
             }
             else
             {
-                if (caput != null)
+                if (segment.Body.Count() > 0)
                 {
-                    body = String.Join("\n", segment.Body.Skip(1).Take(segment.Body.Count()).Select(s => s.Text));
-                    possibleData = segment.Body[segment.Body.Count() - 1].Text;
-                }
-                else
-                {
-                    body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
-                    possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                    if (caput != null)
+                    {
+                        body = String.Join("\n", segment.Body.Skip(1).Take(segment.Body.Count()).Select(s => s.Text));
+                        possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                    }
+                    else
+                    {
+                        body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
+                        possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                    }
                 }
             }
 
@@ -264,6 +269,7 @@ namespace PdfTextReader.Parser
                         else
                         {
                             autor = new Autor() { Assinatura = line.Text };
+                            autores.Add(autor);
                             continue;
                         }
                     }

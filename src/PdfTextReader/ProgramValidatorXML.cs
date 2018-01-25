@@ -20,6 +20,7 @@ namespace PdfTextReader
         bool bodyConditions = false;
         bool titleConditions = false;
         bool hierarchyConditions = false;
+        bool numeroDaPaginaConditions = false;
         bool anexoConditions = true;
         bool roleConditions = true;
         bool signConditions = true;
@@ -83,8 +84,8 @@ namespace PdfTextReader
             {
                 foreach (XAttribute item in el.Attributes())
                 {
-                    //if (item.Name == "Hierarquia")
-                    //    CheckHierarchy(item.Value);
+                    if (item.Name == "NumPagina")
+                        CheckNumeroDaPagina(item.Value);
                 }
 
                 foreach (XElement item in el.Elements())
@@ -127,18 +128,26 @@ namespace PdfTextReader
                 || !titleConditions 
                 || !roleConditions 
                 || !signConditions 
-                || !tipoArtigoConditions)
+                || !tipoArtigoConditions
+                || !numeroDaPaginaConditions)
             {
 
                 string error = (bodyConditions ? "-" : "Body") + "," + 
                     (titleConditions ? "-" : "Title") + "," + 
                     (roleConditions ? "-" : "Role") + "," + 
-                    (signConditions ? "-" : "Sign") + "," + 
+                    (signConditions ? "-" : "Sign") + "," +
+                    (numeroDaPaginaConditions ? "-" : "NumPag") + "," +
                     (tipoArtigoConditions ? "-" : "Tipo");
 
                 DocumentsCountWithError++;
                 file.CopyTo($"{XMLErrorsDir}/{file.Name.Replace(".xml", "")}-ISSUE-{error}.xml");
             }
+        }
+
+        void CheckNumeroDaPagina(string text)
+        {
+            if (text != "-1")
+                numeroDaPaginaConditions = true;
         }
 
         void CheckHierarchy(string text)
