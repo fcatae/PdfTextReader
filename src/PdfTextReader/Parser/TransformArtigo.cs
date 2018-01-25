@@ -124,7 +124,7 @@ namespace PdfTextReader.Parser
             {
                 if (input.Contains("No") || input.Contains("N°") || input.Contains("Nº"))
                 {
-                    Regex number = new Regex(@"(.+?(?= No)|(?= N°)|(?= Nº))", RegexOptions.CultureInvariant);
+                    Regex number = new Regex(@"(.+?(?= N.))", RegexOptions.CultureInvariant);
                     Match mNumber = number.Match(input);
                     if (mNumber.Success)
                         output = mNumber.Groups[0].ToString();
