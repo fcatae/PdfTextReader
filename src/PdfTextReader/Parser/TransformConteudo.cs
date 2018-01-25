@@ -23,7 +23,9 @@ namespace PdfTextReader.Parser
 
             segment = ProcessExclusiveText(segments[0]);
 
-            int page = segment.Body[0].Lines[0].PageInfo.PageNumber;
+            int page = -1;
+            if (segment.Body.Count() > 0)
+                page = segment.Body[0].Lines[0].PageInfo.PageNumber;
 
             string titulo = null;
             string hierarchy = null;
@@ -95,20 +97,23 @@ namespace PdfTextReader.Parser
                 if (valueToTake == 0)
                     valueToTake = 1;
                 body = String.Join("\n", segment.Body.Take(valueToTake).Select(s => s.Text));
-                if (idxSigna > 1 && idxSigna < segment.Body.Count())
+                if (idxSigna > 0 && idxSigna < segment.Body.Count())
                     possibleData = segment.Body[idxSigna - 1].Text;
             }
             else
             {
-                if (caput != null)
+                if (segment.Body.Count() > 0)
                 {
-                    body = String.Join("\n", segment.Body.Skip(1).Take(segment.Body.Count()).Select(s => s.Text));
-                    possibleData = segment.Body[segment.Body.Count() - 1].Text;
-                }
-                else
-                {
-                    body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
-                    possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                    if (caput != null)
+                    {
+                        body = String.Join("\n", segment.Body.Skip(1).Take(segment.Body.Count()).Select(s => s.Text));
+                        possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                    }
+                    else
+                    {
+                        body = String.Join("\n", segment.Body.Take(segment.Body.Count()).Select(s => s.Text));
+                        possibleData = segment.Body[segment.Body.Count() - 1].Text;
+                    }
                 }
             }
 
@@ -130,12 +135,12 @@ namespace PdfTextReader.Parser
             }
 
 
-            //Verificando se Data ficou na assinatura
+            //Verificando se Data ficou no Corpo
             if (data == null)
                 if (possibleData != null)
                     data = HasData(possibleData);
-            if (data != null)
-                body = RemoveDataFromBody(body, data);
+            //if (data != null)
+                //body = RemoveDataFromBody(body, data);
 
             return new Conteudo()
             {
@@ -158,12 +163,15 @@ namespace PdfTextReader.Parser
 
         string HasData(string body)
         {
+
+            string LastLine = body.Split("\n").Last();
+
             string result = null;
 
-            var match = Regex.Match(body, @"(.+?[a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
+            var match = Regex.Match(LastLine, @"(.+?[a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
 
             if (match.Success)
-                return body;
+                return LastLine;
 
             return result;
         }
@@ -261,6 +269,7 @@ namespace PdfTextReader.Parser
                         else
                         {
                             autor = new Autor() { Assinatura = line.Text };
+                            autores.Add(autor);
                             continue;
                         }
                     }
