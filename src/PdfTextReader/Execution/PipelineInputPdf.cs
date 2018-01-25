@@ -206,7 +206,8 @@ namespace PdfTextReader.Execution
 
                 var pdfPage = Page(i);
 
-                callback(pdfPage);
+                if (ProtectCall(callback, pdfPage) == false)
+                    continue;
 
                 var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
 
@@ -228,7 +229,8 @@ namespace PdfTextReader.Execution
             {
                 var pdfPage = Page(i);
 
-                callback(pdfPage);
+                if (ProtectCall(callback, pdfPage) == false)
+                    continue;
 
                 var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
 
@@ -237,6 +239,23 @@ namespace PdfTextReader.Execution
                     yield return t;
                 }
             }
+        }
+
+        bool ProtectCall(Action<PipelineInputPdfPage> callback, PipelineInputPdfPage pdfPage)
+        {
+            try
+            {
+                callback(pdfPage);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+                Console.WriteLine(ex.ToString());
+                StoreStatistics(new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
+            }
+
+            return false;
         }
 
         public void StoreStatistics(object stats)
