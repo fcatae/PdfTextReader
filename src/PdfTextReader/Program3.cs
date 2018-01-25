@@ -26,13 +26,13 @@ namespace PdfTextReader
 
             if( page != -1 )
             {
-                basename = ExtractPage(basename, 35);
+                basename = ExtractPage(basename, page);
             }
 
             var artigos = GetTextLines(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"bin/{basename}-lines.txt")
                             .ConvertText<CreateTextLineIndex,TextLine>()
-                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateStructuresV2, TextStructure>()
                                 .ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
                                 //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
                                 .Log<AnalyzeStructures>($"bin/{basename}-struct.txt")
