@@ -95,7 +95,7 @@ namespace PdfTextReader.Parser
                 if (valueToTake == 0)
                     valueToTake = 1;
                 body = String.Join("\n", segment.Body.Take(valueToTake).Select(s => s.Text));
-                if (idxSigna > 1 && idxSigna < segment.Body.Count())
+                if (idxSigna > 0 && idxSigna < segment.Body.Count())
                     possibleData = segment.Body[idxSigna - 1].Text;
             }
             else
@@ -130,12 +130,12 @@ namespace PdfTextReader.Parser
             }
 
 
-            //Verificando se Data ficou na assinatura
+            //Verificando se Data ficou no Corpo
             if (data == null)
                 if (possibleData != null)
                     data = HasData(possibleData);
-            if (data != null)
-                body = RemoveDataFromBody(body, data);
+            //if (data != null)
+                //body = RemoveDataFromBody(body, data);
 
             return new Conteudo()
             {
