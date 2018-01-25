@@ -20,7 +20,9 @@ namespace PdfTextReader
             BasicFirstPageStats.Reset();
             PdfReaderException.ContinueOnException();
 
-            var artigos = GetTextLines(basename, inputfolder, outputfolder, out Execution.Pipeline pipeline)
+            var pipeline = new Execution.Pipeline();
+
+            var artigos = GetTextLines(pipeline, basename, inputfolder, outputfolder)
                             .ConvertText<CreateTextLineIndex, TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
                                 .ShowPdf<ShowStructureCentral>($"{outputfolder}/{basename}-show-central.pdf")
@@ -28,6 +30,9 @@ namespace PdfTextReader
                             .ConvertText<CreateTreeSegments, TextSegment>()
                                 .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree.txt")
                                 .ToList();
+
+            // pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/errors/{basename}-parser-errors.pdf");
+            //pipeline.ExtractOutput($"{outputfolder}/errors/{basename}-parser-errors.pdf");
 
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
@@ -53,12 +58,12 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
-        static PipelineText<TextLine> GetTextLines(string basename, string inputfolder, string outputfolder, out Execution.Pipeline pipeline)
+        static PipelineText<TextLine> GetTextLines(Execution.Pipeline pipeline, string basename, string inputfolder, string outputfolder)
         {
             string inputfile = $"{inputfolder}/{basename}.pdf";
             string outputfile = $"{outputfolder}/{basename}-parser.pdf";
 
-            return Examples.GetTextLines(inputfile, outputfile, out pipeline);            
+            return Examples.GetTextLines(pipeline, inputfile, outputfile);
         }
         
         static void ExtractPages(string basename, string outputname, IList<int> pages)

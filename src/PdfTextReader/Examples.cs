@@ -19,6 +19,11 @@ namespace PdfTextReader
         {
             pipeline = new Execution.Pipeline();
 
+            return GetTextLines(pipeline, inputname, outputname);
+        }
+
+        public static PipelineText<TextLine> GetTextLines(Execution.Pipeline pipeline, string inputname, string outputname)
+        {
             var result =
             pipeline.Input(inputname)
                     .Output(outputname)
