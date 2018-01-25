@@ -36,7 +36,7 @@ namespace PdfTextReader.TextStructures
         }
 
         public bool Aggregate(TextLine current)
-        {
+        {            
             bool sameFont = ((_last.FontName == current.FontName) &&
                              (_last.FontStyle == current.FontStyle) &&
                              (_last.FontSize == current.FontSize));
@@ -55,16 +55,60 @@ namespace PdfTextReader.TextStructures
             bool isContinuation = IsZero(_last.MarginRight) && IsZero(current.MarginLeft);
             bool wasFullLine = IsZero(_last.MarginLeft) && IsZero(_last.MarginRight);
             bool isFullLine = IsZero(current.MarginLeft) && IsZero(current.MarginRight);
+            
+            _next = new TextLine2()
+            {
+                FontName = current.FontName,
+                FontStyle = current.FontStyle,
+                FontSize = current.FontSize,
+                AfterSpace = current.AfterSpace,
+                HasBackColor = current.HasBackColor,
+                BeforeSpace = current.BeforeSpace,
+                Block = current.Block,
+                CenteredAt = current.CenteredAt,
+                HasLargeSpace = current.HasLargeSpace,
+                MarginLeft = current.MarginLeft,
+                MarginRight = current.MarginRight,
+                PageInfo = current.PageInfo,
+                Text = current.Text,
 
-            _last.AlignedCenter = sameAlignCenter;
-            _last.HasContinuation = isContinuation;
+                AlignedCenter = sameAlignCenter,
+                HasContinuation = isContinuation
+            };
 
             return false;
         }
 
         public TextLine2 Create(List<TextLine> lineset)
         {
-            return _last;
+            var next = _next;
+
+            // almost all lines
+            if (next != null)
+            {
+                _next = null;
+                return next;
+            }
+
+            // only for the first line
+            var current = lineset[0];
+
+            return new TextLine2()
+            {
+                FontName = current.FontName,
+                FontStyle = current.FontStyle,
+                FontSize = current.FontSize,
+                AfterSpace = current.AfterSpace,
+                HasBackColor = current.HasBackColor,
+                BeforeSpace = current.BeforeSpace,
+                Block = current.Block,
+                CenteredAt = current.CenteredAt,
+                HasLargeSpace = current.HasLargeSpace,
+                MarginLeft = current.MarginLeft,
+                MarginRight = current.MarginRight,
+                PageInfo = current.PageInfo,
+                Text = current.Text
+            };
         }
 
         bool IsZero(float a)

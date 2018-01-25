@@ -32,14 +32,14 @@ namespace PdfTextReader.TextStructures
             };            
         }
 
-        public bool Aggregate(TextLine2 line)
+        public bool Aggregate(TextLine2 next)
         {
-            var last = _last;
-            _last = line;
+            var current = _last;
+            _last = next;
 
-            if ((_structure.FontName != line.FontName) ||
-                (_structure.FontStyle != line.FontStyle) ||
-                (_structure.FontSize != line.FontSize))
+            if ((_structure.FontName != next.FontName) ||
+                (_structure.FontStyle != next.FontStyle) ||
+                (_structure.FontSize != next.FontSize))
                 return false;
             
             // different page or column
@@ -47,14 +47,14 @@ namespace PdfTextReader.TextStructures
                 return false;
 
             // if there is next line
-            if( line.BeforeSpace != null )
+            if( next.BeforeSpace != null )
             {
                 // too far
-                if ((float)line.BeforeSpace > (float)line.FontSize * 0.75)
+                if ((float)next.BeforeSpace > (float)next.FontSize * 0.75)
                     return false;
 
                 // same spacing as structure
-                if (!IsZero(_structure.AfterSpace - line.BeforeSpace))
+                if (!IsZero(_structure.AfterSpace - next.BeforeSpace))
                     return false;
 
                 //has margin at second line
@@ -67,9 +67,9 @@ namespace PdfTextReader.TextStructures
             }
 
             // update the current space        
-            _structure.AfterSpace = line.AfterSpace;
+            _structure.AfterSpace = next.AfterSpace;
 
-            if (last.AlignedCenter && (!line.AlignedCenter) && (!last.HasContinuation))
+            if (current.AlignedCenter && (!next.AlignedCenter) && (!current.HasContinuation))
                 return false;
 
             return true;
