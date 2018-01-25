@@ -72,6 +72,11 @@ namespace PdfTextReader
 
         void Validate(FileInfo file)
         {
+            //Caso o proximo artigo venha sem assinatura ou cargo, ele não é erro.
+            roleConditions = true;
+            signConditions = true;
+            tipoArtigoConditions = true;
+
             XDocument doc = XDocument.Load(file.FullName);
             //Elementos Metadado e Conteudo
             foreach (XElement el in doc.Root.Elements())
@@ -95,13 +100,13 @@ namespace PdfTextReader
 
                     if (item.Name == "Autores")
                     {
-                        foreach (XAttribute at in el.Attributes())
-                        {
-                            CheckRoles(at.Value);
-                        }
-
                         foreach (var i in item.Elements())
                         {
+                            foreach (XAttribute at in i.Attributes())
+                            {
+                                CheckRoles(at.Value);
+                            }
+
                             CheckSigns(i.Value);
                         }
 
@@ -124,8 +129,15 @@ namespace PdfTextReader
                 || !signConditions 
                 || !tipoArtigoConditions)
             {
+
+                string error = (bodyConditions ? "-" : "Body") + "," + 
+                    (titleConditions ? "-" : "Title") + "," + 
+                    (roleConditions ? "-" : "Role") + "," + 
+                    (signConditions ? "-" : "Sign") + "," + 
+                    (tipoArtigoConditions ? "-" : "Tipo");
+
                 DocumentsCountWithError++;
-                file.CopyTo($"{XMLErrorsDir}/{file.Name.Replace(".xml", "")}-ISSUE.xml");
+                file.CopyTo($"{XMLErrorsDir}/{file.Name.Replace(".xml", "")}-ISSUE-{error}.xml");
             }
         }
 
@@ -201,7 +213,7 @@ namespace PdfTextReader
             {
                 roleConditions = false;
                 if (text.Replace("o", "O").ToUpper() != text.Replace("o", "O"))
-                    if (text.Length < 40)
+                    if (text.Length < 90)
                         roleConditions = true;
             }
         }
@@ -249,6 +261,7 @@ namespace PdfTextReader
             "Ato Complementar",
             "Ato Concessório",
             "Ato Declaratório",
+            "ATOS DECLARATÓRIOS",
             "Ato Declaratório Concessivo",
             "Ato Declaratório Conjunto",
             "Ato Declaratório Especial",

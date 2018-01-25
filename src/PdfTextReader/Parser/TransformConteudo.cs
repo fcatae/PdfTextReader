@@ -158,12 +158,15 @@ namespace PdfTextReader.Parser
 
         string HasData(string body)
         {
+
+            string LastLine = body.Split("\n").Last();
+
             string result = null;
 
-            var match = Regex.Match(body, @"(.+?[a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
+            var match = Regex.Match(LastLine, @"(.+?[a-zA-Z]+, \d\d de [a-zA-Z]+ de \d{4})");
 
             if (match.Success)
-                return body;
+                return LastLine;
 
             return result;
         }
