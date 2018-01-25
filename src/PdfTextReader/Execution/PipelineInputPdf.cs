@@ -24,6 +24,12 @@ namespace PdfTextReader.Execution
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
 
+        private static bool g_continueOnException = true;
+
+        public static void StopOnException()
+        {
+            g_continueOnException = false;
+        }
         public static PipelineInputPdf DebugCurrent;
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
@@ -206,7 +212,8 @@ namespace PdfTextReader.Execution
 
                 var pdfPage = Page(i);
 
-                callback(pdfPage);
+                if (ProtectCall(callback, pdfPage) == false)
+                    continue;
 
                 var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
 
@@ -228,7 +235,8 @@ namespace PdfTextReader.Execution
             {
                 var pdfPage = Page(i);
 
-                callback(pdfPage);
+                if (ProtectCall(callback, pdfPage) == false)
+                    continue;
 
                 var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
 
@@ -237,6 +245,30 @@ namespace PdfTextReader.Execution
                     yield return t;
                 }
             }
+        }
+
+        bool ProtectCall(Action<PipelineInputPdfPage> callback, PipelineInputPdfPage pdfPage)
+        {
+            if (!g_continueOnException)
+            {
+                callback(pdfPage);
+                return true;
+            }
+
+            try
+            {
+                callback(pdfPage);
+                return true;
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                System.Diagnostics.Debug.WriteLine(ex.ToString());
+
+                StoreStatistics(new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
+            }
+
+            return false;
         }
 
         public void StoreStatistics(object stats)

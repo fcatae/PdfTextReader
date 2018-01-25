@@ -10,6 +10,7 @@ namespace PdfTextReader.PDFCore
     class IdentifyTables : IProcessBlock
     {
         const float MINIMUM_BACKGROUND_SIZE = 5f;
+        const float MAXIMUM_LIZE_WIDTH = 2f;
 
         private BlockPage _pageResult;
         private BlockPage _pageLines;
@@ -158,16 +159,16 @@ namespace PdfTextReader.PDFCore
             var tables = new BlockPage();
             var lines = new BlockPage();
             var background = new BlockPage();
-            
+
             foreach (var b in blockList)
             {
                 // does not add line segments
-                if (b.Count() == 1)
+                if ((b.Count() == 1) || (b.GetWidth() < MAXIMUM_LIZE_WIDTH) || (b.GetHeight() < MAXIMUM_LIZE_WIDTH))
                     lines.Add(b);
                 else
                     tables.Add(b);
             }
-
+            
             // add background
             var dark = page.AllBlocks
                         .Where(b => !TableCell.HasDarkColor((TableCell)b))

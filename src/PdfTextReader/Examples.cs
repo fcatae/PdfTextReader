@@ -75,17 +75,17 @@ namespace PdfTextReader
 
             pipeline.Done();
         }
-        public static IEnumerable<TextLine> GetEnumerableLines(string basename)
-        {
-            var pipeline = new Execution.Pipeline();
+        //public static IEnumerable<TextLine> GetEnumerableLines(string basename)
+        //{
+        //    var pipeline = new Execution.Pipeline();
 
-            var result =
-            pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-test-output.pdf")
-                    .StreamConvert<CreateTextLines>(ProcessPage);                    
+        //    var result =
+        //    pipeline.Input($"bin/{basename}.pdf")
+        //            .Output($"bin/{basename}-test-output.pdf")
+        //            .StreamConvert<CreateTextLines>(ProcessPage);                    
 
-            return result;
-        }
+        //    return result;
+        //}
 
         public static PipelineText<TextLine> GetTextLines(string basename)
         {

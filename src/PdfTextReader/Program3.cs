@@ -25,10 +25,8 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            //ExtractPages(basename, $"{basename}-p14", new int[] { 14 });
-            //ExtractPages(basename, $"{basename}-p16", new int[] { 16 });
-            //ExtractPages(basename, $"{basename}-p27", new int[] { 27 });
-
+            basename = ExtractPage(basename, 35);
+            
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
             //Examples.FollowText(basename);
@@ -65,27 +63,36 @@ namespace PdfTextReader
             //ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
         }
 
-        static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
+        static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline, int startPage=1)
+        {
+            if (startPage == 1)
+                return GetTextLines(basename, out pipeline, new int[] { });
+
+            var skipPages = Enumerable.Range(1, startPage - 1).ToArray();
+
+            return GetTextLines(basename, out pipeline, skipPages);
+        }
+
+        static PipelineText<TextLine> GetTextLines(string basename, out Execution.Pipeline pipeline, int[] exceptPages)
         {
             pipeline = new Execution.Pipeline();
 
             var result =
             pipeline.Input($"bin/{basename}.pdf")
                     .Output($"bin/{basename}-parser-output.pdf")
-                    .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
+                    .AllPagesExcept<CreateTextLines>(exceptPages, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
-                              //.Show(Color.Blue)
                               .ParsePdf<PreProcessImages>()
                                   .ParseBlock<BasicFirstPageStats>()
                                   //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
-                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
+                                  //.Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
                                   .ParseBlock<RemoveSmallFonts>()
                                   //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<MergeTableText>()
-                                  //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                                  .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
                                   .ParseBlock<ReplaceCharacters>()
@@ -101,11 +108,12 @@ namespace PdfTextReader
                                   .ParseBlock<AddTableSpace>()
                                   .ParseBlock<RemoveTableOverImage>()
                                   .ParseBlock<RemoveImageTexts>()
-                                  .ParseBlock<AddImageSpace>()                                    
+                                  .ParseBlock<AddImageSpace>()
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
-                                  .ParseBlock<AddTableLines>()
-
+                                  .ParseBlock<AddTableHorizontalLines>()
+                                  .ParseBlock<RemoveBackgroundNonText>()
+                                  
                                       // Try to rewrite column
                                       .ParseBlock<BreakColumnsRewrite>()
 
@@ -122,7 +130,7 @@ namespace PdfTextReader
 
                                       .Show(Color.Orange)
                                       .ShowLine(Color.Black)
-                                  
+
                                   .ParseBlock<CheckOverlap>()
 
                                       .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
@@ -139,6 +147,23 @@ namespace PdfTextReader
                 pipeline.Input($"bin/{basename}.pdf")
                         .ExtractPages($"bin/{outputname}.pdf", pages);
             }
+        }
+
+        static void ExtractPages(string basename, IList<int> pages)
+        {
+            foreach(var p in pages)
+            {
+                ExtractPages(basename, $"{basename}-p{p}", new int[] { p });
+            }
+        }
+        static string ExtractPage(string basename, int p, bool create = true)
+        {
+            string outputname = $"{basename}-p{p}";
+
+            if(create)
+                ExtractPages(basename, outputname, new int[] { p });
+
+            return outputname;
         }
     }
 }
