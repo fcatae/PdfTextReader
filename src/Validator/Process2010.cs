@@ -9,14 +9,15 @@ namespace Validator
         int _totalProcessed = 0;
 
         //public string FilePattern => "DO1_2010_0?_10.pdf"; //6
-        public string FilePattern => "*.pdf";
+        //public string FilePattern => "*.pdf";
+        public string FilePattern => "DO1_2010_02_??.pdf";
 
         public void Run(File file, string outputname)
         {            
             string inputFolder = file.Folder;
             string basename = file.Filename;
 
-            if (basename.Contains("DO1_2010_01_"))
+            if (!basename.Contains("DO1_2010_02_02"))
                 return;
 
             // CMD C:\PDF\2010\ c:\pdf\output 2010

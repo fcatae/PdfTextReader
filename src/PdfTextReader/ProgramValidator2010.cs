@@ -34,10 +34,16 @@ namespace PdfTextReader
             var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
             var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
             var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
+            var unhandled = (ValidateUnhandledExceptions)pipeline.Statistics.Calculate<ValidateUnhandledExceptions, StatsExceptionHandled>();
 
             var pagesLayout = layout.GetPageErrors().ToList();
             var pagesOverlap = overlap.GetPageErrors().ToList();
-            var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t => t).ToList();
+            var pagesUnhandled = unhandled.GetPageErrors().ToList();
+
+            var pages = pagesLayout
+                            .Concat(pagesOverlap)
+                            .Concat(pagesUnhandled)
+                            .Distinct().OrderBy(t => t).ToList();
 
             if( pages.Count > 0 )
             {
@@ -87,7 +93,8 @@ namespace PdfTextReader
                                   .ParseBlock<AddImageSpace>()
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
-                                  .ParseBlock<AddTableLines>()
+                                  .ParseBlock<AddTableHorizontalLines>()
+                                  .ParseBlock<RemoveBackgroundNonText>()
 
                                       // Try to rewrite column
                                       .ParseBlock<BreakColumnsRewrite>()
