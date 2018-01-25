@@ -69,7 +69,7 @@ namespace PdfTextReader.TextStructures
             // update the current space        
             _structure.AfterSpace = next.AfterSpace;
 
-            if (current.AlignedCenter && (!next.AlignedCenter) && (!current.HasContinuation))
+            if (current.AlignedCenter && (!next.AlignedCenter) && (!next.HasContinuation))
                 return false;
 
             return true;
