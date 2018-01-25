@@ -132,15 +132,41 @@ namespace PdfTextReader
                 || !numeroDaPaginaConditions)
             {
 
-                string error = (bodyConditions ? "-" : "Body") + "," + 
-                    (titleConditions ? "-" : "Title") + "," + 
-                    (roleConditions ? "-" : "Role") + "," + 
-                    (signConditions ? "-" : "Sign") + "," +
-                    (numeroDaPaginaConditions ? "-" : "NumPag") + "," +
-                    (tipoArtigoConditions ? "-" : "Tipo");
+                StringBuilder error = new StringBuilder();
+
+
+                if (!bodyConditions)
+                {
+                    error.Append("Body-");
+                }
+
+                if (!titleConditions)
+                {
+                    error.Append("Title-");
+                }
+
+                if (!roleConditions)
+                {
+                    error.Append("Role-");
+                }
+
+                if (!signConditions)
+                {
+                    error.Append("Sign-");
+                }
+
+                if (!numeroDaPaginaConditions)
+                {
+                    error.Append("NumPag-");
+                }
+
+                if (!tipoArtigoConditions)
+                {
+                    error.Append("Tipo-");
+                }
 
                 DocumentsCountWithError++;
-                file.CopyTo($"{XMLErrorsDir}/{file.Name.Replace(".xml", "")}-ISSUE-{error}.xml");
+                file.CopyTo($"{XMLErrorsDir}/{file.Name.Replace(".xml", "")}-ISSUE-{error.ToString()}.xml");
             }
         }
 

@@ -116,13 +116,17 @@ namespace PdfTextReader.Parser
 
         string ConvertBreakline2Space(string input)
         {
-            string output = input.Replace("\n", " ");
-            if (output.Contains(":"))
+            string output = input;
+            if (input != null && input.Length > 1)
             {
-                output = output.Substring(0, output.Length - 1);
+                output = input.Replace("\n", " ");
+                if (output.Contains(":"))
+                {
+                    output = output.Substring(0, output.Length - 1);
+                }
+                if (output.Substring(0, 1) == " ")
+                    output = output.Substring(1, output.Length - 1);
             }
-            if (output != null && output.Length > 1 && output.Substring(0,1) == " ")
-                output = output.Substring(1, output.Length - 1);
             return output;
         }
 
