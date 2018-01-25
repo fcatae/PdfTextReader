@@ -6,6 +6,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
+    [Obsolete]
     class BreakColumns : IProcessBlock, IValidateBlock
     {
         public BlockPage Process(BlockPage page)
