@@ -25,10 +25,8 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            //ExtractPages(basename, $"{basename}-p14", new int[] { 14 });
-            //ExtractPages(basename, $"{basename}-p16", new int[] { 16 });
-            //ExtractPages(basename, $"{basename}-p27", new int[] { 27 });
-
+            //ExtractPages(basename, new int[] { 1 });
+            
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
             //Examples.FollowText(basename);
@@ -75,17 +73,16 @@ namespace PdfTextReader
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
-                              //.Show(Color.Blue)
                               .ParsePdf<PreProcessImages>()
                                   .ParseBlock<BasicFirstPageStats>()
                                   //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
-                                  .Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
+                                  //.Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
                                   .ParseBlock<RemoveSmallFonts>()
                                   //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<MergeTableText>()
-                                  //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
+                                  .Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<HighlightTextTable>()
                                   .ParseBlock<RemoveTableText>()
                                   .ParseBlock<ReplaceCharacters>()
@@ -101,11 +98,12 @@ namespace PdfTextReader
                                   .ParseBlock<AddTableSpace>()
                                   .ParseBlock<RemoveTableOverImage>()
                                   .ParseBlock<RemoveImageTexts>()
-                                  .ParseBlock<AddImageSpace>()                                    
+                                  .ParseBlock<AddImageSpace>()
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
                                   .ParseBlock<AddTableLines>()
-
+                                  .ParseBlock<RemoveBackgroundNonText>()
+                                  
                                       // Try to rewrite column
                                       .ParseBlock<BreakColumnsRewrite>()
 
@@ -122,7 +120,7 @@ namespace PdfTextReader
 
                                       .Show(Color.Orange)
                                       .ShowLine(Color.Black)
-                                  
+
                                   .ParseBlock<CheckOverlap>()
 
                                       .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
@@ -138,6 +136,14 @@ namespace PdfTextReader
             {
                 pipeline.Input($"bin/{basename}.pdf")
                         .ExtractPages($"bin/{outputname}.pdf", pages);
+            }
+        }
+
+        static void ExtractPages(string basename, IList<int> pages)
+        {
+            foreach(var p in pages)
+            {
+                ExtractPages(basename, $"{basename}-p{p}", new int[] { p });
             }
         }
     }
