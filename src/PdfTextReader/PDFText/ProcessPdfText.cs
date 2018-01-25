@@ -134,9 +134,14 @@ namespace PdfTextReader.PDFText
 
             string fontname = font.GetFontName();
 
-            return RemoveSubFontPrefix(fontname);
+            return RemoveFontStyleSuffix(RemoveSubFontPrefix(fontname));
         }
-        
+
+        string RemoveFontStyleSuffix(string name)
+        {
+            return name.Replace("Bold", "").Replace("Italic", "").Replace("-", "");
+        }
+
         string RemoveSubFontPrefix(string name)
         {
             // According to PDF specification ISO 32000-1:2008, 

@@ -30,13 +30,13 @@ namespace PdfTextReader
             }
 
             var artigos = GetTextLines(basename, out Execution.Pipeline pipeline)
-                                //.Log<AnalyzeLines>(Console.Out)
+                                .Log<AnalyzeLines>($"bin/{basename}-lines.txt")
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
-                                //.ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
+                                .ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
                                 //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
-                                //.Log<AnalyzeStructures>(Console.Out)
-                                //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
+                                .Log<AnalyzeStructures>($"bin/{basename}-struct.txt")
+                                .Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
                                 //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
                                 //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
