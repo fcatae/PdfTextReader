@@ -11,6 +11,7 @@ namespace PdfTextReader.TextStructures
         const float ERR_ALIGNMENT = 1f;
 
         TextLine2 _last;
+        TextLine2 _next;
 
         public void Init(TextLine line)
         {
@@ -28,7 +29,9 @@ namespace PdfTextReader.TextStructures
                 MarginLeft = line.MarginLeft,
                 MarginRight = line.MarginRight,
                 PageInfo = line.PageInfo,
-                Text = line.Text
+                Text = line.Text,
+
+                AlignedCenter = false
             };
         }
 
@@ -50,10 +53,11 @@ namespace PdfTextReader.TextStructures
             float minimumRight = Math.Min(_last.MarginRight, current.MarginRight);
 
             bool isContinuation = IsZero(_last.MarginRight) && IsZero(current.MarginLeft);
+            bool wasFullLine = IsZero(_last.MarginLeft) && IsZero(_last.MarginRight);
             bool isFullLine = IsZero(current.MarginLeft) && IsZero(current.MarginRight);
 
-            // center = both Centered
-            // isContinuation == false
+            _last.AlignedCenter = sameAlignCenter;
+            _last.HasContinuation = isContinuation;
 
             return false;
         }

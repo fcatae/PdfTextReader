@@ -16,9 +16,11 @@ namespace PdfTextReader.TextStructures
         float STAT_FIRST_TABSTOP = float.NaN;
 
         TextStructure _structure;
+        TextLine2 _last = null;
 
         public void Init(TextLine2 line)
         {
+            _last = line;
             _structure = new TextStructure()
             {
                 FontName = line.FontName,
@@ -32,6 +34,9 @@ namespace PdfTextReader.TextStructures
 
         public bool Aggregate(TextLine2 line)
         {
+            var last = _last;
+            _last = line;
+
             if ((_structure.FontName != line.FontName) ||
                 (_structure.FontStyle != line.FontStyle) ||
                 (_structure.FontSize != line.FontSize))
@@ -63,6 +68,9 @@ namespace PdfTextReader.TextStructures
 
             // update the current space        
             _structure.AfterSpace = line.AfterSpace;
+
+            if (last.AlignedCenter && (!line.AlignedCenter) && (!last.HasContinuation))
+                return false;
 
             return true;
         }
