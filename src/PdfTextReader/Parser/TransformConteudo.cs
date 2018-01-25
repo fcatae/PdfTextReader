@@ -80,7 +80,7 @@ namespace PdfTextReader.Parser
             {
                 resultProcess.Clear();
                 resultProcess = ProcessSignatureAndRole(segment.Body[idxSigna].Lines);
-                autores.Add(new Autor() { Assinatura = resultProcess[0], Cargo = resultProcess[1] });  
+                autores.Add(new Autor() { Assinatura = resultProcess[0], Cargo = resultProcess[1] });
                 data = resultProcess[2];
             }
 
@@ -140,7 +140,7 @@ namespace PdfTextReader.Parser
                 if (possibleData != null)
                     data = HasData(possibleData);
             //if (data != null)
-                //body = RemoveDataFromBody(body, data);
+            //body = RemoveDataFromBody(body, data);
 
             return new Conteudo()
             {
@@ -239,13 +239,17 @@ namespace PdfTextReader.Parser
                 {
                     signature = signature + "\n" + item.Text;
                 }
-                else if (item.Text.All(Char.IsDigit))
-                {
-                    date = item.Text;
-                }
                 else
                 {
-                    role = role + "\n" + item.Text;
+                    var match = Regex.Match(item.Text, @"(\,? [0-9]* [a-zA-Z]* [a-zA-Z]* [a-zA-Z]* [0-9]*)");
+                    var match2 = Regex.Match(item.Text, @"([0-9]*\/[0-9]*\/[0-9]*)");
+
+                    if (match.Success)
+                        date = item.Text;
+                    else if (match2.Success)
+                        date = item.Text;
+                    else
+                        role = role + "\n" + item.Text;
                 }
             }
 
