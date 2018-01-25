@@ -32,6 +32,7 @@ namespace PdfTextReader
                             .ConvertText<CreateTextLineIndex, TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
                                 .Log<AnalyzeStructuresCentral>($"{logDir}/{basename}-central.txt")
+                                .ShowPdf<ShowStructureCentral>($"{logDir}/{basename}-show-central.pdf")
                             .PrintAnalytics($"{logDir}/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
                                 .Log<AnalyzeSegmentTitles>($"{logDir}/{basename}-tree.txt")

@@ -95,6 +95,11 @@ namespace PdfTextReader
 
                     if (item.Name == "Autores")
                     {
+                        foreach (XAttribute at in el.Attributes())
+                        {
+                            CheckRoles(at.Value);
+                        }
+
                         foreach (var i in item.Elements())
                         {
                             CheckSigns(i.Value);
@@ -154,11 +159,21 @@ namespace PdfTextReader
             if (!String.IsNullOrWhiteSpace(text))
             {
                 var bodyParts = text.Split("\n");
-                var lastItem = bodyParts[bodyParts.Count() - 1];
-                var lastButOne = bodyParts[bodyParts.Count() - 2];
+                if (bodyParts.Count() > 2)
+                {
+                    var lastItem = bodyParts[bodyParts.Count() - 1];
+                    var lastButOne = bodyParts[bodyParts.Count() - 2];
 
-                if (lastItem.ToUpper() != lastItem || lastButOne.ToUpper() != lastButOne)
-                    bodyConditions = true;
+                    if (lastItem.ToUpper() != lastItem || lastButOne.ToUpper() != lastButOne)
+                        bodyConditions = true;
+                }
+                else if (bodyParts.Count() == 2)
+                {
+                    var lastItem = bodyParts[bodyParts.Count() - 1];
+
+                    if (lastItem.ToUpper() != lastItem)
+                        bodyConditions = true;
+                }
             }
 
         }
@@ -182,11 +197,12 @@ namespace PdfTextReader
 
         void CheckRoles(string text)
         {
-            roleConditions = false;
             if (!String.IsNullOrWhiteSpace(text))
             {
+                roleConditions = false;
                 if (text.Replace("o", "O").ToUpper() != text.Replace("o", "O"))
-                    roleConditions = true;
+                    if (text.Length < 40)
+                        roleConditions = true;
             }
         }
 
@@ -324,6 +340,7 @@ namespace PdfTextReader
             "Correição Parcial",
             "Decisão",
             "Decisões",
+            "DECISÕES",
             "Decisão Executiva",
             "Decisão Normativa",
             "Decisão/Despacho",
