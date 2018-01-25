@@ -46,6 +46,10 @@ namespace PdfTextReader.TextStructures
 
                 string titleText = titles[nivel].Text;
 
+                // separate the main titles
+                if (nivel == 0)
+                    input.WriteLine();
+
                 // adjust the hierarchy
                 for (int j = 0; j < nivel; j++)
                     input.Write("    ");
