@@ -34,6 +34,9 @@ namespace PdfTextReader.PDFCore
                 PdfReaderException.AlwaysThrow("AddTableLines requires IdentifyTables");
             }
 
+            if (page.IsEmpty())
+                return page;
+
             var result = new BlockPage();
 
             foreach (var block in page.AllBlocks)
