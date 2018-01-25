@@ -51,7 +51,7 @@ namespace PdfTextReader.Execution
         }
         static public void ShowException(PipelineInputPdf pdf, Exception ex)
         {
-            string text = ex.Message;
+            string text = ex.Message + "\n" + ex.StackTrace;
 
             pdf.CurrentPage.DrawWarning(text, 20, Color.Red);            
         }

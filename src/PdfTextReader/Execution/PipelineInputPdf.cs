@@ -11,6 +11,7 @@ using System.Text;
 using PdfTextReader.Base;
 using iText.Kernel.Font;
 using iText.IO.Font.Constants;
+using iText.Kernel.Pdf.Extgstate;
 
 namespace PdfTextReader.Execution
 {
@@ -376,12 +377,56 @@ namespace PdfTextReader.Execution
                 canvas.Rectangle(x, h, width, height);
                 canvas.Stroke();
             }
+            public void FillRectangle(double x, double h, double width, double height, System.Drawing.Color color)
+            {
+                var canvas = GetCanvas();
+
+                var pdfColor = GetColor(color);
+
+                int opacity = color.A;
+
+                canvas.SaveState();
+                if( opacity < 250 )
+                {
+                    PdfExtGState gstate = new PdfExtGState();
+                    gstate.SetFillOpacity(color.A / 255f);
+                    //gstate.SetBlendMode(PdfExtGState.BM_EXCLUSION);
+                    canvas.SetExtGState(gstate);
+                }                
+
+                canvas.SetFillColor(pdfColor);
+                canvas.Rectangle(x, h, width, height);
+                canvas.Fill();
+                canvas.RestoreState();
+            }
+            public void FillRectangle2(double x, double h, double width, double height, System.Drawing.Color color)
+            {
+                var canvas = GetCanvas();
+
+                var pdfColor = GetColor(color);
+
+                int opacity = color.A;
+
+                canvas.SaveState();
+                if (opacity < 250)
+                {
+                    PdfExtGState gstate = new PdfExtGState();
+                    gstate.SetFillOpacity(color.A / 255f);
+                    //gstate.SetBlendMode(PdfExtGState.BM_EXCLUSION);
+                    canvas.SetExtGState(gstate);
+                }
+
+                canvas.SetFillColor(pdfColor);
+                canvas.Rectangle(x, h, width, height);
+                canvas.Fill();
+                canvas.RestoreState();
+            }
             public void DrawText(double x, double h, string text, float size, System.Drawing.Color color)
             {
                 var canvas = GetCanvas();
 
                 var pdfColor = GetColor(color);
-                
+
                 canvas.SetColor(pdfColor, true);
                 //canvas.Rectangle(x, h, width, height);
                 canvas.BeginText();
@@ -397,18 +442,32 @@ namespace PdfTextReader.Execution
                 int MAXTEXTSIZE = (int)(1.2*_pdfPage.GetPageSize().GetHeight()/size);
                 float margin = 10f;
                 float linespace = size*1.15f;
+                float paragraph = size * 2f;
+                
+                var white = System.Drawing.Color.FromArgb(200, 250, 250, 250);
 
                 float x = margin;
                 float h = _pdfPage.GetPageSize().GetHeight() - size - margin;
+                float page_width = _pdfPage.GetPageSize().GetWidth();
+                float page_height = _pdfPage.GetPageSize().GetHeight();
+                
+                FillRectangle(0, 0, page_width, page_height, white);
 
-                string text = message;
-                while (text.Length > MAXTEXTSIZE)
+                string[] lines = message.Split("\n");
+
+                foreach (var line in lines)
                 {
-                    DrawText(x, h, text.Substring(0, MAXTEXTSIZE), size, color);
-                    h -= linespace;
-                    text = text.Substring(MAXTEXTSIZE);
+                    string text;
+
+                    for (text = line; text.Length > MAXTEXTSIZE; text = text.Substring(MAXTEXTSIZE))
+                    {                        
+                        DrawText(x, h, text.Substring(0, MAXTEXTSIZE), size, color);
+                        h -= linespace;
+                    }
+                    DrawText(x, h, text, size, color);
+
+                    h -= paragraph;
                 }
-                DrawText(x, h, text, size, color);
             }
 
             public void DrawLine(double x1, double h1, double x2, double h2, System.Drawing.Color color)
