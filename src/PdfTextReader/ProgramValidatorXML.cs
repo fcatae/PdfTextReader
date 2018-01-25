@@ -152,7 +152,15 @@ namespace PdfTextReader
         void CheckBody(string text)
         {
             if (!String.IsNullOrWhiteSpace(text))
-                bodyConditions = true;
+            {
+                var bodyParts = text.Split("\n");
+                var lastItem = bodyParts[bodyParts.Count() - 1];
+                var lastButOne = bodyParts[bodyParts.Count() - 2];
+
+                if (lastItem.ToUpper() != lastItem || lastButOne.ToUpper() != lastButOne)
+                    bodyConditions = true;
+            }
+
         }
 
         void CheckAnexo(string text)
@@ -170,6 +178,7 @@ namespace PdfTextReader
                     signConditions = true;
             }
         }
+
 
         void CheckRoles(string text)
         {

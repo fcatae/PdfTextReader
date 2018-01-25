@@ -41,6 +41,7 @@ namespace PdfTextReader
                                 .Log<AnalyzeTreeStructure>($"{logDir}/{basename}-tree-data.txt")
                             .ConvertText<TransformConteudo, Conteudo>()
                             .ConvertText<AggregateAnexo, Conteudo>()
+                            .ConvertText<AggregateSingularBody, Conteudo>()
                             .ToList();
             //Create XML
             var createArticle = new TransformArtigo();
