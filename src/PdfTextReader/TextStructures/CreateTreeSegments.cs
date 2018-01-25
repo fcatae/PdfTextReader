@@ -40,6 +40,8 @@ namespace PdfTextReader.Parser
 
                     var mergedSegments = MergeSegments(current, next);
 
+                    ValidateFontStyle(mergedSegments);
+
                     _current = new TextSegment()
                     {
                         Title = mergedSegments,
@@ -61,6 +63,47 @@ namespace PdfTextReader.Parser
                 PdfReaderException.AlwaysThrow("_shouldNotContinue");
         }
 
+        void ValidateFontStyle(TextStructure[] titles)
+        {
+            for(int i=0; i<titles.Length-1; i++)
+            {
+                var major = titles[i];
+                var minor = titles[i + 1];
+
+                int compare = CompareStructureHieararchy(major, minor);
+
+                if (compare < 0)
+                {
+                    PdfReaderException.Warning("invalid title order");
+                    return;
+                }
+            }
+        }
+
+        //TextStructure[] MergeSegments(TextStructure[] current, TextStructure[] next)
+        //{
+        //    for(int split=1; split<next.Length; split++)
+        //    {
+        //        var major = next[split-1];
+        //        var minor = next[split];
+
+        //        // found a split
+        //        if( CompareStructureHieararchy(major, minor) < 0 )
+        //        {
+        //            var orderedBlock = next.Take(split);
+        //            var unorderedBlock = next.Skip(split);
+
+        //            var merge1 = MergeSegmentsOrdered(current, orderedBlock.ToArray());
+
+        //            return MergeSegments(merge1, unorderedBlock.ToArray());
+        //        }
+        //    }
+
+        //    // lists are both ordered
+        //    return MergeSegmentsOrdered(current, next);
+        //}
+
+        //TextStructure[] MergeSegmentsOrdered(TextStructure[] current, TextStructure[] next)
         TextStructure[] MergeSegments(TextStructure[] current, TextStructure[] next)
         {
             if ((current == null) || (next == null) || (next.Length == 0))

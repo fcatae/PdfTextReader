@@ -46,9 +46,9 @@ namespace PdfTextReader
                                 //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
                                 //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
-                                //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
                                 //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeSegmentTitles>($"bin/{basename}-segment-titles-tree.txt")
                                 .Log<AnalyzeTreeStructure>(Console.Out)
                             .ToList();
             

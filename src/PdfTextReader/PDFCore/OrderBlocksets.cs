@@ -115,7 +115,7 @@ namespace PdfTextReader.PDFCore
                 }
             }
 
-            var checkOddX = Values.Where(v => v.X != 2 && v.X != 3 && v.X != 4 && v.X != 6).ToList();
+            var checkOddX = Values.Where(v => v.X != 2 && v.X != 3 && v.X != 4 && v.X != 0).ToList();
             if (checkOddX.Count > 0)
             {
                 PdfReaderException.Warning("check X failed");

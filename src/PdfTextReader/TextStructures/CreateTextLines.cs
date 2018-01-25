@@ -26,7 +26,10 @@ namespace PdfTextReader.TextStructures
                     continue;
 
                 if (bset is ImageBlock || bset is TableSet)
+                {
+                    yield return CreateTableLine(bset, pageInfo);
                     continue;
+                }
 
                 // TODO: fix this bug
                 if (blockArea.First() is TableCell)
@@ -97,6 +100,25 @@ namespace PdfTextReader.TextStructures
             }
 
             return lines.ToList();
+        }
+
+        TextLine CreateTableLine(IBlock bl, TextPageInfo pageInfo)
+        {
+            return new TextLine
+            {
+                FontName = "FontTable",
+                FontSize = 5,
+                FontStyle = "Regular",
+                Text = "", //"**TABLE**",
+                MarginLeft = 0,
+                MarginRight = 0,
+                BeforeSpace = null,
+                AfterSpace = null,
+                HasLargeSpace = true,
+                Block = bl,
+                HasBackColor = false,
+                PageInfo = pageInfo
+            };
         }
     }
 }

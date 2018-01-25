@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Validator
@@ -39,11 +40,21 @@ namespace Validator
             }
             catch (Exception ex)
             {
-                Console.WriteLine("CRITICAL ERROR: Unhandled Exception");
-                Console.WriteLine(ex.ToString());
-                Console.WriteLine();
-                Console.WriteLine($"File {basename}: End with FAILURES");
+                LogException(Console.Out, basename, ex);
+
+                using (var outfile = new StreamWriter($"{outputname}/{basename}-crash-exception.log"))
+                {
+                    LogException(outfile, basename, ex);
+                }
             }
+        }
+
+        void LogException(TextWriter writer, string basename, Exception ex)
+        {
+            writer.WriteLine("CRITICAL ERROR: Unhandled Exception");
+            writer.WriteLine(ex.ToString());
+            writer.WriteLine();
+            writer.WriteLine($"File {basename}: End with FAILURES");
         }
     }
 }
