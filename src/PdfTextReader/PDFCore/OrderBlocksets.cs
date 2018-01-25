@@ -1,4 +1,4 @@
-﻿// #define DEBUG_ORDERBLOCKSET
+﻿#define DEBUG_ORDERBLOCKSET
 
 using System;
 using System.Collections.Generic;
@@ -116,6 +116,9 @@ namespace PdfTextReader.PDFCore
                         {
                             if (val != null)
                             {
+#if DEBUG_ORDERBLOCKSET
+                                Console.WriteLine($"[{val.ID}] X={val.X} Y={val.Y} X2={val.X2} W={val.W} cur_w={cur_w} level={level}");
+#endif
                                 OrderedBlocks.Add((IBlock)val.B);
                             }
                         }
