@@ -1,12 +1,15 @@
 ﻿using PdfTextReader.Base;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class ValidateOverlap : IValidateBlock
+    class CheckOverlap : IProcessBlock, IValidateBlock, IRetrieveStatistics
     {
+        StatsBlocksOverlapped _overlappedBlocks = StatsBlocksOverlapped.Empty;
+
         public BlockPage Validate(BlockPage page)
         {
             if (HasTableOverlap(page))
@@ -17,6 +20,37 @@ namespace PdfTextReader.PDFCore
             var emptyResult = new BlockPage();
 
             return emptyResult;
+        }
+
+        public BlockPage Process(BlockPage page)
+        {
+            var result = GetTableOverlap(page);
+            var list = page.AllBlocks.ToList();
+            var overlapped = new List<IBlock>();
+            var overlappedIds = new List<int>();
+
+            foreach (var block in result.AllBlocks)
+            {
+                for(int i=0; i<list.Count; i++)
+                {
+                    if( block == list[i] )
+                    {
+                        overlapped.Add(block);
+                        overlappedIds.Add(i);
+                    }
+                }
+            }
+      
+            if(overlapped.Count > 0)
+            {
+                _overlappedBlocks = new StatsBlocksOverlapped()
+                {
+                    Blocks = overlapped.ToArray(),
+                    BlockIds = overlappedIds.ToArray()
+                };
+            }
+
+            return page;
         }
 
         bool HasTableOverlap(BlockPage page)
@@ -64,6 +98,11 @@ namespace PdfTextReader.PDFCore
             bool hasOverlap = ((a_x1 <= x) && (a_x2 >= x) && (a_y1 <= h) && (a_y2 >= h));
 
             return hasOverlap;
+        }
+
+        public object RetrieveStatistics()
+        {
+            return _overlappedBlocks;
         }
     }
 }

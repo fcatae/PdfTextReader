@@ -678,6 +678,13 @@ namespace PdfTextReader
             pipeline.Input($"bin/{basename}.pdf")
                     .Extract($"bin/{basename}-p{page}.pdf", page, page);
         }
+        public static void ExtractPages(string basename, string outputname, IList<int> pages)
+        {
+            var pipeline = new Execution.Pipeline();
+
+            pipeline.Input($"bin/{basename}.pdf")
+                    .ExtractPages($"bin/{outputname}.pdf", pages);
+        }
 
         public static void Multipage(string basename)
         {

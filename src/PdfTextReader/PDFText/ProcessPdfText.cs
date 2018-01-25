@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Text;
 using PdfTextReader.Base;
 using iText.IO.Font;
+using System.Linq;
 
 namespace PdfTextReader.PDFText
 {
@@ -49,6 +50,15 @@ namespace PdfTextReader.PDFText
                     WordSpacing = textInfo.GetWordSpacing()
                 };
 
+                if( ShouldRecalculateSpaces(block.Text) )
+                {
+                    string newtext = RecalculateSpaces(textInfo);
+                    if( newtext != block.Text )
+                    {
+                        block.Text = newtext;
+                    }
+                }
+
                 if (block.Width <= 0 || block.Height <= 0)
                     PdfReaderException.AlwaysThrow("block.Width <= 0 || block.Height <= 0");
 
@@ -68,7 +78,42 @@ namespace PdfTextReader.PDFText
                 _blockSet.Add(block);
             }
         }
-        
+
+        bool ShouldRecalculateSpaces(string text)
+        {
+            const char SPACE = ' ';
+
+            if(text.Length > 2)
+            {
+                if (text[0] != SPACE && text[1] != SPACE)
+                    return false;
+            }
+
+            int spaces = text.Count(t => t == SPACE);
+
+            if ((text.Length > 4) && (2*spaces >= text.Length - 4))
+                return true;
+
+            return false;
+        }
+
+        string RecalculateSpaces(TextRenderInfo textInfo)
+        {
+            var chars = textInfo.GetCharacterRenderInfos();
+            float charSize = (textInfo.GetUnscaledWidth() / chars.Count)/2.0f;
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var ch in chars)
+            {
+                string chText = ch.GetText();
+
+                if (chText != " " || (ch.GetUnscaledWidth() > charSize))
+                    sb.Append(chText);
+            }
+
+            return sb.ToString();
+        }
+
         object WorkFont(FontNames font)
         {
             var stat = new

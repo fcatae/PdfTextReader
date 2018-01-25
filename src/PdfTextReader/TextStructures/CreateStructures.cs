@@ -184,12 +184,21 @@ namespace PdfTextReader.TextStructures
             }
 
             // Centralized text must NOT finish with "."
-            if(( _structure.TextAlignment == TextAlignment.CENTER ) && _structure.Text.EndsWith("."))
+            if(( _structure.TextAlignment == TextAlignment.CENTER ) && lineset[0].Text.EndsWith("."))
             {
                 _structure.TextAlignment = TextAlignment.JUSTIFY;
 
+                if (_structure.FontStyle == "Bold" )
+                {
+                    PdfReaderException.Throw("It should be a title");
+                }
+
                 if (lineset.Count != 1)
+                {
                     PdfReaderException.Throw("We only tested for 1 line");
+                    // sometimes... 
+                    // _structure.Text.EndsWith(".") fails
+                }
             }
 
             if( lineset[0].HasLargeSpace )

@@ -8,6 +8,7 @@ namespace PdfTextReader.Base
     class BlockPageSegment : BlockSet<BlockColumn>
     {
         public int NumberOfColumns { get; private set; }
+        public IEnumerable<BlockColumn> Columns => this.Cast<BlockColumn>();
 
         public BlockPageSegment(BlockPage page, int columnType) : base(page)
         {

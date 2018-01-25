@@ -114,6 +114,11 @@ namespace PdfTextReader.Execution
             return this;
         }
 
+        public PipelineDebugContext CreatePipelineDebugContext(string outputname)
+        {
+            return new PipelineDebugContext(_input, outputname);
+        }
+
         public void Dispose()
         {
             if( CurrentPage != null )
@@ -143,6 +148,14 @@ namespace PdfTextReader.Execution
             using (var pdfOutput = new PdfDocument(new PdfWriter(outfile)))
             {
                 pdfInput.CopyPagesTo(pageNumbers, pdfOutput);                
+            }
+        }
+        public void ExtractPages(string outfile, IList<int> pageNumbers)
+        {
+            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
+            using (var pdfOutput = new PdfDocument(new PdfWriter(outfile)))
+            {
+                pdfInput.CopyPagesTo(pageNumbers, pdfOutput);
             }
         }
 

@@ -14,27 +14,7 @@ using System.Linq;
 namespace PdfTextReader
 {
     class Program3
-    {
-        public static void ProcessWork()
-        {
-            //ExamplesWork.Blocks("p40");
-            //ExamplesWork.BlockLines("p40");
-            //ExamplesWork.BlockSets("p40");
-            //ExamplesWork.BlockSets("dou555-p1"); 
-            //ExamplesWork.FollowLine("p40");
-            //ExamplesWork.FollowLine("dou555-p1");
-            //ExamplesWork.BreakColuc:mn("p40");
-            //ExamplesWork.BreakColumn("dou555-p1");
-            //ExamplesWork.Tables("DO1_2016_12_20-p75");
-            //ExamplesWork.Tables("dz088");
-            //ExamplesWork.FindTables("DO1_2016_12_20-p75");
-            //ExamplesWork.FindTables("dz088");
-            //ExamplesWork.BadOrder("p40"); 
-            //ExamplesWork.CorrectOrder("p40");
-            //ExamplesWork.FindIds("dou555-p10");
-            //ExamplesWork.ParseFinal("dou555-p10");
-        }
-        
+    {        
         public static void ProcessStats2(string basename = "DO1_2017_01_06")
         {
             PdfReaderException.ContinueOnException();
@@ -45,46 +25,59 @@ namespace PdfTextReader
             Console.WriteLine("Program3 - ProcessTextLines");
             Console.WriteLine();
 
-            //Extract(basename, 173);
-            //ExamplesPipeline.Extract(basename, 10);
+            //ExtractPages(basename, $"{basename}-p14", new int[] { 14 });
+            //ExtractPages(basename, $"{basename}-p16", new int[] { 16 });
+            //ExtractPages(basename, $"{basename}-p27", new int[] { 27 });
 
             //ValidatorPipeline.Process("DO1_2010_02_10.pdf", @"c:\pdf\output_6", @"c:\pdf\valid");
 
             //Examples.FollowText(basename);
             //Examples.ShowHeaderFooter(basename);
 
+            //Examples.ProcessPipeline("bin/"  + basename);
+
             var artigos = GetTextLinesWithPipelineBlockset(basename, out Execution.Pipeline pipeline)
                                 //.Log<AnalyzeLines>(Console.Out)
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<CreateStructures, TextStructure>()
-                            //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
-                            //.Log<AnalyzeStructures>(Console.Out)
-                            //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
-                            //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
+                                //.ShowPdf<ShowStructureCentral>($"bin/{basename}-show-central.pdf")
+                                //.Log<AnalyzePageInfo<TextStructure>>(Console.Out)
+                                //.Log<AnalyzeStructures>(Console.Out)
+                                //.Log<AnalyzeStructuresCentral>($"bin/{basename}-central.txt")
+                                //.PrintAnalytics($"bin/{basename}-print-analytics.txt")
                             .ConvertText<CreateTextSegments, TextSegment>()
-                            //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
-                            //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
+                                //.Log<AnalyzeSegmentTitles>($"bin/{basename}-tree.txt")
+                                //.Log<AnalyzeSegmentStats>($"bin/{basename}-segments-stats.txt")
                             .ConvertText<CreateTreeSegments, TextSegment>()
-                            .Log<AnalyzeTreeStructure>(Console.Out)
+                                .Log<AnalyzeTreeStructure>(Console.Out)
                             .ToList();
             
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
             
-            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();                        
+            var validation = pipeline.Statistics.Calculate<ValidateFooter, StatsPageFooter>();
+            var layout = (ValidateLayout)pipeline.Statistics.Calculate<ValidateLayout, StatsPageLayout>();
+            var overlap = (ValidateOverlap)pipeline.Statistics.Calculate<ValidateOverlap, StatsBlocksOverlapped>();
+
+            var pagesLayout = layout.GetPageErrors().ToList();
+            var pagesOverlap = overlap.GetPageErrors().ToList();
+            var pages = pagesLayout.Concat(pagesOverlap).Distinct().OrderBy(t =>t).ToList();
+
+            //ExtractPages($"{basename}-parser-output", $"{basename}-page-errors-output", pages);
         }
-        
+
         static PipelineText<TextLine> GetTextLinesWithPipelineBlockset(string basename, out Execution.Pipeline pipeline)
         {
             pipeline = new Execution.Pipeline();
 
             var result =
             pipeline.Input($"bin/{basename}.pdf")
-                    .Output($"bin/{basename}-test-output.pdf")
+                    .Output($"bin/{basename}-parser-output.pdf")
                     .AllPagesExcept<CreateTextLines>(new int[] { }, page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()
-                                  //.Show(Color.Blue)
+                              //.Show(Color.Blue)
                               .ParsePdf<PreProcessImages>()
+                                  .ParseBlock<BasicFirstPageStats>()
                                   //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<RemoveOverlapedImages>()
                               .ParsePdf<ProcessPdfText>()
@@ -108,30 +101,44 @@ namespace PdfTextReader
                                   .ParseBlock<AddTableSpace>()
                                   .ParseBlock<RemoveTableOverImage>()
                                   .ParseBlock<RemoveImageTexts>()
-                                  .ParseBlock<AddImageSpace>()
-                                    .Show(Color.Red)
+                                  .ParseBlock<AddImageSpace>()                                    
                                       .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
                                       .ParseBlock<RemoveFooter>()
+                                  .ParseBlock<AddTableLines>()
+
+                                      // Try to rewrite column
+                                      .ParseBlock<BreakColumnsRewrite>()
+
                                   .ParseBlock<BreakInlineElements>()
                                   .ParseBlock<ResizeBlocksets>()
-                                      .Validate<ResizeBlocksets>().ShowErrors(p => p.Show(Color.Gray))
-                                  .ParseBlock<OrderBlocksets>()
-                                  .Show(Color.Orange)
-                                  .ShowLine(Color.Black)
+                                  .ParseBlock<ResizeBlocksetMagins>()
+
+                                    // Reorder the blocks
+                                    .ParseBlock<OrderBlocksets>()
+
                                   .ParseBlock<OrganizePageLayout>()
-                                  .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
+                                  .ParseBlock<MergeSequentialLayout>()
+                                  .ParseBlock<ResizeSequentialLayout>()
+
+                                      .Show(Color.Orange)
+                                      .ShowLine(Color.Black)
+                                  
+                                  .ParseBlock<CheckOverlap>()
+
+                                      .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
+                                      .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                     );
 
             return result;
         }
-        
-        public static void Extract(string basename, int page)
-        {
-            Console.WriteLine();
-            Console.WriteLine("Program3 - Extract");
-            Console.WriteLine();
 
-            ExamplesPipeline.ExtractPage(basename, page);
+        static void ExtractPages(string basename, string outputname, IList<int> pages)
+        {
+            using (var pipeline = new Execution.Pipeline())
+            {
+                pipeline.Input($"bin/{basename}.pdf")
+                        .ExtractPages($"bin/{outputname}.pdf", pages);
+            }
         }
     }
 }

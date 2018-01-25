@@ -1,4 +1,4 @@
-﻿//#define DEBUG_ORDERBLOCKSET
+﻿#define DEBUG_ORDERBLOCKSET
 
 using System;
 using System.Collections.Generic;
@@ -8,11 +8,8 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class OrderBlocksets : IProcessBlock
+    class OrderBlocksets2 : IProcessBlock
     {
-        const float VERTICAL_DIFFERENCE = 4f;
-        int VERTICAL_DIFFERENCE_INT = 1;
-
         private List<Data> Values { get; set; }
         private List<Data> ValuesY { get; set; }
         List<IBlock> OrderedBlocks = new List<IBlock>();
@@ -58,8 +55,6 @@ namespace PdfTextReader.PDFCore
             .OrderBy(p => 10000 * p.X - p.Y)
             .ToList();
 
-            VERTICAL_DIFFERENCE_INT = (int)(1000*VERTICAL_DIFFERENCE / dh);
-
             var checkInvalidW = Values.Where(v => v.X2 - v.X != v.W).ToList();
 
             // sometimes W is miscalculated - need to investigate
@@ -87,7 +82,7 @@ namespace PdfTextReader.PDFCore
                     .ToList();
             }
 
-            var checkOddW = Values.Where(v => v.W == 1 || v.W == 5).ToList();
+            var checkOddW = Values.Where( v => v.W == 1 || v.W == 5).ToList();
             if (checkOddW.Count > 0)
             {
                 PdfReaderException.Warning("checkOddW failed");
@@ -96,30 +91,21 @@ namespace PdfTextReader.PDFCore
                     .ToList();
             }
 
-            // very weird bug: causes infinite loop!
             var checkZeroW = Values.Where(v => v.W == 0).ToList();
             if (checkZeroW.Count > 0)
             {
-                // try to set to 2
-                checkZeroW.Where(t => t.X == 4).Select(t => { var inv = Values.Where(t1 => t1.ID == t.ID).First(); inv.W = 2; inv.X2 = 6; return 0; }).ToList();
-
-                Values = Values.OrderBy(p => 10000 * p.X - p.Y).ToList();
-
-                checkZeroW = Values.Where(v => v.W == 0).ToList();
-                if (checkZeroW.Count > 0)
-                {
-                    PdfReaderException.Warning("checkZeroW failed");
-                    Values = Values.Where(t => t.W != 0)
-                            .OrderBy(p => 10000 * p.X - p.Y)
-                            .ToList();
-                }
+                PdfReaderException.Warning("checkZeroW failed");
+                Values = Values.Where( t => t.W != 0)
+                    .OrderBy(p => 10000 * p.X - p.Y)
+                    .ToList();
             }
 
-            var checkOddX = Values.Where(v => v.X != 2 && v.X != 3 && v.X != 4 && v.X != 6).ToList();
+            var checkOddX = Values.Where(v => v.X != 2 && v.X != 3 && v.X != 4 && v.X != 6 ).ToList();
             if (checkOddX.Count > 0)
             {
                 PdfReaderException.Warning("check X failed");
             }
+
             // Prepare the values order by Y
             this.ValuesY = Values.OrderBy(p => -100 * p.Y + p.X).ToList();
 
@@ -127,6 +113,7 @@ namespace PdfTextReader.PDFCore
 
             OrderedBlocks = new List<IBlock>();
 
+//            counter();
             scan();
 
             var result = new BlockPage();
@@ -136,6 +123,48 @@ namespace PdfTextReader.PDFCore
             result.AddRange(OrderedBlocks);
 
             return result;
+        }
+
+        void counter()
+        {
+            int last_columns = -1;
+            int last_k = 0;
+
+            var ordered_columns = Values.OrderByDescending(b => b.Y).ToList();
+
+            for (int k = 0; k < ordered_columns.Count; k++)
+            {
+                var v = ordered_columns[k];
+
+                if (v == null)
+                    continue;
+
+                int columns = GetNumberOfColumns(v.W);
+
+                if( columns != last_columns )
+                {
+                    Console.WriteLine($"process: {columns} - segments: {k}-{last_k}" );
+                    last_k = k;
+                    last_columns = columns;
+                }                
+            }
+        }
+
+        int GetNumberOfColumns(int width)
+        {            
+            switch (width)
+            {
+                case 6:
+                    return 1;
+                case 3:
+                    return 2;
+                case 2:
+                case 4:
+                    return 3;
+                    break;
+            }
+
+            throw PdfReaderException.AlwaysThrow("invalid W width");
         }
 
         void scan(int level=0, int x = 2, int min_y = -1, int max_x=6, int cur_w=-1)
@@ -198,7 +227,7 @@ namespace PdfTextReader.PDFCore
 
                         if (!(threeColumns && threeColumns2))
                         {
-                            scan(level + 1, x: x, min_y: v.Y1+1, max_x: 6, cur_w: cur_w);
+                            scan(level + 1, x: x, min_y: v.Y1 + 1, max_x: 6, cur_w: cur_w);
 
                             // reset to the new column W
                             k = -1;
@@ -227,7 +256,7 @@ namespace PdfTextReader.PDFCore
                         continue;
 
                     // define a new goal
-                    scan(level + 1, x: x+2, min_y: v.Y1+1, max_x: v.X2, cur_w: cur_w);
+                    scan(level + 1, x: x+2, min_y: v.Y1 + 1, max_x: v.X2, cur_w: cur_w);
 
                     if ((v.W != cur_w) && (!((v.W == 2 && cur_w == 4) || (v.W == 4 && cur_w == 2))))
                         PdfReaderException.Warning($"v.W != cur_w: {v.W} != {cur_w}");
