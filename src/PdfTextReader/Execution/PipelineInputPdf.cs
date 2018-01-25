@@ -264,6 +264,7 @@ namespace PdfTextReader.Execution
             {
                 Console.WriteLine(ex.ToString());
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
+                PipelineDebug.ShowException(this, ex);
 
                 StoreStatistics(new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
             }
@@ -391,6 +392,25 @@ namespace PdfTextReader.Execution
                 canvas.EndText();
                 //canvas.Stroke();
             }
+            public void DrawWarning(string message, float size, System.Drawing.Color color)
+            {
+                int MAXTEXTSIZE = (int)(1.2*_pdfPage.GetPageSize().GetHeight()/size);
+                float margin = 10f;
+                float linespace = size*1.15f;
+
+                float x = margin;
+                float h = _pdfPage.GetPageSize().GetHeight() - size - margin;
+
+                string text = message;
+                while (text.Length > MAXTEXTSIZE)
+                {
+                    DrawText(x, h, text.Substring(0, MAXTEXTSIZE), size, color);
+                    h -= linespace;
+                    text = text.Substring(MAXTEXTSIZE);
+                }
+                DrawText(x, h, text, size, color);
+            }
+
             public void DrawLine(double x1, double h1, double x2, double h2, System.Drawing.Color color)
             {
                 var canvas = GetCanvas();

@@ -49,7 +49,13 @@ namespace PdfTextReader.Execution
                 pdf.CurrentPage.DrawText(b.GetX(), b.GetH()+ b.GetHeight(), b.GetText(), b.GetHeight()/2, color);
             }
         }
+        static public void ShowException(PipelineInputPdf pdf, Exception ex)
+        {
+            string text = ex.Message;
 
+            pdf.CurrentPage.DrawWarning(text, 20, Color.Red);            
+        }
+        
         static public void Show(PipelineInputPdf pdf, System.Collections.IEnumerable objectList, Color color)
         {
             foreach (var t in objectList)
