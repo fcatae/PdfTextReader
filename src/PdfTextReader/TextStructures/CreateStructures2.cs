@@ -6,89 +6,32 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.TextStructures
 {
-    class CreateStructures2 : IAggregateStructure<TextLine, TextStructure>
+    class CreateStructures2 : IAggregateStructure<TextLine2, TextStructure>
     {
         const float FLOATING_TEXT_RIGHT = 10f;
         const float MAXIMUM_CENTER_DIFFERENCE = 1f;
         const float MAXIMUM_CENTER_MARGIN = 4F;
         const float difference_margin_center_text = 1F;
 
+        float STAT_FIRST_TABSTOP = float.NaN;
+
         TextStructure _structure;
-        TextLine _last;
 
-        public float STAT_TABSTOP_LEFT = 8f;
-
-        public void Init(TextLine line)
+        public void Init(TextLine2 line)
         {
-            _last = line;
             _structure = new TextStructure()
             {
-                MarginLeft = line.MarginLeft,
-                MarginRight = line.MarginRight,
-                CenteredAt = line.CenteredAt,
                 FontName = line.FontName,
                 FontStyle = line.FontStyle,
                 FontSize = line.FontSize,
                 AfterSpace = line.AfterSpace,
                 TextAlignment = TextAlignment.JUSTIFY,
                 HasBackColor = line.HasBackColor
-            };
-
-            bool isFloatingLeft = IsStrictlyPositive(line.MarginLeft);
-            bool isFloatingRight = IsStrictlyPositive(line.MarginRight);
-
-            if (isFloatingLeft && isFloatingRight)
-            {
-
-            }
-            if ( isFloatingLeft && isFloatingRight )
-            {
-                // center / right / justified
-            }
+            };            
         }
 
-        TextLine UpdateLastLine(TextLine line)
+        public bool Aggregate(TextLine2 line)
         {
-            var last = _last;
-            _last = line;
-            return last;
-        }
-
-        public bool Aggregate(TextLine line)
-        {
-            var last = UpdateLastLine(line);
-            
-            // beginning of the column?
-            if (line.BeforeSpace == null)
-            {
-                // if this was justified, it is still justified
-                // starting at zero
-                // then YES
-
-                // otherwise, NO:
-                return false;
-            }
-
-            // too far from each other
-            if ((float)line.BeforeSpace > (float)line.FontSize * 0.75)
-                return false;
-
-            bool alignLeft = Equal(line.MarginLeft, _structure.MarginLeft);
-            bool alignCenter = Equal(line.CenteredAt, (float)_structure.CenteredAt);
-            bool alignRight = Equal(line.MarginRight, _structure.MarginRight);
-            bool lineContinuation = IsZero(last.MarginRight) && IsZero(line.MarginLeft);
-            bool lineFull = IsZero(line.MarginRight) && IsZero(line.MarginLeft);
-            bool tab = Equal(line.MarginLeft, STAT_TABSTOP_LEFT);
-
-
-
-
-            // exact same font = same structure
-            if ((_structure.FontName == line.FontName) &&
-                (_structure.FontStyle == line.FontStyle) &&
-                (_structure.FontSize == line.FontSize))
-                return true;
-
             if ((_structure.FontName != line.FontName) ||
                 (_structure.FontStyle != line.FontStyle) ||
                 (_structure.FontSize != line.FontSize))
@@ -124,9 +67,9 @@ namespace PdfTextReader.TextStructures
             return true;
         }
 
-        public TextStructure Create(List<TextLine> lineset)
+        public TextStructure Create(List<TextLine2> lineset)
         {
-            _structure.Lines = lineset;
+            _structure.Lines = lineset.Cast<TextLine>().ToList();
             
             // just a wild guess
             if ( lineset[0].MarginRight < lineset[0].MarginLeft/2 )
@@ -135,8 +78,11 @@ namespace PdfTextReader.TextStructures
                     _structure.TextAlignment = TextAlignment.RIGHT;
                 else
                 {
-                    if(!IsZero(lineset[0].MarginRight))
+                    // floating right?
+                    if (!IsZero(lineset[0].MarginRight))
+                    {
                         _structure.TextAlignment = TextAlignment.RIGHT;
+                    }
                 }
             }
 
@@ -259,27 +205,263 @@ namespace PdfTextReader.TextStructures
                     // _structure.Text.EndsWith(".") fails
                 }
             }
-
+                        
             if( lineset[0].HasLargeSpace )
             {
                 _structure.TextAlignment = TextAlignment.JUSTIFY;
             }
 
+            float boundaryLeft = BoundaryLeft(lineset);
+            float boundaryRight = BoundaryRight(lineset);
+
+            // cannot be on the right - with text in the left
+            if (_structure.TextAlignment == TextAlignment.RIGHT && IsZero(boundaryLeft))
+            {
+                _structure.TextAlignment = TextAlignment.JUSTIFY;
+            }
+
+            //// hack?
+            //if((_structure.TextAlignment == TextAlignment.JUSTIFY) && float.IsNaN(STAT_FIRST_TABSTOP))
+            //{
+            //    if(!IsZero(lineset[0].MarginLeft))
+            //        STAT_FIRST_TABSTOP = lineset[0].MarginLeft;
+            //}
+
+            //if (_structure.TextAlignment == TextAlignment.RIGHT && IsZero(StatAtFirstTabStop(lineset[0].MarginLeft)))
+            //{
+            //    _structure.TextAlignment = TextAlignment.JUSTIFY;
+            //}
+            var align = GetAligmnent(lineset);
+
+            if( align != _structure.TextAlignment )
+            {
+                PdfReaderException.Warning("aligment calculation diverging");
+                _structure.TextAlignment = align;
+                var text = String.Join("\n", _structure.Lines.Select(t=>t.Text));
+
+                GetAligmnent(lineset);
+            }
+
             return _structure;            
         }
-                
-        bool Equal(float v1, float v2)
+
+        TextAlignment GetAligmnent(List<TextLine2> lineset)
         {
-            float value = v1 - v2;
-            return ((value > -difference_margin_center_text) && (value < difference_margin_center_text));
+            if (lineset == null || lineset.Count == 0)
+                throw new ArgumentNullException();
+
+            if (HasInlineTables(lineset))
+                return TextAlignment.JUSTIFY;
+
+            TextAlignment alignment = TextAlignment.UNKNOWN;
+
+            float boundaryLeft = BoundaryLeft(lineset);
+            float boundaryRight = BoundaryRight(lineset);
+
+            if (lineset.Count == 1)
+            {
+                float centeredAt = lineset[0].CenteredAt;
+                string text = lineset[0].Text;
+
+                // check boundary distance (small text)
+                alignment = (boundaryLeft < boundaryRight) ? TextAlignment.JUSTIFY : TextAlignment.RIGHT;
+
+                if (IsZero(centeredAt))
+                {
+                    alignment = TextAlignment.CENTER;
+                }
+
+                // overrides small margin right
+                if ((alignment == TextAlignment.RIGHT) && StatBeforeFirstTabStop(boundaryLeft))
+                {
+                    alignment = TextAlignment.JUSTIFY;
+                }
+
+                // text is centered AND justified
+                float guessTabStop = StatAtFirstTabStop(boundaryLeft);
+                if ((alignment == TextAlignment.CENTER) && IsZero(guessTabStop))
+                {
+                    // very difficult to decide
+                    //bool centerHasPrecision = Math.Abs(centeredAt) < Math.Abs(guessTabStop);
+                    //alignment = centerHasPrecision ? TextAlignment.CENTER : TextAlignment.JUSTIFY;
+
+                    // prefer center
+                    alignment = TextAlignment.CENTER;
+                }
+
+                if (IsZero(boundaryRight) && IsZero(boundaryLeft))
+                {
+                    // CENTER or JUSTIFIED
+                    // choose center
+                    alignment = TextAlignment.CENTER;
+
+                    // Exception 1: summary
+                    if (text.Contains("..."))
+                        alignment = TextAlignment.JUSTIFY;
+
+                    // Exception 2: empty
+                    if (text == "")
+                        alignment = TextAlignment.JUSTIFY;
+                }
+            }
+            else if (lineset.Count == 2)
+            {
+                float center1 = lineset[0].CenteredAt;
+                float center2 = lineset[1].CenteredAt;
+                float left1 = lineset[0].MarginLeft;
+                float left2 = lineset[1].MarginLeft;
+                float right1 = lineset[0].MarginRight;
+                float right2 = lineset[1].MarginRight;
+
+                // use general rule
+                alignment = (boundaryLeft < boundaryRight) ? TextAlignment.JUSTIFY : TextAlignment.RIGHT;
+
+                if (IsZero(boundaryRight) && IsZero(boundaryLeft))
+                {
+                    alignment = TextAlignment.JUSTIFY;
+                }
+
+                // overrides small margin right
+                if ((alignment == TextAlignment.RIGHT) && StatBeforeFirstTabStop(boundaryLeft))
+                {
+                    alignment = TextAlignment.JUSTIFY;
+                }
+
+                // specific case: CENTER and JUSTIFIED
+                if (IsZero(left1) && IsZero(right1))
+                {
+                    // the second line decide
+                }
+
+                if (IsZero(center1) && IsZero(center2))
+                {
+                    alignment = TextAlignment.CENTER;
+                }
+
+                // difficult decision
+                if (IsZero(left1) && IsZero(left2) && IsZero(right1) && IsZero(right2))
+                {
+                    // opt for CENTER
+                    alignment = TextAlignment.CENTER;
+                }
+            }
+            else
+            {
+                float? centeredAt = CenteredAt(lineset);
+
+                // use general rule
+                alignment = (boundaryLeft < boundaryRight) ? TextAlignment.JUSTIFY : TextAlignment.RIGHT;
+
+                if (centeredAt != null && IsZero(centeredAt))
+                {
+                    alignment = TextAlignment.CENTER;
+                }
+
+                // overrides small margin right
+                if ((alignment == TextAlignment.RIGHT) && StatBeforeFirstTabStop(boundaryLeft))
+                {
+                    alignment = TextAlignment.JUSTIFY;
+                }
+
+                // cannot be RIGHT align
+                if (IsZero(boundaryRight) && IsZero(boundaryLeft))
+                {
+                    var textline = FirstNonFullLine(lineset);
+
+                    if (textline != null)
+                    {
+                        alignment = (IsZero(textline.CenteredAt)) ? TextAlignment.CENTER : TextAlignment.JUSTIFY;
+                    }
+                    else
+                    {
+                        // ALL LINES are FULL?
+                        alignment = TextAlignment.JUSTIFY;
+                    }
+                }
+            }
+
+
+            // hack?
+            if ((alignment == TextAlignment.JUSTIFY) && float.IsNaN(STAT_FIRST_TABSTOP))
+            {
+                float margin = lineset[0].MarginLeft;
+
+                // protect
+                bool validMargin = (margin > 20 && margin < 40);
+
+                if(validMargin)
+                {
+                    if (!IsZero(margin))
+                        STAT_FIRST_TABSTOP = margin;
+                }
+            }
+
+            return alignment;
+        }
+
+        bool HasInlineTables(IEnumerable<TextLine> lineset)
+        {
+            return lineset.Any(t => t.HasLargeSpace);
+        }
+
+        float StatAtFirstTabStop(float value)
+        {
+            return (float.IsNaN(STAT_FIRST_TABSTOP)) ? 10000f : Math.Abs(value - STAT_FIRST_TABSTOP);
+        }
+        bool StatBeforeFirstTabStop(float value)
+        {
+            return (float.IsNaN(STAT_FIRST_TABSTOP)) ? false : value <= STAT_FIRST_TABSTOP + difference_margin_center_text;
+        }
+        TextLine FirstNonFullLine(IEnumerable<TextLine> lineset)
+        {
+            return lineset.FirstOrDefault(t => IsStrictlyPositive(t.MarginRight) || IsStrictlyPositive(t.MarginLeft));
+        }
+
+        float? CenteredAt(IEnumerable<TextLine> lineset)
+        {
+            float min = CenteredMinimumAt(lineset);
+            float max = CenteredMaximumAt(lineset);
+
+            if (!IsZero(min - max))
+                return null;
+
+            return (max + min)/2.0f;
+        }
+        float CenteredMinimumAt(IEnumerable<TextLine> lineset)
+        {
+            return lineset.Min(t => t.CenteredAt);
+        }
+        float CenteredMaximumAt(IEnumerable<TextLine> lineset)
+        {
+            return lineset.Max(t => t.CenteredAt);
+        }
+        float BoundaryLeft(IEnumerable<TextLine> lineset)
+        {
+            return lineset.Min(t => t.MarginLeft);
+        }
+        float BoundaryRight(IEnumerable<TextLine> lineset)
+        {
+            return lineset.Min(t => t.MarginRight);
+        }
+        bool IsAlignedMarginLeft()
+        {
+            throw new NotImplementedException();
+        }
+        bool IsAlignedMarginRight()
+        {
+            throw new NotImplementedException();
+        }
+        bool IsAllCentralized()
+        {
+            throw new NotImplementedException();
+        }
+        bool IsStrictlyPositive(float value)
+        {
+            return value >= difference_margin_center_text;
         }
         bool IsZero(float? value)
         {
             return ((value > -difference_margin_center_text) && (value < difference_margin_center_text));                
-        }
-        bool IsStrictlyPositive(float? value)
-        {
-            return (value > difference_margin_center_text);
         }
         bool IsZeroCenter(float? value)
         {
