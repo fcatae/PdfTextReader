@@ -20,6 +20,24 @@ namespace PdfTextReader.TextStructures
                         _current.TextStruct.TextAlignment = TextAlignment.JUSTIFY;
                         line.TextStruct.TextAlignment = TextAlignment.JUSTIFY;
                     }
+
+                    if (_current.TextStruct.TextAlignment == TextAlignment.RIGHT && line.HasContinuation )
+                    {
+                        bool insideDistance = _current.VerticalSpacing < 1f;
+
+                        if(insideDistance)
+                        {
+                            bool confirmContinuation = ((_current.TextStruct.MarginRight < 1f) && (line.TextStruct.MarginLeft < 1f));
+
+                            if (!confirmContinuation)
+                                PdfReaderException.Warning("failure validating line continuation");
+
+                            PdfReaderException.Warning("convert TextAlignment to JUSTIFIED");
+
+                            _current.TextStruct.TextAlignment = TextAlignment.JUSTIFY;
+                            line.TextStruct.TextAlignment = TextAlignment.JUSTIFY;
+                        }
+                    }
                 }
             }
 

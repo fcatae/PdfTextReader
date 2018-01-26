@@ -11,5 +11,6 @@ namespace PdfTextReader.Base
         public bool SameSpacing;
         public bool AlignedTabStop;
         public bool HasContinuation;
+        public float VerticalSpacing;
     }
 }
