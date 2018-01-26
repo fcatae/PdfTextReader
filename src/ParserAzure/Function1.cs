@@ -10,12 +10,16 @@ namespace ParserAzure
         [return: Queue("myqueue-output", Connection = "QueueOUT")]
         public static string Run([QueueTrigger("myqueue-items", Connection = "QueueIN")]string myQueueItem, TraceWriter log)
         {
-            log.Info($"C# Queue trigger function processed: {myQueueItem}");
+            string[] names = myQueueItem.Split(' ');
+            string fileDownload = names[0];
+            string fileUpload = names[1];
+
 
 
             BlobHelper blobHelper = new BlobHelper(Environment.GetEnvironmentVariable("QueueIN"), "test");
-            blobHelper.Write($"{myQueueItem}.txt", myQueueItem);
-            return ($"Blob done: {myQueueItem}");
+            var content = blobHelper.Read(fileDownload);
+            blobHelper.Write($"{fileUpload}", content);
+            return ($"Blob done: file {fileUpload} was saved");
         }
     }
 }
