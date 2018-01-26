@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,9 +7,9 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public class VirtualFS
+    public class VirtualFS : IVirtualFS
     {
-        public static VirtualFS Storage = new VirtualFS();
+        public static IVirtualFS Storage = new VirtualFS();
 
         public Stream OpenReader2(string filename)
         {
@@ -22,11 +23,11 @@ namespace PdfTextReader.Base
             return new FileStream(filename, FileMode.CreateNew);
         }
         
-        public static iText.Kernel.Pdf.PdfReader OpenReader(string filename)
+        public static iText.Kernel.Pdf.PdfReader OpenPdfReader(string filename)
         {
             return new iText.Kernel.Pdf.PdfReader(filename);
         }
-        public static iText.Kernel.Pdf.PdfWriter OpenWriter(string filename)
+        public static iText.Kernel.Pdf.PdfWriter OpenPdfWriter(string filename)
         {
             return new iText.Kernel.Pdf.PdfWriter(filename);
         }

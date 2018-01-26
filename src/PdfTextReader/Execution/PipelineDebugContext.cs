@@ -15,7 +15,7 @@ namespace PdfTextReader.Execution
 
         public PipelineDebugContext(string filename, string outputname)
         {
-            this._pdf = new PdfDocument(VirtualFS.OpenReader(filename), VirtualFS.OpenWriter(outputname));
+            this._pdf = new PdfDocument(VirtualFS.OpenPdfReader(filename), VirtualFS.OpenPdfWriter(outputname));
         }
 
         public void Dispose()
