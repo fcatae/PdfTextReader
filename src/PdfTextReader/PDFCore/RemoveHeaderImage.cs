@@ -40,86 +40,68 @@ namespace PdfTextReader.PDFCore
                 PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
             }
 
-            var header = FindBlocksAtHeader(page);
+            var topImage = FindTopImage(this._images);
 
-            var image = FindImageOverlap(header);
+            _headerImage = topImage;
 
-            _headerImage = image;
-
-            if (image == null)
+            if (topImage == null)
                 PdfReaderException.AlwaysThrow("image == null");
 
-            var result = RemoveHeaderImageWithText(page, image);
+            var result = RemoveHeaderImageAndAbove(page, topImage);
 
-            this._parse.RemoveImage(image);
+            this._parse.RemoveImage(topImage);
 
             return result;
         }
 
-        public BlockPage FindBlocksAtHeader(BlockPage page)
+        public IBlock FindTopImage(IEnumerable<IBlock> images)
         {
-            float err = 1f;
-            float maxH = page.AllBlocks.Max(b => b.GetH()) - err;
-
-            var blocksAtHeader = page.AllBlocks.Where(b => b.GetH() >= maxH);
-
-            var result = new BlockPage();
-
-            result.AddRange(blocksAtHeader);
-
-            return result;
-        }               
-
-        public IBlock FindImageOverlap(BlockPage page)
-        {
-            var result = new BlockPage();
-
-            foreach (var block in page.AllBlocks)
-            {
-                foreach (var table in _images)
-                {
-                    if (Block.HasOverlap(table, block))
-                    {
-                        return table;
-                    }
-                }
-            }
-
-            return null;
+            return _images.OrderByDescending(t => t.GetH()).FirstOrDefault();
         }
 
-        public BlockPage RemoveHeaderImageWithText(BlockPage page, IBlock table)
+        public BlockPage RemoveHeaderImageAndAbove(BlockPage page, IBlock image)
         {
-            if (this._images == null)
-                PdfReaderException.AlwaysThrow("RemoveImageTexts requires PreProcessImages");
-
             var result = new BlockPage();
+
+            float imageH = image.GetH();
+            bool foundHeader = false;
 
             foreach (var block in page.AllBlocks)
             {
-                if (!Block.HasOverlap(table, block))
+                float h = block.GetH() + block.GetHeight();
+
+                if (h > imageH)
                 {
-                    result.Add(block);
+                    if (block.GetHeight() > statRegionTooLarge)
+                        PdfReaderException.Throw("block.GetHeight() > statRegionTooLarge");
+
+                    foundHeader = true;
+                    continue;
                 }
+
+                result.Add(block);
             }
+
+            bool checkFailure = (foundHeader == false) || (imageH < 500f);
+
+            if(checkFailure)
+                PdfReaderException.Throw("(foundHeader == false) || (imageH < 500f)");
 
             return result;
         }
 
         public BlockPage Validate(BlockPage page)
         {
+            var result = new BlockPage();
+
             if (this._images == null)
                 PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
 
-            var header = FindBlocksAtHeader(page);
-
-            var image = FindImageOverlap(header);
-
-            var result = new BlockPage();
-
-            if (image != null)
+            var topImage = FindTopImage(this._images);
+            
+            if (topImage != null)
             {
-                result.Add(image);
+                result.Add(topImage);
             }
 
             return result;
