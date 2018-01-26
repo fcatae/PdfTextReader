@@ -29,7 +29,7 @@ namespace ParserAzure
             var storageAccount = CloudStorageAccount.Parse(conn);
             var client = storageAccount.CreateCloudBlobClient();
             var container = client.GetContainerReference(containerName);
-
+                        
             // container.CreateIfNotExists();
 
             return container;
@@ -42,13 +42,28 @@ namespace ParserAzure
 
             blockBlob.UploadFromStream(stream);
         }
-        
+        public Stream GetWriter(string filename)
+        {
+            var container = GetContainer();
+            var blockBlob = container.GetBlockBlobReference(filename);
+
+            return blockBlob.OpenWrite();
+        }
+
         public void Read(string filename, Stream stream)
         {
             var container = GetContainer();
             var blockBlob = container.GetBlockBlobReference(filename);
 
             blockBlob.DownloadToStream(stream);
-        }        
+        }
+
+        public Stream GetReader(string filename, Stream stream)
+        {
+            var container = GetContainer();
+            var blockBlob = container.GetBlockBlobReference(filename);
+
+            return blockBlob.OpenRead();
+        }
     }
 }
