@@ -56,6 +56,7 @@ namespace PdfTextReader.TextStructures
             float minimumRight = Math.Min(_last.MarginRight, current.MarginRight);
 
             bool isContinuation = IsZero(_last.MarginRight) && IsZero(current.MarginLeft);
+            bool isContinuationAligned = IsZero(_last.MarginRight) && sameAlignLeft;
             bool wasFullLine = IsZero(_last.MarginLeft) && IsZero(_last.MarginRight);
             bool isFullLine = IsZero(current.MarginLeft) && IsZero(current.MarginRight);
             
@@ -76,7 +77,7 @@ namespace PdfTextReader.TextStructures
                 Text = current.Text,
 
                 AlignedCenter = sameAlignCenter,
-                HasContinuation = isContinuation
+                HasContinuation = isContinuation || isContinuationAligned
             };
 
             return false;
