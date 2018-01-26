@@ -21,19 +21,9 @@ namespace ParserRun
             string connectionString = config.Get("AZURE_STORAGE");
             string storageContainer = config.Get("AZURE_STORAGE_CONTAINER");
 
-            var blob = new AzureBlob(connectionString, storageContainer);
+            // Test azure connection
+            TestAzureBlob.Run(connectionString, storageContainer);
             
-            using (var sw = new System.IO.StreamWriter(blob.GetStreamWriter("teste1.txt")))
-            {
-                sw.WriteLine("Hello from WRITER");
-            }
-
-            using (var sr = new System.IO.StreamReader(blob.GetStreamReader("teste1.txt")))
-            {
-                string output = sr.ReadToEnd();
-
-                Console.WriteLine("Output from READER = " + output);
-            }
         }
     }
 }
