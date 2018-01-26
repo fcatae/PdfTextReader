@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    class VirtualFS
+    public class VirtualFS
     {
         public static VirtualFS Storage = new VirtualFS();
 
@@ -30,7 +30,11 @@ namespace PdfTextReader.Base
         {
             return new iText.Kernel.Pdf.PdfWriter(filename);
         }
-
+        public static StreamReader OpenStreamReader(string filename)
+        {
+            return new StreamReader(filename);
+        }
+        
         public static StreamWriter OpenStreamWriter(string filename)
         {
             return new StreamWriter(filename);
@@ -49,6 +53,10 @@ namespace PdfTextReader.Base
         public static string GetDirectoryCreateDirectory(string folder)
         {
             return Directory.CreateDirectory(folder).FullName;
+        }
+        public static void DirectoryCreateDirectory(string outpath)
+        {
+            Directory.CreateDirectory(outpath);
         }
 
         public static IEnumerable<VFileInfo> DirectoryInfoEnumerateFiles(string folder, string pattern)

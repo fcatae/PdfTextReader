@@ -42,7 +42,7 @@ namespace Validator
             {
                 LogException(Console.Out, basename, ex);
 
-                using (var outfile = new StreamWriter($"{outputname}/{basename}-crash-exception.log"))
+                using (var outfile = PdfTextReader.Base.VirtualFS.OpenStreamWriter($"{outputname}/{basename}-crash-exception.log"))
                 {
                     LogException(outfile, basename, ex);
                 }
