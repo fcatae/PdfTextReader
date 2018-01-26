@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public partial class VirtualFS : IVirtualFS
+    partial class VirtualFS : IVirtualFS
     {   
         public static Stream OpenRead(string filename)
         {
@@ -99,13 +99,6 @@ namespace PdfTextReader.Base
             {
                 _f.CopyTo(dest);
             }
-        }
-        
-        // External validators
-
-        public static void DirectoryCreateDirectory(string outpath)
-        {
-            Directory.CreateDirectory(outpath);
         }
     }
 }

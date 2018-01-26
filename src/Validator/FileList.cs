@@ -20,7 +20,7 @@ namespace Validator
         {
             string outpath = Path.Combine(outputFolder, basename);
 
-            VirtualFS.DirectoryCreateDirectory(outpath);
+            Directory.CreateDirectory(outpath);
 
             return outpath;
         }

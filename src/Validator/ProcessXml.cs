@@ -57,7 +57,7 @@ namespace Validator
 
             var xmlFile = _inputFolder + "\\" + _basename + ".xml";
 
-            using (StreamReader sr = PdfTextReader.Base.VirtualFS.OpenStreamReader(xmlFile))
+            using (StreamReader sr = new StreamReader(xmlFile))
             {
                 string article = sr.ReadToEnd();
 

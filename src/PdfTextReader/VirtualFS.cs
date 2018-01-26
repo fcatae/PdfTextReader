@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
-    public partial class VirtualFS : IVirtualFS
+    partial class VirtualFS : IVirtualFS
     {
         static IVirtualFS g_vfs = new VirtualFS();
 
