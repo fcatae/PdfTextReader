@@ -11,7 +11,11 @@ namespace ParserAzure
         public static string Run([QueueTrigger("myqueue-items", Connection = "QueueIN")]string myQueueItem, TraceWriter log)
         {
             log.Info($"C# Queue trigger function processed: {myQueueItem}");
-            return ($"RETORNO DA PORRA: {myQueueItem}");
+
+
+            BlobHelper blobHelper = new BlobHelper(Environment.GetEnvironmentVariable("QueueIN"), "test");
+            blobHelper.Write($"{myQueueItem}.txt", myQueueItem);
+            return ($"Blob done: {myQueueItem}");
         }
     }
 }
