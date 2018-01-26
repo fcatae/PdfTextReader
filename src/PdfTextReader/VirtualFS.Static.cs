@@ -29,21 +29,27 @@ namespace PdfTextReader.Base
             return new iText.Kernel.Pdf.PdfWriter(OpenWrite(filename));
         }
 
+        // System.IO.TextStream
         public static StreamReader OpenStreamReader(string filename)
         {
-            return new StreamReader(filename);
+            return new StreamReader(OpenRead(filename));
         }
         
         public static StreamWriter OpenStreamWriter(string filename)
         {
-            return new StreamWriter(filename);
+            return new StreamWriter(OpenRead(filename));
         }
 
+        // XML
         public static System.Xml.XmlWriter OpenXmlWriter(string finalURL, System.Xml.XmlWriterSettings settings)
         {
             return System.Xml.XmlWriter.Create($"{finalURL}.xml", settings);
         }
 
+
+        // Internal validators
+
+        // System.IO: Directory, DirectoryInfo
         public static string GetDirectoryName(string folder)
         {
             return new DirectoryInfo(folder).Name;
@@ -53,11 +59,7 @@ namespace PdfTextReader.Base
         {
             return Directory.CreateDirectory(folder).FullName;
         }
-        public static void DirectoryCreateDirectory(string outpath)
-        {
-            Directory.CreateDirectory(outpath);
-        }
-
+        
         public static IEnumerable<VFileInfo> DirectoryInfoEnumerateFiles(string folder, string pattern)
         {
             var directory = new DirectoryInfo(folder);
@@ -92,6 +94,13 @@ namespace PdfTextReader.Base
             {
                 _f.CopyTo(dest);
             }
+        }
+        
+        // External validators
+
+        public static void DirectoryCreateDirectory(string outpath)
+        {
+            Directory.CreateDirectory(outpath);
         }
     }
 }
