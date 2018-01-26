@@ -1,4 +1,5 @@
-﻿using PdfTextReader.Execution;
+﻿using PdfTextReader.Base;
+using PdfTextReader.Execution;
 using PdfTextReader.PDFText;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,10 @@ namespace PdfTextReader
 {
     public class ExamplesAzure
     {
-        public static void FollowText(string basename)
+        public static void FollowText(IVirtualFS virtualFS, string basename)
         {
+            VirtualFS.ConfigureFileSystem(virtualFS);
+
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"{basename}.pdf")

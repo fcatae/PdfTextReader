@@ -1,6 +1,6 @@
-﻿using PdfTextReader.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,8 +18,12 @@ namespace PdfTextReader.Base
             return g_vfs.OpenWriter(filename);
         }
 
-        public void SetFileSystem(IVirtualFS virtualFS)
+        [DebuggerHidden]
+        public static void ConfigureFileSystem(IVirtualFS virtualFS)
         {
+            if (virtualFS == null)
+                throw new ArgumentNullException(nameof(IVirtualFS));
+
             g_vfs = virtualFS;
         }
 

@@ -1,4 +1,4 @@
-﻿using PdfTextReader.Interfaces;
+﻿using PdfTextReader;
 using System;
 using System.Collections.Generic;
 using System.IO;

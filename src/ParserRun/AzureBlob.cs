@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
+using System.Diagnostics;
 
 namespace ParserRun
 {
@@ -36,7 +37,9 @@ namespace ParserRun
         }
 
         // synchronous version
+        [DebuggerHidden]
         public Stream GetStreamWriter(string filename) => GetStreamWriterAsync(filename).Result;
+        [DebuggerHidden]
         public Stream GetStreamReader(string filename) => GetStreamReaderAsync(filename).Result;
 
         public async Task<Stream> GetStreamWriterAsync(string filename)
