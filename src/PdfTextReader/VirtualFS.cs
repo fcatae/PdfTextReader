@@ -34,5 +34,10 @@ namespace PdfTextReader.Base
         {
             return new StreamWriter(filename);
         }
+
+        public static System.Xml.XmlWriter OpenXmlWriter(string finalURL, System.Xml.XmlWriterSettings settings)
+        {
+            return System.Xml.XmlWriter.Create($"{finalURL}.xml", settings);
+        }
     }
 }
