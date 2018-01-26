@@ -59,7 +59,7 @@ namespace PdfTextReader.Execution
         public PipelineText<TT> Log<TL>(string filename)
             where TL : ILogStructure<TT>, new()
         {
-            var file = _factory.CreateInstance<TextWriter>( ()=> new StreamWriter(filename) );            
+            var file = _factory.CreateInstance<TextWriter>( ()=> VirtualFS.OpenStreamWriter(filename) );            
 
             return Log<TL>(file);
         }

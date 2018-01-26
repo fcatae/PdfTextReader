@@ -30,5 +30,9 @@ namespace PdfTextReader.Base
             return new iText.Kernel.Pdf.PdfWriter(filename);
         }
 
+        public static StreamWriter OpenStreamWriter(string filename)
+        {
+            return new StreamWriter(filename);
+        }
     }
 }
