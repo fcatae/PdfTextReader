@@ -12,6 +12,7 @@ using PdfTextReader.Base;
 using iText.Kernel.Font;
 using iText.IO.Font.Constants;
 using iText.Kernel.Pdf.Extgstate;
+using System.IO;
 
 namespace PdfTextReader.Execution
 {
@@ -35,10 +36,10 @@ namespace PdfTextReader.Execution
 
         public PipelineInputPdfPage CurrentPage { get; private set; }
         public TransformIndexTree Index => _indexTree;
-                
+
         public PipelineInputPdf(string filename)
         {
-            var pdfDocument = new PdfDocument(new PdfReader(filename));
+            var pdfDocument = new PdfDocument(VirtualFS.OpenReader(filename));
 
             this._input = filename;
             this._pdfDocument = pdfDocument;
@@ -73,7 +74,7 @@ namespace PdfTextReader.Execution
 
             var errorPages = _pdfLog.GetErrors().OrderBy(t => t).ToList();            
 
-            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
+            using (var pdfInput = new PdfDocument(VirtualFS.OpenReader(_input)))
             {
                 int total = pdfInput.GetNumberOfPages();
                 var positivePages = Enumerable.Range(1, total).Except(errorPages).ToList();
@@ -81,7 +82,7 @@ namespace PdfTextReader.Execution
                 if (positivePages.Count == 0)
                     return;
 
-                using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+                using (var pdfOutput = new PdfDocument(VirtualFS.OpenWriter(outputfile)))
                 {
                     pdfInput.CopyPagesTo(positivePages, pdfOutput);
                 }
@@ -98,8 +99,8 @@ namespace PdfTextReader.Execution
             if (pageList.Count == 0)
                 return 0;
 
-            using (var pdfInput = new PdfDocument(new PdfReader(_output)))
-            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+            using (var pdfInput = new PdfDocument(VirtualFS.OpenReader(_output)))
+            using (var pdfOutput = new PdfDocument(VirtualFS.OpenWriter(outputfile)))
             {
                 pdfInput.CopyPagesTo(pageList, pdfOutput);
             }
@@ -116,8 +117,8 @@ namespace PdfTextReader.Execution
             if (errorPages.Count == 0)
                 return 0;
 
-            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
-            using (var pdfOutput = new PdfDocument(new PdfWriter(outputfile)))
+            using (var pdfInput = new PdfDocument(VirtualFS.OpenReader(_input)))
+            using (var pdfOutput = new PdfDocument(VirtualFS.OpenWriter(outputfile)))
             {
                 pdfInput.CopyPagesTo(errorPages, pdfOutput);
             }
@@ -132,7 +133,7 @@ namespace PdfTextReader.Execution
                 ((IDisposable)_pdfOutput).Dispose();
             }
 
-            var pdfOutput = new PdfDocument(new PdfReader(_input), new PdfWriter(outfile));
+            var pdfOutput = new PdfDocument(VirtualFS.OpenReader(_input), VirtualFS.OpenWriter(outfile));
 
             this._output = outfile;
             this._pdfOutput = pdfOutput;
@@ -170,16 +171,16 @@ namespace PdfTextReader.Execution
         {
             IList<int> pageNumbers = Enumerable.Range(start, end - start + 1).ToList();
 
-            using (var pdfInput = new PdfDocument(new PdfReader(_input)) )
-            using (var pdfOutput = new PdfDocument(new PdfWriter(outfile)))
+            using (var pdfInput = new PdfDocument(VirtualFS.OpenReader(_input)) )
+            using (var pdfOutput = new PdfDocument(VirtualFS.OpenWriter(outfile)))
             {
                 pdfInput.CopyPagesTo(pageNumbers, pdfOutput);                
             }
         }
         public void ExtractPages(string outfile, IList<int> pageNumbers)
         {
-            using (var pdfInput = new PdfDocument(new PdfReader(_input)))
-            using (var pdfOutput = new PdfDocument(new PdfWriter(outfile)))
+            using (var pdfInput = new PdfDocument(VirtualFS.OpenReader(_input)))
+            using (var pdfOutput = new PdfDocument(VirtualFS.OpenWriter(outfile)))
             {
                 pdfInput.CopyPagesTo(pageNumbers, pdfOutput);
             }
