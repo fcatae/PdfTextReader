@@ -41,9 +41,9 @@ namespace PdfTextReader.Base
         }
 
         // XML
-        public static System.Xml.XmlWriter OpenXmlWriter(string finalURL, System.Xml.XmlWriterSettings settings)
+        public static System.Xml.XmlWriter OpenXmlWriter(string filename, System.Xml.XmlWriterSettings settings)
         {
-            return System.Xml.XmlWriter.Create($"{finalURL}.xml", settings);
+            return System.Xml.XmlWriter.Create(OpenWrite(filename), settings);
         }
 
 
