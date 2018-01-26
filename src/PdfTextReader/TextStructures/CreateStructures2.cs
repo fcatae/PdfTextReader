@@ -401,10 +401,13 @@ namespace PdfTextReader.TextStructures
                 // protect
                 bool validMargin = (margin > 20 && margin < 40);
 
-                if(validMargin)
+                if (!IsZero(margin)) 
                 {
-                    if (!IsZero(margin))
+                    if (validMargin)
+                    {
+                        PDFCore.BasicFirstPageStats.Global.SetTabStop(margin);
                         STAT_FIRST_TABSTOP = margin;
+                    }
                 }
             }
 

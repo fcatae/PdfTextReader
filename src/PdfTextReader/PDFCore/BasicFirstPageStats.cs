@@ -11,12 +11,18 @@ namespace PdfTextReader.PDFCore
         public float MinX { get; private set; }
         public float MaxX { get; private set; }
         public float PageWidth { get; private set; }
+        public float TabStop { get; private set; }
 
         public static BasicFirstPageStats Global = null;
 
         public static void Reset()
         {
             Global = null;
+        }
+
+        public void SetTabStop(float tabstop)
+        {
+            TabStop = tabstop;
         }
 
         void SetupPage(BlockPage page)
