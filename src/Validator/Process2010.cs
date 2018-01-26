@@ -10,7 +10,7 @@ namespace Validator
 
         //public string FilePattern => "DO1_2010_0?_10.pdf"; //6
         //public string FilePattern => "*.pdf";
-        public string FilePattern => "DO1_2010_??_??.pdf";
+        public string FilePattern => "DO1_2010_12_??.pdf";
 
         public void Run(File file, string outputname)
         {            

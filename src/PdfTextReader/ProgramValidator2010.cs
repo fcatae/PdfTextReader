@@ -24,8 +24,11 @@ namespace PdfTextReader
 
             var artigos = GetTextLines(pipeline, basename, inputfolder, outputfolder)
                             .ConvertText<CreateTextLineIndex, TextLine>()
-                            .ConvertText<CreateStructures, TextStructure>()
-                                .ShowPdf<ShowStructureCentral>($"{outputfolder}/{basename}-show-central.pdf")
+                            .ConvertText<PreCreateStructures, TextLine2>()
+                            .ConvertText<CreateStructures2, TextStructure>()
+                            .ConvertText<PreCreateTextSegments, TextStructureAgg>()
+                            .ConvertText<AggregateStructures, TextStructure>()
+                            .ShowPdf<ShowStructureCentral>($"{outputfolder}/{basename}-show-central.pdf")
                             .ConvertText<CreateTextSegments, TextSegment>()
                             .ConvertText<CreateTreeSegments, TextSegment>()
                                 .Log<AnalyzeTreeStructure>($"{outputfolder}/{basename}-tree.txt")
