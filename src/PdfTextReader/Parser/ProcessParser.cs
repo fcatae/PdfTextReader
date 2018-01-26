@@ -15,26 +15,7 @@ namespace PdfTextReader.Parser
         public void XMLWriter(IEnumerable<Artigo> artigos, string doc)
         {
 
-            string numpag = artigos.FirstOrDefault().Metadados.NumeroDaPagina.ToString().PadLeft(4, '0');
-            string docFinalText = new DirectoryInfo(doc).Name;
-            string date = docFinalText.Substring(4, 10).Replace("_", "");
-            string globalId = docFinalText.Substring(21, docFinalText.Length - 21);
-            string modelNameGlobal = $"{date}-{globalId}";
-            string modelNameCustom = null;
-
-            if (numpag == initialPage)
-            {
-                modelNameCustom = $"{date}-{numpag}-{countPerPage++}";
-            }
-            else
-            {
-                initialPage = numpag;
-                countPerPage = 1;
-                modelNameCustom = $"{date}-{numpag}-{countPerPage}";
-            }
-
-
-            string finalURL = doc.Replace(docFinalText,modelNameCustom);
+            string finalURL = ProcessName(artigos.FirstOrDefault(), doc);
 
             var settings = new XmlWriterSettings()
             {
@@ -138,6 +119,30 @@ namespace PdfTextReader.Parser
                 writer.WriteEndDocument();
 
             }
+        }
+
+        private string ProcessName(Artigo artigo, string doc)
+        {
+            string numpag = artigo.Metadados.NumeroDaPagina.ToString().PadLeft(4, '0');
+            string docFinalText = new DirectoryInfo(doc).Name;
+            string date = docFinalText.Substring(4, 10).Replace("_", "");
+            string globalId = docFinalText.Substring(21, docFinalText.Length - 21);
+            string modelNameGlobal = $"{date}-{globalId}";
+            string modelNameCustom = null;
+
+            if (numpag == initialPage)
+            {
+                modelNameCustom = $"{date}-{numpag}-{countPerPage++}";
+            }
+            else
+            {
+                initialPage = numpag;
+                countPerPage = 1;
+                modelNameCustom = $"{date}-{numpag}-{countPerPage}";
+            }
+
+
+            return doc.Replace(docFinalText, modelNameCustom);
         }
 
         string ConvertBreakline2Space(string input)
