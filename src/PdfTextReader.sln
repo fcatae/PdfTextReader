@@ -9,8 +9,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Tests", "..\t
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator", "Validator\Validator.csproj", "{0483385A-7E68-4680-8E7C-C465EB65E426}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserAzure", "ParserAzure\ParserAzure.csproj", "{92988DCF-C0C5-4111-8736-CA5044255282}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,10 +27,6 @@ Global
 		{0483385A-7E68-4680-8E7C-C465EB65E426}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0483385A-7E68-4680-8E7C-C465EB65E426}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0483385A-7E68-4680-8E7C-C465EB65E426}.Release|Any CPU.Build.0 = Release|Any CPU
-		{92988DCF-C0C5-4111-8736-CA5044255282}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{92988DCF-C0C5-4111-8736-CA5044255282}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{92988DCF-C0C5-4111-8736-CA5044255282}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{92988DCF-C0C5-4111-8736-CA5044255282}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
