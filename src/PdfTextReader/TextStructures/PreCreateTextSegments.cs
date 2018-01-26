@@ -39,6 +39,8 @@ namespace PdfTextReader.TextStructures
 
             bool sameAlignTabStop = Equal(_last.TabStop, current.TabStop);
 
+            bool hasContinuation = _last.HasContinuation && IsZero(current.MarginLeft);
+
             //bool sameAlignLeft = Equal(_last.MarginLeft, current.MarginLeft);
             //bool sameAlignRight = Equal(_last.MarginRight, current.MarginRight);
             //bool sameAlignCenter = Equal(_last.CenteredAt, current.CenteredAt);
@@ -57,7 +59,8 @@ namespace PdfTextReader.TextStructures
                 TextStruct = current,
                 SameFont = sameFont,
                 SameSpacing = sameSpacing,
-                AlignedTabStop = sameAlignTabStop
+                AlignedTabStop = sameAlignTabStop,
+                HasContinuation = hasContinuation
             };
 
             return false;

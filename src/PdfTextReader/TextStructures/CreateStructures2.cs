@@ -252,6 +252,7 @@ namespace PdfTextReader.TextStructures
 
             _structure.TabStop = lineset[0].MarginLeft;
             _structure.MarginLeft = lineset.Min(t => t.MarginLeft);
+            _structure.HasContinuation = IsZero(lineset.Last().MarginRight);
 
             return _structure;            
         }

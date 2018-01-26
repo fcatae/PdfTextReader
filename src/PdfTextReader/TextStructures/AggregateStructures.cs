@@ -11,7 +11,7 @@ namespace PdfTextReader.TextStructures
 
         public bool Aggregate(TextStructureAgg line)
         {
-            if(line.SameFont && line.SameSpacing && line.AlignedTabStop)
+            if(line.SameFont && line.SameSpacing && (line.AlignedTabStop || line.HasContinuation))
             {
                 if(_current.TextStruct.TextAlignment != line.TextStruct.TextAlignment)
                 {
