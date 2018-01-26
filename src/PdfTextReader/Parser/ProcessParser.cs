@@ -21,7 +21,7 @@ namespace PdfTextReader.Parser
             {
                 Indent = true                
             };
-            using (XmlWriter writer = XmlWriter.Create($"{finalURL}.xml", settings))
+            using (XmlWriter writer = VirtualFS.OpenXmlWriter($"{finalURL}.xml", settings))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Artigo");

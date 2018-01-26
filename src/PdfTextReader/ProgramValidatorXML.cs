@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader.Base;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -33,13 +34,13 @@ namespace PdfTextReader
 
         public void ValidateArticle(string folder)
         {
-            currentName =  new DirectoryInfo(folder).Name;
+            currentName =  VirtualFS.GetDirectoryName(folder);
 
-            logDir = Directory.CreateDirectory($"{folder}/Log").FullName;
-            XMLErrorsDir = Directory.CreateDirectory($"{folder}/XML-Errors").FullName;
+            logDir = VirtualFS.GetDirectoryCreateDirectory($"{folder}/Log");
+            XMLErrorsDir = VirtualFS.GetDirectoryCreateDirectory($"{folder}/XML-Errors");
             folder = folder + "/XMLs";
-            var directory = new DirectoryInfo(folder);
-            foreach (var file in directory.EnumerateFiles("*.xml"))
+            
+            foreach (var file in VirtualFS.DirectoryInfoEnumerateFiles(folder, "*.xml"))
             {
                 DocumentsCount++;
                 Validate(file);
@@ -54,7 +55,7 @@ namespace PdfTextReader
 
             float result = (1.0f - ((float) error /(float) docs)) * 100;
             string text = $"Article precision: {result.ToString("00.00")}%  \nArticles processed: {docs}  \nArticles With Error: {error}";
-            File.WriteAllText($"{logDir}/ArticlePrecision.txt", text);
+            VirtualFS.FileWriteAllText($"{logDir}/ArticlePrecision.txt", text);
 
             GlobalStats.text += $" \n\n{currentName} - {text}";
         }
@@ -66,19 +67,19 @@ namespace PdfTextReader
 
             float result = (1.0f - ((float)error / (float)docs)) * 100;
             string text = $"Article precision: {result.ToString("00.00")}%  \nArticles processed: {docs}  \nArticles With Error: {error} \n\n{GlobalStats.text}";
-            File.WriteAllText(filename, text);
+            VirtualFS.FileWriteAllText(filename, text);
 
             return result;
         }
 
-        void Validate(FileInfo file)
+        void Validate(VirtualFS.VFileInfo file)
         {
             //Caso o proximo artigo venha sem assinatura ou cargo, ele não é erro.
             roleConditions = true;
             signConditions = true;
             tipoArtigoConditions = true;
 
-            XDocument doc = XDocument.Load(file.FullName);
+            XDocument doc = VirtualFS.XDocumentLoad(file.FullName);
             //Elementos Metadado e Conteudo
             foreach (XElement el in doc.Root.Elements())
             {
