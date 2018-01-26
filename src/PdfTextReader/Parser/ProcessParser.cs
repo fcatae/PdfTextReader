@@ -132,13 +132,13 @@ namespace PdfTextReader.Parser
 
             if (numpag == initialPage)
             {
-                modelNameCustom = $"{date}-{numpag}-{countPerPage++}";
+                modelNameCustom = $"{date}-{numpag}-{countPerPage++.ToString().PadLeft(2, '0')}";
             }
             else
             {
                 initialPage = numpag;
                 countPerPage = 1;
-                modelNameCustom = $"{date}-{numpag}-{countPerPage}";
+                modelNameCustom = $"{date}-{numpag}-{countPerPage.ToString().PadLeft(2, '0')}";
             }
 
 
