@@ -11,11 +11,16 @@ namespace PdfTextReader.Base
     {   
         public static Stream OpenRead(string filename)
         {
-            return _vfs.OpenReader(filename);
+            return g_vfs.OpenReader(filename);
         }
         public static Stream OpenWrite(string filename)
         {
-            return _vfs.OpenWriter(filename);
+            return g_vfs.OpenWriter(filename);
+        }
+
+        public void SetFileSystem(IVirtualFS virtualFS)
+        {
+            g_vfs = virtualFS;
         }
 
         // iText.Kernel.Pdf
@@ -37,7 +42,7 @@ namespace PdfTextReader.Base
         
         public static StreamWriter OpenStreamWriter(string filename)
         {
-            return new StreamWriter(OpenRead(filename));
+            return new StreamWriter(OpenWrite(filename));
         }
 
         // XML

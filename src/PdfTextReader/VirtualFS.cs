@@ -9,18 +9,18 @@ namespace PdfTextReader.Base
 {
     public partial class VirtualFS : IVirtualFS
     {
-        static IVirtualFS _vfs = new VirtualFS();
+        static IVirtualFS g_vfs = new VirtualFS();
 
         public Stream OpenReader(string filename)
         {
             System.Diagnostics.Debug.WriteLine($"READ: {filename}");
-            return new FileStream(filename, FileMode.Open);
+            return new FileStream(filename, FileMode.Open, FileAccess.Read);
         }
 
         public Stream OpenWriter(string filename)
         {
             System.Diagnostics.Debug.WriteLine($"WRITE: {filename}");
-            return new FileStream(filename, FileMode.CreateNew);
+            return new FileStream(filename, FileMode.Create);
         }        
     }
 }
