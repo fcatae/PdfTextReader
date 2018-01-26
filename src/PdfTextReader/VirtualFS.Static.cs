@@ -9,14 +9,26 @@ namespace PdfTextReader.Base
 {
     public partial class VirtualFS : IVirtualFS
     {   
+        public static Stream OpenRead(string filename)
+        {
+            return _vfs.OpenReader(filename);
+        }
+        public static Stream OpenWrite(string filename)
+        {
+            return _vfs.OpenWriter(filename);
+        }
+
+        // iText.Kernel.Pdf
         public static iText.Kernel.Pdf.PdfReader OpenPdfReader(string filename)
         {
-            return new iText.Kernel.Pdf.PdfReader(filename);
+            return new iText.Kernel.Pdf.PdfReader(OpenRead(filename));
         }
+
         public static iText.Kernel.Pdf.PdfWriter OpenPdfWriter(string filename)
         {
-            return new iText.Kernel.Pdf.PdfWriter(filename);
+            return new iText.Kernel.Pdf.PdfWriter(OpenWrite(filename));
         }
+
         public static StreamReader OpenStreamReader(string filename)
         {
             return new StreamReader(filename);
