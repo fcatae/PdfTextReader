@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
@@ -9,13 +10,37 @@ namespace PdfTextReader.Parser
 {
     class ProcessParser
     {
+        int countPerPage = 1;
+        string initialPage = "0001";
         public void XMLWriter(IEnumerable<Artigo> artigos, string doc)
         {
+
+            string numpag = artigos.FirstOrDefault().Metadados.NumeroDaPagina.ToString().PadLeft(4, '0');
+            string docFinalText = new DirectoryInfo(doc).Name;
+            string date = docFinalText.Substring(4, 10).Replace("_", "");
+            string globalId = docFinalText.Substring(21, docFinalText.Length - 21);
+            string modelNameGlobal = $"{date}-{globalId}";
+            string modelNameCustom = null;
+
+            if (numpag == initialPage)
+            {
+                modelNameCustom = $"{date}-{numpag}-{countPerPage++}";
+            }
+            else
+            {
+                initialPage = numpag;
+                countPerPage = 1;
+                modelNameCustom = $"{date}-{numpag}-{countPerPage}";
+            }
+
+
+            string finalURL = doc.Replace(docFinalText,modelNameCustom);
+
             var settings = new XmlWriterSettings()
             {
                 Indent = true                
             };
-            using (XmlWriter writer = XmlWriter.Create($"{doc}.xml", settings))
+            using (XmlWriter writer = XmlWriter.Create($"{finalURL}.xml", settings))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Artigo");
@@ -111,6 +136,7 @@ namespace PdfTextReader.Parser
 
                 writer.WriteEndElement();
                 writer.WriteEndDocument();
+
             }
         }
 
