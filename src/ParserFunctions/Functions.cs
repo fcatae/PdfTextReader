@@ -37,7 +37,7 @@ namespace ParserFunctions
 
         [FunctionName("Ping")]
         [return: Queue("tasks")]
-        public static Model.Pdf Ping([HttpTrigger]HttpRequest request, TraceWriter log)
+        public static Model.Pdf Ping([HttpTrigger]HttpRequest request)
         {
             //string document = request.Query["year"];
 
@@ -45,7 +45,7 @@ namespace ParserFunctions
         }
 
         [FunctionName("Test")]
-        public static string Test([HttpTrigger]HttpRequest request, TraceWriter log)
+        public static string Test([HttpTrigger]HttpRequest request)
         {
             bool inputOk;
             bool outputOk;
