@@ -92,5 +92,10 @@ namespace PdfTextReader.Base
                 this.Add(b);
             }            
         }
+
+        public IEnumerable<T> TakeLast(int end)
+        {
+            return _blockList.TakeLast(end);
+        }
     }
 }
