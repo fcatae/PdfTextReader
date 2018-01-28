@@ -8,6 +8,8 @@ namespace ParserFunctions
     public static class Functions
     {
         static AzureFS g_fileSystem;
+        static AzureBlob g_input;
+        static AzureBlob g_output;
 
         static Functions()
         {
@@ -20,6 +22,8 @@ namespace ParserFunctions
             var output = new AzureBlob(outputStorage, outputContainer);
 
             g_fileSystem = new AzureFS(input, output);
+            g_input = input;
+            g_output = output;
         }
 
         [FunctionName("ProcessPdf")]
@@ -38,6 +42,21 @@ namespace ParserFunctions
             //string document = request.Query["year"];
 
             return new Model.Pdf { Name = "p40" };
+        }
+
+        [FunctionName("Test")]
+        public static string Test([HttpTrigger]HttpRequest request, TraceWriter log)
+        {
+            bool inputOk;
+            bool outputOk;
+
+            try { TestAzureBlob.Run(g_input, "test.txt"); inputOk = true; }
+            catch { inputOk = false; }
+
+            try { TestAzureBlob.Run(g_output, "test.txt"); outputOk = true; }
+            catch { outputOk = false; }
+
+            return $"Input={inputOk}, Output={outputOk}";
         }
     }
 }
