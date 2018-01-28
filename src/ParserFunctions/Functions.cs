@@ -1,15 +1,15 @@
 using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
+using Microsoft.AspNetCore.Http;
 
 namespace ParserFunctions
 {
-    public static class Function1
+    public static class Functions
     {
-        static string g_storageAccount;
         static AzureFS g_fileSystem;
 
-        static Function1()
+        static Functions()
         {
             string inputStorage = Environment.GetEnvironmentVariable("PDFTEXTREADER_PDF");
             string inputContainer = "pdf";
@@ -22,13 +22,22 @@ namespace ParserFunctions
             g_fileSystem = new AzureFS(input, output);
         }
 
-        [FunctionName("Function1")]
-        public static void Run([QueueTrigger("tasks")]dynamic myQueueItem, TraceWriter log)
+        [FunctionName("ProcessPdf")]
+        public static void ProcessPdf([QueueTrigger("tasks")]Model.Pdf pdf, TraceWriter log)
         {
-            log.Info($"C# Queue trigger function processed: {myQueueItem}");
-            string document = myQueueItem.name;
+            string document = pdf.Name;
 
+            log.Info($"Processing file: {document}");
             PdfTextReader.ExamplesAzure.FollowText(g_fileSystem, document);
+        }
+
+        [FunctionName("Ping")]
+        [return: Queue("tasks")]
+        public static Model.Pdf Ping([HttpTrigger]HttpRequest request, TraceWriter log)
+        {
+            //string document = request.Query["year"];
+
+            return new Model.Pdf { Name = "p40" };
         }
     }
 }
