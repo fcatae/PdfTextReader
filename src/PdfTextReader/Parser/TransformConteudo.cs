@@ -164,7 +164,7 @@ namespace PdfTextReader.Parser
         string HasData(string body)
         {
 
-            string LastLine = body.Split("\n").Last();
+            string LastLine = body.Split('\n').Last();
 
             string result = null;
 

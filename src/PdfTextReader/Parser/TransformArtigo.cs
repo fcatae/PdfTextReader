@@ -93,7 +93,7 @@ namespace PdfTextReader.Parser
             string output = null;
             if (input != null)
             {
-                string p1 = input.Split(",")[0];
+                string p1 = input.Split(',')[0];
                 //Get Type
                 output = GetType(input);
 

@@ -454,7 +454,7 @@ namespace PdfTextReader.Execution
                 float x = margin;
                 float h = _pdfPage.GetPageSize().GetHeight() - size - margin;
                 
-                string[] lines = message.Split("\n");
+                string[] lines = message.Split('\n');
 
                 foreach (var line in lines)
                 {

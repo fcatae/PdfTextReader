@@ -206,7 +206,7 @@ namespace PdfTextReader
         {
             if (!String.IsNullOrWhiteSpace(text))
             {
-                var bodyParts = text.Split("\n");
+                var bodyParts = text.Split('\n');
                 if (bodyParts.Count() > 2)
                 {
                     var lastItem = bodyParts[bodyParts.Count() - 1];

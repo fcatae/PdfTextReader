@@ -13,7 +13,7 @@ namespace PdfTextReader.Parser
 
         public Anexo (string text)
         {
-            string[] lines = text.Split("\n");
+            string[] lines = text.Split('\n');
             lines = CleanVoids(lines);
 
             HierarquiaTitulo = GetTitleTree(lines);

@@ -29,7 +29,7 @@ namespace PdfTextReader.Parser
                 for (int i = 1; i < conteudos.Count; i++)
                 {
                     //Verificando se na hierarquia entrou o título da lei (Capitulo)
-                    var titleParts = conteudos[i].Hierarquia.Split(":");
+                    var titleParts = conteudos[i].Hierarquia.Split(':');
                     foreach (string title in titleParts)
                     {
                         if (title.Contains("CAPÍTULO"))
