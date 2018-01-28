@@ -43,9 +43,9 @@ namespace ParserFunctions
 
             return new Model.Pdf { Name = "p40" };
         }
-
+        
         [FunctionName("Test")]
-        public static string Test([HttpTrigger]HttpRequest request, TraceWriter log)
+        public static string Test([HttpTrigger]HttpRequest request)
         {
             bool inputOk;
             bool outputOk;
