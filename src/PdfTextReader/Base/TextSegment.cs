@@ -16,11 +16,11 @@ namespace PdfTextReader.Base
 
             sb.AppendLine("==========================================================================");
             sb.AppendLine();
-            sb.AppendJoin("\r\n", Title.Select(t => t.Text));
+            sb.AppendLine(String.Join("\r\n", Title.Select(t => t.Text)));
             sb.AppendLine();
             sb.AppendLine();
             sb.AppendLine("--------------------------------------------------------------------------");
-            sb.AppendJoin("\r\n", Body.Select(t => t.Text));
+            sb.AppendLine(String.Join("\r\n", Body.Select(t => t.Text)));
             sb.AppendLine();
 
             return sb.ToString();
