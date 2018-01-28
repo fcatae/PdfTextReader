@@ -4,9 +4,9 @@ using System.IO;
 
 namespace PdfTextReader
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("PDF Text Reader");
             var watch = System.Diagnostics.Stopwatch.StartNew();
