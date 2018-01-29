@@ -15,25 +15,30 @@ namespace PdfTextReader.Azure.Blob
     {
         private readonly CloudBlobContainer _container;
         
-        public AzureBlobContainer(AzureBlobAccount parent, string name, CloudBlobContainer container) : base(parent, name)
+        public AzureBlobContainer(AzureBlobAccount parent, string name, CloudBlobContainer container) : base(parent, name, container.Uri)
         {
             _container = container;
         }
-        
-        public IEnumerable<AzureBlobRef> EnumerateFiles()
-        {
-            var files = EnumerateFilesInternal();
 
-            return files;
+        public override AzureBlobFolder GetFolder(string name)
+        {
+            var folder = _container.GetDirectoryReference(name);
+
+            // check folder existance
+
+            return new AzureBlobFolder(this, name, folder);
         }
-        
-        IEnumerable<AzureBlobRef> EnumerateFilesInternal()
-        {
-            BlobContinuationToken token = null;
 
-            do
-            {
-                var segment = _container.ListBlobsSegmentedAsync(
+        public override AzureBlobFileBlock GetFile(string name)
+        {
+            var blob = _container.GetBlockBlobReference(name);
+
+            return new AzureBlobFileBlock(this, name, blob);
+        }
+
+        protected override BlobResultSegment ListBlobs(BlobContinuationToken token)
+        {
+            return _container.ListBlobsSegmentedAsync(
                     prefix: "",
                     useFlatBlobListing: false,
                     blobListingDetails: BlobListingDetails.None,
@@ -41,24 +46,6 @@ namespace PdfTextReader.Azure.Blob
                     currentToken: token,
                     options: null,
                     operationContext: null).Result;
-
-                foreach (var blob in segment.Results)
-                {
-                    string name = blob.Uri.AbsolutePath;
-
-                    if ( blob is CloudBlobDirectory )
-                    {                        
-                        yield return new AzureBlobFolder(this, name, (CloudBlobDirectory)blob);
-                    }
-                    else
-                    {
-                        yield return new AzureBlobFile(this, name);
-                    }
-                }
-
-                token = segment.ContinuationToken;
-
-            } while (token != null);
-        }
+        }        
     }
 }
