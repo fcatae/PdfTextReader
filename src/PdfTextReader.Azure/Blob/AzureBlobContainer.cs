@@ -44,48 +44,15 @@ namespace PdfTextReader.Azure.Blob
 
                 foreach (var blob in segment.Results)
                 {
-                    string blobPath = blob.Uri.AbsolutePath;
+                    string name = blob.Uri.AbsolutePath;
 
                     if ( blob is CloudBlobDirectory )
                     {                        
-                        yield return new AzureBlobFolder(this, blobPath);
+                        yield return new AzureBlobFolder(this, name, (CloudBlobDirectory)blob);
                     }
                     else
                     {
-                        yield return new AzureBlobFile(this, blobPath);
-                    }
-                }
-
-                token = segment.ContinuationToken;
-
-            } while (token != null);
-        }
-
-        IEnumerable<AzureBlobRef> EnumerateFilesInternal(CloudBlobDirectory folder)
-        {
-            BlobContinuationToken token = null;
-
-            do
-            {
-                var segment = folder.ListBlobsSegmentedAsync(
-                    useFlatBlobListing: true,
-                    blobListingDetails: BlobListingDetails.None,
-                    maxResults: 1000,
-                    currentToken: token,
-                    options: null,
-                    operationContext: null).Result;
-
-                foreach (var blob in segment.Results)
-                {
-                    string blobPath = blob.Uri.AbsolutePath;
-
-                    if (blob is CloudBlobDirectory)
-                    {
-                        yield return new AzureBlobFolder(this, blobPath);
-                    }
-                    else
-                    {
-                        yield return new AzureBlobFile(this, blobPath);
+                        yield return new AzureBlobFile(this, name);
                     }
                 }
 
