@@ -14,66 +14,19 @@ namespace PdfTextReader.Azure.Blob
     public class AzureBlobContainer : AzureBlobFolder
     {
         private readonly CloudBlobContainer _container;
-        private readonly string _containerPath;
-
-        public string UriPath => _containerPath;
-
-        public AzureBlobContainer(string connectionString, string accountAlias, string containerName) : base(containerName)
+        
+        public AzureBlobContainer(AzureBlobAccount parent, string name, CloudBlobContainer container) : base(parent, name)
         {
-            _container = GetContainer(connectionString, containerName);
-            _containerPath = _container.Uri.AbsolutePath;
-        }
-
-        private CloudBlobContainer GetContainer(string conn, string containerName)
-        {
-            var storageAccount = CloudStorageAccount.Parse(conn);
-            var client = storageAccount.CreateCloudBlobClient();
-            var container = client.GetContainerReference(containerName);
-
-            return container;
+            _container = container;
         }
         
-        // synchronous version
-        [DebuggerHidden]
-        public Stream GetStreamWriter(string filename) => GetStreamWriterAsync(filename).Result;
-        [DebuggerHidden]
-        public Stream GetStreamReader(string filename) => GetStreamReaderAsync(filename).Result;
-
-        public async Task<Stream> GetStreamWriterAsync(string filename)
-        {
-            var blockBlob = _container.GetBlockBlobReference(filename);
-
-            await _container.CreateIfNotExistsAsync();
-
-            return await blockBlob.OpenWriteAsync();
-        }
-        
-        public Task<Stream> GetStreamReaderAsync(string filename)
-        {
-            var blockBlob = _container.GetBlockBlobReference(filename);
-
-            return blockBlob.OpenReadAsync();
-        }
-
         public IEnumerable<AzureBlobRef> EnumerateFiles()
         {
             var files = EnumerateFilesInternal();
 
             return files;
         }
-
-        public IEnumerable<AzureBlobRef> EnumerateFiles(string folder)
-        {
-            if ( String.IsNullOrEmpty(folder) )
-                throw new ArgumentNullException(nameof(folder));
-
-            var directory = _container.GetDirectoryReference(folder);
-
-            var files = EnumerateFilesInternal(directory);
-
-            return files;
-        }
-
+        
         IEnumerable<AzureBlobRef> EnumerateFilesInternal()
         {
             BlobContinuationToken token = null;

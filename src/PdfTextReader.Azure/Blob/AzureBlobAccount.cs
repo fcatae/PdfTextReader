@@ -23,15 +23,38 @@ namespace PdfTextReader.Azure.Blob
             return client;
         }
 
-        public override AzureBlobFolder GetFolder(string folder)
+        CloudBlobContainer GetContainer(string containerName)
         {
-            return base.GetFolder(folder);
+            return _client.GetContainerReference(containerName); 
         }
 
-        public override AzureBlobRef EnumFiles()
+        public override AzureBlobFolder GetFolder(string name)
         {
+            var container = GetContainer(name);
 
-            return base.EnumFiles();
+            var folder = new AzureBlobContainer(this, name, container);
+
+            return folder;
+        }
+
+        public override IEnumerable<AzureBlobRef> EnumItems()
+        {
+            BlobContinuationToken token = null;
+
+            do
+            {
+                var segment = _client.ListContainersSegmentedAsync(token).Result;
+
+                foreach (var container in segment.Results)
+                {
+                    string name = container.Name;
+
+                    yield return new AzureBlobContainer(this, name, container);
+                }
+
+                token = segment.ContinuationToken;
+
+            } while (token != null);
         }
     }
 }

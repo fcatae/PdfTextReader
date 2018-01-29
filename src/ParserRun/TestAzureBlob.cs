@@ -13,6 +13,8 @@ namespace ParserRun
             string accountAlias = "storage011";
 
             var account = new AzureBlobAccount(connectionString, accountAlias);
+            var containers = account.EnumItems().ToList();
+            var container = account.GetFolder("pdf");
 
             var path = account.Path;
             var name = account.Name;

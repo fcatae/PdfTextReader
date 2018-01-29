@@ -14,13 +14,19 @@ namespace PdfTextReader.Azure.Blob
             Name = rootname;
         }
 
-        public AzureBlobRef(AzureBlobRef parent, string filename)
+        public AzureBlobRef(AzureBlobRef parent, string name)
         {
-            Path = $"{parent.Path}/{filename}";
-            Name = filename;
+            Path = $"{parent.Path}/{name}";
+            Name = name;
         }
 
         public readonly string Name;
         public readonly string Path;
+
+        void EnsureValidName(string name)
+        {
+            if (name.Contains("/") || name.Contains("\\"))
+                throw new ArgumentException("'Name' contains invalid characters");
+        }
     }
 }

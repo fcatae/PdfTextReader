@@ -18,8 +18,8 @@ namespace ParserFunctions
             _output = output;
         }
 
-        public Stream OpenReader(string filename) => _input.GetStreamReader(filename);
+        public Stream OpenReader(string filename) => throw new NotImplementedException(); // _input.GetStreamReader(filename);
 
-        public Stream OpenWriter(string filename) => _output.GetStreamWriter(filename);
+        public Stream OpenWriter(string filename) => throw new NotImplementedException(); //  _output.GetStreamWriter(filename);
     }
 }
