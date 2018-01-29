@@ -32,7 +32,7 @@ namespace ParserFunctions
         {
             string document = pdf.Name;
 
-            log.Info($"Processing file: {document}");
+            log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}");
             PdfTextReader.ExamplesAzure.FollowText(g_fileSystem, document);
         }
 

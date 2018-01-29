@@ -14,6 +14,8 @@ namespace PdfTextReader
         {
             VirtualFS.ConfigureFileSystem(virtualFS);
 
+            PdfReaderException.ContinueOnException();
+
             var pipeline = new Execution.Pipeline();
 
             pipeline.Input($"{basename}.pdf")
