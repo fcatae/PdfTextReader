@@ -49,7 +49,12 @@ namespace ParserFunctions
 
             foreach (var file in files)
             {
-                testQueue.Add(new Model.Pdf { Name = $"{folder}/{file}" });
+                if(file.ToLower().EndsWith(".pdf"))
+                {
+                    string fileWithoutExtension = file.Substring(0, file.Length - 4);
+
+                    testQueue.Add(new Model.Pdf { Name = $"{folder}/{fileWithoutExtension}" });
+                }                
             }
 
             return "done";
