@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ParserRun
@@ -21,6 +22,12 @@ namespace ParserRun
 
                 Console.WriteLine("Output from READER = " + output);
             }
+        }
+
+        public static void Enum(string connectionString, string storageContainer)
+        {
+            var blob = new AzureBlob(connectionString, storageContainer);
+            var files = blob.EnumerateFiles("2010/", "2010_01").ToList();
         }
     }
 }

@@ -31,8 +31,6 @@ namespace ParserRun
             var client = storageAccount.CreateCloudBlobClient();
             var container = client.GetContainerReference(containerName);
                         
-            // container.CreateIfNotExists();
-
             return container;
         }
 
@@ -45,6 +43,8 @@ namespace ParserRun
         public async Task<Stream> GetStreamWriterAsync(string filename)
         {
             var container = GetContainer();
+            // container.CreateIfNotExists();
+
             var blockBlob = container.GetBlockBlobReference(filename);
 
             return await blockBlob.OpenWriteAsync();
@@ -56,6 +56,74 @@ namespace ParserRun
             var blockBlob = container.GetBlockBlobReference(filename);
 
             return blockBlob.OpenReadAsync();
+        }
+
+        public IEnumerable<string> EnumerateFiles(string folder)
+        {
+            return EnumerateFiles(folder, "");
+        }
+
+        public IEnumerable<string> EnumerateFiles(string folder, string prefix)
+        {
+            if (folder == null || prefix == null)
+                throw new ArgumentNullException();
+
+            string folderPath = GetFolderPath(folder);
+            string path = folderPath + prefix;
+
+            var files = EnumerateFilesInternal(path).ToList();
+
+            return RemovePrefix(files, folderPath);
+        }
+
+        IEnumerable<string> EnumerateFilesInternal(string prefix)
+        {
+            var container = GetContainer();
+
+            BlobContinuationToken token = null;
+
+            do
+            {
+                var segment = container.ListBlobsSegmentedAsync(
+                    prefix,
+                    useFlatBlobListing: true,
+                    blobListingDetails: BlobListingDetails.None,
+                    maxResults: 1000,
+                    currentToken: token,
+                    options: null,
+                    operationContext: null).Result;
+
+                foreach (var blob in segment.Results)
+                {
+                    yield return GetRelativePath(blob.Uri);
+                }
+
+                token = segment.ContinuationToken;
+
+            } while (token != null);
+        }
+
+        string GetFolderPath(string folder)
+        {
+            return (folder.EndsWith("/")) ? folder : folder + "/";
+        }
+
+        string GetRelativePath(string folder, string path)
+        {
+            return path.Substring(folder.Length + 1);
+        }
+
+        string GetRelativePath(Uri uri)
+        {
+            string path = uri.AbsolutePath;
+            
+            // file: /container/...
+            return path.Substring(_containerName.Length + 2);
+        }
+
+        IEnumerable<string> RemovePrefix(IEnumerable<string> files, string folder)
+        {
+            return files.Select(f => f.Substring(folder.Length));
         }
     }
 }

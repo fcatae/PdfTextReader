@@ -23,6 +23,7 @@ namespace ParserRun
 
             // Test azure connection
             TestAzureBlob.Run(connectionString, storageContainer);
+            TestAzureBlob.Enum(connectionString, storageContainer);
 
             // create the AzureFS
             var virtualFileSystem = new AzureFS(connectionString, storageContainer);
