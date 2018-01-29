@@ -14,20 +14,20 @@ namespace ParserRun
 
             var account = new AzureBlobAccount(connectionString, accountAlias);
             var containers = account.EnumItems().ToList();
-            var container = account.GetFolderReference("pdf");
+            var container = account.GetFolder("pdf");
 
             var items = container.EnumItems().ToList();
-            var folder = container.GetFolderReference("2010");
-            var subfolder = folder.GetFolderReference("2010_01_04");
+            var folder = container.GetFolder("2010");
+            var subfolder = folder.GetFolder("2010_01_04");
 
             // bug
-            folder.GetFolderReference("notexist");
+            folder.GetFile("notexist");
 
             var files = subfolder.EnumItems().ToList();
-            var file = subfolder.GetFolderReference("DO1_2010_01_04.pdf");
+            var file = subfolder.GetFolder("DO1_2010_01_04.pdf");
 
             // bug
-            var folder2 = container.GetFolderReference("2010/2010_01_04");
+            var folder2 = container.GetFolder("2010/2010_01_04");
 
             var path = account.Path;
             var name = account.Name;
