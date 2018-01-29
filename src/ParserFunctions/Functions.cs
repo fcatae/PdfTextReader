@@ -36,18 +36,42 @@ namespace ParserFunctions
             PdfTextReader.ExamplesAzure.FollowText(g_fileSystem, document);
         }
 
+        [FunctionName("ProcessFolder")]
+        public static string ProcessFolder([HttpTrigger]HttpRequest request,
+            [Queue("tasks")] ICollector<Model.Pdf> testQueue)
+        {
+            string folder = request.Query["folder"];
+
+            if (folder == null)
+                return "'folder' parameter not specified";
+
+            var files = g_input.EnumerateFiles(folder).ToList();
+
+            foreach (var file in files)
+            {
+                testQueue.Add(new Model.Pdf { Name = file });
+            }
+
+            return "done";
+        }
+
         [FunctionName("TestListFiles")]
-        public static void TestListFiles([HttpTrigger]HttpRequest request,
+        public static string TestListFiles([HttpTrigger]HttpRequest request,
             [Queue("test")] ICollector<Model.Pdf> testQueue)
         {
-            string folder = ((string)request.Query["folder"]) ?? "";
+            string folder = request.Query["folder"];
+
+            if (folder == null)
+                return "'folder' parameter not specified";
 
             var files = g_input.EnumerateFiles(folder).ToList();
 
             foreach(var file in files)
             {
                 testQueue.Add(new Model.Pdf { Name = file });
-            }            
+            }
+
+            return "done";
         }
 
         [FunctionName("Ping")]

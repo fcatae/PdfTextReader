@@ -60,7 +60,7 @@ namespace ParserFunctions
         
         public IEnumerable<string> EnumerateFiles(string folder)
         {
-            if (folder == null )
+            if ( String.IsNullOrEmpty(folder) )
                 throw new ArgumentNullException(nameof(folder));
 
             var container = GetContainer();
@@ -99,7 +99,7 @@ namespace ParserFunctions
         {
             string folder = directory.AbsolutePath;
 
-            var relativePath = files.Select(f => f.Substring(folder.Length + 1)).ToList();
+            var relativePath = files.Select(f => f.Substring(folder.Length)).ToList();
 
             return relativePath;
         }
