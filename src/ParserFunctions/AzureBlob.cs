@@ -57,5 +57,51 @@ namespace ParserFunctions
 
             return blockBlob.OpenReadAsync();
         }
+        
+        public IEnumerable<string> EnumerateFiles(string folder)
+        {
+            if (folder == null )
+                throw new ArgumentNullException(nameof(folder));
+
+            var container = GetContainer();
+            var directory = container.GetDirectoryReference(folder);
+            
+            var files = EnumerateFilesInternal(directory).ToList();
+
+            return MakeRelativePath(files, directory.Uri);
+        }
+
+        IEnumerable<string> EnumerateFilesInternal(CloudBlobDirectory folder)
+        {
+            BlobContinuationToken token = null;
+
+            do
+            {
+                var segment = folder.ListBlobsSegmentedAsync(
+                    useFlatBlobListing: true,
+                    blobListingDetails: BlobListingDetails.None,
+                    maxResults: 1000,
+                    currentToken: token,
+                    options: null,
+                    operationContext: null).Result;
+
+                foreach (var blob in segment.Results)
+                {
+                    yield return blob.Uri.AbsolutePath;
+                }
+
+                token = segment.ContinuationToken;
+
+            } while (token != null);
+        }
+        
+        IEnumerable<string> MakeRelativePath(IEnumerable<string> files, Uri directory)
+        {
+            string folder = directory.AbsolutePath;
+
+            var relativePath = files.Select(f => f.Substring(folder.Length + 1)).ToList();
+
+            return relativePath;
+        }
     }
 }

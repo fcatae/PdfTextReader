@@ -2,6 +2,7 @@ using System;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace ParserFunctions
 {
@@ -33,6 +34,20 @@ namespace ParserFunctions
 
             log.Info($"Processing file: {document}");
             PdfTextReader.ExamplesAzure.FollowText(g_fileSystem, document);
+        }
+
+        [FunctionName("TestListFiles")]
+        public static void TestListFiles([HttpTrigger]HttpRequest request,
+            [Queue("test")] ICollector<Model.Pdf> testQueue)
+        {
+            string folder = ((string)request.Query["folder"]) ?? "";
+
+            var files = g_input.EnumerateFiles(folder).ToList();
+
+            foreach(var file in files)
+            {
+                testQueue.Add(new Model.Pdf { Name = file });
+            }            
         }
 
         [FunctionName("Ping")]

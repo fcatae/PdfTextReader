@@ -73,7 +73,7 @@ namespace ParserRun
 
             var files = EnumerateFilesInternal(path).ToList();
 
-            return RemovePrefix(files, folderPath);
+            return files;
         }
 
         IEnumerable<string> EnumerateFilesInternal(string prefix)
@@ -119,11 +119,6 @@ namespace ParserRun
             
             // file: /container/...
             return path.Substring(_containerName.Length + 2);
-        }
-
-        IEnumerable<string> RemovePrefix(IEnumerable<string> files, string folder)
-        {
-            return files.Select(f => f.Substring(folder.Length));
-        }
+        }        
     }
 }
