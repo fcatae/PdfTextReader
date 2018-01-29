@@ -22,6 +22,7 @@ namespace ParserRun
             string storageContainer = config.Get("AZURE_STORAGE_CONTAINER");
 
             // Test azure connection
+            TestAzureBlob.V2(connectionString, storageContainer);
             TestAzureBlob.Run(connectionString, storageContainer);
             TestAzureBlob.Enum(connectionString, storageContainer);
 

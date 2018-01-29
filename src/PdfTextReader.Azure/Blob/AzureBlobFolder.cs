@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    class AzureBlobFolder : AzureBlobRef
+    public class AzureBlobFolder : AzureBlobRef
     {
         protected AzureBlobFolder(string filename) : base(filename)
         {
@@ -12,6 +12,16 @@ namespace PdfTextReader.Azure.Blob
 
         public AzureBlobFolder(AzureBlobRef parent, string filename) : base(parent, filename)
         {
+        }
+
+        public virtual AzureBlobFolder GetFolder(string folder)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual AzureBlobRef EnumFiles()
+        {
+            throw new NotImplementedException();
         }
     }
 }

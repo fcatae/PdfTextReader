@@ -11,14 +11,14 @@ using System.Diagnostics;
 
 namespace PdfTextReader.Azure.Blob
 {
-    class AzureBlobContainer : AzureBlobFolder
+    public class AzureBlobContainer : AzureBlobFolder
     {
         private readonly CloudBlobContainer _container;
         private readonly string _containerPath;
 
         public string UriPath => _containerPath;
 
-        public AzureBlobContainer(string connectionString, string containerName) : base(containerName)
+        public AzureBlobContainer(string connectionString, string accountAlias, string containerName) : base(containerName)
         {
             _container = GetContainer(connectionString, containerName);
             _containerPath = _container.Uri.AbsolutePath;

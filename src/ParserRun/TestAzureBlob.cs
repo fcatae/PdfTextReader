@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader.Azure.Blob;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,18 @@ namespace ParserRun
 {
     class TestAzureBlob
     {
+        public static void V2(string connectionString, string storageContainer)
+        {
+            string accountAlias = "storage011";
+
+            var account = new AzureBlobAccount(connectionString, accountAlias);
+
+            var path = account.Path;
+            var name = account.Name;
+            //container.Name;
+
+        }
+
         public static void Run(string connectionString, string storageContainer)
         {
             var blob = new AzureBlob(connectionString, storageContainer);

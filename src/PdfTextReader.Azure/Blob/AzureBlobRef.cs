@@ -4,7 +4,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    abstract class AzureBlobRef
+    public abstract class AzureBlobRef
     {
         const string PROTOCOL = "wasb://";
 
