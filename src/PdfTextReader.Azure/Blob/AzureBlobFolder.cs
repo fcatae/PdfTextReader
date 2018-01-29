@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Storage.Blob;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace PdfTextReader.Azure.Blob
@@ -33,14 +34,14 @@ namespace PdfTextReader.Azure.Blob
             _folderUri = folder.Uri;
         }
         
-        public virtual AzureBlobFolder GetFolder(string name)
+        public virtual AzureBlobFolder GetFolderReference(string name)
         {
             if (_folder == null)
                 throw new InvalidOperationException();
 
             var blobDirectory = _folder.GetDirectoryReference(name);
 
-            // check folder existance
+            CheckExists(blobDirectory);
 
             return new AzureBlobFolder(this, name, blobDirectory);
         }
@@ -84,6 +85,20 @@ namespace PdfTextReader.Azure.Blob
                 token = segment.ContinuationToken;
 
             } while (token != null);
+        }
+
+        void CheckExists(CloudBlobDirectory folder)
+        {
+            var item = folder.ListBlobsSegmentedAsync(
+                    useFlatBlobListing: false,
+                    blobListingDetails: BlobListingDetails.None,
+                    maxResults: 1,
+                    currentToken: null,
+                    options: null,
+                    operationContext: null).Result;
+
+            if (item.Results.FirstOrDefault() == null)
+                throw new System.IO.DirectoryNotFoundException($"Folder '{folder.Uri.AbsoluteUri}' does not exist");
         }
 
         protected virtual BlobResultSegment ListBlobs(BlobContinuationToken token)

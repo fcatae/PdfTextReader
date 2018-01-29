@@ -20,7 +20,7 @@ namespace PdfTextReader.Azure.Blob
             _container = container;
         }
 
-        public override AzureBlobFolder GetFolder(string name)
+        public override AzureBlobFolder GetFolderReference(string name)
         {
             var folder = _container.GetDirectoryReference(name);
 
