@@ -49,7 +49,7 @@ namespace ParserFunctions
 
             foreach (var file in files)
             {
-                testQueue.Add(new Model.Pdf { Name = file });
+                testQueue.Add(new Model.Pdf { Name = $"{folder}/{file}" });
             }
 
             return "done";
