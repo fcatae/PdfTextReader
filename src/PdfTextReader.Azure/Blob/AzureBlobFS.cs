@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFS : IAzureBlobFolder
+    class AzureBlobFS : IAzureBlobFolder
     {
         const string PROTOCOL = "wasb:/"; // just one slash
         readonly char[] PATH_SEPARATORS = new[] { '/', '\\' };

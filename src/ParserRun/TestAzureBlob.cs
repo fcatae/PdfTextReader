@@ -10,10 +10,8 @@ namespace ParserRun
     {
         public static void V2(string connectionString, string storageContainer)
         {
-            string accountAlias = "storage011";
-
-            var fs = new AzureBlobFS();
-            fs.AddStorage("/t1", connectionString);
+            var fs = new PdfTextReader.Azure.AzureFS();
+            fs.AddStorageAccount("/t1", connectionString);
 
             var stores = fs.EnumItems();
             var account = fs.GetFolder("t1");
