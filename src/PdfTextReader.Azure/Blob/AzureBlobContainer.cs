@@ -15,7 +15,7 @@ namespace PdfTextReader.Azure.Blob
     {
         private readonly CloudBlobContainer _container;
         
-        public AzureBlobContainer(AzureBlobAccount parent, string name, CloudBlobContainer container) : base(parent, name, container.Uri)
+        public AzureBlobContainer(IAzureBlob parent, string name, CloudBlobContainer container) : base(parent, name, container.Uri)
         {
             _container = container;
         }

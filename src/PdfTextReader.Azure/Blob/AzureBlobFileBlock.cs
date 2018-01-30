@@ -12,7 +12,7 @@ namespace PdfTextReader.Azure.Blob
     {
         CloudBlockBlob _blob;
 
-        public AzureBlobFileBlock(AzureBlobRef parent, string name, CloudBlockBlob blob) : base(parent, name, blob.Uri)
+        public AzureBlobFileBlock(IAzureBlob parent, string name, CloudBlockBlob blob) : base(parent, name, blob.Uri)
         {
             _blob = blob;
         }

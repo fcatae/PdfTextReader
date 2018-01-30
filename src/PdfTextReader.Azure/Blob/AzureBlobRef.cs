@@ -5,16 +5,16 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public abstract class AzureBlobRef : IAzureBlob
+    abstract class AzureBlobRef : IAzureBlob
     {
-        protected AzureBlobRef(string rootname)
-        {
-            if (String.IsNullOrEmpty(rootname))
-                throw new ArgumentNullException(nameof(rootname));
+        //protected AzureBlobRef(string rootname)
+        //{
+        //    if (String.IsNullOrEmpty(rootname))
+        //        throw new ArgumentNullException(nameof(rootname));
 
-            Path = rootname;
-            Name = rootname;
-        }
+        //    Path = rootname;
+        //    Name = rootname;
+        //}
 
         public AzureBlobRef(IAzureBlob parent, string name, Uri uri)
         {

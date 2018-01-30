@@ -10,12 +10,12 @@ namespace PdfTextReader.Azure.Blob
     {
         CloudBlobClient _client;
 
-        public AzureBlobAccount(AzureBlobRef parent, string accountName, string connectionString)
+        public AzureBlobAccount(IAzureBlob parent, string accountName, string connectionString)
             : this(parent, accountName, GetClient(connectionString))
         {            
         }
 
-        AzureBlobAccount(AzureBlobRef parent, string accountName, CloudBlobClient client) 
+        AzureBlobAccount(IAzureBlob parent, string accountName, CloudBlobClient client) 
             : base(parent, accountName, client.BaseUri)
         {
             if (client == null)

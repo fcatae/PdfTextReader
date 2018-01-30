@@ -6,16 +6,23 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFS : AzureBlobRef, IAzureBlobFolder
+    public class AzureBlobFS : IAzureBlobFolder
     {
         const string PROTOCOL = "wasb:/"; // just one slash
         readonly char[] PATH_SEPARATORS = new[] { '/', '\\' };
+        public string Name { get; }
+        public string Path { get; }
 
-        public AzureBlobFS() : base(PROTOCOL)
+        public AzureBlobFS() : this(PROTOCOL)
         {
         }
-        public AzureBlobFS(string protocol) : base(protocol)
+        public AzureBlobFS(string protocol)
         {
+            if (protocol == null)
+                throw new InvalidOperationException();
+
+            Name = protocol;
+            Path = protocol;
         }
 
         Dictionary<string, AzureBlobAccount> _storageAccounts = new Dictionary<string, AzureBlobAccount>();

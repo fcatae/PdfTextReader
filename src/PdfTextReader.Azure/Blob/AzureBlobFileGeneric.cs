@@ -10,7 +10,7 @@ namespace PdfTextReader.Azure.Blob
 {
     class AzureBlobFileGeneric : AzureBlobRef, IAzureBlobFile
     {
-        public AzureBlobFileGeneric(AzureBlobRef parent, string name, Uri uri) : base(parent, name, uri)
+        public AzureBlobFileGeneric(IAzureBlob parent, string name, Uri uri) : base(parent, name, uri)
         {
         }
 

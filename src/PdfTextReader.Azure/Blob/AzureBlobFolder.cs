@@ -13,7 +13,7 @@ namespace PdfTextReader.Azure.Blob
 
         CloudBlobDirectory _folder;
 
-        protected AzureBlobFolder(AzureBlobRef parent, string containerName, Uri folderUri) : base(parent, containerName, folderUri)
+        protected AzureBlobFolder(IAzureBlob parent, string containerName, Uri folderUri) : base(parent, containerName, folderUri)
         {
             if (folderUri == null)
                 throw new ArgumentNullException(nameof(folderUri));
@@ -21,7 +21,7 @@ namespace PdfTextReader.Azure.Blob
             _folder = null;
         }
 
-        public AzureBlobFolder(AzureBlobRef parent, string name, CloudBlobDirectory folder) : base(parent, name, folder.Uri)
+        public AzureBlobFolder(IAzureBlob parent, string name, CloudBlobDirectory folder) : base(parent, name, folder.Uri)
         {
             if (folder == null)
                 throw new ArgumentNullException(nameof(folder));
