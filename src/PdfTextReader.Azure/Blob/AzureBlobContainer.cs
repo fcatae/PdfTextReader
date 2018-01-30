@@ -11,7 +11,7 @@ using System.Diagnostics;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobContainer : AzureBlobFolder
+    class AzureBlobContainer : AzureBlobFolder
     {
         private readonly CloudBlobContainer _container;
         

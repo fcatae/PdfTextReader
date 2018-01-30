@@ -7,16 +7,11 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFolder : AzureBlobRef, IAzureBlobFolder
+    class AzureBlobFolder : AzureBlobRef, IAzureBlobFolder
     {
         readonly char[] PATH_SEPARATORS = new[] {'/', '\\'};
 
         CloudBlobDirectory _folder;
-
-        protected AzureBlobFolder(string storageAccountAlias) : base(storageAccountAlias)
-        {
-            _folder = null;
-        }
 
         protected AzureBlobFolder(AzureBlobRef parent, string containerName, Uri folderUri) : base(parent, containerName, folderUri)
         {

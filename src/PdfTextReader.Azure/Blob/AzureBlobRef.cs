@@ -16,7 +16,7 @@ namespace PdfTextReader.Azure.Blob
             Name = rootname;
         }
 
-        public AzureBlobRef(AzureBlobRef parent, string name, Uri uri)
+        public AzureBlobRef(IAzureBlob parent, string name, Uri uri)
         {
             if (parent == null)
                 throw new ArgumentNullException(nameof(parent));

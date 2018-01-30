@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobAccount : AzureBlobFolder
+    class AzureBlobAccount : AzureBlobFolder
     {
         CloudBlobClient _client;
 
