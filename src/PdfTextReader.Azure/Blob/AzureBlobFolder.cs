@@ -9,30 +9,29 @@ namespace PdfTextReader.Azure.Blob
 {
     public class AzureBlobFolder : AzureBlobRef
     {
+        readonly char[] PATH_SEPARATORS = new[] {'/', '\\'};
+
         CloudBlobDirectory _folder;
-        Uri _folderUri;
 
         protected AzureBlobFolder(string storageAccountAlia) : base(storageAccountAlia)
         {
             _folder = null;
         }
 
-        protected AzureBlobFolder(AzureBlobRef parent, string containerName, Uri folderUri) : base(parent, containerName)
+        protected AzureBlobFolder(AzureBlobRef parent, string containerName, Uri folderUri) : base(parent, containerName, folderUri)
         {
             if (folderUri == null)
                 throw new ArgumentNullException(nameof(folderUri));
 
             _folder = null;
-            _folderUri = folderUri;
         }
 
-        public AzureBlobFolder(AzureBlobRef parent, string name, CloudBlobDirectory folder) : base(parent, name)
+        public AzureBlobFolder(AzureBlobRef parent, string name, CloudBlobDirectory folder) : base(parent, name, folder.Uri)
         {
             if (folder == null)
                 throw new ArgumentNullException(nameof(folder));
 
             _folder = folder;
-            _folderUri = folder.Uri;
         }
 
         public AzureBlobFolder GetFolder(string name)
@@ -63,7 +62,7 @@ namespace PdfTextReader.Azure.Blob
 
         AzureBlobFolder GetChildFolderRecursive(string name)
         {
-            string[] components = name.Split(new[] { '/' }, 1, StringSplitOptions.RemoveEmptyEntries);
+            string[] components = SplitFolderComponents(name);
             
             // parent
             string parentDirectory = components[0];
@@ -128,7 +127,7 @@ namespace PdfTextReader.Azure.Blob
                     }
                     else
                     {
-                        yield return new AzureBlobFileGeneric(this, name);
+                        yield return new AzureBlobFileGeneric(this, name, blob.Uri);
                     }
                 }
 
@@ -161,33 +160,15 @@ namespace PdfTextReader.Azure.Blob
                     options: null,
                     operationContext: null).Result;
         }
-
-        protected IEnumerable<AzureBlobRef> EnumSegment(IEnumerable<IListBlobItem> segments)
-        {
-
-            foreach (var blob in segments)
-            {
-                string name = MakeRelativePath(blob.Uri);
-
-                if (blob is CloudBlobDirectory)
-                {
-                    yield return new AzureBlobFolder(this, name, (CloudBlobDirectory)blob);
-                }
-                else
-                {
-                    yield return new AzureBlobFileGeneric(this, name);
-                }
-            }
-        }
         
         string MakeRelativePath(Uri childFolderUri)
         {
             string fullpath = childFolderUri.AbsolutePath;
-            string basepath = _folderUri.AbsolutePath;
+            string basepath = Uri.AbsolutePath;
 
             string relativePath = fullpath.Substring(basepath.Length);
 
-            return relativePath.Trim('/');
+            return relativePath.Trim(PATH_SEPARATORS);
         }
         
         void CheckValidFileName(string name)
@@ -195,8 +176,13 @@ namespace PdfTextReader.Azure.Blob
             if (name == "..")
                 throw new System.IO.DirectoryNotFoundException($"Accessing parent folder ../ is not allowed");
 
-            if (name.Contains("/") || name.Contains(":"))
+            if (name.Contains("/") || name.Contains("\\") || name.Contains(":"))
                 throw new InvalidOperationException($"Invalid characters in path name");
+        }
+
+        string[] SplitFolderComponents(string path)
+        {
+            return path.Split(PATH_SEPARATORS, 1, StringSplitOptions.RemoveEmptyEntries);
         }
     }
 }

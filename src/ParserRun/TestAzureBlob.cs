@@ -24,6 +24,7 @@ namespace ParserRun
             var file = subfolder.GetFile("DO1_2010_01_04.pdf");
 
             var folder2 = container.GetFolder("2010/2010_01_04");
+            var folder3 = container.GetFolder("2010/2010_01_04/DO1_2010_01_04.pdf");
 
             var path = account.Path;
             var name = account.Name;

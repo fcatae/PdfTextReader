@@ -17,7 +17,7 @@ namespace PdfTextReader.Azure.Blob
             Name = rootname;
         }
 
-        public AzureBlobRef(AzureBlobRef parent, string name)
+        public AzureBlobRef(AzureBlobRef parent, string name, Uri uri)
         {
             if (parent == null)
                 throw new ArgumentNullException(nameof(parent));
@@ -26,10 +26,12 @@ namespace PdfTextReader.Azure.Blob
             
             Path = $"{parent.Path}/{name}";
             Name = name;
+            Uri = uri;
         }
 
         public readonly string Name;
         public readonly string Path;
+        public readonly Uri Uri;
 
         [DebuggerHidden]
         void EnsureValidName(string name)
