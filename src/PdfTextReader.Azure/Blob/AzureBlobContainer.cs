@@ -20,12 +20,10 @@ namespace PdfTextReader.Azure.Blob
             _container = container;
         }
 
-        public override AzureBlobFolder GetFolder(string name)
+        protected override AzureBlobFolder GetChildFolder(string name)
         {
             var folder = _container.GetDirectoryReference(name);
-
-            // check folder existance
-
+            
             return new AzureBlobFolder(this, name, folder);
         }
 
@@ -46,6 +44,11 @@ namespace PdfTextReader.Azure.Blob
                     currentToken: token,
                     options: null,
                     operationContext: null).Result;
-        }        
+        }
+
+        public override bool Exists()
+        {
+            return _container.ExistsAsync().Result;
+        }
     }
 }

@@ -28,7 +28,7 @@ namespace PdfTextReader.Azure.Blob
             return _client.GetContainerReference(containerName); 
         }
 
-        public override AzureBlobFolder GetFolder(string name)
+        protected override AzureBlobFolder GetChildFolder(string name)
         {
             var container = GetContainer(name);
 
@@ -55,6 +55,11 @@ namespace PdfTextReader.Azure.Blob
                 token = segment.ContinuationToken;
 
             } while (token != null);
+        }
+
+        public override bool Exists()
+        {
+            return true;
         }
     }
 }

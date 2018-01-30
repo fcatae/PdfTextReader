@@ -34,15 +34,61 @@ namespace PdfTextReader.Azure.Blob
             _folder = folder;
             _folderUri = folder.Uri;
         }
-        
-        public virtual AzureBlobFolder GetFolder(string name)
+
+        public AzureBlobFolder GetFolder(string name)
+        {
+            var folder = GetChildFolderRecursive(name);
+
+            // throw exception if it does not exist
+            CheckExists(folder);
+            
+            return folder;
+        }
+
+        public virtual bool Exists()
         {
             if (_folder == null)
                 throw new InvalidOperationException();
 
-            var blobDirectory = _folder.GetDirectoryReference(name);
+            var item = _folder.ListBlobsSegmentedAsync(
+                useFlatBlobListing: false,
+                blobListingDetails: BlobListingDetails.None,
+                maxResults: 1,
+                currentToken: null,
+                options: null,
+                operationContext: null).Result;
 
-            CheckExists(blobDirectory);
+            return (item.Results.FirstOrDefault() != null);
+        }
+
+        AzureBlobFolder GetChildFolderRecursive(string name)
+        {
+            string[] components = name.Split(new[] { '/' }, 1, StringSplitOptions.RemoveEmptyEntries);
+            
+            // parent
+            string parentDirectory = components[0];
+
+            var current = GetChildFolder(parentDirectory);
+            
+            if (components.Length == 1)
+            {
+                return current;
+            }
+
+            // child - recursive
+            string childDirectory = components[1];
+
+            return current.GetChildFolderRecursive(childDirectory);
+        }
+
+        protected virtual AzureBlobFolder GetChildFolder(string name)
+        {
+            if (_folder == null)
+                throw new InvalidOperationException();
+
+            CheckValidFileName(name);
+
+            var blobDirectory = _folder.GetDirectoryReference(name);
 
             return new AzureBlobFolder(this, name, blobDirectory);
         }
@@ -54,8 +100,9 @@ namespace PdfTextReader.Azure.Blob
 
             var blob = _folder.GetBlockBlobReference(name);
 
+            // throw exception if it does not exist
             CheckExists(blob);
-
+            
             return new AzureBlobFileBlock(this, name, blob);
         }
 
@@ -91,17 +138,9 @@ namespace PdfTextReader.Azure.Blob
         }
 
         [DebuggerHidden]
-        void CheckExists(CloudBlobDirectory folder)
+        void CheckExists(AzureBlobFolder folder)
         {
-            var item = folder.ListBlobsSegmentedAsync(
-                    useFlatBlobListing: false,
-                    blobListingDetails: BlobListingDetails.None,
-                    maxResults: 1,
-                    currentToken: null,
-                    options: null,
-                    operationContext: null).Result;
-
-            if (item.Results.FirstOrDefault() == null)
+            if (folder.Exists() == false)
                 throw new System.IO.DirectoryNotFoundException($"Folder '{folder.Uri.AbsoluteUri}' does not exist");
         }
 
@@ -141,13 +180,6 @@ namespace PdfTextReader.Azure.Blob
             }
         }
         
-        string GetName(CloudBlobDirectory folder)
-        {
-            string name = folder.Prefix;
-
-            return name.TrimEnd('/');
-        }
-
         string MakeRelativePath(Uri childFolderUri)
         {
             string fullpath = childFolderUri.AbsolutePath;
@@ -156,6 +188,15 @@ namespace PdfTextReader.Azure.Blob
             string relativePath = fullpath.Substring(basepath.Length);
 
             return relativePath.Trim('/');
+        }
+        
+        void CheckValidFileName(string name)
+        {
+            if (name == "..")
+                throw new System.IO.DirectoryNotFoundException($"Accessing parent folder ../ is not allowed");
+
+            if (name.Contains("/") || name.Contains(":"))
+                throw new InvalidOperationException($"Invalid characters in path name");
         }
     }
 }
