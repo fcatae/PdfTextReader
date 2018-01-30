@@ -37,6 +37,11 @@ namespace PdfTextReader.Azure.Blob
             return folder;
         }
 
+        protected override AzureBlobFileBlock GetChildFile(string name)
+        {
+            throw new System.IO.FileNotFoundException($"'{this.Uri}' is a storage account, not a file");
+        }
+
         public override IEnumerable<AzureBlobRef> EnumItems()
         {
             BlobContinuationToken token = null;

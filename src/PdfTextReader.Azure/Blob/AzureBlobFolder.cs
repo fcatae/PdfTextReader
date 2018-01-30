@@ -92,7 +92,29 @@ namespace PdfTextReader.Azure.Blob
             return new AzureBlobFolder(this, name, blobDirectory);
         }
 
-        public virtual AzureBlobFileBlock GetFile(string name)
+        public AzureBlobFileBlock GetFile(string name)
+        {
+            CheckValidFilePath(name);
+
+            AzureBlobFolder folder = this;
+
+            string[] components = SplitFileComponents(name);
+
+            string filename = components[0];
+
+            // Get folder
+            if (components.Length > 1)
+            {
+                string parentDirectory = components[0];
+                folder = GetChildFolderRecursive(parentDirectory);
+
+                filename = components[1];
+            }
+
+            return folder.GetChildFile(filename);
+        }
+
+        protected virtual AzureBlobFileBlock GetChildFile(string name)
         {
             if (_folder == null)
                 throw new InvalidOperationException();
@@ -101,7 +123,7 @@ namespace PdfTextReader.Azure.Blob
 
             // throw exception if it does not exist
             CheckExists(blob);
-            
+
             return new AzureBlobFileBlock(this, name, blob);
         }
 
@@ -173,6 +195,9 @@ namespace PdfTextReader.Azure.Blob
         
         void CheckValidFileName(string name)
         {
+            if (name == null || name == "")
+                throw new ArgumentNullException();
+
             if (name == "..")
                 throw new System.IO.DirectoryNotFoundException($"Accessing parent folder ../ is not allowed");
 
@@ -180,9 +205,41 @@ namespace PdfTextReader.Azure.Blob
                 throw new InvalidOperationException($"Invalid characters in path name");
         }
 
+        void CheckValidFilePath(string path)
+        {
+            if (path == null || path == "")
+                throw new ArgumentNullException();
+
+            if (path.StartsWith("/"))
+                throw new System.IO.DirectoryNotFoundException($"Cannot access root folder");
+
+            if (path.EndsWith("/"))
+                throw new System.IO.FileNotFoundException($"'{path}' ends with '/'");
+        }
+
         string[] SplitFolderComponents(string path)
         {
-            return path.Split(PATH_SEPARATORS, 1, StringSplitOptions.RemoveEmptyEntries);
+            int idxSeparator = path.IndexOfAny(PATH_SEPARATORS);
+
+            return SplitComponents(path, idxSeparator);
+        }
+
+        string[] SplitFileComponents(string path)
+        {
+            int idxSeparator = path.LastIndexOfAny(PATH_SEPARATORS);
+
+            return SplitComponents(path, idxSeparator);
+        }
+
+        string[] SplitComponents(string path, int idxSeparator)
+        {
+            if (idxSeparator < 0)
+                return new string[] { path };
+
+            string folder = path.Substring(0, idxSeparator);
+            string filename = path.Substring(idxSeparator + 1);
+
+            return new string[] { folder, filename };
         }
     }
 }

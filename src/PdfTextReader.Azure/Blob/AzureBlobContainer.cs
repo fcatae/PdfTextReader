@@ -27,8 +27,11 @@ namespace PdfTextReader.Azure.Blob
             return new AzureBlobFolder(this, name, folder);
         }
 
-        public override AzureBlobFileBlock GetFile(string name)
+        protected override AzureBlobFileBlock GetChildFile(string name)
         {
+            if (_container == null)
+                throw new InvalidOperationException();
+
             var blob = _container.GetBlockBlobReference(name);
 
             return new AzureBlobFileBlock(this, name, blob);

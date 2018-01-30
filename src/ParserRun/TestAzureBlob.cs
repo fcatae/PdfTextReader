@@ -19,14 +19,14 @@ namespace ParserRun
             var items = container.EnumItems().ToList();
             var folder = container.GetFolder("2010");
             var subfolder = folder.GetFolder("2010_01_04");
-            
+
             var files = subfolder.EnumItems().ToList();
             var file = subfolder.GetFile("DO1_2010_01_04.pdf");
 
             var folder2 = container.GetFolder("2010/2010_01_04");
-            var folder3 = container.GetFolder("2010/2010_01_04/DO1_2010_01_04.pdf");
+            var file3 = container.GetFile("2010/2010_01_04/DO1_2010_01_04.pdf");
 
-            var path = account.Path;
+            var path = file3.Path;
             var name = account.Name;
             //container.Name;
 
