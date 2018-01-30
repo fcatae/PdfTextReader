@@ -7,13 +7,12 @@ namespace PdfTextReader.Azure.Blob
 {
     public abstract class AzureBlobRef
     {
-        const string PROTOCOL = "wasb://";
-
         protected AzureBlobRef(string rootname)
         {
-            EnsureValidName(rootname);
+            if (String.IsNullOrEmpty(rootname))
+                throw new ArgumentNullException(nameof(rootname));
 
-            Path = PROTOCOL + rootname;
+            Path = rootname;
             Name = rootname;
         }
 

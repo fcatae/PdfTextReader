@@ -12,7 +12,12 @@ namespace ParserRun
         {
             string accountAlias = "storage011";
 
-            var account = new AzureBlobAccount(connectionString, accountAlias);
+            var fs = new AzureBlobFS();
+            fs.AddStorage("/t1", connectionString);
+
+            var stores = fs.EnumItems();
+            var account = fs.GetFolder("t1");
+
             var containers = account.EnumItems().ToList();
             var container = account.GetFolder("pdf");
 
@@ -26,8 +31,10 @@ namespace ParserRun
             var folder2 = container.GetFolder("2010/2010_01_04");
             var file3 = container.GetFile("2010/2010_01_04/DO1_2010_01_04.pdf");
 
-            var path = file3.Path;
-            var name = account.Name;
+            var file4 = fs.GetFile("t1/pdf/2010/2010_01_04/DO1_2010_01_04.pdf");
+
+            //var path = file3.Path;
+            //var name = account.Name;
             //container.Name;
 
         }

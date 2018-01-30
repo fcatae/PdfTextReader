@@ -10,12 +10,21 @@ namespace PdfTextReader.Azure.Blob
     {
         CloudBlobClient _client;
 
-        public AzureBlobAccount(string connectionString, string accountName) : base(accountName)
-        {
-            _client = GetClient(connectionString);
+        public AzureBlobAccount(AzureBlobRef parent, string accountName, string connectionString)
+            : this(parent, accountName, GetClient(connectionString))
+        {            
         }
 
-        CloudBlobClient GetClient(string connectionString)
+        AzureBlobAccount(AzureBlobRef parent, string accountName, CloudBlobClient client) 
+            : base(parent, accountName, client.BaseUri)
+        {
+            if (client == null)
+                throw new ArgumentNullException(nameof(client));
+
+            _client = client;
+        }
+
+        static CloudBlobClient GetClient(string connectionString)
         {
             var storageAccount = CloudStorageAccount.Parse(connectionString);
             var client = storageAccount.CreateCloudBlobClient();
@@ -39,7 +48,7 @@ namespace PdfTextReader.Azure.Blob
 
         protected override AzureBlobFileBlock GetChildFile(string name)
         {
-            throw new System.IO.FileNotFoundException($"'{this.Uri}' is a storage account, not a file");
+            throw new System.IO.FileNotFoundException($"'{this.Path}' is a storage account, not a file");
         }
 
         public override IEnumerable<AzureBlobRef> EnumItems()

@@ -13,7 +13,7 @@ namespace PdfTextReader.Azure.Blob
 
         CloudBlobDirectory _folder;
 
-        protected AzureBlobFolder(string storageAccountAlia) : base(storageAccountAlia)
+        protected AzureBlobFolder(string storageAccountAlias) : base(storageAccountAlias)
         {
             _folder = null;
         }
