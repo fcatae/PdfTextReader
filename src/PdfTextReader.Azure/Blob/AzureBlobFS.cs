@@ -6,7 +6,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFS : AzureBlobRef
+    public class AzureBlobFS : AzureBlobRef, IAzureBlobFolder
     {
         const string PROTOCOL = "wasb:/"; // just one slash
         readonly char[] PATH_SEPARATORS = new[] { '/', '\\' };
@@ -42,8 +42,14 @@ namespace PdfTextReader.Azure.Blob
             _storageAccounts.Add(key, azureBlobAccount);
         }
 
-        public AzureBlobFolder GetFolder(string path)
+        public IAzureBlobFolder GetFolder(string path)
         {
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if (path == null)
+                return this;
+
             var account = FindStorageAccount(path);
 
             if (account == null)
@@ -57,8 +63,14 @@ namespace PdfTextReader.Azure.Blob
             return account.GetFolder(blobpath);
         }
 
-        public AzureBlobFileBlock GetFile(string path)
+        public IAzureBlobFile GetFile(string path)
         {
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            if ( path == "" )
+                throw new System.IO.FileNotFoundException($"'{path}' is empty");
+
             var account = FindStorageAccount(path);
 
             if (account == null)
@@ -100,7 +112,7 @@ namespace PdfTextReader.Azure.Blob
             return true;
         }
 
-        public IEnumerable<AzureBlobRef> EnumItems()
+        public IEnumerable<IAzureBlob> EnumItems()
         {
             return _storageAccounts.Values;
         }

@@ -9,26 +9,26 @@ namespace ParserFunctions
 {
     class AzureFS : IVirtualFS
     {
-        const string PROTOCOL = "wasb://";
+        AzureBlobFS _blobFS = new AzureBlobFS();
+        string _workingFolder;
 
-        AzureBlobFS _blobFS;
-        AzureBlobContainer _input;
-        AzureBlobContainer _output;
-
-        public AzureFS(AzureBlobContainer input, AzureBlobContainer output)
+        public void AddStorageAccount(string name, string connectionString)
         {
-            _blobFS = new AzureBlobFS();
-            _input = input;
-            _output = output;
+            _blobFS.AddStorage(name, connectionString);
         }
 
-        public void AddStorageAccount(string name, AzureBlobAccount azureBlobAccount)
+        public void SetWorkingFolder(string path)
         {
-            //_blobFS.Mount(name, azureBlobAccount);
+            if (path == null)
+                throw new ArgumentNullException(nameof(path));
+
+            _workingFolder = path;
         }
 
-        public Stream OpenReader(string filename) => throw new NotImplementedException(); // _input.GetStreamReader(filename);
+        public string GetWorkingFolder() => _workingFolder;
 
-        public Stream OpenWriter(string filename) => throw new NotImplementedException(); //  _output.GetStreamWriter(filename);
+        public Stream OpenReader(string filename) => _blobFS.GetFile(filename).GetStreamReader();
+        
+        public Stream OpenWriter(string filename) => _blobFS.GetFile(filename).GetStreamWriter();
     }
 }

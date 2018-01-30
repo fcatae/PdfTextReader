@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public abstract class AzureBlobRef
+    public abstract class AzureBlobRef : IAzureBlob
     {
         protected AzureBlobRef(string rootname)
         {
@@ -28,8 +28,8 @@ namespace PdfTextReader.Azure.Blob
             Uri = uri;
         }
 
-        public readonly string Name;
-        public readonly string Path;
+        public string Name { get; }
+        public string Path { get; }
         public readonly Uri Uri;
 
         [DebuggerHidden]

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFileBlock : AzureBlobRef
+    public class AzureBlobFileBlock : AzureBlobRef, IAzureBlobFile
     {
         CloudBlockBlob _blob;
 

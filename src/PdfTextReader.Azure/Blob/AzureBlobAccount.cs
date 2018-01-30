@@ -51,7 +51,7 @@ namespace PdfTextReader.Azure.Blob
             throw new System.IO.FileNotFoundException($"'{this.Path}' is a storage account, not a file");
         }
 
-        public override IEnumerable<AzureBlobRef> EnumItems()
+        public override IEnumerable<IAzureBlob> EnumItems()
         {
             BlobContinuationToken token = null;
 

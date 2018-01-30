@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFolder : AzureBlobRef
+    public class AzureBlobFolder : AzureBlobRef, IAzureBlobFolder
     {
         readonly char[] PATH_SEPARATORS = new[] {'/', '\\'};
 
@@ -34,7 +34,7 @@ namespace PdfTextReader.Azure.Blob
             _folder = folder;
         }
 
-        public AzureBlobFolder GetFolder(string name)
+        public IAzureBlobFolder GetFolder(string name)
         {
             var folder = GetChildFolderRecursive(name);
 
@@ -92,7 +92,7 @@ namespace PdfTextReader.Azure.Blob
             return new AzureBlobFolder(this, name, blobDirectory);
         }
 
-        public AzureBlobFileBlock GetFile(string name)
+        public IAzureBlobFile GetFile(string name)
         {
             CheckValidFilePath(name);
 
@@ -127,7 +127,7 @@ namespace PdfTextReader.Azure.Blob
             return new AzureBlobFileBlock(this, name, blob);
         }
 
-        public virtual IEnumerable<AzureBlobRef> EnumItems()
+        public virtual IEnumerable<IAzureBlob> EnumItems()
         {
             BlobContinuationToken token = null;
 

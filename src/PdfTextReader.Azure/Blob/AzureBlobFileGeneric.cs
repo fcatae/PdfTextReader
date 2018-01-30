@@ -8,10 +8,20 @@ using System.Threading.Tasks;
 
 namespace PdfTextReader.Azure.Blob
 {
-    public class AzureBlobFileGeneric : AzureBlobRef
+    public class AzureBlobFileGeneric : AzureBlobRef, IAzureBlobFile
     {
         public AzureBlobFileGeneric(AzureBlobRef parent, string name, Uri uri) : base(parent, name, uri)
         {
+        }
+
+        public Stream GetStreamReader()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Stream GetStreamWriter()
+        {
+            throw new NotImplementedException();
         }
     }
 }
