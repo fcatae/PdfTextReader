@@ -10,6 +10,9 @@ namespace ParserFunctions
 {
     public static class Functions
     {
+        const string INPUT_PATH = "wasb://input/pdf/";
+        const string OUTPUT_PATH = "wasb://output/output/";
+
         static AzureFS g_fileSystem;
 
         static Functions()
@@ -24,33 +27,29 @@ namespace ParserFunctions
         public static void ProcessPdf([QueueTrigger("tasks")]Model.Pdf pdf, TraceWriter log)
         {
             string document = pdf.Name;
+            string inputfolder = $"{INPUT_PATH}{pdf.Path}";
+            string outputfolder = $"{OUTPUT_PATH}{pdf.Path}";
 
-            log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}");
-            PdfTextReader.ExamplesAzure.FollowText(g_fileSystem, document);
+            log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}, inputfolder={inputfolder}, outputfolder={outputfolder}");
+
+            PdfTextReader.ExamplesAzure.RunParserPDF(g_fileSystem, document, inputfolder, outputfolder);
         }
 
         [FunctionName("ProcessFolder")]
         public static string ProcessFolder([HttpTrigger]HttpRequest request,
             [Queue("tasks")] ICollector<Model.Pdf> testQueue)
         {
-            string year = request.Query["year"];
+            string year = request.Query[$"{nameof(year)}"];
 
             if (year == null)
-                return "'folder' parameter not specified";
+                return $"'{nameof(year)}' parameter not specified";
 
-            //var files = g_fileSystem.GetFolder(folder);
+            string folderName = year.Replace('|', '/');
 
-            //var files = g_fileSystem.GetFolder(folder); .EnumerateFiles(folder).ToList();
-
-            //foreach (var file in files)
-            //{
-            //    if(file.ToLower().EndsWith(".pdf"))
-            //    {
-            //        string fileWithoutExtension = file.Substring(0, file.Length - 4);
-
-            //        testQueue.Add(new Model.Pdf { Name = $"{year}/{fileWithoutExtension}" });
-            //    }                
-            //}
+            foreach (var pdf in GetInput(folderName))
+            {
+                testQueue.Add(pdf);
+            }
 
             return "done";
         }
@@ -59,8 +58,6 @@ namespace ParserFunctions
         public static string TestListFiles([HttpTrigger]HttpRequest request,
             [Queue("test")] ICollector<Model.Pdf> testQueue)
         {
-            const string INPUT_PATH = "wasb://input/pdf/";
-
             string year = request.Query[$"{nameof(year)}"];
 
             if (year == null)
@@ -68,20 +65,28 @@ namespace ParserFunctions
 
             string folderName = year.Replace('|', '/');
 
+            foreach(var pdf in GetInput(folderName))
+            {
+                testQueue.Add(pdf);
+            }
+
+            return "done";
+        }
+        
+        static IEnumerable<Model.Pdf> GetInput(string folderName)
+        {
             var folder = g_fileSystem.GetFolder(INPUT_PATH).GetFolder(folderName);
 
-            foreach(var file in GetFilesRecursive(folder))
+            foreach (var file in GetFilesRecursive(folder))
             {
-                if( file.Name.ToLower().EndsWith(".pdf") )
+                if (file.Name.ToLower().EndsWith(".pdf"))
                 {
                     string basepath = file.Path.Substring(INPUT_PATH.Length);
                     string folderPath = basepath.Substring(0, basepath.Length - file.Name.Length).Trim('/');
 
-                    testQueue.Add(new Model.Pdf { Name = file.Name, Path = folderPath });
+                    yield return new Model.Pdf { Name = file.Name, Path = folderPath };
                 }
             }
-            
-            return "done";
         }
 
         static IEnumerable<IAzureBlobFile> GetFilesRecursive(IAzureBlobFolder folder)
@@ -110,9 +115,7 @@ namespace ParserFunctions
         [return: Queue("tasks")]
         public static Model.Pdf Ping([HttpTrigger]HttpRequest request, TraceWriter log)
         {
-            //string document = request.Query["year"];
-
-            return new Model.Pdf { Name = "p40" };
+            return new Model.Pdf { Name = "p40" , Path = "test"};
         }
         
         [FunctionName("Test")]
