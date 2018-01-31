@@ -10,11 +10,15 @@ namespace ParserFunctions
 {
     public class AzureFS : IVirtualFS
     {
-        AzureBlobFileSystem _inputFS = new AzureBlobFileSystem();
-        AzureBlobFileSystem _outputFS = new AzureBlobFileSystem();
+        AzureBlobFileSystem _azure = new AzureBlobFileSystem();
+        AzureBlobFileSystem _inputFS;
+        AzureBlobFileSystem _outputFS;
 
         public AzureFS(string inputConnectionString, string outputConnectionString)
         {
+            _inputFS = _azure;
+            _outputFS = _azure;
+
             if (String.IsNullOrEmpty(inputConnectionString))
                 throw new ArgumentNullException(nameof(inputConnectionString));
 
