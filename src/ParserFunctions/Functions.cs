@@ -3,28 +3,21 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
+using PdfTextReader.Azure;
+using System.Collections.Generic;
 
 namespace ParserFunctions
 {
     public static class Functions
     {
         static AzureFS g_fileSystem;
-        static AzureBlob g_input;
-        static AzureBlob g_output;
 
         static Functions()
         {
             string inputStorage = Environment.GetEnvironmentVariable("PDFTEXTREADER_PDF");
-            string inputContainer = "pdf";
             string outputStorage = Environment.GetEnvironmentVariable("PDFTEXTREADER_OUTPUT");
-            string outputContainer = "output";
-
-            var input = new AzureBlob(inputStorage, inputContainer);
-            var output = new AzureBlob(outputStorage, outputContainer);
-
-            g_fileSystem = new AzureFS(input, output);
-            g_input = input;
-            g_output = output;
+            
+            g_fileSystem = new AzureFS(inputStorage, outputStorage);
         }
 
         [FunctionName("ProcessPdf")]
@@ -40,22 +33,24 @@ namespace ParserFunctions
         public static string ProcessFolder([HttpTrigger]HttpRequest request,
             [Queue("tasks")] ICollector<Model.Pdf> testQueue)
         {
-            string folder = request.Query["folder"];
+            string year = request.Query["year"];
 
-            if (folder == null)
+            if (year == null)
                 return "'folder' parameter not specified";
 
-            var files = g_input.EnumerateFiles(folder).ToList();
+            //var files = g_fileSystem.GetFolder(folder);
 
-            foreach (var file in files)
-            {
-                if(file.ToLower().EndsWith(".pdf"))
-                {
-                    string fileWithoutExtension = file.Substring(0, file.Length - 4);
+            //var files = g_fileSystem.GetFolder(folder); .EnumerateFiles(folder).ToList();
 
-                    testQueue.Add(new Model.Pdf { Name = $"{folder}/{fileWithoutExtension}" });
-                }                
-            }
+            //foreach (var file in files)
+            //{
+            //    if(file.ToLower().EndsWith(".pdf"))
+            //    {
+            //        string fileWithoutExtension = file.Substring(0, file.Length - 4);
+
+            //        testQueue.Add(new Model.Pdf { Name = $"{year}/{fileWithoutExtension}" });
+            //    }                
+            //}
 
             return "done";
         }
@@ -64,19 +59,51 @@ namespace ParserFunctions
         public static string TestListFiles([HttpTrigger]HttpRequest request,
             [Queue("test")] ICollector<Model.Pdf> testQueue)
         {
-            string folder = request.Query["folder"];
+            const string INPUT_PATH = "wasb://input/pdf/";
 
-            if (folder == null)
-                return "'folder' parameter not specified";
+            string year = request.Query[$"{nameof(year)}"];
 
-            var files = g_input.EnumerateFiles(folder).ToList();
+            if (year == null)
+                return $"'{nameof(year)}' parameter not specified";
 
-            foreach(var file in files)
+            string folderName = year.Replace('|', '/');
+
+            var folder = g_fileSystem.GetFolder(INPUT_PATH).GetFolder(folderName);
+
+            foreach(var file in GetFilesRecursive(folder))
             {
-                testQueue.Add(new Model.Pdf { Name = file });
-            }
+                if( file.Name.ToLower().EndsWith(".pdf") )
+                {
+                    string basepath = file.Path.Substring(INPUT_PATH.Length);
+                    string folderPath = basepath.Substring(0, basepath.Length - file.Name.Length).Trim('/');
 
+                    testQueue.Add(new Model.Pdf { Name = file.Name, Path = folderPath });
+                }
+            }
+            
             return "done";
+        }
+
+        static IEnumerable<IAzureBlobFile> GetFilesRecursive(IAzureBlobFolder folder)
+        {
+            var items = folder.EnumItems();
+
+            foreach(var it in items)
+            {
+                if (it is IAzureBlobFile)
+                    yield return (IAzureBlobFile)it;
+
+                if (it is IAzureBlobFolder)
+                {
+                    var childFolder = (IAzureBlobFolder)it;
+                    var recursive_items = GetFilesRecursive(childFolder);
+
+                    foreach( var rec_it in recursive_items )
+                    {
+                        yield return rec_it;
+                    }
+                }
+            }            
         }
 
         [FunctionName("Ping")]
@@ -94,10 +121,10 @@ namespace ParserFunctions
             bool inputOk;
             bool outputOk;
 
-            try { TestAzureBlob.Run(g_input, "test.txt"); inputOk = true; }
+            try { TestAzureBlob.Run(g_fileSystem, "wasb://input/pdf/test.txt"); inputOk = true; }
             catch { inputOk = false; }
 
-            try { TestAzureBlob.Run(g_output, "test.txt"); outputOk = true; }
+            try { TestAzureBlob.Run(g_fileSystem, "wasb://output/test/test.txt"); outputOk = true; }
             catch { outputOk = false; }
 
             return $"Input={inputOk}, Output={outputOk}";

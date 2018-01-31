@@ -1,24 +1,37 @@
-﻿using PdfTextReader;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using PdfTextReader;
+using PdfTextReader.Azure.Blob;
+using PdfTextReader.Azure;
 
 namespace ParserFunctions
 {
-    class AzureFS : IVirtualFS
+    public class AzureFS : IVirtualFS
     {
-        AzureBlob _input;
-        AzureBlob _output;
+        AzureBlobFileSystem _inputFS = new AzureBlobFileSystem();
+        AzureBlobFileSystem _outputFS = new AzureBlobFileSystem();
 
-        public AzureFS(AzureBlob input, AzureBlob output)
+        public AzureFS(string inputConnectionString, string outputConnectionString)
         {
-            _input = input;
-            _output = output;
+            if (String.IsNullOrEmpty(inputConnectionString))
+                throw new ArgumentNullException(nameof(inputConnectionString));
+
+            if (String.IsNullOrEmpty(outputConnectionString))
+                throw new ArgumentNullException(nameof(outputConnectionString));
+
+            _inputFS.AddStorageAccount("input", inputConnectionString);
+            _outputFS.AddStorageAccount("output", outputConnectionString);
         }
+        
+        public Stream OpenReader(string filename) => _inputFS.GetFile(filename).GetStreamReader();
+        
+        public Stream OpenWriter(string filename) => _outputFS.GetFile(filename).GetStreamWriter();
 
-        public Stream OpenReader(string filename) => _input.GetStreamReader(filename);
-
-        public Stream OpenWriter(string filename) => _output.GetStreamWriter(filename);
+        public IAzureBlobFolder GetFolder(string name)
+        {
+            return _inputFS.GetFolder(name);
+        }
     }
 }

@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserConsole", "ParserCons
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserFunctions", "ParserFunctions\ParserFunctions.csproj", "{99E8274A-E914-482C-87B7-9374F25A2B1F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfTextReader.Azure", "PdfTextReader.Azure\PdfTextReader.Azure.csproj", "{AB782AB1-C794-4789-9E96-BEB00E8E0154}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Azure", "PdfTextReader.Azure\PdfTextReader.Azure.csproj", "{AB782AB1-C794-4789-9E96-BEB00E8E0154}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

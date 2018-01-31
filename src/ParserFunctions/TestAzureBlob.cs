@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -6,18 +7,18 @@ namespace ParserFunctions
 {
     class TestAzureBlob
     {
-        public static void Run(AzureBlob blob, string filename)
+        public static void Run(AzureFS azure, string filename)
         {
-            using (var sw = new System.IO.StreamWriter(blob.GetStreamWriter(filename)))
+            using (var sw = new System.IO.StreamWriter(azure.OpenWriter(filename)))
             {
                 sw.WriteLine("Hello from WRITER");
             }
 
-            using (var sr = new System.IO.StreamReader(blob.GetStreamReader(filename)))
+            using (var sr = new System.IO.StreamReader(azure.OpenReader(filename)))
             {
-                string output = sr.ReadToEnd();
+                string text = sr.ReadToEnd();
 
-                Console.WriteLine("Output from READER = " + output);
+                Console.WriteLine("Output from READER = " + text);
             }
         }
     }

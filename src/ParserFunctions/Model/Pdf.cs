@@ -7,5 +7,6 @@ namespace ParserFunctions.Model
     public class Pdf
     {
         public string Name { get; set; }
+        public string Path { get; set; }
     }
 }
