@@ -83,8 +83,9 @@ namespace ParserFunctions
                 {
                     string basepath = file.Path.Substring(INPUT_PATH.Length);
                     string folderPath = basepath.Substring(0, basepath.Length - file.Name.Length).Trim('/');
+                    string filenameWithoutExt = file.Name.Substring(0, file.Name.Length - ".pdf".Length);
 
-                    yield return new Model.Pdf { Name = file.Name, Path = folderPath };
+                    yield return new Model.Pdf { Name = filenameWithoutExt, Path = folderPath };
                 }
             }
         }
