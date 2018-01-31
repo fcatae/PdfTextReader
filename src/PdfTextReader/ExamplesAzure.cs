@@ -56,7 +56,7 @@ namespace PdfTextReader
                                 .Log<AnalyzeTreeStructure>(Console.Out)
                             .ToList();
             
-            pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
+            //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
         }
 
         static PipelineText<TextLine> GetTextLines(Pipeline pipeline, string basename, string inputfolder, string outputfolder)
