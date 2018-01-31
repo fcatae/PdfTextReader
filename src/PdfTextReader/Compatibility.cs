@@ -9,8 +9,8 @@ namespace PdfTextReader
     {
         public static IEnumerable<T> TakeLast<T>(this List<T> list, int end)
         {
-            int count = list.Count - end;
-            return list.GetRange(end, count);
+            int start = list.Count - end;
+            return list.GetRange(start, end);
         }
     }
 }
