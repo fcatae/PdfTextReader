@@ -34,7 +34,7 @@ namespace PdfTextReader.Azure.Blob
             var folder = GetChildFolderRecursive(name);
 
             // throw exception if it does not exist
-            CheckExists(folder);
+            // CheckExists(folder); -- ignore
             
             return folder;
         }
@@ -117,7 +117,7 @@ namespace PdfTextReader.Azure.Blob
             var blob = _folder.GetBlockBlobReference(name);
 
             // throw exception if it does not exist
-            CheckExists(blob);
+            // CheckExists(blob); -- ignore
 
             return new AzureBlobFileBlock(this, name, blob);
         }
