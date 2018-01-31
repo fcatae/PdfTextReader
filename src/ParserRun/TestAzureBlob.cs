@@ -15,7 +15,7 @@ namespace ParserRun
             abfs.SetWorkingFolder("wasb://t1/pdf/2010");
             var rf = abfs.GetFolder("2010_01_04");
 
-            var fs = new AzureFS();
+            var fs = new TestFS();
             fs.AddStorageAccount("/t1", connectionString);
 
             var stores = fs.EnumItems();

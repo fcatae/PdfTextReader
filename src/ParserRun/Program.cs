@@ -11,29 +11,28 @@ namespace ParserRun
 
             var config = new Config(args);
 
-            Console.WriteLine(config.Get("AZURE_STORAGE"));
-            Console.WriteLine(config.Get("AZURE_STORAGE_CONTAINER"));
+            Console.WriteLine(config.Get("AZURE_STORAGE_PDF"));
+            Console.WriteLine(config.Get("AZURE_STORAGE_OUTPUT"));
 
             // DEV: configure the secrets
             //
-            //   dotnet user-secrets set AZURE_STORAGE abc
-            //   dotnet user-secrets set AZURE_STORAGE_CONTAINER abc
+            //   dotnet user-secrets set AZURE_STORAGE_PDF <_connection_string_from_portal_>
+            //   dotnet user-secrets set AZURE_STORAGE_OUTPUT <_connection_string_from_portal_>
             //
-            string connectionString = config.Get("AZURE_STORAGE");
-            string storageContainer = config.Get("AZURE_STORAGE_CONTAINER");
+            string inputConnectionString = config.Get("AZURE_STORAGE_PDF");
+            string outputConnectionString = config.Get("AZURE_STORAGE_OUTPUT");
 
             // Test azure connection
-            TestAzureBlob.V2(connectionString, storageContainer);
-            TestAzureBlob.Run(connectionString, storageContainer);
-            TestAzureBlob.Enum(connectionString, storageContainer);
+            //TestAzureBlob.V2(connectionString, storageContainer);
+            //TestAzureBlob.Run(connectionString, storageContainer);
+            //TestAzureBlob.Enum(connectionString, storageContainer);
 
             // create the AzureFS
-            var virtualFileSystem = new AzureFS(connectionString, storageContainer);
+            var azureBlobs = new AzureFS(inputConnectionString, outputConnectionString);
 
-            PdfTextReader.ExamplesAzure.FollowText(virtualFileSystem, "example");
-
-
-            ExamplesAzure.RunParserPDF("DO1_2010_01_04", "wasb://input/pdf/2010/2010_01_04", "wasb://output/test");
+            //PdfTextReader.ExamplesAzure.FollowText(virtualFileSystem, "example");
+            
+            ExamplesAzure.RunParserPDF(azureBlobs, "DO1_2010_01_04", "wasb://input/pdf/2010/2010_01_04", "wasb://output/test");
         }
     }
 }

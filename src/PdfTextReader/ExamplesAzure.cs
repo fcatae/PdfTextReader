@@ -32,8 +32,10 @@ namespace PdfTextReader
             pipeline.Done();
         }
 
-        public static void RunParserPDF(string basename, string inputfolder, string outputfolder)
+        public static void RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
         {
+            VirtualFS.ConfigureFileSystem(virtualFS);
+
             PdfReaderException.ContinueOnException();
 
             Pipeline pipeline = new Pipeline();

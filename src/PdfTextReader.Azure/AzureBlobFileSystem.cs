@@ -9,9 +9,15 @@ namespace PdfTextReader.Azure
 {
     public class AzureBlobFileSystem
     {
-        AzureBlobFS _root = new AzureBlobFS();
+        AzureBlobFS _root;
         string _workingFolder;
         IAzureBlobFolder _currentFolder;
+
+        public AzureBlobFileSystem()
+        {
+            _root = new AzureBlobFS();
+            SetWorkingFolder(null);
+        }
 
         public void AddStorageAccount(string name, string connectionString)
         {
@@ -34,13 +40,17 @@ namespace PdfTextReader.Azure
             return _root.GetFolder(name);
         }
 
-        public IAzureBlobFolder GetFolder(string name)
+        public IAzureBlobFolder GetFolder(string path)
         {
+            string name = (IsAbsolutePath(path)) ? RemoveProtocol(path) : path;
+
             return _currentFolder.GetFolder(name);
         }
 
-        public IAzureBlobFile GetFile(string name)
+        public IAzureBlobFile GetFile(string path)
         {
+            string name = (IsAbsolutePath(path)) ? RemoveProtocol(path) : path;
+
             return _currentFolder.GetFile(name);
         }
 
@@ -58,6 +68,14 @@ namespace PdfTextReader.Azure
                 return path.Substring(_root.Path.Length+1);
 
             throw new System.IO.DirectoryNotFoundException($"Invalid protocol '{path}'");
+        }
+
+        bool IsAbsolutePath(string path)
+        {
+            if ((_root.Path == path) || path.StartsWith(_root.Path))
+                return true;
+
+            return false;
         }
     }
 }

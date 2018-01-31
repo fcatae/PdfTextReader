@@ -10,30 +10,23 @@ namespace ParserRun
 {
     public class AzureFS : IVirtualFS
     {
-        AzureBlobFileSystem _blobFS = new AzureBlobFileSystem();
-        
-        public void AddStorageAccount(string name, string connectionString)
+        AzureBlobFileSystem _inputFS = new AzureBlobFileSystem();
+        AzureBlobFileSystem _outputFS = new AzureBlobFileSystem();
+
+        public AzureFS(string inputConnectionString, string outputConnectionString)
         {
-            _blobFS.AddStorageAccount(name, connectionString);
+            if (String.IsNullOrEmpty(inputConnectionString))
+                throw new ArgumentNullException(nameof(inputConnectionString));
+
+            if (String.IsNullOrEmpty(outputConnectionString))
+                throw new ArgumentNullException(nameof(outputConnectionString));
+
+            _inputFS.AddStorageAccount("input", inputConnectionString);
+            _outputFS.AddStorageAccount("output", outputConnectionString);
         }
         
-        public Stream OpenReader(string filename) => _blobFS.GetFile(filename).GetStreamReader();
+        public Stream OpenReader(string filename) => _inputFS.GetFile(filename).GetStreamReader();
         
-        public Stream OpenWriter(string filename) => _blobFS.GetFile(filename).GetStreamWriter();
-
-        public IAzureBlobFolder GetFolder(string name)
-        {
-            return _blobFS.GetFolder(name);
-        }
-
-        public IAzureBlobFile GetFile(string name)
-        {
-            return _blobFS.GetFile(name);
-        }
-
-        public IEnumerable<IAzureBlob> EnumItems()
-        {
-            return _blobFS.EnumItems();
-        }        
+        public Stream OpenWriter(string filename) => _outputFS.GetFile(filename).GetStreamWriter();  
     }
 }
