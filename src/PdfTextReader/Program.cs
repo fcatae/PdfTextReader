@@ -1,6 +1,6 @@
-using iText.Kernel.Pdf;
 using System;
 using System.IO;
+using System.Diagnostics;
 
 namespace PdfTextReader
 {
@@ -9,9 +9,9 @@ namespace PdfTextReader
         public static void Main(string[] args)
         {
             Console.WriteLine("PDF Text Reader");
-            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var watch = Stopwatch.StartNew();
 
-            Program3.ProcessStats2(@"DO1_2016_01_18", 2);
+            ExamplesAzure.RunParserPDF("DO1_2010_01_04", "bin", "bin/test");
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

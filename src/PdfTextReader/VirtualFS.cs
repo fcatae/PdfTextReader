@@ -20,6 +20,21 @@ namespace PdfTextReader.Base
         public Stream OpenWriter(string filename)
         {
             System.Diagnostics.Debug.WriteLine($"WRITE: {filename}");
+
+            string folderName = Path.GetDirectoryName(filename);
+            if(!Directory.Exists(folderName))
+            {
+                if(Path.IsPathRooted(folderName))
+                {
+                    throw new NotImplementedException();
+                }
+                else
+                {
+                    DirectoryInfo directory = new DirectoryInfo(".");
+                    directory.CreateSubdirectory(folderName);
+                }
+            }
+
             return new FileStream(filename, FileMode.Create);
         }        
     }

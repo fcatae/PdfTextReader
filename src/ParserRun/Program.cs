@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PdfTextReader;
+using System;
 
 namespace ParserRun
 {
@@ -27,9 +28,12 @@ namespace ParserRun
             TestAzureBlob.Enum(connectionString, storageContainer);
 
             // create the AzureFS
-            //var virtualFileSystem = new AzureFS(connectionString, storageContainer);
+            var virtualFileSystem = new AzureFS(connectionString, storageContainer);
 
-            //PdfTextReader.ExamplesAzure.FollowText(virtualFileSystem, "example");
+            PdfTextReader.ExamplesAzure.FollowText(virtualFileSystem, "example");
+
+
+            ExamplesAzure.RunParserPDF("DO1_2010_01_04", "wasb://input/pdf/2010/2010_01_04", "wasb://output/test");
         }
     }
 }
