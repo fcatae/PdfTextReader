@@ -182,10 +182,10 @@ Classifying the line into Centered, Justified or Floating-Right is quite straigh
 
 However, we noticed several edge cases to be handled. The solution goes through the text to identify paragraph similarities to group them, and specific characteristics to break them apart. 
 
-This process is composed of 7 stages.
+This process is composed of 9 stages.
 
 ```csharp
-var articles = ConvertPdfIntoText(basename)
+var content = ConvertPdfIntoText(basename)
                 .ConvertText<CreateTextLineIndex,TextLine>()        // 1
                 .ConvertText<PreCreateStructures, TextLine2>()      // 2
                 .ConvertText<CreateStructures2, TextStructure>()    // 3
@@ -194,7 +194,13 @@ var articles = ConvertPdfIntoText(basename)
                     .ShowPdf<ShowStructureCentral>($"{basename}-show-central.pdf")
                 .ConvertText<CreateTextSegments, TextSegment>()     // 6
                 .ConvertText<CreateTreeSegments, TextSegment>()     // 7
+                .ConvertText<TransformConteudo, Conteudo>()         // 8
                 .ToList();
+
+// 9
+var createArticle = new TransformArtigo();
+var artigos = createArticle.Create(content);
+createArticle.CreateXML(artigos, basename);                
 ``` 
 
 ## PDF Parser Result ##
