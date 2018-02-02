@@ -30,9 +30,9 @@ namespace ParserRun
             // create the AzureFS
             var azureBlobs = new AzureFS(inputConnectionString, outputConnectionString);
 
-            //PdfTextReader.ExamplesAzure.FollowText(virtualFileSystem, "example");
-            
-            ExamplesAzure.RunParserPDF(azureBlobs, "DO1_2010_01_04", "wasb://input/pdf/2010/2010_01_04", "wasb://output/test");
+            //ExamplesAzure.FollowText(virtualFileSystem, "example");
+            //ExamplesAzure.RunParserPDF(azureBlobs, "DO1_2010_01_04", "wasb://input/pdf/2010/2010_01_04", "wasb://output/test");
+            ExamplesAzure.RunCreateArtigos(azureBlobs, "DO1_2010_01_04", "wasb://input/pdf/2010/2010_01_04", "wasb://output/test/logs", "wasb://output/test/artigos");
         }
     }
 }

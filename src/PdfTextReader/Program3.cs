@@ -29,7 +29,7 @@ namespace PdfTextReader
                 basename = ExtractPage(basename, page);
             }
 
-            var artigos = GetTextLines(basename, out Execution.Pipeline pipeline)
+            var conteudo = GetTextLines(basename, out Execution.Pipeline pipeline)
                                 .Log<AnalyzeLines>($"bin/{basename}-lines.txt")
                             .ConvertText<CreateTextLineIndex,TextLine>()
                             .ConvertText<PreCreateStructures, TextLine2>()
@@ -46,11 +46,16 @@ namespace PdfTextReader
                             .ConvertText<CreateTreeSegments, TextSegment>()
                                 .Log<AnalyzeSegmentTitles>($"bin/{basename}-segment-titles-tree.txt")
                                 .Log<AnalyzeTreeStructure>(Console.Out)
+                            .ConvertText<TransformConteudo, Conteudo>()
                             .ToList();
 
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
-            pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
+            var createArticle = new TransformArtigo();
+            var artigos = createArticle.Create(conteudo);
+            createArticle.CreateXML(artigos, $"bin/{basename}", basename);
+
+            //pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
         }
 
         static PipelineText<TextLine> GetTextLines(string basename, out Execution.Pipeline pipeline)

@@ -15,13 +15,17 @@ namespace PdfTextReader.Parser
         public void XMLWriter(IEnumerable<Artigo> artigos, string doc)
         {
 
-            string finalURL = ProcessName(artigos.FirstOrDefault(), doc);
+            // TODO: fix it
+            // Rollback to previous name
+            //string finalURL = ProcessName(artigos.FirstOrDefault(), doc);
+            string finalURL = doc;
 
             var settings = new XmlWriterSettings()
             {
                 Indent = true                
             };
-            using (XmlWriter writer = VirtualFS.OpenXmlWriter($"{finalURL}.xml", settings))
+            using (Stream virtualStream = VirtualFS.OpenWrite($"{finalURL}.xml"))
+            using (XmlWriter writer = XmlWriter.Create(virtualStream, settings))
             {
                 writer.WriteStartDocument();
                 writer.WriteStartElement("Artigo");
@@ -81,7 +85,7 @@ namespace PdfTextReader.Parser
                             {
                                 writer.WriteString(ConvertBreakline2Space(autor.Assinatura));
                             }
-                                
+
                             writer.WriteEndElement();
 
                             //if (autor.Assinatura != null && autor.Assinatura.Length > 3)

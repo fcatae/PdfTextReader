@@ -11,8 +11,12 @@ namespace PdfTextReader
             Console.WriteLine("PDF Text Reader");
             var watch = Stopwatch.StartNew();
 
-            IVirtualFS localFiles = new Base.VirtualFS();
-            ExamplesAzure.RunParserPDF(localFiles, "DO1_2010_01_04", "bin", "bin/test");
+            Program3.ProcessStats2("DO1_2010_01_05");
+
+            //ExamplesPipeline.ProcessPipeline("bin/DO1_2017_11_14");
+
+//            IVirtualFS localFiles = new Base.VirtualFS();
+//ExamplesAzure.RunParserPDF(localFiles, "DO1_2010_01_04", "bin", "bin/test");
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;

@@ -59,11 +59,37 @@ namespace PdfTextReader
             pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
         }
 
-        static PipelineText<TextLine> GetTextLines(Pipeline pipeline, string basename, string inputfolder, string outputfolder)
+        public static void RunCreateArtigos(IVirtualFS virtualFS, string basename, string inputfolder, string tmpfolder, string outputfolder)
+        {
+            VirtualFS.ConfigureFileSystem(virtualFS);
+
+            PdfReaderException.ContinueOnException();
+
+            Pipeline pipeline = new Pipeline();
+
+            var conteudo = GetTextLines(pipeline, basename, inputfolder, tmpfolder) // use temp folder
+                            .ConvertText<CreateTextLineIndex, TextLine>()
+                            .ConvertText<PreCreateStructures, TextLine2>()
+                            .ConvertText<CreateStructures2, TextStructure>()
+                            .ConvertText<PreCreateTextSegments, TextStructureAgg>()
+                            .ConvertText<AggregateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                            .ConvertText<CreateTreeSegments, TextSegment>()
+                                .Log<AnalyzeSegmentTitles>($"{tmpfolder}/{basename}/segment-titles-tree.txt")
+                            .ConvertText<TransformConteudo, Conteudo>()
+                            .ToList();
+            
+            var createArticle = new TransformArtigo();
+            var artigos = createArticle.Create(conteudo);
+            createArticle.CreateXML(artigos, $"{outputfolder}/{basename}", basename);
+        }
+
+
+        static PipelineText<TextLine> GetTextLines(Pipeline pipeline, string basename, string inputfolder, string tmpfolder)
         {
             var result =
             pipeline.Input($"{inputfolder}/{basename}.pdf")
-                    .Output($"{outputfolder}/{basename}/parser-output.pdf")
+                    .Output($"{tmpfolder}/{basename}/parser-output.pdf")
                     .AllPages<CreateTextLines>(page =>
                               page.ParsePdf<PreProcessTables>()
                                   .ParseBlock<IdentifyTables>()             // 1

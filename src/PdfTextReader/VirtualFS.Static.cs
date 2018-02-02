@@ -48,14 +48,7 @@ namespace PdfTextReader.Base
         {
             return new StreamWriter(OpenWrite(filename));
         }
-
-        // XML
-        public static System.Xml.XmlWriter OpenXmlWriter(string filename, System.Xml.XmlWriterSettings settings)
-        {
-            return System.Xml.XmlWriter.Create(OpenWrite(filename), settings);
-        }
-
-
+        
         // Internal validators
 
         // System.IO: Directory, DirectoryInfo
