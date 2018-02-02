@@ -73,3 +73,127 @@ Once we understand what are text, image and tables, we can lay the blocks in the
 ![order](docs/images/06ordering.png)
 
 The problem is complex because a single page can have 1, 2 or 3 columns. Sometimes the columns can be merged, so it is not unusual to see a column fitting into a 2/3 of the page.
+
+
+## Pipeline: PDF Parser ##
+
+This initial process consists of a pipeline with ~30 stages. 
+
+```csharp
+pipeline.Input($"{inputfolder}/{basename}.pdf")
+    .Output($"{outputfolder}/{basename}/parser-output.pdf")
+    .AllPages<CreateTextLines>(page =>
+                page.ParsePdf<PreProcessTables>()
+                    .ParseBlock<IdentifyTables>()             // 1
+                .ParsePdf<PreProcessImages>()
+                    .ParseBlock<BasicFirstPageStats>()        // 2
+                    .ParseBlock<RemoveOverlapedImages>()      // 3
+                .ParsePdf<ProcessPdfText>()                   // 4
+                    .ParseBlock<RemoveSmallFonts>()           // 5
+                    .ParseBlock<MergeTableText>()             // 6
+                    .ParseBlock<HighlightTextTable>()         // 7
+                    .ParseBlock<RemoveTableText>()            // 8
+                    .ParseBlock<ReplaceCharacters>()          // 9
+                    .ParseBlock<GroupLines>()                 // 10
+                    .ParseBlock<RemoveTableDotChar>()         // 11
+                        .Show(Color.Yellow)
+                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveHeaderImage>()          // 12
+                    .ParseBlock<FindInitialBlocksetWithRewind>()  // 13
+                        .Show(Color.Gray)
+                    .ParseBlock<BreakColumnsLight>()          // 14
+                    .ParseBlock<AddTableSpace>()              // 15
+                    .ParseBlock<RemoveTableOverImage>()       // 16
+                    .ParseBlock<RemoveImageTexts>()           // 17
+                    .ParseBlock<AddImageSpace>()              // 18
+                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                    .ParseBlock<RemoveFooter>()               // 19
+                    .ParseBlock<AddTableHorizontalLines>()    // 20
+                    .ParseBlock<RemoveBackgroundNonText>()    // 21
+                        .ParseBlock<BreakColumnsRewrite>()    // 22
+
+                    .ParseBlock<BreakInlineElements>()        // 23
+                    .ParseBlock<ResizeBlocksets>()            // 24
+                    .ParseBlock<ResizeBlocksetMagins>()       // 25
+                    .ParseBlock<OrderBlocksets>()           // 26
+
+                    .ParseBlock<OrganizePageLayout>()         // 27
+                    .ParseBlock<MergeSequentialLayout>()      // 28
+                    .ParseBlock<ResizeSequentialLayout>()     // 29
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Black)
+
+                    .ParseBlock<CheckOverlap>()               // 30
+
+                        .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
+                        .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
+                    .PrintWarnings()
+```
+
+The current process is quite accurate (error: 1-2%). Most of the errors are caused by inline table. In order to improve this, we have to review our current process: 
+
+1) Extract text
+2) Identify the columns.
+
+Thus, we have to first identify the blocksets and fit into columns. Then we extract the text and parse the tables.
+
+1) Identify the columns.
+2) Extract text
+
+It looks similar - but it requires us to scan the PDF files twice.
+
+
+## Defining the Text Alignment ##
+
+The goal of the PDF Parser Pipeline is to generate a list of ordered blocksets that we can use to extract the text. The text itself has margins relative to the column (not to the page), which allow us to define the text alignment property.
+
+In our case, we highlight the `centered text in red`, and `right-aligned or floating text in blue`.
+
+![text-align](docs/images/10align.png)
+
+
+## Edge Cases are Hard ##
+
+This process has also flaws:
+
+1. Large vertical distance between the lines cause us to consider multiple paragraphs rather than a single one.
+
+    ![large vertical distance](docs/images/11linedist.png)
+
+
+2. Titles and body text with similar vertical distance
+
+    ![vertical distance](docs/images/12paragraph.png)
+
+
+3. Justified text that are visually centered in the column
+
+    ![justified and centered](docs/images/13centered.png)
+
+
+4. Centered text that are slightly off to the right, and could be considered as floating to the right
+
+    ![centered off right](docs/images/14notcentered.png)
+
+
+## Pipeline for Text Processing ##
+
+Classifying the line into Centered, Justified or Floating-Right is quite straightforward. If the margins are equal, then the text is centered. If the margin right is smaller than the left, then it is floating left. Otherwise, it is justified.
+
+However, we noticed several edge cases to be handled. The solution goes through the text to identify paragraph similarities to group them, and specific characteristics to break them apart. 
+
+This process is composed of 7 stages.
+
+```csharp
+var articles = ConvertPdfIntoText(basename)
+                .ConvertText<CreateTextLineIndex,TextLine>()        // 1
+                .ConvertText<PreCreateStructures, TextLine2>()      // 2
+                .ConvertText<CreateStructures2, TextStructure>()    // 3
+                .ConvertText<PreCreateTextSegments, TextStructureAgg>() // 4
+                .ConvertText<AggregateStructures, TextStructure>() // 5
+                    .ShowPdf<ShowStructureCentral>($"{basename}-show-central.pdf")
+                .ConvertText<CreateTextSegments, TextSegment>()     // 6
+                .ConvertText<CreateTreeSegments, TextSegment>()     // 7
+                .ToList();
+``` 
+
