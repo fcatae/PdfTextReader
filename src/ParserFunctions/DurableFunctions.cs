@@ -74,11 +74,14 @@ namespace ParserFunctions
         }
 
         [FunctionName("DurableFunctions_ProcessPdf")]
-        public static Model.PdfStats.File ProcessPdf([ActivityTrigger]Model.PdfStats.File pdf, TraceWriter log)
+        public static Model.PdfStats.File ProcessPdf([ActivityTrigger]Model.PdfStats.File pdf, 
+            [Queue("done")] out string result,
+            TraceWriter log)
         {
             string document = pdf.Name;
             string inputfolder = $"{INPUT_PATH}{pdf.Path}";
             string outputfolder = $"{OUTPUT_PATH}artigos/{pdf.Path}";
+            string error = null;
 
             try
             {
@@ -91,10 +94,12 @@ namespace ParserFunctions
             }
             catch(Exception ex)
             {
-                pdf.Done(ex.ToString());
+                error = ex.ToString();
             }
 
-            pdf.Done();
+            pdf.Done(error);
+
+            result = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}, time={pdf.ElapsedTime}, hostname={pdf.Hostname}";
 
             return pdf;
         }
