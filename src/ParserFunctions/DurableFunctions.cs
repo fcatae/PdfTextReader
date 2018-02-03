@@ -26,15 +26,29 @@ namespace ParserFunctions
         }
 
         [FunctionName("DurableFunctions")]
-        public static async Task<List<string>> RunOrchestrator(
+        public static async Task<Model.PdfStats> RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
-            var outputs = new List<string>();
+            string year = "test";
 
-            var files = await context.CallActivityAsync<Model.Pdf[]>("DurableFunctions_ListFiles", "test");
+            var files = await context.CallActivityAsync<Model.Pdf[]>("DurableFunctions_ListFiles", year);
 
-            // returns ["Hello Tokyo!", "Hello Seattle!", "Hello London!"]
-            return outputs;
+            var stats = await context.CallActivityAsync<Model.PdfStats>("DurableFunctions_CreateStats", year);
+
+            var tasks = files.Select(async pdf =>
+            {
+                var file = stats.Create(pdf);
+
+                file = await context.CallActivityAsync<Model.PdfStats.File>("DurableFunctions_ProcessPdf", file);
+
+                return file;
+            }).ToArray();
+
+            var results = await Task.WhenAll(tasks);
+
+            stats.Done(results);
+
+            return stats;
         }
 
         [FunctionName("DurableFunctions_ListFiles")]
@@ -48,6 +62,40 @@ namespace ParserFunctions
             var files = EnumerateFiles(folderName).ToArray();
 
             return files;
+        }
+
+        [FunctionName("DurableFunctions_CreateStats")]
+        public static Model.PdfStats CreateStats([ActivityTrigger]string year)
+        {
+            // PdfStats constructor is NOT deterministic
+            // Thus, it needs to be called from a function
+            return new Model.PdfStats(year);
+        }
+
+        [FunctionName("DurableFunctions_ProcessPdf")]
+        public static Model.PdfStats.File ProcessPdf([ActivityTrigger]Model.PdfStats.File pdf, TraceWriter log)
+        {
+            string document = pdf.Name;
+            string inputfolder = $"{INPUT_PATH}{pdf.Path}";
+            string outputfolder = $"{OUTPUT_PATH}artigos/{pdf.Path}";
+
+            try
+            {
+                pdf.Start();
+
+                log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}, inputfolder={inputfolder}, outputfolder={outputfolder}");
+
+                //PdfTextReader.ExamplesAzure.RunParserPDF(g_fileSystem, document, inputfolder, outputfolder);
+                PdfTextReader.ExamplesAzure.RunCreateArtigos(g_fileSystem, document, inputfolder, "nul://", outputfolder);
+            }
+            catch(Exception ex)
+            {
+                pdf.Done(ex.ToString());
+            }
+
+            pdf.Done();
+
+            return pdf;
         }
 
         [FunctionName("DurableFunctions_HttpStart")]
