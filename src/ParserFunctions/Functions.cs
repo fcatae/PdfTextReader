@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace ParserFunctions
 {
-    static class Functions
+    public static class Functions
     {
         const string INPUT_PATH = "wasb://input/pdf/";
         const string OUTPUT_PATH = "wasb://output/output/";
