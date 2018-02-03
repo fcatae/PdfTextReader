@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Azure.WebJobs;
@@ -29,7 +30,7 @@ namespace ParserFunctions
         public static async Task<Model.PdfStats> RunOrchestrator(
             [OrchestrationTrigger] DurableOrchestrationContext context)
         {
-            string year = "test";
+            string year = context.GetInput<string>();
 
             var files = await context.CallActivityAsync<Model.Pdf[]>("DurableFunctions_ListFiles", year);
 
@@ -110,6 +111,33 @@ namespace ParserFunctions
             log.Info($"Started orchestration with ID = '{instanceId}'.");
 
             return starter.CreateCheckStatusResponse(req, instanceId);
+        }
+
+        [FunctionName("HttpStartProcess")]
+        public static async Task<HttpResponseMessage> HttpStartProcess(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post")]HttpRequestMessage req,
+            [OrchestrationClient]DurableOrchestrationClient starter,
+            TraceWriter log)
+        {
+            string qs = req.RequestUri.Query;
+
+            if (qs == null )
+                throw new ArgumentNullException("Null query string");
+
+            string year = qs.TrimStart('?');
+
+            if (year == "" )
+                throw new ArgumentNullException("Empty query string");
+            
+            string instanceId = await starter.StartNewAsync("DurableFunctions", year);
+
+            log.Info($"Started orchestration with ID = '{instanceId}'.");
+            
+            var response = starter.CreateCheckStatusResponse(req, instanceId);
+
+            var content = await response.Content.ReadAsStringAsync();
+
+            return response;
         }
 
         static IEnumerable<Model.Pdf> EnumerateFiles(string folderName)
