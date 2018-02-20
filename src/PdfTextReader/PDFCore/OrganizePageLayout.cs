@@ -9,6 +9,7 @@ namespace PdfTextReader.PDFCore
     class OrganizePageLayout : IProcessBlock, IRetrieveStatistics
     {
         const float MAX_PAGE_WIDTH_DIFFERENCE = 8f;
+        const float HORIZONTAL_LINE_HEIGHT = 5f;
 
         float _minX = float.NaN;
         float _maxX = float.NaN;
@@ -83,6 +84,10 @@ namespace PdfTextReader.PDFCore
 
                 if(last_columnX != position || last_columnSize != columnSize)
                 {
+                    bool isHorizontalLine = (block is TableSet) && (block.GetHeight() < HORIZONTAL_LINE_HEIGHT);
+                    if (isHorizontalLine)
+                        continue;
+
                     //Console.WriteLine($"NEW COLUMN");
                     column = new BlockColumn(newpage, columnType, position, columnSize);
                     segment.AddColumn(column);
