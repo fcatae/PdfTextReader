@@ -45,6 +45,21 @@ namespace PdfTextReader.Execution
         public object Summary(Func<PipelineStats, object> func)
         {
             return func(this);
-        }        
+        }
+
+        public void SaveStats<T>(string filename)
+            where T: class
+        {
+            using (var file = VirtualFS.OpenStreamWriter(filename))
+            {
+                var stats = RetrieveStatistics<T>();
+
+                int page = 1;
+                foreach(var s in stats)
+                {
+                    file.WriteLine($"{page++}:{s.ToString()}");
+                }
+            }
+        }
     }
 }

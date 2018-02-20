@@ -95,7 +95,7 @@ namespace PdfTextReader.Execution
                 _activeContext.ExtractOutputPages(filename, pages);
             }
         }
-
+        
         public void Done()
         {
             Dispose();

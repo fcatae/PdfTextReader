@@ -14,7 +14,30 @@ using System.Linq;
 namespace PdfTextReader
 {
     class Program3
-    {        
+    {
+        public static void CreateLayout(string basename)
+        {
+            //PipelineInputPdf.StopOnException();
+            //PdfReaderException.ContinueOnException();
+
+            Console.WriteLine();
+            Console.WriteLine("Program3 - CreateLayout");
+            Console.WriteLine();
+
+            var textLines = GetTextLines(basename, out Execution.Pipeline pipeline)
+                            .ConvertText<CreateStructures, TextStructure>()
+                            .ConvertText<CreateTextSegments, TextSegment>()
+                            .ToList();
+
+            Console.WriteLine($"FILENAME: {pipeline.Filename}");
+
+            var statistics = pipeline.Statistics;
+            //var layout = (ValidateLayout)statistics.Calculate<ValidateLayout, StatsPageLayout>();
+            var layout = statistics.RetrieveStatistics<StatsPageLayout>();
+
+            pipeline.Statistics.SaveStats<StatsPageLayout>($"bin/{basename}-pagelayout.txt");
+        }
+
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
         {
             //PipelineInputPdf.StopOnException();
@@ -50,12 +73,12 @@ namespace PdfTextReader
                             .ToList();
 
             Console.WriteLine($"FILENAME: {pipeline.Filename}");
-
+            
             var createArticle = new TransformArtigo();
             var artigos = createArticle.Create(conteudo);
             createArticle.CreateXML(artigos, $"bin/{basename}", basename);
 
-            //pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
+            pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
         }
 
         static PipelineText<TextLine> GetTextLines(string basename, out Execution.Pipeline pipeline)
