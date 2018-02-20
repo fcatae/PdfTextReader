@@ -13,6 +13,9 @@ namespace PdfTextReader.ExecutionStats
         {
             for (int i = 0; i < Results.Count; i++)
             {
+                if (Results[i] == null)
+                    continue;
+
                 yield return Results[i].PageNumber;
             }
         }

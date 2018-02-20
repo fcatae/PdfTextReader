@@ -27,6 +27,9 @@ namespace PdfTextReader.ExecutionStats
 
             foreach(var s in stats)
             {
+                if (s == null)
+                    continue;
+
                 bool error = false;
 
                 if (s.Layout.Contains("()"))

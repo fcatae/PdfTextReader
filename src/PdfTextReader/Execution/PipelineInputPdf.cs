@@ -23,6 +23,7 @@ namespace PdfTextReader.Execution
         private string _output;
         private PdfDocument _pdfOutput;
         private List<object> _statsCollection = new List<object>();
+        private List<List<object>> _statsCollectionPerPage = new List<List<object>>();
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
 
@@ -288,6 +289,7 @@ namespace PdfTextReader.Execution
                 PipelineDebug.ShowException(this, ex);
 
                 StoreStatistics(new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
+                StoreStatistics(pdfPage.GetPageNumber(), new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
             }
 
             return false;
@@ -296,6 +298,20 @@ namespace PdfTextReader.Execution
         public void StoreStatistics(object stats)
         {
             _statsCollection.Add(stats);
+        }
+
+        public void StoreStatistics(int page, object stats)
+        {
+            int index = page - 1;
+
+            if( index >= _statsCollectionPerPage.Count )
+            {
+                _statsCollectionPerPage.Add(new List<object>());
+            }
+
+            var stat = _statsCollectionPerPage[index];
+
+            stat.Add(stats);
         }
 
         public IEnumerable<T> RetrieveStatistics<T>()
@@ -308,7 +324,7 @@ namespace PdfTextReader.Execution
             return availableStats;
         }
 
-        public PipelineStats Statistics => new PipelineStats(_statsCollection);
+        public PipelineStats Statistics => new PipelineStats(_statsCollection, _statsCollectionPerPage);
 
         public class PipelineInputPdfPage : IDisposable
         {

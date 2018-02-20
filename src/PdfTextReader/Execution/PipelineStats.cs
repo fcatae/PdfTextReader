@@ -9,25 +9,32 @@ namespace PdfTextReader.Execution
     class PipelineStats
     {
         private List<object> _statsCollection;
+        private List<List<object>> _statsCollectionPerPage;
 
-        public PipelineStats(List<object> statsCollection)
+        public PipelineStats(List<object> statsCollection, List<List<object>> statsCollectionPerPage)
         {
             _statsCollection = statsCollection;
+            _statsCollectionPerPage = statsCollectionPerPage;
         }
 
-        public void StoreStatistics(object stats)
-        {
-            _statsCollection.Add(stats);
-        }
+        //public void StoreStatistics(object stats)
+        //{
+        //    _statsCollection.Add(stats);
+        //}
 
         public IEnumerable<S> RetrieveStatistics<S>()
             where S : class
         {
-            var availableStats = _statsCollection
-                                    .Select(s => s as S)
-                                    .Where(s => s != null);
+            var availableStats = _statsCollectionPerPage
+                                 .Select(col => col.Select(s => s as S).Where(s => s != null).FirstOrDefault());
 
             return availableStats;
+
+            //var availableStats = _statsCollection
+            //                        .Select(s => s as S)
+            //                        .Where(s => s != null);
+
+            //return availableStats;
         }
 
         public object Calculate<T, S>()
@@ -57,7 +64,8 @@ namespace PdfTextReader.Execution
                 int page = 1;
                 foreach(var s in stats)
                 {
-                    file.WriteLine($"{page++}:{s.ToString()}");
+                    string layout = (s != null) ? s.ToString() : "";
+                    file.WriteLine($"{page++}:{layout}");
                 }
             }
         }

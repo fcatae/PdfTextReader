@@ -154,6 +154,7 @@ namespace PdfTextReader.Execution
             var stats = process.RetrieveStatistics();
 
             this.ParentContext.StoreStatistics(stats);
+            this.ParentContext.StoreStatistics(PageNumber, stats);
         }
 
         public PipelinePage ShowErrors(Action<PipelinePage> callback)

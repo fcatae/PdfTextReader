@@ -36,6 +36,8 @@ namespace PdfTextReader
             var layout = statistics.RetrieveStatistics<StatsPageLayout>();
 
             pipeline.Statistics.SaveStats<StatsPageLayout>($"bin/{basename}-pagelayout.txt");
+
+            pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
         }
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
