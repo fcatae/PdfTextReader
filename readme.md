@@ -9,7 +9,7 @@ The project has a pipeline for processing the incoming PDF file.
 
 ## Problem: PDF has no concept of column, paragraph or line ##
 
-PDF is just a collection of characters spread out in a document page. Sometimes we can tell that characters form a word due to its spacing characteristics. However, this spacing can be variable and breaks the word
+PDF is just a collection of characters spread out in a document page. Sometimes we can tell that characters form a word due to its spacing characteristics. However, this spacing can be variable and breaks the word.
 
 ![blocks](docs/images/01blocks.png)
 
