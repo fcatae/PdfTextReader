@@ -105,7 +105,7 @@ namespace PdfTextReader
 
             var createArticle = new TransformArtigo();
             var artigos = createArticle.Create(conteudo);
-            createArticle.CreateXML(artigos, $"{outputfolder}/{basename}", basename);
+            createArticle.CreateJson(artigos, $"{outputfolder}/{basename}", basename);
         }
 
         static PipelineText<TextLine> GetTextLines(Pipeline pipeline, string basename, string inputfolder, string tmpfolder)
