@@ -36,6 +36,19 @@ namespace ParserFunctions
             PdfTextReader.ExamplesAzure.RunCreateArtigos(g_fileSystem, document, inputfolder, "nul://", outputfolder);
         }
 
+        [FunctionName("ProcessPdfJson")]
+        public static void ProcessPdfJson([QueueTrigger("tasks")]Model.Pdf pdf, TraceWriter log)
+        {
+            string document = pdf.Name;
+            string inputfolder = $"{INPUT_PATH}{pdf.Path}";
+            string outputfolder = $"{OUTPUT_PATH}artigos/{pdf.Path}";
+
+            log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}, inputfolder={inputfolder}, outputfolder={outputfolder}");
+
+            //PdfTextReader.ExamplesAzure.RunParserPDF(g_fileSystem, document, inputfolder, outputfolder);
+            PdfTextReader.ExamplesAzure.RunCreateArtigos(g_fileSystem, document, inputfolder, "nul://", outputfolder);
+        }
+
         [FunctionName("ProcessFolder")]
         public static string ProcessFolder([HttpTrigger]HttpRequest request,
             [Queue("tasks")] ICollector<Model.Pdf> testQueue)

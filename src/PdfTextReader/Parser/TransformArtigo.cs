@@ -156,5 +156,11 @@ namespace PdfTextReader.Parser
             var procParser = new ProcessParser();
             procParser.XMLWriterMultiple(artigos, $"{outputfolder}/{basename}-artigo");
         }
+
+        public void CreateJson(IEnumerable<Artigo> artigos, string outputfolder, string basename)
+        {
+            var procParser = new ProcessParserJson();
+            procParser.WriteJson(artigos, $"{outputfolder}/{basename}-artigo");
+        }
     }
 }
