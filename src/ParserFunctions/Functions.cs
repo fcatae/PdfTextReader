@@ -29,11 +29,13 @@ namespace ParserFunctions
             string document = pdf.Name;
             string inputfolder = $"{INPUT_PATH}{pdf.Path}";
             string outputfolder = $"{OUTPUT_PATH}artigos/{pdf.Path}";
+            string outputfolderJson = $"{OUTPUT_PATH}artigosJson/{pdf.Path}";
 
             log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}, inputfolder={inputfolder}, outputfolder={outputfolder}");
 
             //PdfTextReader.ExamplesAzure.RunParserPDF(g_fileSystem, document, inputfolder, outputfolder);
-            PdfTextReader.ExamplesAzure.RunCreateArtigos(g_fileSystem, document, inputfolder, "nul://", outputfolder);
+            //PdfTextReader.ExamplesAzure.RunCreateArtigos(g_fileSystem, document, inputfolder, "nul://", outputfolder);
+            PdfTextReader.ExamplesAzure.RunCreateArtigosJson(g_fileSystem, document, inputfolder, "nul://", outputfolderJson);
         }
 
         [FunctionName("ProcessPdfJson")]
@@ -42,11 +44,12 @@ namespace ParserFunctions
             string document = pdf.Name;
             string inputfolder = $"{INPUT_PATH}{pdf.Path}";
             string outputfolder = $"{OUTPUT_PATH}artigos/{pdf.Path}";
+            string outputfolderJson = $"{OUTPUT_PATH}artigosJson/{pdf.Path}";
 
             log.Info($"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}: Processing file: {document}, inputfolder={inputfolder}, outputfolder={outputfolder}");
 
             //PdfTextReader.ExamplesAzure.RunParserPDF(g_fileSystem, document, inputfolder, outputfolder);
-            PdfTextReader.ExamplesAzure.RunCreateArtigos(g_fileSystem, document, inputfolder, "nul://", outputfolder);
+            PdfTextReader.ExamplesAzure.RunCreateArtigosJson(g_fileSystem, document, inputfolder, "nul://", outputfolderJson);
         }
 
         [FunctionName("ProcessFolder")]
