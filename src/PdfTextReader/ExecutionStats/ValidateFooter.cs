@@ -18,6 +18,9 @@ namespace PdfTextReader.ExecutionStats
 
             foreach(var stat in stats)
             {
+                if (stat == null)
+                    continue;
+
                 if( stat.HasFooter )
                 {
                     float height = (float)stat.FooterHeight;
