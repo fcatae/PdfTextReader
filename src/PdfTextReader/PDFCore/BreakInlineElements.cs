@@ -77,11 +77,14 @@ namespace PdfTextReader.PDFCore
                             PdfReaderException.Throw("BreakinlineElements: try to break image/table");
                             continue;
                         }
-
+                                                
                         var elems = BreakElements(blocks[i], blocks[j]);
 
                         if (elems == null)
-                            PdfReaderException.AlwaysThrow("(elems == null)");
+                        {
+                            PdfReaderException.Warning("(elems == null)");
+                            continue;
+                        }                        
 
                         // has to do replacement in place
                         blocks[i] = null;
@@ -104,8 +107,11 @@ namespace PdfTextReader.PDFCore
 
             int size = SelectSize((BlockSet<IBlock>)a, middle);
 
-            if (size == -1)
-                PdfReaderException.AlwaysThrow("size == -1");
+            if (size <= 0)
+            {
+                PdfReaderException.Warning("size == 0 | size == -1 (block is indivisible?)");
+                return null;
+            }
 
             var blocks = CreateNewBlocks((BlockSet<IBlock>)a, size);
 
