@@ -8,25 +8,27 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Parser
 {
-    class ProcessParser
+    class ProcessParserOriginal
     {
         int countPerPage = 1;
         string initialPage = "0001";
         public void XMLWriter(IEnumerable<Artigo> artigos, string doc)
         {
+
+            // TODO: fix it
+            // Rollback to previous name
+            //string finalURL = ProcessName(artigos.FirstOrDefault(), doc);
             string finalURL = doc;
 
             var settings = new XmlWriterSettings()
             {
-                OmitXmlDeclaration = true, // omit XML declaration
                 Indent = true                
             };
-
             using (Stream virtualStream = VirtualFS.OpenWrite($"{finalURL}.xml"))
             using (XmlWriter writer = XmlWriter.Create(virtualStream, settings))
             {
                 writer.WriteStartDocument();
-                writer.WriteStartElement("article");
+                writer.WriteStartElement("Artigo");
 
                 foreach (Artigo artigo in artigos)
                 {
@@ -34,35 +36,65 @@ namespace PdfTextReader.Parser
                     Metadados metadados = artigo.Metadados;
                     List<Anexo> anexos = artigo.Anexos;
 
+
+                    //Writing Metadata
+                    writer.WriteStartElement("Metadados");
+
+                    writer.WriteAttributeString("ID", conteudo.IntenalId.ToString());
+                    if (metadados.Nome != null)
+                        writer.WriteAttributeString("Nome", ConvertBreakline2Space(metadados.Nome));
+                    if (metadados.TipoDoArtigo != null)
+                        writer.WriteAttributeString("TipoDoArtigo", ConvertBreakline2Space(metadados.TipoDoArtigo));
                     if (conteudo.Hierarquia != null)
-                        writer.WriteAttributeString("hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
-                    
-                    writer.WriteAttributeString("artSection", ConvertBreakline2Space(metadados.Grade));                    
-                    writer.WriteAttributeString("numberPage", metadados.NumeroDaPagina.ToString());
+                        writer.WriteAttributeString("Hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
+                    if (metadados.Grade != null)
+                        writer.WriteAttributeString("Grade", ConvertBreakline2Space(metadados.Grade));
+                    if (metadados.NumeroDaPagina >= 0)
+                        writer.WriteAttributeString("NumPagina", metadados.NumeroDaPagina.ToString());
+
+                    writer.WriteEndElement();
 
                     //Writing Body
-                    writer.WriteStartElement("body");
+                    writer.WriteStartElement("Conteudo");
 
-                    writer.WriteElementString("Identifica", ConvertBreakline2Space(conteudo.Titulo));
-                    writer.WriteElementString("Ementa", conteudo.Caput);
-                    writer.WriteElementString("Texto", conteudo.Corpo);
-
+                    if (conteudo.Titulo != null)
+                        writer.WriteElementString("Titulo", ConvertBreakline2Space(conteudo.Titulo));
+                    if (conteudo.Caput != null)
+                        writer.WriteElementString("Caput", conteudo.Caput);
+                    if (conteudo.Corpo != null)
+                        writer.WriteElementString("Corpo", conteudo.Corpo);
                     if (conteudo.Autor.Count > 0)
                     {
                         writer.WriteStartElement("Autores");
-
                         foreach (Autor autor in conteudo.Autor)
                         {
-                            writer.WriteElementString("assina", ConvertBreakline2Space(autor.Assinatura));
+                            writer.WriteStartElement("Autor");
                             if (autor.Cargo != null)
                             {
-                                writer.WriteElementString("cargo", ConvertBreakline2Space(autor.Cargo));
+                                if (autor.Assinatura == null)
+                                {
+                                    writer.WriteString(ConvertBreakline2Space(autor.Cargo));
+                                }
+                                else
+                                {
+                                    writer.WriteAttributeString("Cargo", ConvertBreakline2Space(autor.Cargo));
+                                    writer.WriteString(ConvertBreakline2Space(autor.Assinatura));
+                                }
                             }
-                        }
+                            else
+                            {
+                                writer.WriteString(ConvertBreakline2Space(autor.Assinatura));
+                            }
 
+                            writer.WriteEndElement();
+
+                            //if (autor.Assinatura != null && autor.Assinatura.Length > 3)
+                            //    writer.WriteElementString("Assinatura", autor.Assinatura);
+                            //if (autor.Cargo != null)
+                            //    writer.WriteElementString("Cargo", ConvertBreakline2Space(autor.Cargo));
+                        }
                         writer.WriteEndElement();
                     }
-
                     if (conteudo.Data != null)
                         writer.WriteElementString("Data", conteudo.Data);
 
@@ -119,9 +151,6 @@ namespace PdfTextReader.Parser
 
         string ConvertBreakline2Space(string input)
         {
-            if (input == null)
-                return null;
-
             string output = input;
             if (input != null && input.Length > 1)
             {

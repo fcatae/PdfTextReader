@@ -144,13 +144,7 @@ namespace PdfTextReader.Parser
 
             return output;
         }
-
-        public void CreateXML(IEnumerable<Artigo> artigos, string basename)
-        {
-            var procParser = new ProcessParser();
-            procParser.XMLWriterMultiple(artigos, $"bin/{basename}-artigo");
-        }
-
+        
         public void CreateXML(IEnumerable<Artigo> artigos, string outputfolder, string basename)
         {
             var procParser = new ProcessParser();
