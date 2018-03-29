@@ -20,9 +20,9 @@ namespace PdfTextReader
         static ProgramValidatorXMLStats GlobalStats = new ProgramValidatorXMLStats();
         bool bodyConditions = false;
         bool titleConditions = false;
-        bool hierarchyConditions = false;
+        //bool hierarchyConditions = false;
         bool numeroDaPaginaConditions = false;
-        bool anexoConditions = true;
+        //bool anexoConditions = true;
         bool roleConditions = true;
         bool signConditions = true;
         bool tipoArtigoConditions = true;
@@ -176,15 +176,15 @@ namespace PdfTextReader
             if (text != "-1")
                 numeroDaPaginaConditions = true;
         }
-
-        void CheckHierarchy(string text)
-        {
-            if (!String.IsNullOrWhiteSpace(text))
-            {
-                if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
-                    hierarchyConditions = true;
-            }
-        }
+        
+        //void CheckHierarchy(string text)
+        //{
+        //    if (!String.IsNullOrWhiteSpace(text))
+        //    {
+        //        if (text.Replace("o", "O").ToUpper() == text.Replace("o", "O"))
+        //            hierarchyConditions = true;
+        //    }
+        //}
 
         void CheckTitle(string text)
         {
@@ -226,11 +226,11 @@ namespace PdfTextReader
 
         }
 
-        void CheckAnexo(string text)
-        {
-            if (String.IsNullOrWhiteSpace(text))
-                anexoConditions = false;
-        }
+        //void CheckAnexo(string text)
+        //{
+        //    if (String.IsNullOrWhiteSpace(text))
+        //        anexoConditions = false;
+        //}
 
         void CheckSigns(string text)
         {
