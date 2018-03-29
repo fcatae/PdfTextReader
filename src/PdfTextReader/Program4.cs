@@ -48,7 +48,9 @@ namespace PdfTextReader
             //Create XML
             var createArticle = new TransformArtigo();
             var artigos = createArticle.Create(conteudos);
+
             createArticle.CreateXML(artigos, $"bin/{basename}", basename);
+
 
             var validator = new ProgramValidatorXML();
             validator.ValidateArticle("bin");
