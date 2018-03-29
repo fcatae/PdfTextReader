@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2026
+VisualStudioVersion = 15.0.26730.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader", "PdfTextReader\PdfTextReader.csproj", "{80A50EFE-A30C-4572-823A-B60663AFA6B5}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserFunctions", "ParserFunctions\ParserFunctions.csproj", "{99E8274A-E914-482C-87B7-9374F25A2B1F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Azure", "PdfTextReader.Azure\PdfTextReader.Azure.csproj", "{AB782AB1-C794-4789-9E96-BEB00E8E0154}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserFrontend", "ParserFrontend\ParserFrontend.csproj", "{E832F543-3BB9-47B0-8D8C-049A5B345671}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{AB782AB1-C794-4789-9E96-BEB00E8E0154}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB782AB1-C794-4789-9E96-BEB00E8E0154}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB782AB1-C794-4789-9E96-BEB00E8E0154}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E832F543-3BB9-47B0-8D8C-049A5B345671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E832F543-3BB9-47B0-8D8C-049A5B345671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E832F543-3BB9-47B0-8D8C-049A5B345671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E832F543-3BB9-47B0-8D8C-049A5B345671}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
