@@ -19,10 +19,12 @@ namespace ParserFrontend.Pages
         }
 
         public string Message { get; set; }
+        public string ResultLink { get; set; }
 
         public void OnGet()
         {
-            Message = "Upload page.";
+            Message = "";
+            ResultLink = "#";
         }
 
         public void OnPost()
@@ -36,12 +38,12 @@ namespace ParserFrontend.Pages
                 string filename = file.FileName;
                 using (var stream = file.OpenReadStream())
                 {
-                    string basename = _pdfHandler.CreatePdfFile(filename, "bin/input", stream);
-                    _pdfHandler.Process(basename, "bin/input", "bin/output");
-                }
+                    string basename = _pdfHandler.CreatePdfFile(filename, "input", stream);
+                    string links = _pdfHandler.Process(basename, "input", "output");
 
-                Message = file.FileName;
-                Console.WriteLine(file.FileName);
+                    Message = basename;
+                    ResultLink = links;
+                }
             }
         }
     }

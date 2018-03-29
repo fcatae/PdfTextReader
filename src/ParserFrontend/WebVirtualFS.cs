@@ -9,16 +9,19 @@ namespace ParserFrontend
 {
     class WebVirtualFS : IVirtualFS
     {
-        public Stream OpenReader(string filename)
+        const string FILEFOLDERWWW = "wwwroot/files";
+
+        public Stream OpenReader(string virtualfile)
         {
-            System.Diagnostics.Debug.WriteLine($"READ: {filename}");
+            string filename = GetLocalFilename(virtualfile);
+            
             return new FileStream(filename, FileMode.Open, FileAccess.Read);
         }
 
-        public Stream OpenWriter(string filename)
+        public Stream OpenWriter(string virtualfile)
         {
-            System.Diagnostics.Debug.WriteLine($"WRITE: {filename}");
-
+            string filename = GetLocalFilename(virtualfile);
+            
             string folderName = Path.GetDirectoryName(filename);
             if (!Directory.Exists(folderName))
             {
@@ -34,6 +37,14 @@ namespace ParserFrontend
             }
 
             return new FileStream(filename, FileMode.Create);
+        }
+
+        string GetLocalFilename(string virtualfile)
+        {
+            if (virtualfile.Contains(".."))
+                throw new FileNotFoundException("Invalid path");
+
+            return $"{FILEFOLDERWWW}/{virtualfile}";
         }
     }
 }
