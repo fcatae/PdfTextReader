@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\PdfTextReader.Azure\PdfTextReader.Azure.csproj" />
     <ProjectReference Include="..\..\src\PdfTextReader\PdfTextReader.csproj" />
   </ItemGroup>
 
