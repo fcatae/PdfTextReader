@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace ParserFrontend.Pages
 {
-    public class ContactModel : PageModel
+    public class UploadModel : PageModel
     {
         public string Message { get; set; }
 
