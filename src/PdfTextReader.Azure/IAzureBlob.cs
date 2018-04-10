@@ -7,6 +7,6 @@ namespace PdfTextReader.Azure
     public interface IAzureBlob
     {
         string Name { get; }
-        string Path { get; }
+        string Path { get; }       
     }
 }

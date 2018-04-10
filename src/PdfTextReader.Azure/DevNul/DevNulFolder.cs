@@ -15,6 +15,10 @@ namespace PdfTextReader.Azure.DevNul
         public string Name { get; private set; }
         public string Path { get; private set; }
 
+        public string Extension { get{ return null;}  }
+
+        public Uri Uri { get; }
+
         public IEnumerable<IAzureBlob> EnumItems()
         {
             return new IAzureBlob[0];

@@ -12,6 +12,18 @@ namespace PdfTextReader.Azure.Blob
     {
         CloudBlockBlob _blob;
 
+        public string Extension {
+            get {
+                var idx = Name.LastIndexOf('.');
+                if (idx == -1)
+                    return string.Empty;
+
+                return Name.Substring(idx + 1);
+            }
+        }
+
+        string IAzureBlobFile.Uri => Uri.ToString();
+
         public AzureBlobFileBlock(IAzureBlob parent, string name, CloudBlockBlob blob) : base(parent, name, blob.Uri)
         {
             _blob = blob;
