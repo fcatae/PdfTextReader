@@ -7,15 +7,7 @@ namespace PdfTextReader.Azure.Blob
 {
     abstract class AzureBlobRef : IAzureBlob
     {
-        //protected AzureBlobRef(string rootname)
-        //{
-        //    if (String.IsNullOrEmpty(rootname))
-        //        throw new ArgumentNullException(nameof(rootname));
-
-        //    Path = rootname;
-        //    Name = rootname;
-        //}
-
+        
         public AzureBlobRef(IAzureBlob parent, string name, Uri uri)
         {
             if (parent == null)

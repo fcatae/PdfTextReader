@@ -9,5 +9,7 @@ namespace PdfTextReader.Azure
     {
         Stream GetStreamWriter();
         Stream GetStreamReader();
+        string Extension { get; }
+        string Uri { get; }
     }
 }
