@@ -14,7 +14,6 @@ namespace PdfTextReader.Execution
     class PipelineSingletonAutofacFactory : IDisposable
     {
         Dictionary<Type, object> _dictionary = new Dictionary<Type, object>();
-        IContainer _container;
         static IContainer g_container;
         ILifetimeScope _scope;
 
