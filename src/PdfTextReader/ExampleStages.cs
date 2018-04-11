@@ -13,7 +13,10 @@ namespace PdfTextReader
 {
     class ExampleStages
     {
-        public static void Stage1(PipelineInputPdf.PipelineInputPdfPage page)
+        string outputfolder;
+        string basename;
+
+        public void Stage1(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.ParsePdf<PreProcessTables>()
                     .ParseBlock<IdentifyTables>()             // 1
@@ -67,7 +70,7 @@ namespace PdfTextReader
                     .PrintWarnings();
         }
 
-        public static IList<TextSegment> Stage2(PipelineText<TextLine> tfunc, string outputfolder, string basename)
+        public IList<TextSegment> Stage2(PipelineText<TextLine> tfunc)
         {
             var segs = tfunc.Log<AnalyzeLines>($"{outputfolder}/{basename}/lines.txt")
                            .ConvertText<CreateTextLineIndex, TextLine>()
@@ -85,6 +88,24 @@ namespace PdfTextReader
                            .ToList();
 
             return segs;
+        }
+
+        public void Start(string a, string b, string c)
+        {
+            string inputfolder = a;
+            outputfolder = b;
+            basename = c;
+
+            Pipeline pipeline = new Pipeline();
+
+            var result =
+            pipeline.Input($"{inputfolder}/{basename}.pdf")
+                    .Output($"{outputfolder}/{basename}/parser-output.pdf")
+                    .AllPages<CreateTextLines>(Stage1);
+
+            var sequences = Stage2(result);
+
+            //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
         }
     }
 }

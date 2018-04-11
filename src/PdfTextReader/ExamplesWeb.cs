@@ -109,14 +109,8 @@ namespace PdfTextReader
 
             PdfReaderException.ContinueOnException();
 
-            Pipeline pipeline = new Pipeline();
-            
-            var result =
-            pipeline.Input($"{inputfolder}/{basename}.pdf")
-                    .Output($"{outputfolder}/{basename}/parser-output.pdf")
-                    .AllPages<CreateTextLines>(ExampleStages.Stage1);
-
-            var sequences = ExampleStages.Stage2(result, outputfolder, basename);
+            var examples = new ExampleStages();
+            examples.Start(inputfolder, outputfolder, basename);
 
             //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
         }        
