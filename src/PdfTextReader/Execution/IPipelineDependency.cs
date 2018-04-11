@@ -5,7 +5,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Execution
 {
-    [Obsolete]
+    [Obsolete("removed")]
     interface IPipelineDependency
     {
         void SetPage(PipelinePage page);

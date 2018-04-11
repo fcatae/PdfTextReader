@@ -7,27 +7,41 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class MergeTableText : IProcessBlock, IValidateBlock, IPipelineDependency
+    class MergeTableText : IProcessBlock, IValidateBlock //, IPipelineDependency
     {
         private List<IBlock> _tables;
         private List<IBlock> _tableLines;
         private IdentifyTables _parser;
 
-        public void SetPage(PipelinePage p)
+        public MergeTableText(PDFCore.IdentifyTables parserTable)
         {
-            var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-
             var page = parserTable.PageTables;
 
             if (page == null)
             {
                 PdfReaderException.AlwaysThrow("MergeTableText requires IdentifyTables");
             }
-            
+
             this._tables = page.AllBlocks.ToList();
             this._tableLines = parserTable.PageLines.AllBlocks.ToList();
             this._parser = parserTable;
         }
+
+        //public void SetPage(PipelinePage p)
+        //{
+        //    var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
+
+        //    var page = parserTable.PageTables;
+
+        //    if (page == null)
+        //    {
+        //        PdfReaderException.AlwaysThrow("MergeTableText requires IdentifyTables");
+        //    }
+            
+        //    this._tables = page.AllBlocks.ToList();
+        //    this._tableLines = parserTable.PageLines.AllBlocks.ToList();
+        //    this._parser = parserTable;
+        //}
 
         public BlockPage Process(BlockPage page)
         {            

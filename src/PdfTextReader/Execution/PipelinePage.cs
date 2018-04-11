@@ -71,11 +71,11 @@ namespace PdfTextReader.Execution
             return this;
         }
         public PipelinePage Validate<T>(Action<BlockSet<IBlock>> filter = null)
-            where T : IValidateBlock, new()
+            where T : IValidateBlock
         {
             var initial = this.LastResult;
 
-            var processor = CreateInstance<T>();
+            var processor = CreateInstanceUsingAutofac<T>();
 
             var result = processor.Validate(initial);
             
@@ -94,11 +94,11 @@ namespace PdfTextReader.Execution
         {
             var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 
-            var deps = obj as IPipelineDependency;
-            if(deps != null)
-            {
-                deps.SetPage(this);
-            }
+            //var deps = obj as IPipelineDependency;
+            //if(deps != null)
+            //{
+            //    deps.SetPage(this);
+            //}
 
             return obj;
         }

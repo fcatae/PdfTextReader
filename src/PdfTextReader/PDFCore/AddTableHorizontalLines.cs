@@ -7,15 +7,13 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class AddTableHorizontalLines : IProcessBlock, IPipelineDependency
+    class AddTableHorizontalLines : IProcessBlock //, IPipelineDependency
     {
         private List<IBlock> _lines;
         private List<IBlock> _background;
 
-        public void SetPage(PipelinePage p)
+        public AddTableHorizontalLines(PDFCore.IdentifyTables parserTable)
         {
-            var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-
             var page = parserTable.PageLines;
 
             if (page == null)
@@ -26,6 +24,21 @@ namespace PdfTextReader.PDFCore
             this._lines = page.AllBlocks.Where(l => l.GetWidth() > l.GetHeight()).ToList();
             this._background = parserTable.PageBackground.AllBlocks.ToList();
         }
+
+        //public void SetPage(PipelinePage p)
+        //{
+        //    var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
+
+        //    var page = parserTable.PageLines;
+
+        //    if (page == null)
+        //    {
+        //        PdfReaderException.AlwaysThrow("AddTableHorizontalLines requires IdentifyTables");
+        //    }
+
+        //    this._lines = page.AllBlocks.Where(l => l.GetWidth() > l.GetHeight()).ToList();
+        //    this._background = parserTable.PageBackground.AllBlocks.ToList();
+        //}
 
         public BlockPage Process(BlockPage page)
         {
