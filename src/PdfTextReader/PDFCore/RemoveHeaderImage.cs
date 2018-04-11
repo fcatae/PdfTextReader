@@ -8,7 +8,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveHeaderImage : IProcessBlock, IValidateBlock //, IPipelineDependency
+    class RemoveHeaderImage : IProcessBlock, IValidateBlock
     {
         const float statRegionTooLarge = 200f;
         private List<IBlock> _images;
@@ -30,22 +30,6 @@ namespace PdfTextReader.PDFCore
 
             this._parse = parseImage;
         }
-
-        //public void SetPage(PipelinePage p)
-        //{
-        //    var parseImage = p.CreateInstance<PreProcessImages>();
-
-        //    var page = parseImage.Images;
-
-        //    if (page == null)
-        //    {
-        //        PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
-        //    }
-
-        //    this._images = page.AllBlocks.ToList();
-
-        //    this._parse = parseImage;
-        //}
 
         public BlockPage Process(BlockPage page)
         {

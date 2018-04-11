@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveBackgroundNonText : IProcessBlock //, IPipelineDependency
+    class RemoveBackgroundNonText : IProcessBlock
     {
         const float MINIMUM_BACKGROUND_SIZE = 5f;
 
@@ -26,22 +26,6 @@ namespace PdfTextReader.PDFCore
             region.AddRange(backgrounds);
             this._region = region;
         }
-
-        //public void SetPage(PipelinePage p)
-        //{
-        //    var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-            
-        //    var backgrounds = parserTable.PageBackground.AllBlocks;
-
-        //    if (backgrounds == null)
-        //    {
-        //        PdfReaderException.AlwaysThrow("RemoveBackgroundNonText requires IdentifyTables");
-        //    }
-            
-        //    var region = new List<IBlock>();
-        //    region.AddRange(backgrounds);
-        //    this._region = region;            
-        //}
 
         public BlockPage Process(BlockPage page)
         {

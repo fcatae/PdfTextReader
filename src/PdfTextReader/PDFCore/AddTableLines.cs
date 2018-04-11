@@ -7,7 +7,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class AddTableLines : IProcessBlock //, IPipelineDependency
+    class AddTableLines : IProcessBlock
     {
         private List<IBlock> _lines;
         private List<IBlock> _background;
@@ -24,21 +24,6 @@ namespace PdfTextReader.PDFCore
             this._lines = page.AllBlocks.ToList();
             this._background = parserTable.PageBackground.AllBlocks.ToList();
         }
-
-        //public void SetPage(PipelinePage p)
-        //{
-        //    var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-
-        //    var page = parserTable.PageLines;
-
-        //    if (page == null)
-        //    {
-        //        PdfReaderException.AlwaysThrow("AddTableLines requires IdentifyTables");
-        //    }
-
-        //    this._lines = page.AllBlocks.ToList();
-        //    this._background = parserTable.PageBackground.AllBlocks.ToList();
-        //}
 
         public BlockPage Process(BlockPage page)
         {

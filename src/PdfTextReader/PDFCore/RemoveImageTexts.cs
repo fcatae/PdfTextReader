@@ -8,7 +8,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveImageTexts : IProcessBlock //, IPipelineDependency
+    class RemoveImageTexts : IProcessBlock
     {
         private List<IBlock> _images;
 
@@ -23,20 +23,6 @@ namespace PdfTextReader.PDFCore
 
             this._images = page.AllBlocks.ToList();
         }
-
-        //public void SetPage(PipelinePage p)
-        //{
-        //    var parseImage = p.CreateInstance<PreProcessImages>();
-
-        //    var page = parseImage.Images;
-
-        //    if (page == null)
-        //    {
-        //        PdfReaderException.AlwaysThrow("RemoveImageTexts requires PreProcessImages");
-        //    }
-            
-        //    this._images = page.AllBlocks.ToList();
-        //}
 
         public BlockPage Process(BlockPage page)
         {

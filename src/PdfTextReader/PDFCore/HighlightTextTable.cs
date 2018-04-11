@@ -7,7 +7,7 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class HighlightTextTable : IProcessBlock, IValidateBlock //, IPipelineDependency
+    class HighlightTextTable : IProcessBlock, IValidateBlock
     {
         const float MINIMUM_BACKGROUND_SIZE = 5f;
 
@@ -28,24 +28,6 @@ namespace PdfTextReader.PDFCore
             region.AddRange(backgrounds.AsEnumerable());
             this._region = region;
         }
-
-        //public void SetPage(PipelinePage p)
-        //{
-        //    var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-
-        //    var lines = parserTable.PageLines.AllBlocks;
-        //    var backgrounds = parserTable.PageBackground.AllBlocks;
-
-        //    if ((lines == null)|| (backgrounds == null))
-        //    {
-        //        PdfReaderException.AlwaysThrow("HighlightTextTable requires IdentifyTables");
-        //    }
-            
-        //    var region = new List<IBlock>();
-        //    region.AddRange(lines.AsEnumerable());
-        //    region.AddRange(backgrounds.AsEnumerable());
-        //    this._region = region;            
-        //}
 
         public BlockPage FindHighlightBlocks(BlockPage page)
         {

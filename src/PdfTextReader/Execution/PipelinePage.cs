@@ -75,7 +75,7 @@ namespace PdfTextReader.Execution
         {
             var initial = this.LastResult;
 
-            var processor = CreateInstanceUsingAutofac<T>();
+            var processor = CreateInstance<T>();
 
             var result = processor.Validate(initial);
             
@@ -90,39 +90,19 @@ namespace PdfTextReader.Execution
             return this;
         }
         
-        public T CreateInstanceUsingAutofac<T>()
+        public T CreateInstance<T>()
         {
             var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 
-            //var deps = obj as IPipelineDependency;
-            //if(deps != null)
-            //{
-            //    deps.SetPage(this);
-            //}
-
             return obj;
         }
-
-        //public T CreateInstance<T>()
-        //    where T : new()
-        //{
-        //    var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
-
-        //    var deps = obj as IPipelineDependency;
-        //    if (deps != null)
-        //    {
-        //        deps.SetPage(this);
-        //    }
-
-        //    return obj;
-        //}
-
+        
         public PipelinePage ParseBlock<T>()
             where T: IProcessBlock
         {
             var initial = this.LastResult;
             
-            var processor = CreateInstanceUsingAutofac<T>();
+            var processor = CreateInstance<T>();
 
             var result = processor.Process(initial);
 

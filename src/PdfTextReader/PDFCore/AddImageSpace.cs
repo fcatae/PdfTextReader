@@ -8,7 +8,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class AddImageSpace : IProcessBlock //, IPipelineDependency
+    class AddImageSpace : IProcessBlock
     {
         private List<IBlock> _images;
 
@@ -23,20 +23,6 @@ namespace PdfTextReader.PDFCore
 
             this._images = page.AllBlocks.ToList();
         }
-
-        //public void SetPage(PipelinePage p)
-        //{
-        //    var parserImage = p.CreateInstance<PreProcessImages>();
-
-        //    var page = parserImage.Images;
-
-        //    if (page == null)
-        //    {
-        //        PdfReaderException.AlwaysThrow("AddImageSpace requires PreProcessImages");
-        //    }
-
-        //    this._images = page.AllBlocks.ToList();
-        //}
 
         public BlockPage Process(BlockPage page)
         {
