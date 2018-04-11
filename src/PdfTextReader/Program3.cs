@@ -15,30 +15,30 @@ namespace PdfTextReader
 {
     class Program3
     {
-        public static void CreateLayout(string basename)
-        {
-            //PipelineInputPdf.StopOnException();
-            //PdfReaderException.ContinueOnException();
+        // public static void CreateLayout(string basename)
+        // {
+        //     //PipelineInputPdf.StopOnException();
+        //     //PdfReaderException.ContinueOnException();
 
-            Console.WriteLine();
-            Console.WriteLine("Program3 - CreateLayout");
-            Console.WriteLine();
+        //     Console.WriteLine();
+        //     Console.WriteLine("Program3 - CreateLayout");
+        //     Console.WriteLine();
 
-            var textLines = GetTextLines(basename, out Execution.Pipeline pipeline)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ToList();
+        //     var textLines = GetTextLines(basename, out Execution.Pipeline pipeline)
+        //                     .ConvertText<CreateStructures, TextStructure>()
+        //                     .ConvertText<CreateTextSegments, TextSegment>()
+        //                     .ToList();
 
-            Console.WriteLine($"FILENAME: {pipeline.Filename}");
+        //     Console.WriteLine($"FILENAME: {pipeline.Filename}");
 
-            var statistics = pipeline.Statistics;
-            //var layout = (ValidateLayout)statistics.Calculate<ValidateLayout, StatsPageLayout>();
-            var layout = statistics.RetrieveStatistics<StatsPageLayout>();
+        //     var statistics = pipeline.Statistics;
+        //     //var layout = (ValidateLayout)statistics.Calculate<ValidateLayout, StatsPageLayout>();
+        //     var layout = statistics.RetrieveStatistics<StatsPageLayout>();
 
-            pipeline.Statistics.SaveStats<StatsPageLayout>($"bin/{basename}-pagelayout.txt");
+        //     // pipeline.Statistics.SaveStats<StatsPageLayout>($"bin/{basename}-pagelayout.txt");
 
-            pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
-        }
+        //     pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
+        // }
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
         {

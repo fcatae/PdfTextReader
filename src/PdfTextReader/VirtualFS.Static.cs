@@ -37,65 +37,11 @@ namespace PdfTextReader.Base
         {
             return new iText.Kernel.Pdf.PdfWriter(OpenWrite(filename));
         }
-
-        // System.IO.TextStream
-        public static StreamReader OpenStreamReader(string filename)
-        {
-            return new StreamReader(OpenRead(filename));
-        }
         
         public static StreamWriter OpenStreamWriter(string filename)
         {
             return new StreamWriter(OpenWrite(filename));
         }
         
-        // Internal validators
-
-        // System.IO: Directory, DirectoryInfo
-        public static string GetDirectoryName(string folder)
-        {
-            return new DirectoryInfo(folder).Name;
-        }
-
-        public static string GetDirectoryCreateDirectory(string folder)
-        {
-            return Directory.CreateDirectory(folder).FullName;
-        }
-        
-        public static IEnumerable<VFileInfo> DirectoryInfoEnumerateFiles(string folder, string pattern)
-        {
-            var directory = new DirectoryInfo(folder);
-
-            var enumFiles = directory.EnumerateFiles("*.xml");
-
-            return enumFiles.Select(f => new VFileInfo(f));
-        }
-
-        public static void FileWriteAllText(string filename, string text)
-        {
-            File.WriteAllText(filename, text);
-        }
-
-        public static System.Xml.Linq.XDocument XDocumentLoad(string filename)
-        {
-            return System.Xml.Linq.XDocument.Load(filename);
-        }
-
-        public class VFileInfo
-        {
-            FileInfo _f;
-
-            public VFileInfo(FileInfo f)
-            {
-                _f = f;
-            }
-
-            public string Name => _f.Name;
-            public string FullName => _f.FullName;
-            public void CopyTo(string dest)
-            {
-                _f.CopyTo(dest);
-            }
-        }
     }
 }

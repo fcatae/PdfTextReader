@@ -66,28 +66,6 @@ namespace PdfTextReader.Execution
         {
             _pdfLog.LogCheck(pageNumber, component, message);
         }
-
-        public void SaveOk(string outputfile)
-        {
-            string inputfile = this._input;
-
-            var errorPages = _pdfLog.GetErrors().OrderBy(t => t).ToList();            
-
-            using (var pdfInput = new PdfDocument(VirtualFS.OpenPdfReader(_input)))
-            {
-                int total = pdfInput.GetNumberOfPages();
-                var positivePages = Enumerable.Range(1, total).Except(errorPages).ToList();
-
-                if (positivePages.Count == 0)
-                    return;
-
-                using (var pdfOutput = new PdfDocument(VirtualFS.OpenPdfWriter(outputfile)))
-                {
-                    pdfInput.CopyPagesTo(positivePages, pdfOutput);
-                }
-            }
-        }
-
         
         public int ExtractOutputPages(string outputfile, IEnumerable<int> pages)
         {
