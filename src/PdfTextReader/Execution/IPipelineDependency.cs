@@ -5,6 +5,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.Execution
 {
+    [Obsolete]
     interface IPipelineDependency
     {
         void SetPage(PipelinePage page);
