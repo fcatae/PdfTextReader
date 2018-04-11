@@ -162,6 +162,12 @@ namespace PdfTextReader.Execution
             
             return pipeText;
         }
+        
+        public IEnumerable<TextLine> Get<T>(Action<PipelineInputPdfPage> callback)
+            where T : IConvertBlock, new()
+        {
+            return StreamConvert<T>(callback);
+        }
 
         private IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
             where T: IConvertBlock, new()

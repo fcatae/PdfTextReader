@@ -101,5 +101,24 @@ namespace PdfTextReader
 
             return result;
         }
+
+
+        public static void RunParserPDF2(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
+        {
+            VirtualFS.ConfigureFileSystem(virtualFS);
+
+            PdfReaderException.ContinueOnException();
+
+            Pipeline pipeline = new Pipeline();
+            
+            var result =
+            pipeline.Input($"{inputfolder}/{basename}.pdf")
+                    .Output($"{outputfolder}/{basename}/parser-output.pdf")
+                    .AllPages<CreateTextLines>(ExampleStages.Stage1);
+
+            var sequences = ExampleStages.Stage2(result, outputfolder, basename);
+
+            //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
+        }        
     }
 }
