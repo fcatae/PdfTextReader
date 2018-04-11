@@ -168,34 +168,12 @@ namespace PdfTextReader.Execution
             }            
         }
 
-        public void Extract(string outfile, int start, int end)
-        {
-            IList<int> pageNumbers = Enumerable.Range(start, end - start + 1).ToList();
-
-            using (var pdfInput = new PdfDocument(VirtualFS.OpenPdfReader(_input)) )
-            using (var pdfOutput = new PdfDocument(VirtualFS.OpenPdfWriter(outfile)))
-            {
-                pdfInput.CopyPagesTo(pageNumbers, pdfOutput);                
-            }
-        }
         public void ExtractPages(string outfile, IList<int> pageNumbers)
         {
             using (var pdfInput = new PdfDocument(VirtualFS.OpenPdfReader(_input)))
             using (var pdfOutput = new PdfDocument(VirtualFS.OpenPdfWriter(outfile)))
             {
                 pdfInput.CopyPagesTo(pageNumbers, pdfOutput);
-            }
-        }
-
-        public void AllPages(Action<PipelineInputPdfPage> callback)
-        {
-            int totalPages = _pdfDocument.GetNumberOfPages();
-
-            for (int i=1; i<=totalPages; i++)
-            {
-                var pdfPage = Page(i);
-
-                callback(pdfPage);
             }
         }
 
@@ -376,12 +354,6 @@ namespace PdfTextReader.Execution
                 _page = page;
 
                 return page;
-            }
-
-            public PipelineInputPdfPage Output(string filename)
-            {
-                this._pdf.Output(filename);
-                return this;
             }
 
             PdfCanvas GetCanvas()
