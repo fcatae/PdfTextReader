@@ -14,51 +14,6 @@ namespace PdfTextReader
 {
     public class ExamplesAzure
     {
-        public static void FollowText(IVirtualFS virtualFS, string basename)
-        {
-            VirtualFS.ConfigureFileSystem(virtualFS);
-
-            PdfReaderException.ContinueOnException();
-
-            var pipeline = new Execution.Pipeline();
-
-            pipeline.Input($"{basename}.pdf")
-                    .Output($"{basename}-follow-text-output.pdf")
-                    .AllPages(page => page
-                              .ParsePdf<ProcessPdfText>()
-                              .ShowLine(Color.Orange)
-                    );
-
-            pipeline.Done();
-        }
-
-        public static void RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
-        {
-            VirtualFS.ConfigureFileSystem(virtualFS);
-
-            PdfReaderException.ContinueOnException();
-
-            Pipeline pipeline = new Pipeline();
-
-            var artigos = GetTextLines(pipeline, basename, inputfolder, outputfolder)
-                                .Log<AnalyzeLines>($"{outputfolder}/{basename}/lines.txt")
-                            .ConvertText<CreateTextLineIndex, TextLine>()
-                            .ConvertText<PreCreateStructures, TextLine2>()
-                            .ConvertText<CreateStructures2, TextStructure>()
-                            .ConvertText<PreCreateTextSegments, TextStructureAgg>()
-                            .ConvertText<AggregateStructures, TextStructure>()
-                                .ShowPdf<ShowStructureCentral>($"{outputfolder}/{basename}/show-central.pdf")
-                                .Log<AnalyzeStructures>($"{outputfolder}/{basename}/struct.txt")
-                                .Log<AnalyzeStructuresCentral>($"{outputfolder}/{basename}/central.txt")
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"{outputfolder}/{basename}/segment-titles-tree.txt")
-                                .Log<AnalyzeTreeStructure>(Console.Out)
-                            .ToList();
-            
-            pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
-        }
-
         public static void RunCreateArtigos(IVirtualFS virtualFS, string basename, string inputfolder, string tmpfolder, string outputfolder)
         {
             VirtualFS.ConfigureFileSystem(virtualFS);
