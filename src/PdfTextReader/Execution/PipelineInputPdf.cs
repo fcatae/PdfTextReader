@@ -177,18 +177,6 @@ namespace PdfTextReader.Execution
             }
         }
 
-        public PipelineText<TextLine> AllPagesExcept<T>(IEnumerable<int> exceptPages, Action<PipelineInputPdfPage> callback)
-            where T : IConvertBlock, new()
-        {
-            var pageList = Enumerable.Range(1, _pdfDocument.GetNumberOfPages()).Except(exceptPages);
-
-            var textLines = StreamConvert<T>(pageList, callback);
-
-            var pipeText = new PipelineText<TextLine>(this, textLines, _indexTree, this);
-
-            return pipeText;
-        }
-
         public PipelineText<TextLine> AllPages<T>(Action<PipelineInputPdfPage> callback)
             where T : IConvertBlock, new()
         {
@@ -199,32 +187,7 @@ namespace PdfTextReader.Execution
             return pipeText;
         }
 
-        public IEnumerable<TextLine> StreamConvert<T>(IEnumerable<int> pageList, Action<PipelineInputPdfPage> callback)
-            where T : IConvertBlock, new()
-        {
-            var processor = new T();
-
-            int totalPages = _pdfDocument.GetNumberOfPages();
-
-            foreach (int i in pageList)
-            {
-                System.Diagnostics.Debug.WriteLine("Processing page " + i);
-
-                var pdfPage = Page(i);
-
-                if (ProtectCall(callback, pdfPage) == false)
-                    continue;
-
-                var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
-
-                foreach (var t in textSet)
-                {
-                    yield return t;
-                }
-            }
-        }
-
-        public IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
+        private IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
             where T: IConvertBlock, new()
         {
             var processor = new T();            
