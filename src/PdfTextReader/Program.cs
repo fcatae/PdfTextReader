@@ -11,7 +11,7 @@ namespace PdfTextReader
             Console.WriteLine("PDF Text Reader");
             var watch = Stopwatch.StartNew();
 
-            Program3.CreateLayout("D14/D142-p41");
+            Program3.CreateLayout("p40");
             //Program3.ProcessStats2("D14/D142",41);
 
             //ExamplesPipeline.ProcessPipeline("bin/DO1_2017_11_14");
