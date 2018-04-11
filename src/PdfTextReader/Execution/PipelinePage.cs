@@ -103,19 +103,19 @@ namespace PdfTextReader.Execution
             return obj;
         }
 
-        public T CreateInstance<T>()
-            where T : new()
-        {
-            var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
+        //public T CreateInstance<T>()
+        //    where T : new()
+        //{
+        //    var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 
-            var deps = obj as IPipelineDependency;
-            if (deps != null)
-            {
-                deps.SetPage(this);
-            }
+        //    var deps = obj as IPipelineDependency;
+        //    if (deps != null)
+        //    {
+        //        deps.SetPage(this);
+        //    }
 
-            return obj;
-        }
+        //    return obj;
+        //}
 
         public PipelinePage ParseBlock<T>()
             where T: IProcessBlock
