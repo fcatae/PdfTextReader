@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader", "PdfTextRea
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Tests", "..\test\PdfTextReader.Test\PdfTextReader.Tests.csproj", "{D171E691-DC64-427C-9A9D-E0C76EA93271}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Validator", "Validator\Validator.csproj", "{0483385A-7E68-4680-8E7C-C465EB65E426}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserRun", "ParserRun\ParserRun.csproj", "{AA4980AB-0283-4273-ADB4-6215E177DCCB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserConsole", "ParserConsole\ParserConsole.csproj", "{37727879-CDBC-4888-A193-86BC32B636D0}"
@@ -39,11 +37,6 @@ Global
 		{D171E691-DC64-427C-9A9D-E0C76EA93271}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D171E691-DC64-427C-9A9D-E0C76EA93271}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D171E691-DC64-427C-9A9D-E0C76EA93271}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0483385A-7E68-4680-8E7C-C465EB65E426}.CORE|Any CPU.ActiveCfg = Debug|Any CPU
-		{0483385A-7E68-4680-8E7C-C465EB65E426}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0483385A-7E68-4680-8E7C-C465EB65E426}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0483385A-7E68-4680-8E7C-C465EB65E426}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0483385A-7E68-4680-8E7C-C465EB65E426}.Release|Any CPU.Build.0 = Release|Any CPU
 		{AA4980AB-0283-4273-ADB4-6215E177DCCB}.CORE|Any CPU.ActiveCfg = Debug|Any CPU
 		{AA4980AB-0283-4273-ADB4-6215E177DCCB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{AA4980AB-0283-4273-ADB4-6215E177DCCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
