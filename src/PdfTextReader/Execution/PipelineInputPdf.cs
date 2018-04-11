@@ -1,18 +1,16 @@
-﻿using iText.Kernel.Pdf;
-using iText.Kernel.Pdf.Canvas;
-using iText.Kernel.Pdf.Canvas.Parser;
-using iText.Kernel.Pdf.Canvas.Parser.Listener;
-using PdfTextReader.PDFCore;
+﻿
 using PdfTextReader.TextStructures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using PdfTextReader.Base;
 using iText.Kernel.Font;
-using iText.IO.Font.Constants;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Extgstate;
-using System.IO;
+using iText.IO.Font.Constants;
 
 namespace PdfTextReader.Execution
 {
