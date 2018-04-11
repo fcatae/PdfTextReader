@@ -90,8 +90,7 @@ namespace PdfTextReader.Execution
             return this;
         }
         
-        public T CreateInstance<T>()
-            where T : new()
+        public T CreateInstanceUsingAutofac<T>()
         {
             var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 
@@ -104,12 +103,26 @@ namespace PdfTextReader.Execution
             return obj;
         }
 
+        public T CreateInstance<T>()
+            where T : new()
+        {
+            var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
+
+            var deps = obj as IPipelineDependency;
+            if (deps != null)
+            {
+                deps.SetPage(this);
+            }
+
+            return obj;
+        }
+
         public PipelinePage ParseBlock<T>()
-            where T: IProcessBlock, new()
+            where T: IProcessBlock
         {
             var initial = this.LastResult;
             
-            var processor = CreateInstance<T>();
+            var processor = CreateInstanceUsingAutofac<T>();
 
             var result = processor.Process(initial);
 

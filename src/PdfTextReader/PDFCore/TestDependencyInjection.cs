@@ -8,18 +8,25 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class TestDependencyInjection : IProcessBlock, IPipelineDependency
+    class TestDependencyInjection : IProcessBlock //, IPipelineDependency
     {
         private List<IBlock> _images;
 
-        public void SetPage(PipelinePage p)
+        public TestDependencyInjection(PreProcessImages parserImage)
         {
-            var parserImage = p.CreateInstance<PreProcessImages>();
-
             var page = parserImage.Images;
 
             this._images = page.AllBlocks.ToList();
         }
+
+        //public void SetPage(PipelinePage p)
+        //{
+        //    var parserImage = p.CreateInstance<PreProcessImages>();
+
+        //    var page = parserImage.Images;
+
+        //    this._images = page.AllBlocks.ToList();
+        //}
 
         public BlockPage Process(BlockPage page)
         {

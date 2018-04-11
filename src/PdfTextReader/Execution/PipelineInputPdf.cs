@@ -334,7 +334,7 @@ namespace PdfTextReader.Execution
             private PipelinePage _page;
             private PdfCanvas _outputCanvas;
 
-            private PipelineSingletonFactory _factory = new PipelineSingletonFactory();
+            private PipelineSingletonAutofacFactory _factory = new PipelineSingletonAutofacFactory();
 
             public int GetPageNumber() => _pageNumber;
             public BlockPage GetLastResult() => _page.LastResult;
@@ -351,7 +351,6 @@ namespace PdfTextReader.Execution
             }
 
             public T CreateInstance<T>()
-                where T: new()
             {
                 return _factory.CreateInstance<T>();
             }
@@ -508,6 +507,12 @@ namespace PdfTextReader.Execution
                 {
                     _outputCanvas.Release();
                     _outputCanvas = null;
+                }
+
+                if( _factory != null )
+                {
+                    _factory.Dispose();
+                    _factory = null;
                 }
             }
         }        
