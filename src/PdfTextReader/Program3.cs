@@ -99,7 +99,9 @@ namespace PdfTextReader
                                   .ParseBlock<RemoveOverlapedImages>()      // 3
                               .ParsePdf<ProcessPdfText>()                   // 4
                                   //.Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
-                                  .ParseBlock<RemoveSmallFonts>()           // 5
+                                    .Validate<HideSmallFonts>().ShowErrors(p => p.Show(Color.Green))
+                                  .ParseBlock<HideSmallFonts>()           // 5
+                        //.ParseBlock<RemoveSmallFonts>()           // 5
                                   //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<MergeTableText>()             // 6
                                   //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
