@@ -80,7 +80,7 @@
         @{
         foreach (var file in Model.CurrentFiles)
         {
-            <p><a href="#@file">@file</a></p>
+            <p><a asp-route="Document_Show" asp-route-name="@file">@file</a></p>
     }
         }
 

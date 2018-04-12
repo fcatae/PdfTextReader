@@ -8,7 +8,8 @@ namespace ParserFrontend.Logic
 {
     public class InputFiles
     {
-        const string PDF_EXTENSION = "*.pdf";
+        const string PDF_EXTENSION = ".pdf";
+        const string PDF_EXTENSION_PATTERN = "*.pdf";
 
         private readonly WebVirtualFS _webFS;
 
@@ -19,7 +20,17 @@ namespace ParserFrontend.Logic
 
         public IEnumerable<string> List()
         {
-            return _webFS.ListFiles(PDF_EXTENSION);
+            var filenames = _webFS.ListFiles(PDF_EXTENSION_PATTERN);
+
+            return filenames.Select(n => RemoveExtension(n));
+        }
+
+        string RemoveExtension(string name)
+        {
+            if( name.EndsWith(PDF_EXTENSION, StringComparison.OrdinalIgnoreCase) )
+                return name.Substring(0, name.Length - PDF_EXTENSION.Length);
+
+            return name;
         }
     }
 }
