@@ -15,9 +15,11 @@ namespace Controllers.ParserFrontend
         }
 
         [Route("{name}", Name="Document_Show")]
-        public object Show(string name)
+        public IActionResult Show(string name)
         {
-            return new { name = name };
+            ViewBag.Name = name;
+
+            return View();
         }
         
         [Route("{name}/{act}", Name="Documents")]
