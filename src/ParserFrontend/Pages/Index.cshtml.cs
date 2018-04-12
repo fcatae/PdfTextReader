@@ -9,9 +9,12 @@ namespace ParserFrontend.Pages
 {
     public class IndexModel : PageModel
     {
+        public IEnumerable<string> CurrentFiles { get; private set; }
         public void OnGet()
         {
+            var inputf = new Logic.InputFiles(new WebVirtualFS());
 
+            CurrentFiles = inputf.List();
         }
     }
 }

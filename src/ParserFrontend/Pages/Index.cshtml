@@ -72,9 +72,17 @@
     <div class="col-md-8">
         <h2>Pesquisa</h2>
         Consulte os documentos disponíveis no site.
+        
         <div class="form-group">
             <input class="form-control" type="text" placeholder="Em Desenvolvimento" />
         </div>
+
+        @{
+        foreach (var file in Model.CurrentFiles)
+        {
+            <p><a href="#@file">@file</a></p>
+    }
+        }
 
         <h2>Upload</h2>
         Envie arquivos para processamento. <a asp-page="/Upload">Clique aqui</a>

@@ -8,12 +8,18 @@ namespace ParserFrontend.Logic
 {
     public class InputFiles
     {
-        private readonly IVirtualFS _virtualFS;
+        const string PDF_EXTENSION = "*.pdf";
 
-        public InputFiles(IVirtualFS virtualFS)
+        private readonly WebVirtualFS _webFS;
+
+        public InputFiles(WebVirtualFS webFS)
         {
-            this._virtualFS = virtualFS;
+            this._webFS = webFS; 
         }
 
+        public IEnumerable<string> List()
+        {
+            return _webFS.ListFiles(PDF_EXTENSION);
+        }
     }
 }
