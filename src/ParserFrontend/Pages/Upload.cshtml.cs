@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using ParserFrontend.Logic;
 
@@ -27,7 +28,7 @@ namespace ParserFrontend.Pages
             ResultLink = "#";
         }
 
-        public void OnPost()
+        public IActionResult OnPost()
         {
             var files = Request.Form.Files;
 
@@ -36,15 +37,24 @@ namespace ParserFrontend.Pages
                 var file = files[0];
 
                 string filename = file.FileName;
-                using (var stream = file.OpenReadStream())
-                {
-                    string basename = _pdfHandler.CreatePdfFile(filename, "input", stream);
-                    string links = _pdfHandler.Process(basename, "input", "output");
+                long length = file.Length;
 
-                    Message = basename;
-                    ResultLink = links;
+                if (filename != "" && length > 0)
+                {
+                    using (var stream = file.OpenReadStream())
+                    {
+                        string basename = _pdfHandler.CreatePdfFile(filename, "input", stream);
+                        string links = _pdfHandler.Process(basename, "input", "output");
+
+                        Message = basename;
+                        ResultLink = links;
+
+                        return this.RedirectToRoute("Document_Show", new { name = basename });
+                    }
                 }
             }
+
+            return this.RedirectToPage();
         }
     }
 }

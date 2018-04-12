@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Controllers.ParserFrontend
+namespace ParserFrontend.Controllers
 {
     [Route("[controller]")]
     public class DocumentsController : Controller
@@ -21,8 +21,20 @@ namespace Controllers.ParserFrontend
 
             return View();
         }
-        
-        [Route("{name}/{act}", Name="Documents")]
+
+        [Route("{name}/output", Name = "Document_Output")]
+        public IActionResult ShowOutput(string name)
+        {
+            var output = new ParserFrontend.Logic.OutputFiles();
+
+            // check if the file was processed
+            // ...
+            // ...
+
+            return new FileStreamResult(output.GetOutputFile(name), "application/pdf");
+        }
+
+        [Route("{name}/{act}")]
         public object Show(string name, string act)
         {
             return new { docname = name , action = act };
