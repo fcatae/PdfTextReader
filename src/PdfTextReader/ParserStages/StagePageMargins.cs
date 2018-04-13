@@ -29,21 +29,18 @@ namespace PdfTextReader.ParserStages
         void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.FromCache<IdentifyTablesData>()
-                // does not work yet    
-                //.ParseBlock<SetIdentifyTablesCompatibility>()
+                .ParseBlock<SetIdentifyTablesCompatibility>()
 
               .FromCache<ProcessImageData>()
-                .ParseBlock<ProcessImageData>()
                 .ParseBlock<SetProcessImageCompatibility>()
                 .ParseBlock<RemoveOverlapedImages2>()
               .FromCache<ProcessPdfTextData>()
-                  .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Green))
+                  .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
                   .ParseBlock<RemoveHeaderImage>()
                   .ParseBlock<FindInitialBlockset>()
-                  //.ParseBlock<AddTableSpace>()       
-                  .ParseBlock<RemoveFooter>()
-                  
-                .Show(Color.Gray);
+                  .ParseBlock<AddTableSpace>()
+                  .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                  .ParseBlock<RemoveFooter>();
         }
     }
 }

@@ -18,6 +18,14 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage LastResult { get; private set; }
 
+        public void UpdateInstance(object cache)
+        {
+            var instance = (ProcessImageData)cache;
+            this.Images = instance.Images;
+            this.LastResult = instance.LastResult;
+            this._blockSet = instance._blockSet;
+        }
+
         public void RemoveImage(IBlock block)
         {
             if (Images == null)

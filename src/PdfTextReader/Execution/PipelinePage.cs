@@ -188,6 +188,8 @@ namespace PdfTextReader.Execution
 
             var cache = this.Context.FromCache<T>(PageNumber);
 
+            processor.UpdateInstance(cache);
+
             var result = cache.LastResult;
 
             this.LastResult = result;

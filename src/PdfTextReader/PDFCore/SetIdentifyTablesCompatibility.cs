@@ -19,8 +19,16 @@ namespace PdfTextReader.PDFCore
 
         public void SetCompatibility(IdentifyTables pre, IdentifyTablesData data)
         {
-            if (data.PageTables == null || data.PageLines == null || data.PageBackground == null )
-                PdfReaderException.AlwaysThrow("Null table properties");
+            if (data.Ready == false)
+            {
+                if (pre.PageTables == null && pre.PageLines == null && pre.PageBackground == null)
+                    PdfReaderException.AlwaysThrow("there is no data available");
+
+                data.PageTables = pre.PageTables;
+                data.PageLines = pre.PageLines;
+                data.PageBackground = pre.PageBackground;
+                data.Ready = true;
+            }
 
             // set the compatibility between PreProcessImages and ProcessImageData
             pre.SetCompatibility(data);

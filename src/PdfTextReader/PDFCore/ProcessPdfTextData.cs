@@ -14,5 +14,11 @@ namespace PdfTextReader.PDFCore
             LastResult = page;
             return page;
         }
+
+        public void UpdateInstance(object cache)
+        {
+            var instance = (ProcessPdfTextData)cache;
+            this.LastResult = instance.LastResult;
+        }
     }
 }

@@ -9,6 +9,7 @@ namespace PdfTextReader.PDFCore
 {
     class IdentifyTablesData : IProcessBlockData
     {
+        public bool Ready { get; set; }
         public BlockPage PageTables { get; set; }
         public BlockPage PageLines { get; set; }
         public BlockPage PageBackground { get; set; }
@@ -21,6 +22,14 @@ namespace PdfTextReader.PDFCore
             return page;
         }
 
-
+        public void UpdateInstance(object cache)
+        {
+            var instance = (IdentifyTablesData)cache;
+            this.LastResult = instance.LastResult;
+            this.Ready = instance.Ready;
+            this.PageTables = instance.PageTables;
+            this.PageLines = instance.PageLines;
+            this.PageBackground = instance.PageBackground;
+        }
     }
 }

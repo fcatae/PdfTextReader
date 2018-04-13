@@ -37,6 +37,8 @@ namespace PdfTextReader.ParserStages
         void InitialCache(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.ParsePdf<PreProcessTables>()
+                    .ParseBlock<IdentifyTables>()
+                    .ParseBlock<SetIdentifyTablesCompatibility>()
                     .StoreCache<IdentifyTablesData>()
                 .ParsePdf<PreProcessImages>()
                     .StoreCache<ProcessImageData>()
