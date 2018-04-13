@@ -10,7 +10,7 @@ namespace PdfTextReader.Execution
     {
         private string _inputFilename = null;
         private PipelineInputPdf _activeContext;
-        private PipelineInputCache _cache = new PipelineInputCache();
+        private PipelineInputCache<IProcessBlockData> _cache = new PipelineInputCache<IProcessBlockData>();
 
         public PipelineInputPdf Input(string filename)
         {

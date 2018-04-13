@@ -37,22 +37,22 @@ namespace PdfTextReader.ParserStages
         void InitialCache(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.ParsePdf<PreProcessTables>()
-                    .ParseBlock<IdentifyTables>().StoreCache<IdentifyTables>()
-                                                 .StoreCache<IdentifyTablesData>()
+                    .StoreCache<IdentifyTablesData>()
                 .ParsePdf<PreProcessImages>()
-                    .ParseBlock<ProcessImageData>().StoreCache<ProcessImageData>()
-                .ParsePdf<ProcessPdfText>().StoreCache<ProcessPdfText>();
+                    .StoreCache<ProcessImageData>()
+                .ParsePdf<ProcessPdfText>()
+                    .StoreCache<ProcessPdfTextData>();
         }
 
         void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page
-                .FromCache<ProcessPdfText>()
-                    .Show(Color.Yellow)
+                .FromCache<ProcessPdfTextData>()
+                    .Show(Color.Black)
                 .FromCache<ProcessImageData>()
-                    .Show(Color.Blue)
-                .FromCache<IdentifyTables>()
-                    .Show(Color.Red);
+                    .Show(Color.Yellow)
+                .FromCache<IdentifyTablesData>()
+                    .Show(Color.Orange);
         }
     }
 }

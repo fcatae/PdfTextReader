@@ -7,17 +7,17 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class IdentifyTablesData : IProcessBlock
+    class IdentifyTablesData : IProcessBlockData
     {
-        private BlockPage _pageResult;
-        private BlockPage _pageLines;
-        private BlockPage _pageBackground;
-        public BlockPage PageTables => _pageResult;
-        public BlockPage PageLines=> _pageLines;
-        public BlockPage PageBackground => _pageBackground;
+        public BlockPage PageTables { get; set; }
+        public BlockPage PageLines { get; set; }
+        public BlockPage PageBackground { get; set; }
+
+        public BlockPage LastResult { get; set; }
 
         public BlockPage Process(BlockPage page)
         {
+            LastResult = page;
             return page;
         }
 

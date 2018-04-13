@@ -10,11 +10,13 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class ProcessImageData : IProcessBlock
+    class ProcessImageData : IProcessBlockData
     {
         private BlockSet<IBlock> _blockSet = new BlockSet<IBlock>();
 
         public BlockPage Images = null;
+
+        public BlockPage LastResult { get; private set; }
 
         public void RemoveImage(IBlock block)
         {
@@ -41,6 +43,8 @@ namespace PdfTextReader.PDFCore
             newpage.AddRange(page.AllBlocks.AsEnumerable());
 
             this.Images = newpage;
+
+            LastResult = newpage;
 
             return newpage;
         }

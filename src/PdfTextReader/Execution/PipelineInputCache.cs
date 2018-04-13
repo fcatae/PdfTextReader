@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PdfTextReader.Execution
 {
-    class PipelineInputCache
+    class PipelineInputCache<TD> where TD: class
     {
         Dictionary<Type, Document> _dictDocuments = new Dictionary<Type, Document>();
         int _numberOfPages = -1;
@@ -31,21 +31,21 @@ namespace PdfTextReader.Execution
             return cache;
         }
 
-        public BlockPage FromCache<T>(int pageNumber)
+        public TD FromCache<T>(int pageNumber)
         {
             var cache = GetCache<T>();
             return cache[pageNumber];
         }
 
-        public void StoreCache<T>(int pageNumber, BlockPage result)
+        public void StoreCache<T>(int pageNumber, TD result)
         {
             var cache = GetCache<T>();
             cache[pageNumber] = result;
         }
 
-        class Document : List<BlockPage>
+        class Document : List<TD>
         {
-            public Document(int size) : base(new BlockPage[size]) {}
+            public Document(int size) : base(new TD[size]) {}
         }
     }
 }

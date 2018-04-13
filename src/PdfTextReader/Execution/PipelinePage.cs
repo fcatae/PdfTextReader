@@ -171,16 +171,25 @@ namespace PdfTextReader.Execution
         }
 
         public PipelinePage StoreCache<T>()
-            where T : class
+            where T : IProcessBlockData
         {
-            this.Context.StoreCache<T>(PageNumber, this.LastResult);
+            var processor = CreateInstance<T>();
+
+            processor.Process(this.LastResult);
+
+            this.Context.StoreCache<T>(PageNumber, processor);
             return this;
         }
 
         public PipelinePage FromCache<T>()
-            where T : class
+            where T : IProcessBlockData
         {
-            var result = this.Context.FromCache<T>(PageNumber);
+            var processor = CreateInstance<T>();
+
+            var cache = this.Context.FromCache<T>(PageNumber);
+
+            var result = cache.LastResult;
+
             this.LastResult = result;
             return this;
         }

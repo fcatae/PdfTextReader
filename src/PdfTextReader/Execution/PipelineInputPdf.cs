@@ -37,7 +37,7 @@ namespace PdfTextReader.Execution
         public PipelineInputPdfPage CurrentPage { get; private set; }
         public TransformIndexTree Index => _indexTree;
 
-        public PipelineInputPdf(string filename, PipelineInputCache cache = null)
+        public PipelineInputPdf(string filename, PipelineInputCache<IProcessBlockData> cache = null)
         {
             var pdfDocument = new PdfDocument(VirtualFS.OpenPdfReader(filename));
 
@@ -278,9 +278,9 @@ namespace PdfTextReader.Execution
             }
         }
 
-        PipelineInputCache _cache = null;
+        PipelineInputCache<IProcessBlockData> _cache = null;
 
-        PipelineInputCache GetCache()
+        PipelineInputCache<IProcessBlockData> GetCache()
         {
             if (_cache == null)
                 PdfReaderException.AlwaysThrow("Cache not initialized");
@@ -288,9 +288,9 @@ namespace PdfTextReader.Execution
             return _cache;
         }
 
-        public BlockPage FromCache<T>(int pageNumber) => GetCache().FromCache<T>(pageNumber-1);
+        public IProcessBlockData FromCache<T>(int pageNumber) => GetCache().FromCache<T>(pageNumber-1);
 
-        public void StoreCache<T>(int pageNumber, BlockPage result) => GetCache().StoreCache<T>(pageNumber-1, result);
+        public void StoreCache<T>(int pageNumber, IProcessBlockData result) => GetCache().StoreCache<T>(pageNumber-1, result);
 
         public class PipelineInputPdfPage : IDisposable
         {
@@ -345,14 +345,13 @@ namespace PdfTextReader.Execution
             }
 
             public PipelinePage FromCache<T>()
-                where T : class
+                where T : IProcessBlockData
             {
                 var page = new PipelinePage(_pdf, _pageNumber);
-                page.LastResult = _pdf.FromCache<T>(this._pageNumber);
 
-                _page = page;
+                _page = page.FromCache<T>();
 
-                return page;
+                return _page;
             }
 
             PdfCanvas GetCanvas()

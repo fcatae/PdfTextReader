@@ -36,7 +36,7 @@ namespace PdfTextReader.ParserStages
                 .ParseBlock<ProcessImageData>()
                 .ParseBlock<SetProcessImageCompatibility>()
                 .ParseBlock<RemoveOverlapedImages2>()
-              .FromCache<ProcessPdfText>()
+              .FromCache<ProcessPdfTextData>()
                   .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Green))
                   .ParseBlock<RemoveHeaderImage>()
                   .ParseBlock<FindInitialBlockset>()

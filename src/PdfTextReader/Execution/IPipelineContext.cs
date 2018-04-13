@@ -12,9 +12,9 @@ namespace PdfTextReader.Execution
     {
         PipelineInputPdf.PipelineInputPdfPage CurrentPage { get; }
 
-        BlockPage FromCache<T>(int pageNumber);
+        IProcessBlockData FromCache<T>(int pageNumber);
 
-        void StoreCache<T>(int pageNumber, BlockPage result);
+        void StoreCache<T>(int pageNumber, IProcessBlockData result);
 
     }
 }
