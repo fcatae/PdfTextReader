@@ -11,5 +11,10 @@ namespace PdfTextReader.Execution
     interface IPipelinePdfContext : IPipelineContext
     {
         PipelineInputPdf.PipelineInputPdfPage CurrentPage { get; }
+
+        BlockPage FromCache<T>(int pageNumber);
+
+        void StoreCache<T>(int pageNumber, BlockPage result);
+
     }
 }

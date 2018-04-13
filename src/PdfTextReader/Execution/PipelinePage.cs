@@ -12,7 +12,7 @@ namespace PdfTextReader.Execution
 {
     class PipelinePage
     {
-        public IPipelineContext Context { get; }
+        public IPipelinePdfContext Context { get; }
         public int PageNumber { get; }
         private BlockPage LastErrors { get; set; }
 
@@ -186,14 +186,14 @@ namespace PdfTextReader.Execution
         public PipelinePage StoreCache<T>()
             where T : class
         {
-            ((PipelineInputPdf)this.Context).StoreCache<T>(PageNumber, this.LastResult);
+            this.Context.StoreCache<T>(PageNumber, this.LastResult);
             return this;
         }
 
         public PipelinePage FromCache<T>()
             where T : class
         {
-            var result = ((PipelineInputPdf)this.Context).FromCache<T>(PageNumber);
+            var result = this.Context.FromCache<T>(PageNumber);
             this.LastResult = result;
             return this;
         }
