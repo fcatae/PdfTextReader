@@ -15,29 +15,48 @@ namespace PdfTextReader
 {
     class Program3
     {
-        public static void CreateLayout(string basename)
+        // public static void CreateLayout(string basename)
+        // {
+        //     //PipelineInputPdf.StopOnException();
+        //     //PdfReaderException.ContinueOnException();
+
+        //     Console.WriteLine();
+        //     Console.WriteLine("Program3 - CreateLayout");
+        //     Console.WriteLine();
+
+        //     var textLines = GetTextLines(basename, out Execution.Pipeline pipeline)
+        //                     .ConvertText<CreateStructures, TextStructure>()
+        //                     .ConvertText<CreateTextSegments, TextSegment>()
+        //                     .ToList();
+
+        //     Console.WriteLine($"FILENAME: {pipeline.Filename}");
+
+        //     var statistics = pipeline.Statistics;
+        //     //var layout = (ValidateLayout)statistics.Calculate<ValidateLayout, StatsPageLayout>();
+        //     var layout = statistics.RetrieveStatistics<StatsPageLayout>();
+
+        //     // pipeline.Statistics.SaveStats<StatsPageLayout>($"bin/{basename}-pagelayout.txt");
+
+        //     pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
+        // }
+
+
+        public static void ProcessStage(string basename)
         {
-            //PipelineInputPdf.StopOnException();
-            //PdfReaderException.ContinueOnException();
-
             Console.WriteLine();
-            Console.WriteLine("Program3 - CreateLayout");
+            Console.WriteLine("ProcessStage");
             Console.WriteLine();
 
-            var textLines = GetTextLines(basename, out Execution.Pipeline pipeline)
-                            .ConvertText<CreateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ToList();
+            PipelineInputPdf.StopOnException();
 
-            Console.WriteLine($"FILENAME: {pipeline.Filename}");
+            using (var context = new ParserStages.StageContext(basename))
+            {
+                var stage0 = new ParserStages.StagePdfInput(context);
+                stage0.Process();
 
-            var statistics = pipeline.Statistics;
-            //var layout = (ValidateLayout)statistics.Calculate<ValidateLayout, StatsPageLayout>();
-            var layout = statistics.RetrieveStatistics<StatsPageLayout>();
-
-            pipeline.Statistics.SaveStats<StatsPageLayout>($"bin/{basename}-pagelayout.txt");
-
-            pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
+                var stage1 = new ParserStages.StagePageMargins(context);
+                stage1.Process();
+            }
         }
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
@@ -99,7 +118,9 @@ namespace PdfTextReader
                                   .ParseBlock<RemoveOverlapedImages>()      // 3
                               .ParsePdf<ProcessPdfText>()                   // 4
                                   //.Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
-                                  .ParseBlock<RemoveSmallFonts>()           // 5
+                                    .Validate<HideSmallFonts>().ShowErrors(p => p.Show(Color.Green))
+                                  .ParseBlock<HideSmallFonts>()           // 5
+                        //.ParseBlock<RemoveSmallFonts>()           // 5
                                   //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
                                   .ParseBlock<MergeTableText>()             // 6
                                   //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))

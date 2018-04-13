@@ -7,15 +7,13 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class AddTableLines : IProcessBlock, IPipelineDependency
+    class AddTableLines : IProcessBlock
     {
         private List<IBlock> _lines;
         private List<IBlock> _background;
 
-        public void SetPage(PipelinePage p)
+        public AddTableLines(PDFCore.IdentifyTables parserTable)
         {
-            var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-
             var page = parserTable.PageLines;
 
             if (page == null)

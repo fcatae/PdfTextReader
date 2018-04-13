@@ -49,25 +49,25 @@ namespace PdfTextReader.Execution
             return value;
         }
 
-        public object Summary(Func<PipelineStats, object> func)
-        {
-            return func(this);
-        }
+        // public object Summary(Func<PipelineStats, object> func)
+        // {
+        //     return func(this);
+        // }
 
-        public void SaveStats<T>(string filename)
-            where T: class
-        {
-            using (var file = VirtualFS.OpenStreamWriter(filename))
-            {
-                var stats = RetrieveStatistics<T>();
+        // public void SaveStats<T>(string filename)
+        //     where T: class
+        // {
+        //     using (var file = VirtualFS.OpenStreamWriter(filename))
+        //     {
+        //         var stats = RetrieveStatistics<T>();
 
-                int page = 1;
-                foreach(var s in stats)
-                {
-                    string layout = (s != null) ? s.ToString() : "";
-                    file.WriteLine($"{page++}:{layout}");
-                }
-            }
-        }
+        //         int page = 1;
+        //         foreach(var s in stats)
+        //         {
+        //             string layout = (s != null) ? s.ToString() : "";
+        //             file.WriteLine($"{page++}:{layout}");
+        //         }
+        //     }
+        // }
     }
 }

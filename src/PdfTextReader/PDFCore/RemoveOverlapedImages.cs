@@ -8,23 +8,21 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveOverlapedImages : IProcessBlock, IValidateBlock, IPipelineDependency
+    class RemoveOverlapedImages : IProcessBlock, IValidateBlock
     {
-        private List<IBlock> _images;
+        //private List<IBlock> _images;
         private PreProcessImages _parse;
 
-        public void SetPage(PipelinePage p)
+        public RemoveOverlapedImages(PreProcessImages parseImage)
         {
-            var parseImage = p.CreateInstance<PreProcessImages>();
-
             var page = parseImage.Images;
 
             if (page == null)
             {
                 PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
             }
-            
-            this._images = page.AllBlocks.ToList();
+
+            //this._images = page.AllBlocks.ToList();
 
             this._parse = parseImage;
         }

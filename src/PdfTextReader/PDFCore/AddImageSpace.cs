@@ -8,14 +8,12 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class AddImageSpace : IProcessBlock, IPipelineDependency
+    class AddImageSpace : IProcessBlock
     {
         private List<IBlock> _images;
 
-        public void SetPage(PipelinePage p)
+        public AddImageSpace(PreProcessImages parserImage)
         {
-            var parserImage = p.CreateInstance<PreProcessImages>();
-
             var page = parserImage.Images;
 
             if (page == null)

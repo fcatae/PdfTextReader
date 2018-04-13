@@ -28,7 +28,30 @@ namespace PdfTextReader
         public float GetWidth() => Width;
         public float GetHeight() => Height;
         public float GetWordSpacing() => WordSpacing;
-        
+
+        public Block()
+        {
+        }
+
+        public Block(Block block)
+        {
+            Text = block.Text;
+            X = block.X;
+            B = block.B;
+            H = block.H;
+            Width = block.Width;
+            Height = block.Height;
+            Lower = block.Lower;
+            FontName = block.FontName;
+            FontFullName = block.FontFullName;
+            FontStyle = block.FontStyle;
+            FontSize = block.FontSize;
+            WordSpacing = block.WordSpacing;
+            HasBackColor = block.HasBackColor;
+            IsBold = block.IsBold;
+            IsItalic = block.IsItalic;
+        }
+
         public static bool HasOverlap(IBlock a, IBlock b)
         {
             float a_x1 = a.GetX();

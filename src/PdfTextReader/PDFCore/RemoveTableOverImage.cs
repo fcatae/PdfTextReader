@@ -8,27 +8,23 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveTableOverImage : IProcessBlock, IPipelineDependency
+    class RemoveTableOverImage : IProcessBlock
     {
         private List<IBlock> _images;
         private IBlock _headerImage;
 
-        public void SetPage(PipelinePage p)
+        public RemoveTableOverImage(PreProcessImages parseImage, RemoveHeaderImage optionalHeaderImage)
         {
-            var parseImage = p.CreateInstance<PreProcessImages>();
-
             var page = parseImage.Images;
 
             if (page == null)
             {
                 PdfReaderException.AlwaysThrow("RemoveTableOverImage requires PreProcessImages");
             }
-            
+
             this._images = page.AllBlocks.ToList();
 
-            var optionalHeaderImage = p.CreateInstance<RemoveHeaderImage>();
-
-            if( optionalHeaderImage != null )
+            if (optionalHeaderImage != null)
             {
                 // add header image to the collection -- tables will be removed as well
                 _headerImage = optionalHeaderImage.HeaderImage;

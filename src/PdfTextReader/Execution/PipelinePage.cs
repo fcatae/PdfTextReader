@@ -12,7 +12,7 @@ namespace PdfTextReader.Execution
 {
     class PipelinePage
     {
-        public IPipelineContext Context { get; }
+        public IPipelinePdfContext Context { get; }
         public int PageNumber { get; }
         private BlockPage LastErrors { get; set; }
 
@@ -71,7 +71,7 @@ namespace PdfTextReader.Execution
             return this;
         }
         public PipelinePage Validate<T>(Action<BlockSet<IBlock>> filter = null)
-            where T : IValidateBlock, new()
+            where T : IValidateBlock
         {
             var initial = this.LastResult;
 
@@ -91,21 +91,14 @@ namespace PdfTextReader.Execution
         }
         
         public T CreateInstance<T>()
-            where T : new()
         {
             var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 
-            var deps = obj as IPipelineDependency;
-            if(deps != null)
-            {
-                deps.SetPage(this);
-            }
-
             return obj;
         }
-
+        
         public PipelinePage ParseBlock<T>()
-            where T: IProcessBlock, new()
+            where T: IProcessBlock
         {
             var initial = this.LastResult;
             
@@ -170,25 +163,37 @@ namespace PdfTextReader.Execution
                         
             return this;
         }
-
-        //public PipelineText<TextLine> Text<T>()
-        //    where T: IConvertBlock, new()
-        //{
-        //    var proc2 = new T();
-        //    var lines = proc2.ProcessPage(this.LastResult);
-
-        //    var pipe = new PipelineText<TextLine>(Context, lines, (PipelineInputPdf)Context);
-
-        //    pipe.CurrentStream = lines;
-
-        //    return pipe;
-        //}
-
+        
         public PipelinePage ParsePdf<T>()
             where T : IEventListener, IPipelineResults<BlockPage>, new()
         {
             return ((PipelineInputPdf)this.Context).CurrentPage.ParsePdf<T>();
         }
 
+        public PipelinePage StoreCache<T>()
+            where T : IProcessBlockData
+        {
+            var processor = CreateInstance<T>();
+
+            processor.Process(this.LastResult);
+
+            this.Context.StoreCache<T>(PageNumber, processor);
+            return this;
+        }
+
+        public PipelinePage FromCache<T>()
+            where T : IProcessBlockData
+        {
+            var processor = CreateInstance<T>();
+
+            var cache = this.Context.FromCache<T>(PageNumber);
+
+            processor.UpdateInstance(cache);
+
+            var result = cache.LastResult;
+
+            this.LastResult = result;
+            return this;
+        }
     }
 }

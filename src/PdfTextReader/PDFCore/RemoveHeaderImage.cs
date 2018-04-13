@@ -8,7 +8,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveHeaderImage : IProcessBlock, IValidateBlock, IPipelineDependency
+    class RemoveHeaderImage : IProcessBlock, IValidateBlock
     {
         const float statRegionTooLarge = 200f;
         private List<IBlock> _images;
@@ -17,10 +17,8 @@ namespace PdfTextReader.PDFCore
 
         public IBlock HeaderImage => _headerImage;
 
-        public void SetPage(PipelinePage p)
+        public RemoveHeaderImage(PreProcessImages parseImage)
         {
-            var parseImage = p.CreateInstance<PreProcessImages>();
-
             var page = parseImage.Images;
 
             if (page == null)

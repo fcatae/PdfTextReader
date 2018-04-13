@@ -6,18 +6,22 @@
 <h2>@ViewData["Title"]</h2>
 <h3><a href="@Model.ResultLink">@Model.Message</a></h3>
 
-<div class="row">
-    <form method="post" enctype="multipart/form-data" asp-page="Upload">
-        <div class="form-group">
-            <div class="col-md-10">
-                <p>Upload one or more files using this form:</p>
-                <input type="file" name="CurrentFile.File" />
+<div class="upload-form">
+    <div class="row">
+        <form method="post" enctype="multipart/form-data" asp-page="Upload">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <p>Envie arquivos</p>
+                    <input type="file" name="CurrentFile.File" />
+                    <p>Arquivos enviados serão processados pelo PdfTextReader</p>
+                </div>
+                <div class="col-md-2">
+                    <input class="form-control" type="submit" value="Upload" />
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="col-md-10">
-                <input type="submit" value="Upload" />
-            </div>
-        </div>
-    </form>
+        </form>
+    </div>
+    <div class="row">
+        <img class="wait-image" src="/images/wait.gif" hidden>
+    </div>
 </div>

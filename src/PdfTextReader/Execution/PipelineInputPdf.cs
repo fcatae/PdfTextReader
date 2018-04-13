@@ -1,18 +1,16 @@
-﻿using iText.Kernel.Pdf;
-using iText.Kernel.Pdf.Canvas;
-using iText.Kernel.Pdf.Canvas.Parser;
-using iText.Kernel.Pdf.Canvas.Parser.Listener;
-using PdfTextReader.PDFCore;
+﻿
 using PdfTextReader.TextStructures;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using PdfTextReader.Base;
 using iText.Kernel.Font;
-using iText.IO.Font.Constants;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Pdf.Canvas.Parser;
+using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Extgstate;
-using System.IO;
+using iText.IO.Font.Constants;
 
 namespace PdfTextReader.Execution
 {
@@ -26,6 +24,7 @@ namespace PdfTextReader.Execution
         private List<List<object>> _statsCollectionPerPage = new List<List<object>>();
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
+        private PipelineSingletonAutofacFactory _documentFactory = new PipelineSingletonAutofacFactory();
 
         private static bool g_continueOnException = true;
 
@@ -38,18 +37,25 @@ namespace PdfTextReader.Execution
         public PipelineInputPdfPage CurrentPage { get; private set; }
         public TransformIndexTree Index => _indexTree;
 
-        public PipelineInputPdf(string filename)
+        public PipelineInputPdf(string filename, PipelineInputCache<IProcessBlockData> cache = null)
         {
             var pdfDocument = new PdfDocument(VirtualFS.OpenPdfReader(filename));
 
             this._input = filename;
             this._pdfDocument = pdfDocument;
 
+            if( cache != null )
+            {
+                cache.SetSize(_pdfDocument.GetNumberOfPages());
+                this._cache = cache;
+            }
+
             PipelineInputPdf.DebugCurrent = this;
 
             PdfReaderException.ClearContext();
         }
-        
+
+
         public PipelineInputPdfPage Page(int pageNumber)
         {
             if (CurrentPage != null)
@@ -68,28 +74,6 @@ namespace PdfTextReader.Execution
         {
             _pdfLog.LogCheck(pageNumber, component, message);
         }
-
-        public void SaveOk(string outputfile)
-        {
-            string inputfile = this._input;
-
-            var errorPages = _pdfLog.GetErrors().OrderBy(t => t).ToList();            
-
-            using (var pdfInput = new PdfDocument(VirtualFS.OpenPdfReader(_input)))
-            {
-                int total = pdfInput.GetNumberOfPages();
-                var positivePages = Enumerable.Range(1, total).Except(errorPages).ToList();
-
-                if (positivePages.Count == 0)
-                    return;
-
-                using (var pdfOutput = new PdfDocument(VirtualFS.OpenPdfWriter(outputfile)))
-                {
-                    pdfInput.CopyPagesTo(positivePages, pdfOutput);
-                }
-            }
-        }
-
         
         public int ExtractOutputPages(string outputfile, IEnumerable<int> pages)
         {
@@ -168,16 +152,6 @@ namespace PdfTextReader.Execution
             }            
         }
 
-        public void Extract(string outfile, int start, int end)
-        {
-            IList<int> pageNumbers = Enumerable.Range(start, end - start + 1).ToList();
-
-            using (var pdfInput = new PdfDocument(VirtualFS.OpenPdfReader(_input)) )
-            using (var pdfOutput = new PdfDocument(VirtualFS.OpenPdfWriter(outfile)))
-            {
-                pdfInput.CopyPagesTo(pageNumbers, pdfOutput);                
-            }
-        }
         public void ExtractPages(string outfile, IList<int> pageNumbers)
         {
             using (var pdfInput = new PdfDocument(VirtualFS.OpenPdfReader(_input)))
@@ -185,30 +159,6 @@ namespace PdfTextReader.Execution
             {
                 pdfInput.CopyPagesTo(pageNumbers, pdfOutput);
             }
-        }
-
-        public void AllPages(Action<PipelineInputPdfPage> callback)
-        {
-            int totalPages = _pdfDocument.GetNumberOfPages();
-
-            for (int i=1; i<=totalPages; i++)
-            {
-                var pdfPage = Page(i);
-
-                callback(pdfPage);
-            }
-        }
-
-        public PipelineText<TextLine> AllPagesExcept<T>(IEnumerable<int> exceptPages, Action<PipelineInputPdfPage> callback)
-            where T : IConvertBlock, new()
-        {
-            var pageList = Enumerable.Range(1, _pdfDocument.GetNumberOfPages()).Except(exceptPages);
-
-            var textLines = StreamConvert<T>(pageList, callback);
-
-            var pipeText = new PipelineText<TextLine>(this, textLines, _indexTree, this);
-
-            return pipeText;
         }
 
         public PipelineText<TextLine> AllPages<T>(Action<PipelineInputPdfPage> callback)
@@ -220,33 +170,14 @@ namespace PdfTextReader.Execution
             
             return pipeText;
         }
-
-        public IEnumerable<TextLine> StreamConvert<T>(IEnumerable<int> pageList, Action<PipelineInputPdfPage> callback)
+        
+        public IEnumerable<TextLine> Get<T>(Action<PipelineInputPdfPage> callback)
             where T : IConvertBlock, new()
         {
-            var processor = new T();
-
-            int totalPages = _pdfDocument.GetNumberOfPages();
-
-            foreach (int i in pageList)
-            {
-                System.Diagnostics.Debug.WriteLine("Processing page " + i);
-
-                var pdfPage = Page(i);
-
-                if (ProtectCall(callback, pdfPage) == false)
-                    continue;
-
-                var textSet = processor.ProcessPage(i, CurrentPage.GetLastResult());
-
-                foreach (var t in textSet)
-                {
-                    yield return t;
-                }
-            }
+            return StreamConvert<T>(callback);
         }
 
-        public IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
+        private IEnumerable<TextLine> StreamConvert<T>(Action<PipelineInputPdfPage> callback)
             where T: IConvertBlock, new()
         {
             var processor = new T();            
@@ -286,7 +217,12 @@ namespace PdfTextReader.Execution
             {
                 Console.WriteLine(ex.ToString());
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
-                PipelineDebug.ShowException(this, ex);
+
+                bool hasOutput = (_pdfOutput != null);
+                if (hasOutput)
+                {
+                    PipelineDebug.ShowException(this, ex);
+                }
 
                 StoreStatistics(new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
                 StoreStatistics(pdfPage.GetPageNumber(), new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
@@ -326,6 +262,36 @@ namespace PdfTextReader.Execution
 
         public PipelineStats Statistics => new PipelineStats(_statsCollection, _statsCollectionPerPage);
 
+        public void StageProcess(Action<PipelineInputPdfPage> callback)
+        {
+            int totalPages = _pdfDocument.GetNumberOfPages();
+
+            using(this)
+            {
+                for (int i = 1; i <= totalPages; i++)
+                {
+                    var pdfPage = Page(i);
+
+                    if (ProtectCall(callback, pdfPage) == false)
+                        continue;
+                }
+            }
+        }
+
+        PipelineInputCache<IProcessBlockData> _cache = null;
+
+        PipelineInputCache<IProcessBlockData> GetCache()
+        {
+            if (_cache == null)
+                PdfReaderException.AlwaysThrow("Cache not initialized");
+
+            return _cache;
+        }
+
+        public IProcessBlockData FromCache<T>(int pageNumber) => GetCache().FromCache<T>(pageNumber-1);
+
+        public void StoreCache<T>(int pageNumber, IProcessBlockData result) => GetCache().StoreCache<T>(pageNumber-1, result);
+
         public class PipelineInputPdfPage : IDisposable
         {
             private readonly PipelineInputPdf _pdf;
@@ -334,7 +300,7 @@ namespace PdfTextReader.Execution
             private PipelinePage _page;
             private PdfCanvas _outputCanvas;
 
-            private PipelineSingletonFactory _factory = new PipelineSingletonFactory();
+            private PipelineSingletonAutofacFactory _factory = new PipelineSingletonAutofacFactory();
 
             public int GetPageNumber() => _pageNumber;
             public BlockPage GetLastResult() => _page.LastResult;
@@ -351,7 +317,6 @@ namespace PdfTextReader.Execution
             }
 
             public T CreateInstance<T>()
-                where T: new()
             {
                 return _factory.CreateInstance<T>();
             }
@@ -379,10 +344,14 @@ namespace PdfTextReader.Execution
                 return page;
             }
 
-            public PipelineInputPdfPage Output(string filename)
+            public PipelinePage FromCache<T>()
+                where T : IProcessBlockData
             {
-                this._pdf.Output(filename);
-                return this;
+                var page = new PipelinePage(_pdf, _pageNumber);
+
+                _page = page.FromCache<T>();
+
+                return _page;
             }
 
             PdfCanvas GetCanvas()
@@ -508,6 +477,12 @@ namespace PdfTextReader.Execution
                 {
                     _outputCanvas.Release();
                     _outputCanvas = null;
+                }
+
+                if( _factory != null )
+                {
+                    _factory.Dispose();
+                    _factory = null;
                 }
             }
         }        

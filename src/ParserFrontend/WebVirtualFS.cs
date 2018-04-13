@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ParserFrontend
 {
-    class WebVirtualFS : IVirtualFS
+    public class WebVirtualFS : IVirtualFS
     {
         const string FILEFOLDERWWW = "wwwroot/files";
 
@@ -37,6 +37,15 @@ namespace ParserFrontend
             }
 
             return new FileStream(filename, FileMode.Create);
+        }
+
+        public string[] ListFiles(string pattern)
+        {
+            DirectoryInfo directory = new DirectoryInfo("wwwroot/files/input");
+
+            var files = directory.EnumerateFiles(pattern).Select(fi => fi.Name);
+
+            return files.ToArray();
         }
 
         string GetLocalFilename(string virtualfile)

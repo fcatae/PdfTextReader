@@ -1,4 +1,5 @@
-﻿using PdfTextReader.Base;
+```
+using PdfTextReader.Base;
 using PdfTextReader.Execution;
 using PdfTextReader.ExecutionStats;
 using PdfTextReader.Parser;
@@ -941,3 +942,5 @@ namespace PdfTextReader
         }
     }
 }
+
+```

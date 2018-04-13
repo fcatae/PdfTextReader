@@ -14,24 +14,6 @@ namespace PdfTextReader
 {
     public class ExamplesWeb
     {
-        public static void FollowText(IVirtualFS virtualFS, string basename)
-        {
-            VirtualFS.ConfigureFileSystem(virtualFS);
-
-            PdfReaderException.ContinueOnException();
-
-            var pipeline = new Execution.Pipeline();
-
-            pipeline.Input($"{basename}.pdf")
-                    .Output($"{basename}-follow-text-output.pdf")
-                    .AllPages(page => page
-                              .ParsePdf<ProcessPdfText>()
-                              .ShowLine(Color.Orange)
-                    );
-
-            pipeline.Done();
-        }
-
         public static void RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
         {
             VirtualFS.ConfigureFileSystem(virtualFS);
@@ -57,55 +39,6 @@ namespace PdfTextReader
                             .ToList();
             
             pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
-        }
-
-        public static void RunCreateArtigos(IVirtualFS virtualFS, string basename, string inputfolder, string tmpfolder, string outputfolder)
-        {
-            VirtualFS.ConfigureFileSystem(virtualFS);
-
-            PdfReaderException.ContinueOnException();
-
-            Pipeline pipeline = new Pipeline();
-
-            var conteudo = GetTextLines(pipeline, basename, inputfolder, tmpfolder) // use temp folder
-                            .ConvertText<CreateTextLineIndex, TextLine>()
-                            .ConvertText<PreCreateStructures, TextLine2>()
-                            .ConvertText<CreateStructures2, TextStructure>()
-                            .ConvertText<PreCreateTextSegments, TextStructureAgg>()
-                            .ConvertText<AggregateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"{tmpfolder}/{basename}/segment-titles-tree.txt")
-                            .ConvertText<TransformConteudo, Conteudo>()
-                            .ToList();
-            
-            var createArticle = new TransformArtigo();
-            var artigos = createArticle.Create(conteudo);
-            createArticle.CreateXML(artigos, $"{outputfolder}/{basename}", basename);
-        }
-        public static void RunCreateArtigosJson(IVirtualFS virtualFS, string basename, string inputfolder, string tmpfolder, string outputfolder)
-        {
-            VirtualFS.ConfigureFileSystem(virtualFS);
-
-            PdfReaderException.ContinueOnException();
-
-            Pipeline pipeline = new Pipeline();
-
-            var conteudo = GetTextLines(pipeline, basename, inputfolder, tmpfolder) // use temp folder
-                            .ConvertText<CreateTextLineIndex, TextLine>()
-                            .ConvertText<PreCreateStructures, TextLine2>()
-                            .ConvertText<CreateStructures2, TextStructure>()
-                            .ConvertText<PreCreateTextSegments, TextStructureAgg>()
-                            .ConvertText<AggregateStructures, TextStructure>()
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>()
-                                .Log<AnalyzeSegmentTitles>($"{tmpfolder}/{basename}/segment-titles-tree.txt")
-                            .ConvertText<TransformConteudo, Conteudo>()
-                            .ToList();
-
-            var createArticle = new TransformArtigo();
-            var artigos = createArticle.Create(conteudo);
-            createArticle.CreateJson(artigos, $"{outputfolder}/{basename}", basename);
         }
 
         static PipelineText<TextLine> GetTextLines(Pipeline pipeline, string basename, string inputfolder, string tmpfolder)
@@ -168,5 +101,18 @@ namespace PdfTextReader
 
             return result;
         }
+
+
+        public static void RunParserPDF2(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
+        {
+            VirtualFS.ConfigureFileSystem(virtualFS);
+
+            PdfReaderException.ContinueOnException();
+
+            var examples = new ExampleStages();
+            examples.Start(inputfolder, outputfolder, basename);
+
+            //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
+        }        
     }
 }

@@ -33,3 +33,8 @@ body {
         display: none;
     }
 }
+
+.bg-dark {
+    background-color: #101010;
+    opacity: 0.8;
+}

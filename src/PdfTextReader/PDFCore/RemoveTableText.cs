@@ -7,21 +7,19 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class RemoveTableText : IProcessBlock, IPipelineDependency
+    class RemoveTableText : IProcessBlock
     {
         private List<IBlock> _tables;
 
-        public void SetPage(PipelinePage p)
+        public RemoveTableText(PDFCore.IdentifyTables parserTable)
         {
-            var parserTable = p.CreateInstance<PDFCore.IdentifyTables>();
-
             var page = parserTable.PageTables;
 
             if (page == null)
             {
                 PdfReaderException.AlwaysThrow("RemoveTableText requires IdentifyTables");
             }
-            
+
             this._tables = page.AllBlocks.ToList();
         }
 

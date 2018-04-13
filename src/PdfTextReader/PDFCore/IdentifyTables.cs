@@ -15,9 +15,10 @@ namespace PdfTextReader.PDFCore
         private BlockPage _pageResult;
         private BlockPage _pageLines;
         private BlockPage _pageBackground;
-        public BlockPage PageTables => _pageResult;
-        public BlockPage PageLines=> _pageLines;
-        public BlockPage PageBackground => _pageBackground;
+        public BlockPage PageTables => (_tableData != null) ? _tableData.PageTables : _pageResult;
+        public BlockPage PageLines=> (_tableData != null) ? _tableData.PageLines : _pageLines;
+        public BlockPage PageBackground => (_tableData != null) ? _tableData.PageBackground : _pageBackground;
+        IdentifyTablesData _tableData = null;
 
         public void SetPageTables(IEnumerable<IBlock> tables)
         {
@@ -28,6 +29,11 @@ namespace PdfTextReader.PDFCore
                 PdfReaderException.AlwaysThrow("blocks already have overlapped elements");
 
             _pageResult = page;
+        }
+
+        public void SetCompatibility(IdentifyTablesData data)
+        {
+            _tableData = data;
         }
 
         public BlockPage Process(BlockPage page)
