@@ -39,7 +39,7 @@ namespace PdfToImageFunction
             using (var pdfInput = File.OpenRead(pdfTempFile))
             {
                 log.Info("Generating Image stream array");
-                PdfImageConverter imageConverter = new PdfImageConverter(gs, tempFolder, "102.4");
+                PdfImageConverter imageConverter = new PdfImageConverter(gs, tempFolder, "204.8");
 
                 try
                 {
@@ -50,24 +50,36 @@ namespace PdfToImageFunction
                     log.Error($"Error generating pdf images {ex.Message}");
                 }
 
-                if (pdfPageImageList != null)
-                    log.Info($"Images generated Total Pages - {pdfPageImageList.Length}");
-                else
-                    log.Info($"No Pages was generated!");
+                
             }
 
-            log.Info($"Uploading Images to final Storage Account");
+            if (pdfPageImageList == null)
+                log.Info($"No Pages was generated!");
+
+            else
+            {
+
+                log.Info($"Uploading Images to final Storage Account");
 
 
-            FileInfo info = new FileInfo(pdfTempFile);
+                FileInfo info = new FileInfo(pdfTempFile);
 
-            UploadImages(pdfPageImageList, info.Name.Replace(".pdf",""));
+                try
+                {
+                    UploadImages(pdfPageImageList, info.Name.ToUpper().Replace(".PDF", ""));
+                }
+                catch (Exception ex) {
+                    log.Error($"Error Uploading Images: {ex.Message}");
+                }
+                
+            }
 
             try
             {
                 File.Delete(pdfTempFile);
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 log.Error($"Error trying to delete the temp file {pdfTempFile}: {ex.Message}");
             }
 
@@ -112,12 +124,6 @@ namespace PdfToImageFunction
         {
             var fileUri = new Uri(pdfFileUrl);
             var fileName = $@"{tempFolder}\{fileUri.Segments[fileUri.Segments.Length-1]}";
-
-
-            //if (!Directory.Exists(tempFolder))
-            //{
-            //    Directory.CreateDirectory(tempFolder);
-            //}
 
             using (var client = new WebClient())
             {
