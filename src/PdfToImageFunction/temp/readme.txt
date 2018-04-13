@@ -1,0 +1,1 @@
+﻿This folder will be used by ghostScript to write image from the pdf file

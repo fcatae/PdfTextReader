@@ -39,7 +39,14 @@ namespace PdfTextReader.Azure
 
             var images = ConvertAsync(pdfFile.FullName, "102.4").GetAwaiter().GetResult();
 
-            imageListOutput = new Stream[images.Length];
+
+            if (images == null)
+            {
+                Console.WriteLine("Error generating the images!");
+                return;
+            }
+
+            imageListOutput = new Stream[images.Length];           
 
             for (var i = 0; i < images.Length; i++)
             {
@@ -56,11 +63,11 @@ namespace PdfTextReader.Azure
 
             try
             {
-                File.Delete($@"{pdfDirectory}");
-
+                Directory.Delete($@"{pdfDirectory}");
             }
             catch(Exception ex) {
                 Console.WriteLine($"Erro deleting directory {pdfDirectory} - {ex.Message}");
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -86,23 +93,44 @@ namespace PdfTextReader.Azure
             var outdir = new FileInfo(input).FullName.Replace(".pdf", "");
             Directory.CreateDirectory(outdir);
 
-            int exitCode = await Task.Run(() =>
-            {
-                String args = $"-dNOPAUSE -sDEVICE=jpeg -r{ratio} -o\"{outdir}\\{filename}_%d.jpg\" \"{input}\"";
-                Process proc = new Process();
-                proc.StartInfo.FileName = _gsPath;
-                proc.StartInfo.Arguments = args;
-                proc.StartInfo.CreateNoWindow = true;
-                proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                proc.Start();
-                proc.WaitForExit();
-                return proc.ExitCode;
-            });
+            string output = "", err = "";
 
-            if (exitCode == 0)
+            try
             {
-                File.Delete(input);
-                return Directory.GetFiles(outdir, "*.jpg");
+                int exitCode = await Task.Run(() =>
+                {
+                    String args = $"-dNOPAUSE -sDEVICE=jpeg -r{ratio} -o\"{outdir}\\{filename}_%d.jpg\" \"{input}\"";
+                    Process proc = new Process();
+                    proc.StartInfo.FileName = _gsPath;
+                    proc.StartInfo.Arguments = args;
+                    //proc.StartInfo.CreateNoWindow = false;
+                    //proc.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+                    proc.StartInfo.UseShellExecute = false;
+                    proc.StartInfo.RedirectStandardOutput = true;
+                    proc.StartInfo.RedirectStandardError = true;
+                    proc.Start();
+                    output = proc.StandardOutput.ReadToEnd();
+                    err = proc.StandardError.ReadToEnd();
+
+                    proc.Start();
+                    proc.WaitForExit();
+                    return proc.ExitCode;
+                });
+
+                if (exitCode == 0)
+                {
+                    File.Delete(input);
+                    return Directory.GetFiles(outdir, "*.jpg");
+                }
+                else
+                {
+                    Console.WriteLine($"ExitCode: {exitCode} gs: {_gsPath} out: {output} err: {err} ");
+                }
+            }
+            catch (Exception ex) {
+                Console.WriteLine($"Error generating image from pdf: {ex.Message}");
+                throw new Exception(ex.Message, ex);
             }
             return null;
         }
