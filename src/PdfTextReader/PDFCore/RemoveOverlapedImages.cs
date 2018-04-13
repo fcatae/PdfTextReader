@@ -10,7 +10,7 @@ namespace PdfTextReader.PDFCore
 {
     class RemoveOverlapedImages : IProcessBlock, IValidateBlock
     {
-        private List<IBlock> _images;
+        //private List<IBlock> _images;
         private PreProcessImages _parse;
 
         public RemoveOverlapedImages(PreProcessImages parseImage)
@@ -22,7 +22,7 @@ namespace PdfTextReader.PDFCore
                 PdfReaderException.AlwaysThrow("RemoveHeaderImage requires PreProcessImages");
             }
 
-            this._images = page.AllBlocks.ToList();
+            //this._images = page.AllBlocks.ToList();
 
             this._parse = parseImage;
         }
