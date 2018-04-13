@@ -10,25 +10,28 @@ namespace PdfTextReader.ParserStages
 {
     class StagePdfInput
     {
-        const string INPUT = "input";
-        const string OUTPUT = "output";
+        private readonly string _input;
+        private readonly string _output;
+        private readonly StageContext _context;
 
-        //public StagePdfInput(StageContext context)
-        //{
-        //    // define the file system
-        //}
-
-        public void Process(string basename)
+        public StagePdfInput(StageContext context)
         {
-            using (Pipeline pipeline = new Pipeline())
-            {
-                pipeline.Input($"{INPUT}/{basename}.pdf")
-                        .StageProcess(InitialCache);
+            this._input = context.InputFolder;
+            this._output = context.OutputFolder;
+            this._context = context;
+        }
 
-                pipeline.Input($"{INPUT}/{basename}.pdf")
-                        .Output($"{OUTPUT}/{basename}/stage0-input.pdf")
-                        .StageProcess(ShowColors);
-            }
+        public void Process()
+        {
+            string basename = _context.Basename;
+            Pipeline pipeline = _context.GetPipeline();
+
+            pipeline.Input($"{_context.InputFilePrefix}.pdf")
+                    .StageProcess(InitialCache);
+
+            pipeline.Input($"{_context.InputFilePrefix}.pdf")
+                    .Output($"{_context.OutputFilePrefix}-stage0-input.pdf")
+                    .StageProcess(ShowColors);
         }
 
         void InitialCache(PipelineInputPdf.PipelineInputPdfPage page)

@@ -47,8 +47,14 @@ namespace PdfTextReader
             Console.WriteLine("ProcessStage");
             Console.WriteLine();
 
-            var stage0 = new ParserStages.StagePdfInput();
-            stage0.Process(basename);
+            using (var context = new ParserStages.StageContext(basename))
+            {
+                var stage0 = new ParserStages.StagePdfInput(context);
+                stage0.Process();
+
+                var stage1 = new ParserStages.StagePageMargins(context);
+                stage1.Process();
+            }
         }
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
