@@ -38,6 +38,7 @@ namespace PdfTextReader.ParserStages
         {
             page.ParsePdf<PreProcessTables>()
                     .ParseBlock<IdentifyTables>().StoreCache<IdentifyTables>()
+                                                 .StoreCache<IdentifyTablesData>()
                 .ParsePdf<PreProcessImages>()
                     .ParseBlock<ProcessImageData>().StoreCache<ProcessImageData>()
                 .ParsePdf<ProcessPdfText>().StoreCache<ProcessPdfText>();
