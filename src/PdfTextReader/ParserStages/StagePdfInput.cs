@@ -44,12 +44,13 @@ namespace PdfTextReader.ParserStages
 
         void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
         {
-            page.FromCache<IdentifyTables>()
+            page
+                .FromCache<ProcessPdfText>()
                     .Show(Color.Yellow)
                 .FromCache<PreProcessImages>()
-                    .Show(Color.Orange)
-                .FromCache<ProcessPdfText>()
-                    .Show(Color.Blue);
+                    .Show(Color.Blue)
+                .FromCache<IdentifyTables>()
+                    .Show(Color.Red);
         }
     }
 }
