@@ -19,7 +19,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Azure", "PdfT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserFrontend", "ParserFrontend\ParserFrontend.csproj", "{E832F543-3BB9-47B0-8D8C-049A5B345671}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QueueConsole", "QueueConsole\QueueConsole.csproj", "{A7678DC4-9482-4D37-B1DA-E799712FA27D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QueueConsole", "QueueConsole\QueueConsole.csproj", "{A7678DC4-9482-4D37-B1DA-E799712FA27D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PdfToImageFunction", "PdfToImageFunction\PdfToImageFunction.csproj", "{1C2CF4B2-C010-4989-9889-090281C0B6D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{A7678DC4-9482-4D37-B1DA-E799712FA27D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7678DC4-9482-4D37-B1DA-E799712FA27D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7678DC4-9482-4D37-B1DA-E799712FA27D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C2CF4B2-C010-4989-9889-090281C0B6D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C2CF4B2-C010-4989-9889-090281C0B6D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C2CF4B2-C010-4989-9889-090281C0B6D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C2CF4B2-C010-4989-9889-090281C0B6D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
