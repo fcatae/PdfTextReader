@@ -266,12 +266,15 @@ namespace PdfTextReader.Execution
         {
             int totalPages = _pdfDocument.GetNumberOfPages();
 
-            for (int i = 1; i <= totalPages; i++)
+            using(this)
             {
-                var pdfPage = Page(i);
+                for (int i = 1; i <= totalPages; i++)
+                {
+                    var pdfPage = Page(i);
 
-                if (ProtectCall(callback, pdfPage) == false)
-                    continue;
+                    if (ProtectCall(callback, pdfPage) == false)
+                        continue;
+                }
             }
         }
 
