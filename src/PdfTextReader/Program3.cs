@@ -47,6 +47,8 @@ namespace PdfTextReader
             Console.WriteLine("ProcessStage");
             Console.WriteLine();
 
+            PipelineInputPdf.StopOnException();
+
             using (var context = new ParserStages.StageContext(basename))
             {
                 var stage0 = new ParserStages.StagePdfInput(context);

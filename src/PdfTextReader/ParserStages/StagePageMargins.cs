@@ -31,12 +31,13 @@ namespace PdfTextReader.ParserStages
             page.FromCache<IdentifyTables>()
                               .FromCache<ProcessImageData>()
                                 .ParseBlock<ProcessImageData>()
-                                  .ParseBlock<RemoveOverlapedImages2>()
+                                .ParseBlock<SetProcessImageCompatibility>()
+                                .ParseBlock<RemoveOverlapedImages2>()
                               .FromCache<ProcessPdfText>()
-
+                                  .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Green))
                                   .ParseBlock<RemoveHeaderImage>()
                                   .ParseBlock<FindInitialBlockset>() 
-                                  .ParseBlock<AddTableSpace>()       
+                                  //.ParseBlock<AddTableSpace>()       
                                   .ParseBlock<RemoveFooter>()
                                                                         .Show(Color.Gray)
 

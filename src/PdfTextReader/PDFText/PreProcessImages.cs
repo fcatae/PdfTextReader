@@ -12,11 +12,42 @@ namespace PdfTextReader.PDFText
 {
     class PreProcessImages : IEventListener, IPipelineResults<BlockPage>
     {
+        private PDFCore.ProcessImageData _processImageData;
+
         private readonly List<EventType> _supportedEvents = new List<EventType>() { EventType.RENDER_IMAGE };
 
         private BlockSet<IBlock> _blockSet = new BlockSet<IBlock>();
 
-        public BlockPage Images = null;
+        // compatibility with ProcessImageData
+        // temporarily we need this, until we remove all direct references
+        // to PreProcessImages. In the future, we only reference
+        // the class ProcessImageData
+        public BlockPage Images
+        {
+            get
+            {
+                // compatibility with ProcessImageData
+                if (_processImageData != null)
+                    return _processImageData.Images;
+
+                return _images;
+            }
+            set
+            {
+                // compatibility with ProcessImageData
+                if (_processImageData != null)
+                    _processImageData.Images = value;
+
+                _images = value;
+            }
+        }
+
+        private BlockPage _images = null;
+
+        public void SetCompatibility(PDFCore.ProcessImageData processImageData)
+        {
+            _processImageData = processImageData;
+        }
 
         public void RemoveImage(IBlock block)
         {

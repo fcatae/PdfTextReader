@@ -48,7 +48,7 @@ namespace PdfTextReader.ParserStages
             page
                 .FromCache<ProcessPdfText>()
                     .Show(Color.Yellow)
-                .FromCache<PreProcessImages>()
+                .FromCache<ProcessImageData>()
                     .Show(Color.Blue)
                 .FromCache<IdentifyTables>()
                     .Show(Color.Red);
