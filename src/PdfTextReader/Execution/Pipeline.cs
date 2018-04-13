@@ -10,10 +10,11 @@ namespace PdfTextReader.Execution
     {
         private string _inputFilename = null;
         private PipelineInputPdf _activeContext;
+        private PipelineInputCache _cache = new PipelineInputCache();
 
         public PipelineInputPdf Input(string filename)
         {
-            var context = new PipelineInputPdf(filename);
+            var context = new PipelineInputPdf(filename, _cache);
 
             this._activeContext = context;
             this._inputFilename = filename;

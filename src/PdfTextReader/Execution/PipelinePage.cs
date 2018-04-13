@@ -183,5 +183,19 @@ namespace PdfTextReader.Execution
             return ((PipelineInputPdf)this.Context).CurrentPage.ParsePdf<T>();
         }
 
+        public PipelinePage StoreCache<T>()
+            where T : class
+        {
+            ((PipelineInputPdf)this.Context).StoreCache<T>(PageNumber, this.LastResult);
+            return this;
+        }
+
+        public PipelinePage FromCache<T>()
+            where T : class
+        {
+            var result = ((PipelineInputPdf)this.Context).FromCache<T>(PageNumber);
+            this.LastResult = result;
+            return this;
+        }
     }
 }

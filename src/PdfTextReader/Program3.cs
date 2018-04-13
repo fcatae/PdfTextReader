@@ -40,6 +40,17 @@ namespace PdfTextReader
         //     pipeline.ExtractOutput<ShowParserWarnings>($"bin/{basename}-parser-errors.pdf");
         // }
 
+
+        public static void ProcessStage(string basename)
+        {
+            Console.WriteLine();
+            Console.WriteLine("ProcessStage");
+            Console.WriteLine();
+
+            var stage0 = new ParserStages.StagePdfInput();
+            stage0.Process(basename);
+        }
+
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)
         {
             //PipelineInputPdf.StopOnException();

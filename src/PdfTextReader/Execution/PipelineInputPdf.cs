@@ -24,6 +24,7 @@ namespace PdfTextReader.Execution
         private List<List<object>> _statsCollectionPerPage = new List<List<object>>();
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
+        private PipelineSingletonAutofacFactory _documentFactory = new PipelineSingletonAutofacFactory();
 
         private static bool g_continueOnException = true;
 
@@ -36,18 +37,25 @@ namespace PdfTextReader.Execution
         public PipelineInputPdfPage CurrentPage { get; private set; }
         public TransformIndexTree Index => _indexTree;
 
-        public PipelineInputPdf(string filename)
+        public PipelineInputPdf(string filename, PipelineInputCache cache = null)
         {
             var pdfDocument = new PdfDocument(VirtualFS.OpenPdfReader(filename));
 
             this._input = filename;
             this._pdfDocument = pdfDocument;
 
+            if( cache != null )
+            {
+                cache.SetSize(_pdfDocument.GetNumberOfPages());
+                this._cache = cache;
+            }
+
             PipelineInputPdf.DebugCurrent = this;
 
             PdfReaderException.ClearContext();
         }
-        
+
+
         public PipelineInputPdfPage Page(int pageNumber)
         {
             if (CurrentPage != null)
@@ -209,7 +217,12 @@ namespace PdfTextReader.Execution
             {
                 Console.WriteLine(ex.ToString());
                 System.Diagnostics.Debug.WriteLine(ex.ToString());
-                PipelineDebug.ShowException(this, ex);
+
+                bool hasOutput = (_pdfOutput != null);
+                if (hasOutput)
+                {
+                    PipelineDebug.ShowException(this, ex);
+                }
 
                 StoreStatistics(new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
                 StoreStatistics(pdfPage.GetPageNumber(), new StatsExceptionHandled(pdfPage.GetPageNumber(), ex));
@@ -248,6 +261,33 @@ namespace PdfTextReader.Execution
         }
 
         public PipelineStats Statistics => new PipelineStats(_statsCollection, _statsCollectionPerPage);
+
+        public void StageProcess(Action<PipelineInputPdfPage> callback)
+        {
+            int totalPages = _pdfDocument.GetNumberOfPages();
+
+            for (int i = 1; i <= totalPages; i++)
+            {
+                var pdfPage = Page(i);
+
+                if (ProtectCall(callback, pdfPage) == false)
+                    continue;
+            }
+        }
+
+        PipelineInputCache _cache = null;
+
+        PipelineInputCache GetCache()
+        {
+            if (_cache == null)
+                PdfReaderException.AlwaysThrow("Cache not initialized");
+
+            return _cache;
+        }
+
+        public BlockPage FromCache<T>(int pageNumber) => GetCache().FromCache<T>(pageNumber-1);
+
+        public void StoreCache<T>(int pageNumber, BlockPage result) => GetCache().StoreCache<T>(pageNumber-1, result);
 
         public class PipelineInputPdfPage : IDisposable
         {
@@ -295,6 +335,17 @@ namespace PdfTextReader.Execution
 
                 if (page.LastResult.AllBlocks == null)
                     throw new InvalidOperationException();
+
+                _page = page;
+
+                return page;
+            }
+
+            public PipelinePage FromCache<T>()
+                where T : class
+            {
+                var page = new PipelinePage(_pdf, _pageNumber);
+                page.LastResult = _pdf.FromCache<T>(this._pageNumber);
 
                 _page = page;
 
