@@ -29,8 +29,8 @@ namespace PdfTextReader.ParserStages
         void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.FromCache<IdentifyTables>()
-                              .FromCache<ProcessImages>()
-                                .ParseBlock<ProcessImages>()
+                              .FromCache<ProcessImageData>()
+                                .ParseBlock<ProcessImageData>()
                                   .ParseBlock<RemoveOverlapedImages2>()
                               .FromCache<ProcessPdfText>()
 

@@ -10,7 +10,7 @@ using PdfTextReader.Base;
 
 namespace PdfTextReader.PDFCore
 {
-    class ProcessImages : IProcessBlock
+    class ProcessImageData : IProcessBlock
     {
         private BlockSet<IBlock> _blockSet = new BlockSet<IBlock>();
 

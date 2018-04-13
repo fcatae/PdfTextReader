@@ -11,9 +11,9 @@ namespace PdfTextReader.PDFCore
     class RemoveOverlapedImages2 : IProcessBlock, IValidateBlock
     {
         //private List<IBlock> _images;
-        private ProcessImages _parse;
+        private ProcessImageData _parse;
 
-        public RemoveOverlapedImages2(ProcessImages parseImage)
+        public RemoveOverlapedImages2(ProcessImageData parseImage)
         {
             var page = parseImage.Images;
 
