@@ -11,14 +11,14 @@ namespace PdfTextReader.Execution
         private string _inputFilename = null;
         private PipelineInputPdf _activeContext;
         private PipelineInputCache<IProcessBlockData> _cache = new PipelineInputCache<IProcessBlockData>();
-        private PipelineFactoryContext _factory;
+        private PipelineFactory _factory;
 
         public Pipeline()
         {
-            _factory = new PipelineFactoryContext();
+            _factory = new PipelineFactory();
         }
 
-        public Pipeline(PipelineFactoryContext factory)
+        public Pipeline(PipelineFactory factory)
         {
             _factory = factory;
         }

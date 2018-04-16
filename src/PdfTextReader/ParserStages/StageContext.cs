@@ -7,12 +7,12 @@ namespace PdfTextReader.ParserStages
 {
     class StageContext : IDisposable
     {
-        private PipelineFactoryContext _factoryContext;
+        private PipelineFactory _factoryContext;
         private Pipeline _pipeline;
 
         public StageContext(string basename)
         {
-            this._factoryContext = new PipelineFactoryContext();
+            this._factoryContext = new PipelineFactory();
             this._pipeline = new Pipeline(_factoryContext);
             this.Basename = basename;
         }

@@ -13,18 +13,18 @@ namespace PdfTextReader.Execution
     {
         public IPipelineContext Context { get; }
         public IEnumerable<TT> CurrentStream;
-        private PipelineFactory _factory = new PipelineFactory();
+        private PipelineDisposeHelper _tracker = new PipelineDisposeHelper();
         private TransformIndexTree _indexTree;
-        private PipelineFactoryContext _pipelineFactory;
+        private PipelineFactory _factory;
 
-        public PipelineText(PipelineFactoryContext factory, IPipelineContext context, IEnumerable<TT> stream, TransformIndexTree indexTree, IDisposable chain)
+        public PipelineText(PipelineFactory factory, IPipelineContext context, IEnumerable<TT> stream, TransformIndexTree indexTree, IDisposable chain)
         {
             this.Context = context;
             this.CurrentStream = stream;
-            _factory = new PipelineFactory();
-            _factory.AddReference(chain);
+            _tracker = new PipelineDisposeHelper();
+            _tracker.TrackInstance(chain);
             _indexTree = indexTree;
-            _pipelineFactory = factory;
+            _factory = factory;
         }
 
         PipelineInputPdf ParentContext => (PipelineInputPdf)this.Context;
@@ -40,31 +40,31 @@ namespace PdfTextReader.Execution
             where P : class, IAggregateStructure<TT,TO>
         {
             var initial = (IEnumerable<TT>)this.CurrentStream;
-            var transform = _pipelineFactory.CreateGlobalInstance<P>();
+            var transform = _factory.CreateGlobalInstance<P>();
             var processor = new TransformText<P,TT,TO>(transform);
 
-            _factory.AddReference(processor);
+            _tracker.TrackInstance(processor);
 
             var index = processor.GetIndexRef();
             _indexTree.AddRef(index);
 
             var result = processor.Transform(initial);
 
-            var pipe = new PipelineText<TO>(_pipelineFactory, this.Context, result, _indexTree, this);
+            var pipe = new PipelineText<TO>(_factory, this.Context, result, _indexTree, this);
             
             return pipe;
         }
 
         PipelineText<TT> CreateNewPipelineTextForLogging(IEnumerable<TT> stream)
         {
-            return new PipelineText<TT>(this._pipelineFactory, this.Context, stream, _indexTree, this);
+            return new PipelineText<TT>(this._factory, this.Context, stream, _indexTree, this);
         }
         
         public PipelineText<TT> Log<TL>(string filename)
             where TL : class, ILogStructure<TT>
         {
             var file = VirtualFS.OpenStreamWriter(filename);
-            _factory.AddReference(file);
+            _tracker.TrackInstance(file);
 
             return Log<TL>(file);
         }
@@ -72,7 +72,7 @@ namespace PdfTextReader.Execution
             where TL : class, ILogStructurePdf<TT>
         {
             var pipeline = ParentContext.CreatePipelineDebugContext(filename);
-            _factory.AddReference(pipeline);
+            _tracker.TrackInstance(pipeline);
 
             return ShowPdf<TL>(pipeline);
         }
@@ -117,7 +117,7 @@ namespace PdfTextReader.Execution
         IEnumerable<TT> PipelineTextLogPdf<TL>(IPipelineDebug pipelineDebug, IEnumerable<TT> stream)
             where TL : class, ILogStructurePdf<TT>
         {
-            TL logger = _pipelineFactory.CreateInstance<TL>();
+            TL logger = _factory.CreateInstance<TL>();
             
             logger.StartLogPdf(pipelineDebug);
 
@@ -134,7 +134,7 @@ namespace PdfTextReader.Execution
         IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream)
             where TL : class, ILogStructure<TT>
         {
-            TL logger = _pipelineFactory.CreateInstance<TL>();
+            TL logger = _factory.CreateInstance<TL>();
             //TL logger = _factory.CreateInstance<TL>();
 
             // v2: pass pipeline context
@@ -158,7 +158,7 @@ namespace PdfTextReader.Execution
 
         public void Dispose()
         {
-            _factory.Dispose();
+            _tracker.Dispose();
         }
     }
 }
