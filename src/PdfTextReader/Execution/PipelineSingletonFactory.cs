@@ -11,6 +11,7 @@ namespace PdfTextReader.Execution
     // It cannot be a singleton because it will break when 
     // processing multiple pages in a single execution
 
+    [Obsolete]
     class PipelineSingletonAutofacFactory : IDisposable
     {
         Dictionary<Type, object> _dictionary = new Dictionary<Type, object>();
@@ -60,6 +61,7 @@ namespace PdfTextReader.Execution
         }
     }
 
+    [Obsolete]
     class PipelineSingletonFactory
     {
         Dictionary<Type, object> _dictionary = new Dictionary<Type, object>();
