@@ -24,7 +24,8 @@ namespace PdfTextReader.Execution
         private List<List<object>> _statsCollectionPerPage = new List<List<object>>();
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
-        private PipelineSingletonAutofacFactory _documentFactory = new PipelineSingletonAutofacFactory();
+        //private PipelineSingletonAutofacFactory _documentFactory = new PipelineSingletonAutofacFactory();
+        private PipelineFactoryContext _documentFactory = new PipelineFactoryContext();
 
         private static bool g_continueOnException = true;
 
@@ -300,7 +301,8 @@ namespace PdfTextReader.Execution
             private PipelinePage _page;
             private PdfCanvas _outputCanvas;
 
-            private PipelineSingletonAutofacFactory _factory = new PipelineSingletonAutofacFactory();
+            //private PipelineSingletonAutofacFactory _factory = new PipelineSingletonAutofacFactory();
+            PipelineFactoryContext _factory = new PipelineFactoryContext();
 
             public int GetPageNumber() => _pageNumber;
             public BlockPage GetLastResult() => _page.LastResult;
@@ -316,13 +318,13 @@ namespace PdfTextReader.Execution
                 PdfReaderException.SetContext(_pdf._input, pageNumber);
             }
 
-            public T CreateInstance<T>()
+            public T CreateInstance<T>() where T: class
             {
                 return _factory.CreateInstance<T>();
             }
 
             public PipelinePage ParsePdf<T>()
-                where T: IEventListener, IPipelineResults<BlockPage>, new()
+                where T: class, IEventListener, IPipelineResults<BlockPage>, new()
             {
                 var listener = CreateInstance<T>();
 
@@ -345,7 +347,7 @@ namespace PdfTextReader.Execution
             }
 
             public PipelinePage FromCache<T>()
-                where T : IProcessBlockData
+                where T : class, IProcessBlockData
             {
                 var page = new PipelinePage(_pdf, _pageNumber);
 

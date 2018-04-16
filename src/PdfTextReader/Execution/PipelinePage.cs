@@ -71,7 +71,7 @@ namespace PdfTextReader.Execution
             return this;
         }
         public PipelinePage Validate<T>(Action<BlockSet<IBlock>> filter = null)
-            where T : IValidateBlock
+            where T : class, IValidateBlock
         {
             var initial = this.LastResult;
 
@@ -90,7 +90,7 @@ namespace PdfTextReader.Execution
             return this;
         }
         
-        public T CreateInstance<T>()
+        public T CreateInstance<T>() where T : class
         {
             var obj = ((PipelineInputPdf)Context).CurrentPage.CreateInstance<T>();
 
@@ -98,7 +98,7 @@ namespace PdfTextReader.Execution
         }
         
         public PipelinePage ParseBlock<T>()
-            where T: IProcessBlock
+            where T: class, IProcessBlock
         {
             var initial = this.LastResult;
             
@@ -165,13 +165,13 @@ namespace PdfTextReader.Execution
         }
         
         public PipelinePage ParsePdf<T>()
-            where T : IEventListener, IPipelineResults<BlockPage>, new()
+            where T : class, IEventListener, IPipelineResults<BlockPage>, new()
         {
             return ((PipelineInputPdf)this.Context).CurrentPage.ParsePdf<T>();
         }
 
         public PipelinePage StoreCache<T>()
-            where T : IProcessBlockData
+            where T : class, IProcessBlockData
         {
             var processor = CreateInstance<T>();
 
@@ -182,7 +182,7 @@ namespace PdfTextReader.Execution
         }
 
         public PipelinePage FromCache<T>()
-            where T : IProcessBlockData
+            where T : class, IProcessBlockData
         {
             var processor = CreateInstance<T>();
 
