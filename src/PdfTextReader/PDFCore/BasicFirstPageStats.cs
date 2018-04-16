@@ -35,10 +35,10 @@ namespace PdfTextReader.PDFCore
 
         void SetupPage(BlockPage page)
         {
-            if (Global == null)
-            {
-                Global = this;
-            }
+            if (Global != null)
+                return;                
+
+            Global = this;
 
             var blocks = page.AllBlocks;
 

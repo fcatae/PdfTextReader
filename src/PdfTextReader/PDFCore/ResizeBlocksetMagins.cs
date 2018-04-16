@@ -35,7 +35,7 @@ namespace PdfTextReader.PDFCore
 
         public ResizeBlocksetMagins(BasicFirstPageStats basicStats)
         {
-            this._basicStats = basicStats;
+            this._basicStats = basicStats.Stats;
         }
 
         void SetupPage(BlockPage page)
