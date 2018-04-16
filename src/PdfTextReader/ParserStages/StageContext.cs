@@ -13,7 +13,7 @@ namespace PdfTextReader.ParserStages
         public StageContext(string basename)
         {
             this._factoryContext = new PipelineFactoryContext();
-            this._pipeline = new Pipeline();
+            this._pipeline = new Pipeline(_factoryContext);
             this.Basename = basename;
         }
         
