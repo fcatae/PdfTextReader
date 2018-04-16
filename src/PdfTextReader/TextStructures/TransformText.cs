@@ -7,16 +7,22 @@ using System.Linq;
 namespace PdfTextReader.TextStructures
 {
     class TransformText<T, TI, TO>
-        where T: class, IAggregateStructure<TI,TO>, new()
+        where T: class, IAggregateStructure<TI,TO>
     {
         List<TI> _input;
         TransformIndex<TI,TO> _index = new TransformIndex<TI,TO>();
+        private readonly T _transform;
 
         public TransformIndex<TI, TO> GetIndexRef() => _index;
 
+        public TransformText(T transform)
+        {
+            this._transform = transform;
+        }
+
         public IEnumerable<TO> Transform(IEnumerable<TI> lines)
         {
-            T transform = new T();
+            T transform = _transform;
 
             int startId = 0;
             int endId = -1;

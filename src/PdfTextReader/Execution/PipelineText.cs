@@ -15,14 +15,16 @@ namespace PdfTextReader.Execution
         public IEnumerable<TT> CurrentStream;
         private PipelineFactory _factory = new PipelineFactory();
         private TransformIndexTree _indexTree;
+        private PipelineFactoryContext _pipelineFactory;
 
-        public PipelineText(IPipelineContext context, IEnumerable<TT> stream, TransformIndexTree indexTree, IDisposable chain)
+        public PipelineText(PipelineFactoryContext factory, IPipelineContext context, IEnumerable<TT> stream, TransformIndexTree indexTree, IDisposable chain)
         {
             this.Context = context;
             this.CurrentStream = stream;
             _factory = new PipelineFactory();
             _factory.AddReference(chain);
             _indexTree = indexTree;
+            _pipelineFactory = factory;
         }
 
         PipelineInputPdf ParentContext => (PipelineInputPdf)this.Context;
@@ -35,25 +37,25 @@ namespace PdfTextReader.Execution
         }
                 
         public PipelineText<TO> ConvertText<P,TO>()
-            where P : class, IAggregateStructure<TT,TO>, new()
+            where P : class, IAggregateStructure<TT,TO>
         {
             var initial = (IEnumerable<TT>)this.CurrentStream;
-            
-            var processor = _factory.CreateInstance( ()=> new TransformText<P,TT,TO>());
+            var transform = _pipelineFactory.CreateGlobalInstance<P>();
+            var processor = _factory.CreateInstance( ()=> new TransformText<P,TT,TO>(transform));
 
             var index = processor.GetIndexRef();
             _indexTree.AddRef(index);
 
             var result = processor.Transform(initial);
 
-            var pipe = new PipelineText<TO>(this.Context, result, _indexTree, this);
+            var pipe = new PipelineText<TO>(_pipelineFactory, this.Context, result, _indexTree, this);
             
             return pipe;
         }
 
         PipelineText<TT> CreateNewPipelineTextForLogging(IEnumerable<TT> stream)
         {
-            return new PipelineText<TT>(this.Context, stream, _indexTree, this);
+            return new PipelineText<TT>(this._pipelineFactory, this.Context, stream, _indexTree, this);
         }
         
         public PipelineText<TT> Log<TL>(string filename)

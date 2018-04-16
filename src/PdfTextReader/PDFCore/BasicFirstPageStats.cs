@@ -13,8 +13,7 @@ namespace PdfTextReader.PDFCore
         public float PageWidth { get; private set; }
         public float TabStop { get; private set; }
 
-        [Obsolete]
-        public static BasicFirstPageStats Global = null;
+        static BasicFirstPageStats Global = null;
 
         public BasicFirstPageStats Stats { get
             {

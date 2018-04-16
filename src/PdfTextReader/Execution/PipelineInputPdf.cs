@@ -171,7 +171,7 @@ namespace PdfTextReader.Execution
         {
             var textLines = StreamConvert<T>(callback);
             
-            var pipeText = new PipelineText<TextLine>(this, textLines, _indexTree, this);
+            var pipeText = new PipelineText<TextLine>(this._documentFactory, this, textLines, _indexTree, this);
             
             return pipeText;
         }

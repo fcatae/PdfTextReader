@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PdfTextReader.Base;
+using PdfTextReader.PDFCore;
 
 namespace PdfTextReader.TextStructures
 {
@@ -12,11 +13,18 @@ namespace PdfTextReader.TextStructures
         const float MAXIMUM_CENTER_DIFFERENCE = 1f;
         const float MAXIMUM_CENTER_MARGIN = 4F;
         const float difference_margin_center_text = 1F;
-
         float STAT_FIRST_TABSTOP = float.NaN;
 
         TextStructure _structure;
         TextLine2 _last = null;
+
+        private readonly BasicFirstPageStats _basicStats;
+        BasicFirstPageStats BasicStats => _basicStats.Stats;
+
+        public CreateStructures2(PDFCore.BasicFirstPageStats basicStats)
+        {
+            this._basicStats = basicStats;
+        }
 
         public void Init(TextLine2 line)
         {
@@ -405,7 +413,7 @@ namespace PdfTextReader.TextStructures
                 {
                     if (validMargin)
                     {
-                        PDFCore.BasicFirstPageStats.Global.SetTabStop(margin);
+                        BasicStats.Stats.SetTabStop(margin);
                         STAT_FIRST_TABSTOP = margin;
                     }
                 }
