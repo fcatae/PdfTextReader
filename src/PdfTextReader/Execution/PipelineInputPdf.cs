@@ -25,7 +25,7 @@ namespace PdfTextReader.Execution
         private PipelinePdfLog _pdfLog = new PipelinePdfLog();
         private TransformIndexTree _indexTree = new TransformIndexTree();
         //private PipelineSingletonAutofacFactory _documentFactory = new PipelineSingletonAutofacFactory();
-        private PipelineFactoryContext _documentFactory = new PipelineFactoryContext();
+        private PipelineFactoryContext _documentFactory;
 
         private static bool g_continueOnException = true;
 
@@ -38,12 +38,16 @@ namespace PdfTextReader.Execution
         public PipelineInputPdfPage CurrentPage { get; private set; }
         public TransformIndexTree Index => _indexTree;
 
-        public PipelineInputPdf(string filename, PipelineInputCache<IProcessBlockData> cache = null)
+        public PipelineInputPdf(string filename, PipelineFactoryContext factory, PipelineInputCache<IProcessBlockData> cache = null)
         {
+            if (factory == null)
+                throw new ArgumentNullException(nameof(factory));
+
             var pdfDocument = new PdfDocument(VirtualFS.OpenPdfReader(filename));
 
             this._input = filename;
             this._pdfDocument = pdfDocument;
+            this._documentFactory = factory;
 
             if( cache != null )
             {
@@ -64,7 +68,7 @@ namespace PdfTextReader.Execution
                 CurrentPage.Dispose();
             }
 
-            var page = new PipelineInputPdfPage(this, pageNumber);
+            var page = new PipelineInputPdfPage(new PipelineFactoryContext(this._documentFactory), this, pageNumber);
             
             CurrentPage = page;
 
@@ -301,19 +305,19 @@ namespace PdfTextReader.Execution
             private PipelinePage _page;
             private PdfCanvas _outputCanvas;
 
-            //private PipelineSingletonAutofacFactory _factory = new PipelineSingletonAutofacFactory();
-            PipelineFactoryContext _factory = new PipelineFactoryContext();
+            PipelineFactoryContext _factory;
 
             public int GetPageNumber() => _pageNumber;
             public BlockPage GetLastResult() => _page.LastResult;
 
-            public PipelineInputPdfPage(PipelineInputPdf pipelineInputContext, int pageNumber)
+            public PipelineInputPdfPage(PipelineFactoryContext factory, PipelineInputPdf pipelineInputContext, int pageNumber)
             {
                 var pdfPage = pipelineInputContext._pdfDocument.GetPage(pageNumber);
 
                 this._pdf = pipelineInputContext;
                 this._pageNumber = pageNumber;
                 this._pdfPage = pdfPage;
+                this._factory = factory;
 
                 PdfReaderException.SetContext(_pdf._input, pageNumber);
             }
