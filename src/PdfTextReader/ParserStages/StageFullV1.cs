@@ -28,6 +28,7 @@ namespace PdfTextReader.ParserStages
 
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-output.pdf")
+                    .Global<BasicFirstPageStats>()
                     .StageProcess(ProcessFull);
         }
 

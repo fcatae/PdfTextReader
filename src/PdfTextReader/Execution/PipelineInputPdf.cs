@@ -267,6 +267,13 @@ namespace PdfTextReader.Execution
 
         public PipelineStats Statistics => new PipelineStats(_statsCollection, _statsCollectionPerPage);
 
+        public PipelineInputPdf Global<T>() where T : class
+        {
+            _documentFactory.CreateGlobalInstance<T>();
+
+            return this;
+        }
+
         public void StageProcess(Action<PipelineInputPdfPage> callback)
         {
             int totalPages = _pdfDocument.GetNumberOfPages();
