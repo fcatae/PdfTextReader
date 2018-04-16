@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <UserSecretsId>PdfTextReader.ParserRun.01262018</UserSecretsId>
+    <Configurations>Debug;Release;CORE</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
