@@ -41,7 +41,9 @@ namespace PdfTextReader.Execution
         {
             var initial = (IEnumerable<TT>)this.CurrentStream;
             var transform = _pipelineFactory.CreateGlobalInstance<P>();
-            var processor = _factory.CreateInstance( ()=> new TransformText<P,TT,TO>(transform));
+            var processor = new TransformText<P,TT,TO>(transform);
+
+            _factory.AddReference(processor);
 
             var index = processor.GetIndexRef();
             _indexTree.AddRef(index);
@@ -59,28 +61,30 @@ namespace PdfTextReader.Execution
         }
         
         public PipelineText<TT> Log<TL>(string filename)
-            where TL : ILogStructure<TT>, new()
+            where TL : class, ILogStructure<TT>
         {
-            var file = _factory.CreateInstance<TextWriter>( ()=> VirtualFS.OpenStreamWriter(filename) );            
+            var file = VirtualFS.OpenStreamWriter(filename);
+            _factory.AddReference(file);
 
             return Log<TL>(file);
         }
         public PipelineText<TT> ShowPdf<TL>(string filename)
-            where TL : ILogStructurePdf<TT>, new()
+            where TL : class, ILogStructurePdf<TT>
         {
-            var pipeline = _factory.CreateInstance<PipelineDebugContext>(() => ParentContext.CreatePipelineDebugContext(filename));
+            var pipeline = ParentContext.CreatePipelineDebugContext(filename);
+            _factory.AddReference(pipeline);
 
             return ShowPdf<TL>(pipeline);
         }
 
         public PipelineText<TT> ShowPdf<TL>(IPipelineDebug pipelineDebug)
-            where TL : ILogStructurePdf<TT>, new()
+            where TL : class, ILogStructurePdf<TT>
         {
             return CreateNewPipelineTextForLogging(PipelineTextLogPdf<TL>(pipelineDebug, this.CurrentStream));
         }
 
         public PipelineText<TT> Log<TL>(TextWriter writer)
-            where TL : ILogStructure<TT>, new()
+            where TL : class, ILogStructure<TT>
         {
             return CreateNewPipelineTextForLogging(PipelineTextLog<TL>(writer, this.CurrentStream));
         }
@@ -111,9 +115,9 @@ namespace PdfTextReader.Execution
             pipelineText.Dispose();
         }
         IEnumerable<TT> PipelineTextLogPdf<TL>(IPipelineDebug pipelineDebug, IEnumerable<TT> stream)
-            where TL : ILogStructurePdf<TT>, new()
+            where TL : class, ILogStructurePdf<TT>
         {
-            TL logger = _factory.CreateInstance<TL>();
+            TL logger = _pipelineFactory.CreateInstance<TL>();
             
             logger.StartLogPdf(pipelineDebug);
 
@@ -128,9 +132,10 @@ namespace PdfTextReader.Execution
         }
 
         IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream)
-            where TL : ILogStructure<TT>, new()
+            where TL : class, ILogStructure<TT>
         {
-            TL logger = _factory.CreateInstance<TL>();
+            TL logger = _pipelineFactory.CreateInstance<TL>();
+            //TL logger = _factory.CreateInstance<TL>();
 
             // v2: pass pipeline context
             var loggerV2 = logger as ILogStructure2<TT>;

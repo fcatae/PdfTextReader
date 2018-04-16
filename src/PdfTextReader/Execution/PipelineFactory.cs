@@ -8,25 +8,6 @@ namespace PdfTextReader.Execution
     {
         private List<IDisposable> _disposableObjects = new List<IDisposable>();
 
-        public T CreateInstance<T>()
-            where T : new()
-        {
-            var obj = new T();
-
-            AddReference(obj);
-
-            return obj;
-        }
-
-        public T CreateInstance<T>(Func<T> create)
-        {
-            var obj = create();
-
-            AddReference(obj);
-
-            return obj;
-        }
-
         public void AddReference(object instance)
         {
             var disposableObj = instance as IDisposable;
