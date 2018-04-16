@@ -16,6 +16,13 @@ namespace PdfTextReader.PDFCore
         [Obsolete]
         public static BasicFirstPageStats Global = null;
 
+        public BasicFirstPageStats Stats { get
+            {
+                return Global;
+            }
+        }
+
+        [Obsolete]
         public static void Reset()
         {
             Global = null;

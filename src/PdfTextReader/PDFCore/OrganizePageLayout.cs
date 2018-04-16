@@ -10,11 +10,17 @@ namespace PdfTextReader.PDFCore
     {
         const float MAX_PAGE_WIDTH_DIFFERENCE = 8f;
         const float HORIZONTAL_LINE_HEIGHT = 5f;
-
         float _minX = float.NaN;
         float _maxX = float.NaN;
         float _pageWidth = float.NaN;
         string _pageLayout;
+
+        private readonly BasicFirstPageStats _basicStats;
+
+        public OrganizePageLayout(BasicFirstPageStats basicStats)
+        {
+            this._basicStats = basicStats;
+        }
 
         void SetupPage(BlockPage page)
         {
@@ -31,16 +37,16 @@ namespace PdfTextReader.PDFCore
         {
             // sometimes the page width is shorter - should we use another source for page width?
 
-            float pageWidth = BasicFirstPageStats.Global.PageWidth;
+            float pageWidth = _basicStats.PageWidth;
 
             float diff = Math.Abs(pageWidth - _pageWidth);
 
             if( diff > MAX_PAGE_WIDTH_DIFFERENCE )
             {
                 PdfReaderException.Warning("Large PageWidth difference -- using the BasicFirstPageStats");
-                _minX = BasicFirstPageStats.Global.MinX;
-                _maxX = BasicFirstPageStats.Global.MaxX;
-                _pageWidth = BasicFirstPageStats.Global.PageWidth;
+                _minX = _basicStats.MinX;
+                _maxX = _basicStats.MaxX;
+                _pageWidth = _basicStats.PageWidth;
             }
         }
 

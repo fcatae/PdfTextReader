@@ -9,6 +9,7 @@ namespace PdfTextReader.PDFCore
     class ResizeBlocksetMagins : IProcessBlock
     {
         const float MAX_PAGE_WIDTH_DIFFERENCE = 8f;
+        private readonly BasicFirstPageStats _basicStats;
 
         private List<Data> Values { get; set; }
         private List<Data> ValuesY { get; set; }
@@ -32,6 +33,11 @@ namespace PdfTextReader.PDFCore
             public IBlock B;
         }
 
+        public ResizeBlocksetMagins(BasicFirstPageStats basicStats)
+        {
+            this._basicStats = basicStats;
+        }
+
         void SetupPage(BlockPage page)
         {
             _MinX = page.AllBlocks.GetX();
@@ -47,21 +53,21 @@ namespace PdfTextReader.PDFCore
         {
             // sometimes the page width is shorter - should we use another source for page width?
 
-            float pageWidth = BasicFirstPageStats.Global.PageWidth;
+            float pageWidth = _basicStats.PageWidth;
 
             float diff = pageWidth - _PageWidth;
 
            if ( Math.Abs(diff) > MAX_PAGE_WIDTH_DIFFERENCE)
             {
                 PdfReaderException.Warning("Large PageWidth difference -- using the BasicFirstPageStats");
-                float min = Math.Min( BasicFirstPageStats.Global.MinX , _MinX);
-                float max = Math.Max( BasicFirstPageStats.Global.MaxX , _MaxX);
+                float min = Math.Min(_basicStats.MinX , _MinX);
+                float max = Math.Max(_basicStats.MaxX , _MaxX);
 
-                bool wrongMin = Math.Abs(_MinX - BasicFirstPageStats.Global.MinX) > MAX_PAGE_WIDTH_DIFFERENCE;
-                bool wrongMax = Math.Abs(_MaxX - BasicFirstPageStats.Global.MaxX) > MAX_PAGE_WIDTH_DIFFERENCE;
+                bool wrongMin = Math.Abs(_MinX - _basicStats.MinX) > MAX_PAGE_WIDTH_DIFFERENCE;
+                bool wrongMax = Math.Abs(_MaxX - _basicStats.MaxX) > MAX_PAGE_WIDTH_DIFFERENCE;
 
-                _MinX = (wrongMin) ?  BasicFirstPageStats.Global.MinX : min;
-                _MaxX = (wrongMax) ? BasicFirstPageStats.Global.MaxX : max;
+                _MinX = (wrongMin) ? _basicStats.MinX : min;
+                _MaxX = (wrongMax) ? _basicStats.MaxX : max;
 
                 _PageWidth = _MaxX - _MinX;
             }
