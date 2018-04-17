@@ -1,4 +1,7 @@
-﻿using System;
+﻿using PdfTextReader.Base;
+using PdfTextReader.Parser;
+using PdfTextReader.TextStructures;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,6 +22,12 @@ namespace PdfTextReader.ParserStages
 
         public void Process()
         {
+            var pipelineText = _context.GetPipelineText<TextSegment>();
+
+            var resultPipeline = pipelineText
+                            .ConvertText<CreateContent, TextSegment>();
+
+            _context.SetPipelineText<TextSegment>(resultPipeline);
         }
     }
 }
