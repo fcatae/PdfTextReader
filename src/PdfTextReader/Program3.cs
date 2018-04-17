@@ -41,13 +41,18 @@ namespace PdfTextReader
         // }
 
 
-        public static void ProcessStage(string basename)
+        public static void ProcessStage(string basename, int page=-1)
         {
             Console.WriteLine();
             Console.WriteLine("ProcessStage");
             Console.WriteLine();
 
             //PipelineInputPdf.StopOnException();
+
+            if( page != -1 )
+            {
+                basename = ExtractPage(basename, page);
+            }
 
             using (var context = new ParserStages.StageContext(basename))
             {
