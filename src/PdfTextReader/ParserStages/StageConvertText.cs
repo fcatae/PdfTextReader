@@ -28,7 +28,7 @@ namespace PdfTextReader.ParserStages
 
             var pipelineText = pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .AllPages<CreateTextLines>(GetLines)
-                    .ConvertText<CreateTextLineIndex, TextLine>();
+                    .ConvertText<CreateTextLineIndex, TextLine>(true);
 
             _context.SetPipelineText<TextLine>(pipelineText);
         }

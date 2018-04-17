@@ -55,6 +55,30 @@ namespace PdfTextReader.Execution
             return pipe;
         }
 
+        public PipelineText<TO> ConvertText<P, TO>(bool preprocess)
+            where P : class, IAggregateStructure<TT, TO>
+        {
+            var initial = (IEnumerable<TT>)this.CurrentStream;
+            var transform = _factory.CreateGlobalInstance<P>();
+            var processor = new TransformText<P, TT, TO>(transform);
+
+            _tracker.TrackInstance(processor);
+
+            var index = processor.GetIndexRef();
+            _indexTree.AddRef(index);
+
+            var result = processor.Transform(initial);
+
+            if (preprocess)
+            {
+                result = result.ToArray();
+            }
+
+            var pipe = new PipelineText<TO>(_factory, this.Context, result, _indexTree, this);
+
+            return pipe;
+        }
+
         PipelineText<TT> CreateNewPipelineTextForLogging(IEnumerable<TT> stream)
         {
             return new PipelineText<TT>(this._factory, this.Context, stream, _indexTree, this);
@@ -117,7 +141,7 @@ namespace PdfTextReader.Execution
         IEnumerable<TT> PipelineTextLogPdf<TL>(IPipelineDebug pipelineDebug, IEnumerable<TT> stream)
             where TL : class, ILogStructurePdf<TT>
         {
-            TL logger = _factory.CreateInstance<TL>();
+            TL logger = _factory.CreateGlobalInstance<TL>();
             
             logger.StartLogPdf(pipelineDebug);
 
@@ -134,7 +158,7 @@ namespace PdfTextReader.Execution
         IEnumerable<TT> PipelineTextLog<TL>(TextWriter file, IEnumerable<TT> stream)
             where TL : class, ILogStructure<TT>
         {
-            TL logger = _factory.CreateInstance<TL>();
+            TL logger = _factory.CreateGlobalInstance<TL>();
             //TL logger = _factory.CreateInstance<TL>();
 
             // v2: pass pipeline context
