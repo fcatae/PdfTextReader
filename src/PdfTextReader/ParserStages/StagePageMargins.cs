@@ -23,10 +23,10 @@ namespace PdfTextReader.ParserStages
             
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-stage1-margins.pdf")
-                    .StageProcess(ShowColors);
+                    .StageProcess(FindMarings);
         }
 
-        void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
+        void FindMarings(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.FromCache<IdentifyTablesData>()
                 .ParseBlock<SetIdentifyTablesCompatibility>()
@@ -35,12 +35,17 @@ namespace PdfTextReader.ParserStages
                 .ParseBlock<SetProcessImageCompatibility>()
                 .ParseBlock<RemoveOverlapedImages2>()
               .FromCache<ProcessPdfTextData>()
-                  .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                  .ParseBlock<RemoveHeaderImage>()
-                  .ParseBlock<FindInitialBlockset>()
-                  .ParseBlock<AddTableSpace>()
-                  .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                  .ParseBlock<RemoveFooter>();
+
+                  .Validate<FindDouHeaderFooter>().ShowErrors(p => p.Show(Color.Purple))
+                  .ParseBlock<FindDouHeaderFooter>()
+                  .Show(Color.Yellow);
+                  
+                  //.Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
+                  //.ParseBlock<RemoveHeaderImage>()
+                  //.ParseBlock<FindInitialBlockset>()
+                  //.ParseBlock<AddTableSpace>()
+                  //.Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+                  //.ParseBlock<RemoveFooter>();
         }
     }
 }

@@ -57,8 +57,8 @@ namespace PdfTextReader
                 var stage1 = new ParserStages.StagePageMargins(context);
                 stage1.Process();
 
-                var stageFull = new ParserStages.StageFullV1(context);
-                stageFull.Process();
+                //var stageFull = new ParserStages.StageFullV1(context);
+                //stageFull.Process();
             }
         }
 
