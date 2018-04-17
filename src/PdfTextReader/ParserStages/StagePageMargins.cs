@@ -37,6 +37,7 @@ namespace PdfTextReader.ParserStages
 
                   .Validate<FilterHeaderFooter>().ShowErrors(p => p.Show(Color.Purple))
                   .ParseBlock<FilterHeaderFooter>()
+                        .StoreCache<HeaderFooterData>()
                   .Show(Color.Yellow);
         }
     }
