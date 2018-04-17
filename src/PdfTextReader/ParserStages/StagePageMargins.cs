@@ -36,8 +36,10 @@ namespace PdfTextReader.ParserStages
                 .ParseBlock<RemoveOverlapedImages2>()
               .FromCache<ProcessPdfTextData>()
 
-                  .Validate<FindDouHeaderFooter>().ShowErrors(p => p.Show(Color.Purple))
                   .ParseBlock<FindDouHeaderFooter>()
+
+                  .Validate<FilterHeaderFooter>().ShowErrors(p => p.Show(Color.Purple))
+                  .ParseBlock<FilterHeaderFooter>()
                   .Show(Color.Yellow);
                   
                   //.Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))

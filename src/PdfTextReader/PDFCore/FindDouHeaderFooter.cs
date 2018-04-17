@@ -6,15 +6,15 @@ using System.Linq;
 
 namespace PdfTextReader.PDFCore
 {
-    class FindDouHeaderFooter : IProcessBlock, IValidateBlock
+    class FindDouHeaderFooter : IProcessBlock
     {
+        private readonly HeaderFooterData _headerFooterData;
         private readonly BlockPage _lines;
         private readonly BlockPage _images;
-        private float _headerH = float.NaN;
-        private float _footerH = float.NaN;
 
-        public FindDouHeaderFooter(IdentifyTablesData tables, ProcessImageData images)
+        public FindDouHeaderFooter(IdentifyTablesData tables, ProcessImageData images, HeaderFooterData headerFooterData)
         {
+            this._headerFooterData = headerFooterData;
             this._lines = tables.PageLines;
             this._images = images.Images;
 
@@ -24,60 +24,33 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage Process(BlockPage page)
         {
-            FindMargins();
+            FindMargins(_images.AllBlocks, _lines.AllBlocks, _headerFooterData);
 
-            var content = new BlockPage();
-
-            foreach(var b in page.AllBlocks)
-            {
-                if( b.GetH() > _footerH && b.GetH() < _headerH )
-                {
-                    content.Add(b);
-                }
-            }
-
-            return content;
+            return page;
         }
 
-        public BlockPage Validate(BlockPage page)
+        void FindMargins(IEnumerable<IBlock> images, IEnumerable<IBlock> lines, HeaderFooterData headerFooterData)
         {
-            FindMargins();
-
-            var headerfooter = new BlockPage();
-
-            foreach (var b in page.AllBlocks)
-            {
-                if (b.GetH() <= _footerH || b.GetH() >= _headerH)
-                {
-                    headerfooter.Add(b);
-                }
-            }
-
-            return headerfooter;
-        }
-
-        void FindMargins()
-        {
-            var header = FindTopImage(_images.AllBlocks);
-            var footer = FindBottomLine(_lines.AllBlocks);
+            var header = FindTopImage(images);
+            var footer = FindBottomLine(lines);
 
             if (header != null)
             {
-                this._headerH = header.GetH();
+                headerFooterData.HeaderH = header.GetH();
             }
             else
             {
-                this._headerH = float.MaxValue;
+                headerFooterData.HeaderH = float.MaxValue;
                 PdfReaderException.Warning("There is no image defining the header");
             }
 
             if( footer != null )
             {
-                this._footerH = footer.GetH();
+                headerFooterData.FooterH = footer.GetH();
             }
             else
             {
-                this._footerH = float.MinValue;
+                headerFooterData.FooterH = float.MinValue;
                 PdfReaderException.Warning("There is no (table) line defining the footer");
             }
         }
