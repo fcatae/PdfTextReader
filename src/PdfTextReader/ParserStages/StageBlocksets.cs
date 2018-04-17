@@ -52,41 +52,45 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<GroupLines>()                 // 10
 
                     //.ParseBlock<RemoveTableDotChar>()         // 11
-                        .Show(Color.Yellow);
+                        .Show(Color.Yellow)
 
-        //    .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-        //.ParseBlock<RemoveHeaderImage>()          // 12
+                    //.ParseBlock<RemoveHeaderImage>()          // 12
 
-        //            .ParseBlock<FindInitialBlocksetWithRewind>()  // 13
-        //                .Show(Color.Gray)
-        //            .ParseBlock<BreakColumnsLight>()          // 14
-        //            .ParseBlock<AddTableSpace>()              // 15
-        //            .ParseBlock<RemoveTableOverImage>()       // 16
-        //            .ParseBlock<RemoveImageTexts>()           // 17
-        //            .ParseBlock<AddImageSpace>()              // 18
+                    .ParseBlock<FindInitialBlocksetWithRewind>()  // 13
 
-        //                .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-        //            .ParseBlock<RemoveFooter>()               // 19
+                        .Show(Color.Gray)
 
-        //            .ParseBlock<AddTableHorizontalLines>()    // 20
-        //            .ParseBlock<RemoveBackgroundNonText>()    // 21
-        //                .ParseBlock<BreakColumnsRewrite>()    // 22
+                    .ParseBlock<BreakColumnsLight>()          // 14
+                    .ParseBlock<AddTableSpace>()              // 15
+                    .ParseBlock<RemoveTableOverImage>()       // 16
+                    .ParseBlock<RemoveImageTexts>()           // 17
 
-        //            .ParseBlock<BreakInlineElements>()        // 23
-        //            .ParseBlock<ResizeBlocksets>()            // 24
-        //            .ParseBlock<ResizeBlocksetMagins>()       // 25
-        //            .ParseBlock<OrderBlocksets>()           // 26
+            //.ParseBlock<AddImageSpace>()              // 18
 
-        //            .ParseBlock<OrganizePageLayout>()         // 27
-        //            .ParseBlock<MergeSequentialLayout>()      // 28
-        //            .ParseBlock<ResizeSequentialLayout>()     // 29
-        //                .Show(Color.Orange)
-        //                .ShowLine(Color.Black)
+            //                .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
+            //            .ParseBlock<RemoveFooter>()               // 19
 
-        //            .ParseBlock<CheckOverlap>()               // 30
-        //                .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
-        //                .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
-        //            .PrintWarnings();
+            //            .ParseBlock<AddTableHorizontalLines>()    // 20
+
+
+                        .ParseBlock<RemoveBackgroundNonText>()    // 21
+                            .ParseBlock<BreakColumnsRewrite>()    // 22
+
+                        .ParseBlock<BreakInlineElements>()        // 23
+                        .ParseBlock<ResizeBlocksets>()            // 24
+                        .ParseBlock<ResizeBlocksetMagins>()       // 25
+                        .ParseBlock<OrderBlocksets>()           // 26
+
+                        .ParseBlock<OrganizePageLayout>()         // 27
+                        .ParseBlock<MergeSequentialLayout>()      // 28
+                        .ParseBlock<ResizeSequentialLayout>()     // 29
+                            .Show(Color.Orange)
+                            .ShowLine(Color.Black)
+
+                        .ParseBlock<CheckOverlap>()               // 30
+                            .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
+                            .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
+                        .PrintWarnings();
         }
     }
 }

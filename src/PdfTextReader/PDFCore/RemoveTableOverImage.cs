@@ -24,7 +24,8 @@ namespace PdfTextReader.PDFCore
 
             this._images = page.AllBlocks.ToList();
 
-            if (optionalHeaderImage != null)
+            // optional is tricky - it comes from Dependency injection, so the optional is never null
+            if (optionalHeaderImage != null && optionalHeaderImage.HeaderImage != null)
             {
                 // add header image to the collection -- tables will be removed as well
                 _headerImage = optionalHeaderImage.HeaderImage;
