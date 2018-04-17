@@ -32,7 +32,7 @@ namespace PdfTextReader.PDFCore
                 return new ColumnSequence
                 {
                     ColumnId = columnId,
-                    H = block.GetH(),
+                    H = block.GetH() + block.GetHeight(),
                     Block = block
                 };
             })
