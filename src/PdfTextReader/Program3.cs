@@ -73,6 +73,12 @@ namespace PdfTextReader
 
                 var stageText2 = new ParserStages.StageConvertStructure(context);
                 stageText2.Process();
+                
+                var stageContent = new ParserStages.StageConvertContent(context);
+                stageContent.Process();
+                
+                var stageArtigos = new ParserStages.StageConvertArtigoGN(context);
+                stageArtigos.Process();
             }
         }
 
