@@ -42,6 +42,7 @@ namespace PdfTextReader.ParserStages
                 //.ParseBlock<RemoveOverlapedImages2>()      // 3
                 .FromCache<HeaderFooterData>()
                 .FromCache<BlocksetData>()
+                    .Show(Color.Gray)
                 .FromCache<ProcessPdfTextData>()
 
                     .ParseBlock<RemoveImageLineFromHeaderFooter>()
@@ -72,6 +73,10 @@ namespace PdfTextReader.ParserStages
 
 
                     .ParseBlock<BreakInlineElements>()        // 23
+                        .Show(Color.Yellow)
+                    .ParseBlock<OrderBlocksetsWithBlockInfo>()
+                    .ParseBlock<ResizeBlocksetsWithBlockInfo>()
+
                         .Show(Color.Red)
                         .ShowLine(Color.Black);
 
