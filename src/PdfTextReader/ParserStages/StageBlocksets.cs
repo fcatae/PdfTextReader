@@ -98,8 +98,8 @@ namespace PdfTextReader.ParserStages
 
                         .ParseBlock<CheckOverlap>()
                             .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
-                            .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
-                        .PrintWarnings();
+                            .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red));
+                        //.PrintWarnings();
         }
 
     }
