@@ -8,13 +8,13 @@ using System.Text;
 
 namespace PdfTextReader.ParserStages
 {
-    class StageRetrieveText
+    class StageRetrieveBlocks
     {
         private readonly string _input;
         private readonly string _output;
         private readonly StageContext _context;
 
-        public StageRetrieveText(StageContext context)
+        public StageRetrieveBlocks(StageContext context)
         {
             this._input = context.InputFolder;
             this._output = context.OutputFolder;
@@ -29,10 +29,10 @@ namespace PdfTextReader.ParserStages
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-stage3-retrieve.pdf")
                     .Global<BasicFirstPageStats>()
-                    .StageProcess(RetrieveText);
+                    .StageProcess(RetrieveBlocks);
         }
 
-        void RetrieveText(PipelineInputPdf.PipelineInputPdfPage page)
+        void RetrieveBlocks(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page
                 .FromCache<IdentifyTablesData>()
