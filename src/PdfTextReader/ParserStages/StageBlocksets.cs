@@ -22,8 +22,11 @@ namespace PdfTextReader.ParserStages
             Pipeline pipeline = _context.GetPipeline();
 
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
-                    .Output($"{_context.OutputFilePrefix}-stage2-blocksets.pdf")
                     .StageProcess(FindBlocksets);
+
+            pipeline.Input($"{_context.InputFilePrefix}.pdf")
+                    .Output($"{_context.OutputFilePrefix}-stage2-blocksets.pdf")
+                    .StageProcess(ShowColors);
         }
 
         void FindBlocksets(PipelineInputPdf.PipelineInputPdfPage page)
@@ -35,7 +38,7 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<SetProcessImageCompatibility>()
                     .ParseBlock<BasicFirstPageStats>()          // 2
                     .ParseBlock<RemoveOverlapedImages2>()       // 3
-                
+
                 .FromCache<HeaderFooterData>()
                     .ParseBlock<RemoveImageLineFromHeaderFooter>()
 
@@ -58,7 +61,7 @@ namespace PdfTextReader.ParserStages
 
                     .ParseBlock<FindInitialBlocksetWithRewind>()  // 13
 
-                        //.Show(Color.Gray)
+                    //.Show(Color.Gray)
 
                     .ParseBlock<BreakColumnsLight>()          // 14
                     .ParseBlock<AddTableSpace>()              // 15
@@ -84,14 +87,20 @@ namespace PdfTextReader.ParserStages
                         .ParseBlock<MergeSequentialLayout>()      // 28
                         .ParseBlock<ResizeSequentialLayout>()     // 29
 
-                        .ParseBlock<ShowBlocksets>()
-                            .Show(Color.Orange)
-                            .ShowLine(Color.Green)
+                        .StoreCache<BlocksetData>();
+        }
 
-                        .ParseBlock<CheckOverlap>()               // 30
+        void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
+        {
+            page.FromCache<BlocksetData>()
+                        .Show(Color.Orange)
+                        .ShowLine(Color.Green)
+
+                        .ParseBlock<CheckOverlap>()
                             .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
                             .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
                         .PrintWarnings();
         }
+
     }
 }
