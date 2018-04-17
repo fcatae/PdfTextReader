@@ -45,7 +45,7 @@ namespace PdfTextReader.ParserStages
                 .FromCache<ProcessPdfTextData>()
 
                     .ParseBlock<RemoveImageLineFromHeaderFooter>()
-                    .ParseBlock<FilterHeaderFooter> ()
+                    .ParseBlock<FilterHeaderFooter>()
 
                     .ParseBlock<RemoveSmallFonts>()           // 5
 
@@ -63,22 +63,17 @@ namespace PdfTextReader.ParserStages
 
                     .ParseBlock<FindInitialBlocksetWithBlockInfo>()  // 13(b)
 
-                                        .Show(Color.Red);
+                    .ParseBlock<AddTableSpace>()              // 15
+                    .ParseBlock<RemoveTableOverImage>()       // 16
+                    .ParseBlock<RemoveImageTexts>()           // 17
+                    .ParseBlock<AddImageSpace>()              // 18
+
+                    .ParseBlock<RemoveBackgroundNonText>()    // 21
 
 
-//                    .ParseBlock<AddTableSpace>()              // 15
-
-
-            //.ParseBlock<RemoveTableOverImage>()       // 16
-            //.ParseBlock<RemoveImageTexts>()           // 17
-
-            //.ParseBlock<AddImageSpace>()              // 18
-
-            //.ParseBlock<RemoveBackgroundNonText>()    // 21
-
-            //.ParseBlock<BreakInlineElements>()        // 23
-            //    .Show(Color.Orange)
-            //    .ShowLine(Color.Black)
+                    .ParseBlock<BreakInlineElements>()        // 23
+                        .Show(Color.Red)
+                        .ShowLine(Color.Black);
 
             //.PrintWarnings();
         }

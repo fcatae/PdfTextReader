@@ -58,7 +58,7 @@ namespace PdfTextReader.PDFCore
                 var column = (BlockColumn)FindColumn(block);
 
                 if (column == null)
-                    PdfReaderException.AlwaysThrow("Column not in the blockset info -- maybe it is header?");
+                    PdfReaderException.Throw("Column not in the blockset info -- review stage 2");
 
                 if(lastColumn != null)
                 {
