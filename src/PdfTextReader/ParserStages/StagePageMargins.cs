@@ -44,8 +44,8 @@ namespace PdfTextReader.ParserStages
             page
                 .FromCache<HeaderFooterData>()
                 .FromCache<ProcessPdfTextData>()
-                  .Validate<ShowHeaderFooter>().ShowErrors(p => p.Show(Color.PaleVioletRed))
-                  .ParseBlock<ShowHeaderFooter>()
+                  .Validate<ShowTextHeaderFooter>().ShowErrors(p => p.Show(Color.PaleVioletRed))
+                  .ParseBlock<ShowTextHeaderFooter>()
                     .Show(Color.Yellow);
         }
     }

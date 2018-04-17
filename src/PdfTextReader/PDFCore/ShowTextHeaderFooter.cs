@@ -6,12 +6,12 @@ using System.Text;
 
 namespace PdfTextReader.PDFCore
 {
-    class ShowHeaderFooter : IProcessBlock, IValidateBlock
+    class ShowTextHeaderFooter : IProcessBlock, IValidateBlock
     {
         private float _headerH = float.NaN;
         private float _footerH = float.NaN;
 
-        public ShowHeaderFooter(HeaderFooterData data)
+        public ShowTextHeaderFooter(HeaderFooterData data)
         {
             _headerH = data.HeaderH;
             _footerH = data.FooterH;
