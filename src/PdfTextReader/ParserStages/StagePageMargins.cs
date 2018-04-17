@@ -22,8 +22,11 @@ namespace PdfTextReader.ParserStages
             Pipeline pipeline = _context.GetPipeline();
             
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
-                    .Output($"{_context.OutputFilePrefix}-stage1-margins.pdf")
                     .StageProcess(FindMargins);
+
+            pipeline.Input($"{_context.InputFilePrefix}.pdf")
+                    .Output($"{_context.OutputFilePrefix}-stage1-margins.pdf")
+                    .StageProcess(ShowColors);
         }
 
         void FindMargins(PipelineInputPdf.PipelineInputPdfPage page)
@@ -32,13 +35,18 @@ namespace PdfTextReader.ParserStages
                 .FromCache<IdentifyTablesData>()
                 .FromCache<ProcessImageData>()
                 .FromCache<ProcessPdfTextData>()
-
                   .ParseBlock<FindDouHeaderFooter>()
+                        .StoreCache<HeaderFooterData>();
+        }
 
-                  .Validate<FilterHeaderFooter>().ShowErrors(p => p.Show(Color.Purple))
-                  .ParseBlock<FilterHeaderFooter>()
-                        .StoreCache<HeaderFooterData>()
-                  .Show(Color.Yellow);
+        void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
+        {
+            page
+                .FromCache<HeaderFooterData>()
+                .FromCache<ProcessPdfTextData>()
+                  .Validate<ShowHeaderFooter>().ShowErrors(p => p.Show(Color.PaleVioletRed))
+                  .ParseBlock<ShowHeaderFooter>()
+                    .Show(Color.Yellow);
         }
     }
 }
