@@ -8,8 +8,6 @@ namespace PdfTextReader.PDFCore
 {
     class FilterHeaderFooter : IProcessBlock, IValidateBlock
     {
-        private readonly BlockPage _lines;
-        private readonly BlockPage _images;
         private float _headerH = float.NaN;
         private float _footerH = float.NaN;
 
