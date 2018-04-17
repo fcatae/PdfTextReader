@@ -104,12 +104,29 @@ namespace PdfTextReader.TextStructures
 
         TextLine CreateTableLine(IBlock bl, TextPageInfo pageInfo)
         {
+            string blockType = "UNKNOWN";
+
+            if (bl is ImageBlock)
+            {
+                blockType = "IMG";
+            }
+            if (bl is TableSet)
+            {
+                blockType = "TABLE";
+            }
+
+            int pageNumber = pageInfo.PageNumber;
+            float x1 = bl.GetX();
+            float h1 = bl.GetH();
+            float x2 = bl.GetX() + bl.GetWidth();
+            float h2 = bl.GetH() + bl.GetHeight();
+            
             return new TextLine
             {
                 FontName = "FontTable",
                 FontSize = 5,
                 FontStyle = "Regular",
-                Text = "", //"**TABLE**",
+                Text = $"\n[[[{blockType}(page={pageNumber},{x1},{h1},{x2},{h2})]]]\n",
                 MarginLeft = 0,
                 MarginRight = 0,
                 BeforeSpace = null,
