@@ -7,7 +7,9 @@ namespace PdfTextReader.PDFCore
 {
     class BlocksetData : IProcessBlockData
     {
-        public BlockPage2 _blocksetInfo;
+        private BlockPage2 _blocksetInfo;
+
+        public BlockPage2 Info => _blocksetInfo;
         public BlockPage LastResult => _blocksetInfo;
 
         public BlockPage Process(BlockPage page2)

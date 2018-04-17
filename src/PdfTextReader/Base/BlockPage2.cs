@@ -48,5 +48,10 @@ namespace PdfTextReader.Base
             var names = _segments.Select(s => s.GetName());
             return String.Join("", names);
         }
+
+        internal object SelectMany(Func<object, object> p)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
