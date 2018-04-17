@@ -245,7 +245,7 @@ namespace PdfTextReader.Execution
         {
             int index = page - 1;
 
-            if( index >= _statsCollectionPerPage.Count )
+            while( index >= _statsCollectionPerPage.Count )
             {
                 _statsCollectionPerPage.Add(new List<object>());
             }
