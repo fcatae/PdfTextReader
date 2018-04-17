@@ -77,6 +77,8 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<OrderBlocksetsWithBlockInfo>()
                     .ParseBlock<ResizeBlocksetsWithBlockInfo>()
 
+                    .StoreCache<FinalBlockResultData>()
+
                         .Show(Color.Red)
                         .ShowLine(Color.Black);
 
