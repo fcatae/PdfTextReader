@@ -53,13 +53,12 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<GroupLines>()                 // 10
 
                     //.ParseBlock<RemoveTableDotChar>()         // 11
-                        .Show(Color.Yellow)
 
                     //.ParseBlock<RemoveHeaderImage>()          // 12
 
                     .ParseBlock<FindInitialBlocksetWithRewind>()  // 13
 
-                        .Show(Color.Gray)
+                        //.Show(Color.Gray)
 
                     .ParseBlock<BreakColumnsLight>()          // 14
                     .ParseBlock<AddTableSpace>()              // 15
@@ -84,8 +83,10 @@ namespace PdfTextReader.ParserStages
                         .ParseBlock<OrganizePageLayout>()         // 27
                         .ParseBlock<MergeSequentialLayout>()      // 28
                         .ParseBlock<ResizeSequentialLayout>()     // 29
+
+                        .ParseBlock<ShowBlocksets>()
                             .Show(Color.Orange)
-                            .ShowLine(Color.Black)
+                            .ShowLine(Color.Green)
 
                         .ParseBlock<CheckOverlap>()               // 30
                             .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
