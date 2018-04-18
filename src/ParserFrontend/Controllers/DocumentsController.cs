@@ -49,13 +49,5 @@ namespace ParserFrontend.Controllers
         {
             return new { docname = name , action = act };
         }
-        
-        [HttpPost("{name}/reprocess", Name = "Document_Reprocess")]
-        public object Reprocess(string name)
-        {
-            _pdfHandler.Process(name, "input", "output");
-            
-            return this.RedirectToRoute("Document_Show", new { name = name });
-        }
     }
 }
