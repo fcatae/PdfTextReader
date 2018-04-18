@@ -69,7 +69,6 @@ namespace ParserFrontend.Logic
                 string content = file.ReadToEnd();
                 return content;
             }
-            return new NotImplementedException();
         }
     }
 }
