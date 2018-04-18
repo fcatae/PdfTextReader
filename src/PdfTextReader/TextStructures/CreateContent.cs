@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.Base;
+using PdfTextReader.Execution;
 using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
 using System;
@@ -9,7 +10,7 @@ namespace PdfTextReader.TextStructures
 {
     class CreateContent : IAggregateStructure<TextSegment, TextSegment>
     {
-        public CreateContent(BasicFirstPageStats basicFirstPageStats)
+        public CreateContent(BasicFirstPageStats basicFirstPageStats, PipelinePageStats<int> teste)
         {
         }
 

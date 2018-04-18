@@ -15,18 +15,26 @@ namespace PdfTextReader.Execution
 
         static PipelineFactory()
         {
-            RegisterAssemblyComponents(Assembly.GetExecutingAssembly());
+            g_defaultScope = RegisterComponents();
         }
 
-        static void RegisterAssemblyComponents(Assembly currentAssembly)
+        static IContainer RegisterComponents()
         {
             var builder = new ContainerBuilder();
 
+            RegisterAssemblyComponents(builder, Assembly.GetExecutingAssembly());
+
+            builder.RegisterGeneric(typeof(PipelinePageStats<>)).AsSelf();
+
+            return builder.Build();
+
+        }
+
+        static void RegisterAssemblyComponents(ContainerBuilder builder, Assembly currentAssembly)
+        {
             builder.RegisterAssemblyTypes(currentAssembly)
                 //.Where(t => t.IsAssignableTo<IProcessBlock>())
                 .InstancePerLifetimeScope();
-
-            g_defaultScope = builder.Build();
         }
 
         public PipelineFactory()
