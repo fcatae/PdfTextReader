@@ -3,12 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ParserFrontend.Logic;
 
 namespace ParserFrontend.Controllers
 {
     [Route("[controller]")]
     public class DocumentsController : Controller
     {
+        PdfHandler _pdfHandler;
+
+        public DocumentsController()
+        {
+            var vfs = new WebVirtualFS();
+
+            _pdfHandler = new PdfHandler(vfs);
+        }
+
         public object Index()
         {
             return new { sucesso = true };
@@ -38,6 +48,14 @@ namespace ParserFrontend.Controllers
         public object Show(string name, string act)
         {
             return new { docname = name , action = act };
+        }
+        
+        [HttpPost("{name}/reprocess", Name = "Document_Reprocess")]
+        public object Reprocess(string name)
+        {
+            _pdfHandler.Process(name, "input", "output");
+            
+            return this.RedirectToRoute("Document_Show", new { name = name });
         }
     }
 }

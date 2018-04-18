@@ -11,7 +11,7 @@ using System.Text;
 
 namespace PdfTextReader
 {
-    class ExampleStages
+    public class ExampleStages
     {
         public static void RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
         {

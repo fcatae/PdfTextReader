@@ -50,7 +50,7 @@ namespace ParserFrontend.Logic
             if (basename == null)
                 throw new ArgumentNullException(nameof(basename));
 
-            PdfTextReader.ExamplesWeb.RunParserPDF(_virtualFS, basename, inputfolder, outputfolder);
+            PdfTextReader.ExampleStages.RunParserPDF(_virtualFS, basename, inputfolder, outputfolder);
 
             return $"/files/output/{basename}/parser-output.pdf";
         }

@@ -1,7 +1,5 @@
 ﻿// Write your Javascript code.
 $(function () {
-
-
 })
 
 // Upload Page
@@ -16,4 +14,10 @@ function uploadFormSubmit(ev) {
     $(".upload-form .wait-image").show();
 
     return true;
+}
+
+$(".show-form .button-reprocess").click(showReprocessDocument);
+
+function showReprocessDocument(ev) {
+    
 }

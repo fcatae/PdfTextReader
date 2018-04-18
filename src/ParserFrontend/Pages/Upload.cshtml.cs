@@ -44,10 +44,11 @@ namespace ParserFrontend.Pages
                     using (var stream = file.OpenReadStream())
                     {
                         string basename = _pdfHandler.CreatePdfFile(filename, "input", stream);
-                        string links = _pdfHandler.Process(basename, "input", "output");
+                        //string links = 
+                        _pdfHandler.Process(basename, "input", "output");
 
                         Message = basename;
-                        ResultLink = links;
+                        //ResultLink = links;
 
                         return this.RedirectToRoute("Document_Show", new { name = basename });
                     }
