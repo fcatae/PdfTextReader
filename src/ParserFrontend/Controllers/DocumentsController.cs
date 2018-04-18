@@ -47,15 +47,9 @@ namespace ParserFrontend.Controllers
         }
 
         [Route("{name}/tree", Name = "Document_OutputTree")]
-        public IActionResult ShowTree(string name)
+        public string ShowTree(string name)
         {
-            //var output = new ParserFrontend.Logic.OutputFiles();
-
-            // check if the file was processed
-            // ...
-            // ...
-
-            return View();
+            return _outputFiles.GetOutputTree(name).ToString();
         }
 
         [Route("{name}/{act}")]

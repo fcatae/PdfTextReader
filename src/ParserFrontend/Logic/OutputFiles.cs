@@ -63,9 +63,11 @@ namespace ParserFrontend.Logic
 
         public object GetOutputTree(string basename)
         {
-            using (var file = OpenReader(basename, "tree"))
+            using (var stream = OpenReader(basename, "tree"))
+            using (var file = new StreamReader(stream))
             {
-
+                string content = file.ReadToEnd();
+                return content;
             }
             return new NotImplementedException();
         }
