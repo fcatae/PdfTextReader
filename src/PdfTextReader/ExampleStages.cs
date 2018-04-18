@@ -13,7 +13,7 @@ namespace PdfTextReader
 {
     public class ExampleStages
     {
-        public static void RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
+        public static Dictionary<string,string> RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
         {
             VirtualFS.ConfigureFileSystem(virtualFS);
 
@@ -47,6 +47,8 @@ namespace PdfTextReader
 
                 string logStage3 = context.GetOutput("stage3");
                 string logTree = context.GetOutput("tree");
+
+                return context.FileListOutput;
             }
         }
     }

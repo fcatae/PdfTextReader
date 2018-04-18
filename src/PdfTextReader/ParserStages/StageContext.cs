@@ -65,6 +65,11 @@ namespace PdfTextReader.ParserStages
             return _outputFiles[name];
         }
 
+        public Dictionary<string,string> FileListOutput
+        {
+            get { return _outputFiles; }
+        }
+
         public void Dispose()
         {
             if( _pipeline != null )

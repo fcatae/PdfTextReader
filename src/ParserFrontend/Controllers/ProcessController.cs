@@ -11,19 +11,23 @@ namespace ParserFrontend.Controllers
     public class ProcessController : Controller
     {
         PdfHandler _pdfHandler;
+        OutputFiles _outputFiles;
 
         public ProcessController()
         {
             var vfs = new WebVirtualFS();
 
             _pdfHandler = new PdfHandler(vfs);
+            _outputFiles = new OutputFiles(vfs);
         }
         
         [HttpPost("{name}/reprocess", Name = "Process_Reprocess")]
         public IActionResult Reprocess(string name)
         {
-            _pdfHandler.Process(name, "input", "output");
-            
+            var fileList = _pdfHandler.Process(name, "input", "output");
+
+            _outputFiles.Save(name, fileList);
+
             return this.RedirectToRoute("Document_Show", new { name = name });
         }
 
@@ -45,7 +49,9 @@ namespace ParserFrontend.Controllers
                     {
                         string basename = _pdfHandler.CreatePdfFile(filename, "input", stream);
 
-                        _pdfHandler.Process(basename, "input", "output");
+                        var fileList = _pdfHandler.Process(basename, "input", "output");
+
+                        _outputFiles.Save(basename, fileList);
 
                         return this.RedirectToRoute("Document_Show", new { name = basename });
                     }

@@ -11,12 +11,14 @@ namespace ParserFrontend.Controllers
     public class DocumentsController : Controller
     {
         PdfHandler _pdfHandler;
+        OutputFiles _outputFiles;
 
         public DocumentsController()
         {
             var vfs = new WebVirtualFS();
 
             _pdfHandler = new PdfHandler(vfs);
+            _outputFiles = new OutputFiles(vfs);
         }
 
         public object Index()
@@ -35,13 +37,25 @@ namespace ParserFrontend.Controllers
         [Route("{name}/output", Name = "Document_Output")]
         public IActionResult ShowOutput(string name)
         {
-            var output = new ParserFrontend.Logic.OutputFiles();
+            //var output = new ParserFrontend.Logic.OutputFiles();
 
             // check if the file was processed
             // ...
             // ...
 
-            return new FileStreamResult(output.GetOutputFile(name), "application/pdf");
+            return new FileStreamResult(_outputFiles.GetOutputFile(name), "application/pdf");
+        }
+
+        [Route("{name}/tree", Name = "Document_OutputTree")]
+        public IActionResult ShowTree(string name)
+        {
+            //var output = new ParserFrontend.Logic.OutputFiles();
+
+            // check if the file was processed
+            // ...
+            // ...
+
+            return View();
         }
 
         [Route("{name}/{act}")]

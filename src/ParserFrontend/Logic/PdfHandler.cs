@@ -45,14 +45,14 @@ namespace ParserFrontend.Logic
                 throw new InvalidOperationException("File is not a PDF file");
         }
 
-        public string Process(string basename, string inputfolder, string outputfolder)
+        public Dictionary<string,string> Process(string basename, string inputfolder, string outputfolder)
         {
             if (basename == null)
                 throw new ArgumentNullException(nameof(basename));
 
-            PdfTextReader.ExampleStages.RunParserPDF(_virtualFS, basename, inputfolder, outputfolder);
+            var fileList = PdfTextReader.ExampleStages.RunParserPDF(_virtualFS, basename, inputfolder, outputfolder);
 
-            return $"/files/output/{basename}/parser-output.pdf";
+            return fileList;
         }
     }
 }
