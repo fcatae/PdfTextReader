@@ -100,19 +100,6 @@ namespace PdfTextReader
                     );
 
             return result;
-        }
-
-
-        public static void RunParserPDF2(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
-        {
-            VirtualFS.ConfigureFileSystem(virtualFS);
-
-            PdfReaderException.ContinueOnException();
-
-            var examples = new ExampleStages();
-            examples.Start(inputfolder, outputfolder, basename);
-
-            //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
-        }        
+        }  
     }
 }

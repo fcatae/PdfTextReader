@@ -30,6 +30,8 @@ namespace PdfTextReader.ParserStages
                     .Output($"{_context.OutputFilePrefix}-stage3-retrieve.pdf")
                     .Global<BasicFirstPageStats>()
                     .StageProcess(RetrieveBlocks);
+
+            _context.AddOutput("stage3", $"{_context.OutputFilePrefix}-stage3-retrieve.pdf");
         }
 
         void RetrieveBlocks(PipelineInputPdf.PipelineInputPdfPage page)

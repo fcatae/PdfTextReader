@@ -54,32 +54,7 @@ namespace PdfTextReader
                 basename = ExtractPage(basename, page);
             }
 
-            using (var context = new ParserStages.StageContext(basename))
-            {
-                var stage0 = new ParserStages.StagePdfInput(context);
-                stage0.Process();
-
-                var stage1 = new ParserStages.StagePageMargins(context);
-                stage1.Process();
-
-                var stage2 = new ParserStages.StageBlocksets(context);
-                stage2.Process();
-
-                var stage3 = new ParserStages.StageRetrieveBlocks(context);
-                stage3.Process();
-
-                var stageText1 = new ParserStages.StageConvertText(context);
-                stageText1.Process();
-
-                var stageText2 = new ParserStages.StageConvertStructure(context);
-                stageText2.Process();
-                
-                var stageContent = new ParserStages.StageConvertContent(context);
-                stageContent.Process();
-                
-                var stageArtigos = new ParserStages.StageConvertArtigoGN(context);
-                stageArtigos.Process();
-            }
+            ExampleStages.RunParserPDF(new VirtualFS(), basename, "input", "output");
         }
 
         public static void ProcessStats2(string basename = "DO1_2017_01_06", int page=-1)

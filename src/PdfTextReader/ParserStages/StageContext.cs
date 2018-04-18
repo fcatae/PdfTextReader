@@ -10,17 +10,24 @@ namespace PdfTextReader.ParserStages
         private PipelineFactory _factoryContext;
         private Pipeline _pipeline;
         private object _pipelineText;
+        private Dictionary<string, string> _outputFiles = new Dictionary<string, string>();
 
-        public StageContext(string basename)
+        public StageContext(string basename) : this(basename, "input", "output")
+        {
+        }
+
+        public StageContext(string basename, string inputfolder, string outputfolder)
         {
             this._factoryContext = new PipelineFactory();
             this._pipeline = new Pipeline(_factoryContext);
             this.Basename = basename;
+            InputFolder = inputfolder;
+            OutputFolder = outputfolder;
         }
-        
+
         public string Basename { get; private set; }
-        public string InputFolder => "input";
-        public string OutputFolder => "output";
+        public string InputFolder { get; private set; }
+        public string OutputFolder { get; private set; }
         public string InputFilePrefix => $"{InputFolder}/{Basename}";
         public string OutputFilePrefix => $"{OutputFolder}/{Basename}/{Basename}";
         
@@ -46,6 +53,16 @@ namespace PdfTextReader.ParserStages
                 throw new ArgumentNullException(nameof(pipelineText));
 
             this._pipelineText = pipelineText;
+        }
+
+        public void AddOutput(string name, string link)
+        {
+            _outputFiles.Add(name, link);
+        }
+
+        public string GetOutput(string name)
+        {
+            return _outputFiles[name];
         }
 
         public void Dispose()

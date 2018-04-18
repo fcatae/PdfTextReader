@@ -80,6 +80,8 @@ namespace PdfTextReader.TextStructures
             if (_indexOutputType[index_end] != typeof(T))
                 throw new InvalidOperationException();
 
+            // this logic has a BUG: if the Type(T) repeats
+            // multiple times, then the index may fail
             int last_instanceId = _indexes[index_end].GetObjectId(instance);
             TextLine line = null;
 

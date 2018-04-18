@@ -17,6 +17,16 @@ namespace PdfTextReader.Execution
         private TransformIndexTree _indexTree;
         private PipelineFactory _factory;
 
+        // this is a ARCHITECTURE change - everything used to be consumed as streaming
+        // but this flag now forces to consolidate everything in memory prior to 
+        // consumption
+        // the initial impact is to fix some weird bugs related to referencing data 
+        // from prior stages, but the index wasn't built yet
+        // this can also simplify the current PipelineText. Eg, we don't need trackers
+        // to dispose the objects as they would be executed sequentially (and not in 
+        // parallel)
+        const bool FORCE_INMEMORY_PROCESS = true;
+
         public PipelineText(PipelineFactory factory, IPipelineContext context, IEnumerable<TT> stream, TransformIndexTree indexTree, IDisposable chain)
         {
             this.Context = context;
@@ -25,6 +35,9 @@ namespace PdfTextReader.Execution
             _tracker.TrackInstance(chain);
             _indexTree = indexTree;
             _factory = factory;
+
+            if (FORCE_INMEMORY_PROCESS)
+                this.CurrentStream = stream.ToArray();
         }
 
         PipelineInputPdf ParentContext => (PipelineInputPdf)this.Context;

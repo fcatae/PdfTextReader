@@ -13,99 +13,41 @@ namespace PdfTextReader
 {
     class ExampleStages
     {
-        string outputfolder;
-        string basename;
-
-        public void Stage1(PipelineInputPdf.PipelineInputPdfPage page)
+        public static void RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
         {
-            page.ParsePdf<PreProcessTables>()
-                    .ParseBlock<IdentifyTables>()             // 1
-                .ParsePdf<PreProcessImages>()
-                    .ParseBlock<BasicFirstPageStats>()        // 2
-                                                              //.Validate<RemoveOverlapedImages>().ShowErrors(p => p.Show(Color.Blue))
-                    .ParseBlock<RemoveOverlapedImages>()      // 3
-                .ParsePdf<ProcessPdfText>()                   // 4
-                                                              //.Validate<RemoveSmallFonts>().ShowErrors(p => p.ShowText(Color.Green))
-                    .ParseBlock<RemoveSmallFonts>()           // 5
-                                                              //.Validate<MergeTableText>().ShowErrors(p => p.Show(Color.Blue))
-                    .ParseBlock<MergeTableText>()             // 6
-                                                              //.Validate<HighlightTextTable>().ShowErrors(p => p.Show(Color.Green))
-                    .ParseBlock<HighlightTextTable>()         // 7
-                    .ParseBlock<RemoveTableText>()            // 8
-                    .ParseBlock<ReplaceCharacters>()          // 9
-                    .ParseBlock<GroupLines>()                 // 10
-                    .ParseBlock<RemoveTableDotChar>()         // 11
-                        .Show(Color.Yellow)
-                        .Validate<RemoveHeaderImage>().ShowErrors(p => p.Show(Color.Purple))
-                    .ParseBlock<RemoveHeaderImage>()          // 12
-                    .ParseBlock<FindInitialBlocksetWithRewind>()  // 13
-                        .Show(Color.Gray)
-                    .ParseBlock<BreakColumnsLight>()          // 14
-                                                              //.ParseBlock<BreakColumns>()
-                    .ParseBlock<AddTableSpace>()              // 15
-                    .ParseBlock<RemoveTableOverImage>()       // 16
-                    .ParseBlock<RemoveImageTexts>()           // 17
-                    .ParseBlock<AddImageSpace>()              // 18
-                        .Validate<RemoveFooter>().ShowErrors(p => p.Show(Color.Purple))
-                    .ParseBlock<RemoveFooter>()               // 19
-                    .ParseBlock<AddTableHorizontalLines>()    // 20
-                    .ParseBlock<RemoveBackgroundNonText>()    // 21
-                        .ParseBlock<BreakColumnsRewrite>()    // 22
+            VirtualFS.ConfigureFileSystem(virtualFS);
 
-                    .ParseBlock<BreakInlineElements>()        // 23
-                    .ParseBlock<ResizeBlocksets>()            // 24
-                    .ParseBlock<ResizeBlocksetMagins>()       // 25
-                    .ParseBlock<OrderBlocksets>()           // 26
+            PdfReaderException.ContinueOnException();
 
-                    .ParseBlock<OrganizePageLayout>()         // 27
-                    .ParseBlock<MergeSequentialLayout>()      // 28
-                    .ParseBlock<ResizeSequentialLayout>()     // 29
-                        .Show(Color.Orange)
-                        .ShowLine(Color.Black)
+            using (var context = new ParserStages.StageContext(basename, inputfolder, outputfolder))
+            {
+                var stage0 = new ParserStages.StagePdfInput(context);
+                stage0.Process();
 
-                    .ParseBlock<CheckOverlap>()               // 30
+                var stage1 = new ParserStages.StagePageMargins(context);
+                stage1.Process();
 
-                        .Validate<CheckOverlap>().ShowErrors(p => p.Show(Color.Red))
-                        .Validate<ValidatePositiveCoordinates>().ShowErrors(p => p.Show(Color.Red))
-                    .PrintWarnings();
-        }
+                var stage2 = new ParserStages.StageBlocksets(context);
+                stage2.Process();
 
-        public IList<TextSegment> Stage2(PipelineText<TextLine> tfunc)
-        {
-            var segs = tfunc.Log<AnalyzeLines>($"{outputfolder}/{basename}/lines.txt")
-                           .ConvertText<CreateTextLineIndex, TextLine>()
-                           .ConvertText<PreCreateStructures, TextLine2>()
-                           .ConvertText<CreateStructures2, TextStructure>()
-                           .ConvertText<PreCreateTextSegments, TextStructureAgg>()
-                           .ConvertText<AggregateStructures, TextStructure>()
-                               .ShowPdf<ShowStructureCentral>($"{outputfolder}/{basename}/show-central.pdf")
-                               .Log<AnalyzeStructures>($"{outputfolder}/{basename}/struct.txt")
-                               .Log<AnalyzeStructuresCentral>($"{outputfolder}/{basename}/central.txt")
-                           .ConvertText<CreateTextSegments, TextSegment>()
-                           .ConvertText<CreateTreeSegments, TextSegment>()
-                               .Log<AnalyzeSegmentTitles>($"{outputfolder}/{basename}/segment-titles-tree.txt")
-                               .Log<AnalyzeTreeStructure>(Console.Out)
-                           .ToList();
+                var stage3 = new ParserStages.StageRetrieveBlocks(context);
+                stage3.Process();
 
-            return segs;
-        }
+                var stageText1 = new ParserStages.StageConvertText(context);
+                stageText1.Process();
 
-        public void Start(string a, string b, string c)
-        {
-            string inputfolder = a;
-            outputfolder = b;
-            basename = c;
+                var stageText2 = new ParserStages.StageConvertStructure(context);
+                stageText2.Process();
 
-            Pipeline pipeline = new Pipeline();
+                var stageContent = new ParserStages.StageConvertContent(context);
+                stageContent.Process();
 
-            var result =
-            pipeline.Input($"{inputfolder}/{basename}.pdf")
-                    .Output($"{outputfolder}/{basename}/parser-output.pdf")
-                    .AllPages<CreateTextLines>(Stage1);
+                var stageArtigos = new ParserStages.StageConvertArtigoGN(context);
+                stageArtigos.Process();
 
-            var sequences = Stage2(result);
-
-            //pipeline.ExtractOutput<ShowParserWarnings>($"{outputfolder}/{basename}/parser-errors.pdf");
+                string logStage3 = context.GetOutput("stage3");
+                string logTree = context.GetOutput("tree");
+            }
         }
     }
 }
