@@ -11,6 +11,7 @@ using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf.Canvas.Parser.Listener;
 using iText.Kernel.Pdf.Extgstate;
 using iText.IO.Font.Constants;
+using PdfTextReader.ExecutionStats;
 
 namespace PdfTextReader.Execution
 {
@@ -45,10 +46,12 @@ namespace PdfTextReader.Execution
 
             var pdfDocument = new PdfDocument(VirtualFS.OpenPdfReader(filename));
 
+            InitDocument(pdfDocument, factory);
+
             this._input = filename;
             this._pdfDocument = pdfDocument;
             this._documentFactory = factory;
-
+            
             if( cache != null )
             {
                 cache.SetSize(_pdfDocument.GetNumberOfPages());
@@ -60,6 +63,19 @@ namespace PdfTextReader.Execution
             PdfReaderException.ClearContext();
         }
 
+        void InitDocument(PdfDocument document, PipelineFactory factory)
+        {
+            var globalStats = factory.CreateGlobalInstance<PipelineDocumentStats>();
+
+            var page = document.GetPage(1);
+
+            var rect = page.GetPageSize();
+            
+            globalStats.X = rect.GetX();
+            globalStats.H = rect.GetY();
+            globalStats.Height = rect.GetHeight();
+            globalStats.Width = rect.GetWidth();
+        }
 
         public PipelineInputPdfPage Page(int pageNumber)
         {

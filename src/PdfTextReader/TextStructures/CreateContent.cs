@@ -10,7 +10,7 @@ namespace PdfTextReader.TextStructures
 {
     class CreateContent : IAggregateStructure<TextSegment, TextSegment>
     {
-        public CreateContent(BasicFirstPageStats basicFirstPageStats, PipelinePageStats<int> teste)
+        public CreateContent(BasicFirstPageStats basicFirstPageStats, PipelinePageStats<int> teste, PipelineDocumentStats docstats)
         {
         }
 
