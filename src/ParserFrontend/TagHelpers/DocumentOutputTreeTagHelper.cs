@@ -43,12 +43,7 @@ namespace ParserFrontend.TagHelpers
             if (node == null)
                 return;
 
-            if( node.Ident >= 0 )
-            {
-                output.Content.AppendHtml("<li>");
-                output.Content.Append(node.Title);
-                output.Content.AppendHtml("</li>");
-            }
+            GenerateOutputLink(output, node);
 
             if (node.Children == null)
                 return;
@@ -61,6 +56,31 @@ namespace ParserFrontend.TagHelpers
             }
 
             output.Content.AppendHtml("</ul>");
+        }
+
+        void GenerateOutputLink(TagHelperOutput output, OutputTreeInfo.Node node)
+        {
+            if (node.Ident >= 0)
+            {
+                output.Content.AppendHtml("<li>");
+
+
+                if (node.Line.Id >= 0)
+                {
+                    string name = this.Name;
+                    string id = node.Line.Id.ToString();
+
+                    output.Content.AppendHtml($"<a href='/documents/{name}/articles/{id}'>");
+                    output.Content.Append(node.Title);
+                    output.Content.AppendHtml("</a>");
+                }
+                else
+                {
+                    output.Content.Append(node.Title);
+                }
+
+                output.Content.AppendHtml("</li>");
+            }
         }
         
     }

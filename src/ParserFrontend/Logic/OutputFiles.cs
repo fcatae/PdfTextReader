@@ -55,7 +55,15 @@ namespace ParserFrontend.Logic
             
             return _webFs.OpenReader(filename);
         }
-        
+
+        Stream OpenReader(string basename, string file, string arg1)
+        {
+            string filename_format = GetFilename(basename, file);
+            string filename = String.Format(filename_format, arg1);
+
+            return _webFs.OpenReader(filename);
+        }
+
         public Stream GetOutputFile(string basename)
         {
             return OpenReader(basename, "stage3");
@@ -64,6 +72,16 @@ namespace ParserFrontend.Logic
         public string GetOutputTree(string basename)
         {
             using (var stream = OpenReader(basename, "tree"))
+            using (var file = new StreamReader(stream))
+            {
+                string content = file.ReadToEnd();
+                return content;
+            }
+        }
+
+        public string GetOutputArtigo(string basename, int idArtigo)
+        {
+            using (var stream = OpenReader(basename, "artigosGN", idArtigo.ToString()))
             using (var file = new StreamReader(stream))
             {
                 string content = file.ReadToEnd();

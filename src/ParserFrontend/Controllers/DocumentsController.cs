@@ -52,10 +52,17 @@ namespace ParserFrontend.Controllers
             return _outputFiles.GetOutputTree(name).ToString();
         }
 
+        [Route("{name}/articles/{id}")]
+        public string ShowDetailedArticle(string name, int id)
+        {
+            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
+            return artigo;
+        }
+        
         [Route("{name}/{act}")]
         public object Show(string name, string act)
         {
-            return new { docname = name , action = act };
+            return new { docname = name, action = act };
         }
     }
 }
