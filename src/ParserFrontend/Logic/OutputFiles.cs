@@ -61,7 +61,7 @@ namespace ParserFrontend.Logic
             return OpenReader(basename, "stage3");
         }
 
-        public object GetOutputTree(string basename)
+        public string GetOutputTree(string basename)
         {
             using (var stream = OpenReader(basename, "tree"))
             using (var file = new StreamReader(stream))

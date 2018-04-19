@@ -21,8 +21,47 @@ namespace ParserFrontend.TagHelpers
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            output.TagName = "div";
-            output.Content.Append(_outputFiles.GetOutputTree(Name).ToString());
+            output.TagName = "pre";
+            try
+            {
+                string text = _outputFiles.GetOutputTree(Name);
+
+                var output_tree = new OutputTreeInfo();
+                var tree = output_tree.Process(text);
+
+                GenerateOutputRecursive(output, tree);
+            }
+            catch
+            {
+
+            }
+            //output.Content.Append(tree);
         }
+
+        void GenerateOutputRecursive(TagHelperOutput output, OutputTreeInfo.Node node)
+        {
+            if (node == null)
+                return;
+
+            if( node.Ident >= 0 )
+            {
+                output.Content.AppendHtml("<li>");
+                output.Content.Append(node.Title);
+                output.Content.AppendHtml("</li>");
+            }
+
+            if (node.Children == null)
+                return;
+
+            output.Content.AppendHtml("<ul>");
+
+            foreach (var child in node.Children)
+            {
+                GenerateOutputRecursive(output, child);
+            }
+
+            output.Content.AppendHtml("</ul>");
+        }
+        
     }
 }
