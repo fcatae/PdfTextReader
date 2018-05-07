@@ -20,10 +20,18 @@ namespace PdfTextReader.PDFCore
             GroupFontLineHelper groupFont = null;
             BlockLine line = null;
             IBlock last = null;
+            string last_hidden = null;
             var result = new BlockPage();
             
             foreach (var block in page.AllBlocks)
             {
+                if( block is BlockHidden )
+                {
+                    var blockHidden = (BlockHidden)block;
+                    last_hidden = blockHidden.GetHiddenText();
+                    continue;
+                }
+
                 if(last != null)
                 {
                     if ( CheckSubfonts(line, (Block)block) )
@@ -57,10 +65,17 @@ namespace PdfTextReader.PDFCore
                 if (( last == null ) || (CompareLine(block, last) != 0))
                 {
                     var b = (Block)block;
+                    string text = block.GetText();
+
+                    if (last_hidden != null)
+                    {
+                        text = last_hidden + text;
+                        last_hidden = null;
+                    }
 
                     line = new BlockLine()
                     {
-                        Text = block.GetText(),
+                        Text = text,
                         X = block.GetX(),
                         H = block.GetH(),
                         Width = block.GetWidth(),

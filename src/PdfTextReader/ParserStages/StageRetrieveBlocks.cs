@@ -53,7 +53,7 @@ namespace PdfTextReader.ParserStages
                     //.ParseBlock<RemoveSmallFonts>()           // 5
                     .ParseBlock<FindDouIdMateria>()           // 5
                     .Validate<RemoveBlockHidden>().ShowErrors(p => p.Show(Color.Green))
-                    .ParseBlock<RemoveBlockHidden>()
+                    //.ParseBlock<RemoveBlockHidden>()
 
                     // considera como parte da tabela? em principio sim..
                     .ParseBlock<MergeTableText>()             // 6
