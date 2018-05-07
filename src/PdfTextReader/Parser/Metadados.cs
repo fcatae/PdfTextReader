@@ -16,6 +16,7 @@ namespace PdfTextReader.Parser
         public string IdMateria { get; set; }
         public string NumeroDaEdicao { get; set; }
         public string NumeroDoJornal { get; set; }
+        public string Titulo { get; set; }
 
     }
 }

@@ -34,6 +34,9 @@ namespace PdfTextReader.Parser
                     Metadados metadados = artigo.Metadados;
                     List<Anexo> anexos = artigo.Anexos;
 
+                    if (metadados.IdMateria!= null)
+                        writer.WriteAttributeString("idmateria", metadados.IdMateria);
+
                     if (conteudo.Hierarquia != null)
                         writer.WriteAttributeString("hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
                     
@@ -43,7 +46,7 @@ namespace PdfTextReader.Parser
                     //Writing Body
                     writer.WriteStartElement("body");
 
-                    writer.WriteElementString("Identifica", ConvertBreakline2Space(conteudo.Titulo));
+                    writer.WriteElementString("Identifica", ConvertBreakline2Space(metadados.Titulo));
                     writer.WriteElementString("Ementa", conteudo.Caput);
                     writer.WriteElementString("Texto", conteudo.Corpo);
 
