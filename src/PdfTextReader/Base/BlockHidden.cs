@@ -8,9 +8,7 @@ namespace PdfTextReader.Base
     {
         public string GetHiddenText()
         {
-            string id = Text.Replace("<!", "").Replace(">", "").Replace("ID","").Trim();
-
-            return $"((IDMATERIA={id})) ";
+            return TitleWithHiddenIdMateria.GetHiddenText(Text);
         }
     }
 }

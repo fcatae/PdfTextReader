@@ -60,12 +60,25 @@ namespace PdfTextReader.TextStructures
                 _currentTree.Push(titleText);
 
                 if (titles.Length == _currentTree.Count)
-                    optPageInfo = $" (Page {p}, ID={_structureId})";
+                    optPageInfo = $" ((Page {p}, ID={_structureId}))";
 
-                input.WriteLine(titleText.Replace("\n", " ") + optPageInfo);
+                string idmateria = TitleWithHiddenIdMateria.GetIdMateria(titleText);
+                string title = GetTitleText(titleText);
+
+                if (idmateria != null)
+                    optPageInfo += $"((IdMateria={idmateria}))";
+
+                input.WriteLine( title + optPageInfo);
             }
 
             _structureId++;
+        }
+
+        string GetTitleText(string text)
+        {
+            string cleanText = TitleWithHiddenIdMateria.CleanIdMateria(text);
+
+            return cleanText.Replace("\n", " ");
         }
 
         public void StartLog(TextWriter input)

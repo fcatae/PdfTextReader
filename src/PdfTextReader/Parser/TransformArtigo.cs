@@ -9,12 +9,8 @@ namespace PdfTextReader.Parser
 {
     class TransformArtigo
     {
-        readonly string IDMATERIA_SEPARATOR_START = "((IDMATERIA=";
-        readonly string[] IDMATERIA_SEPARATOR_END = new string[] { ")) " };
-
         public IEnumerable<Artigo> Create(IList<Conteudo> conteudos)
         {
-
             List<Artigo> artigos = new List<Artigo>();
 
             foreach (Conteudo conteudo in conteudos)
@@ -123,32 +119,12 @@ namespace PdfTextReader.Parser
 
         private string GetIdMateria(string title)
         {
-            if (title == null) return null;
-
-            if( title.StartsWith(IDMATERIA_SEPARATOR_START) )
-            {
-                var components = title.Split(IDMATERIA_SEPARATOR_END, 2, StringSplitOptions.None);
-
-                if (components != null && components.Length == 2)
-                    return components[0].Replace(IDMATERIA_SEPARATOR_START, "");
-            }
-
-            return null;
+            return TitleWithHiddenIdMateria.GetIdMateria(title);
         }
 
         private string CleanIdMateria(string title)
         {
-            if (title == null) return null;
-
-            if (title.StartsWith(IDMATERIA_SEPARATOR_START))
-            {
-                var components = title.Split(IDMATERIA_SEPARATOR_END, 2, StringSplitOptions.None);
-
-                if (components != null && components.Length == 2)
-                    return components[1];
-            }
-
-            return title;
+            return TitleWithHiddenIdMateria.CleanIdMateria(title);
         }
 
         private string GetType(string input)
