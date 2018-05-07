@@ -34,14 +34,9 @@ namespace PdfTextReader.ParserStages
                                 .ShowPdf<ShowStructureCentral>($"{_context.OutputFilePrefix}-show-central.pdf")
                                 .Log<AnalyzeStructures>($"{_context.OutputFilePrefix}-analyze-structures.txt")
                                 .Log<AnalyzeStructuresCentral>($"{_context.OutputFilePrefix}-analyze-structures-central.txt")
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<CreateTreeSegments, TextSegment>(true)
-                                .Log<AnalyzeSegmentTitles>($"{_context.OutputFilePrefix}-analyze-segment-titles.txt")
-                                .Log<AnalyzeTreeStructure>($"{_context.OutputFilePrefix}-tree.txt");
+                            .ConvertText<CreateTextSegments, TextSegment>();
 
             _context.SetPipelineText<TextSegment>(resultPipeline);
-
-            _context.AddOutput("tree", $"{_context.OutputFilePrefix}-tree.txt");
         }
 
     }
