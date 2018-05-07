@@ -11,7 +11,9 @@ namespace PdfTextReader.TextStructures
         ITransformIndexTree _index;
         Stack<string> _currentTree = new Stack<string>();
         int _structureId = 0;
-        
+        int _lastPid = -1;
+        int _lastPage = -1;
+
         public void Init(ITransformIndexTree index)
         {
             if (index == null)
@@ -59,8 +61,18 @@ namespace PdfTextReader.TextStructures
 
                 _currentTree.Push(titleText);
 
+                // reset pid
+                if( _lastPage != p )
+                {
+                    _lastPid = 1;
+                    _lastPage = p;
+                }
+
                 if (titles.Length == _currentTree.Count)
-                    optPageInfo = $" ((Page {p}, ID={_structureId}))";
+                {
+                    optPageInfo = $" ((Page {p}, PID={_lastPage}:{_lastPid}, NUM={_structureId}))";
+                    _lastPid++;
+                }
 
                 string idmateria = TitleWithHiddenIdMateria.GetIdMateria(titleText);
                 string title = GetTitleText(titleText);
