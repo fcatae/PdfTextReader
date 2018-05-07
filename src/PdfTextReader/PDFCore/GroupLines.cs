@@ -28,6 +28,10 @@ namespace PdfTextReader.PDFCore
                 if( block is BlockHidden )
                 {
                     var blockHidden = (BlockHidden)block;
+
+                    if (last_hidden != null)
+                        PdfReaderException.Warning("last_hidden != null: hidden text will be overwritten");
+
                     last_hidden = blockHidden.GetHiddenText();
                     continue;
                 }

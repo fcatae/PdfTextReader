@@ -48,10 +48,9 @@ namespace PdfTextReader.PDFCore
                         }
                     }
 
-                    result.Add(box);
-
                     if (box.Text != "")
                     {
+                        result.Add(box);
                         last_box = box;
                     }
                 }
