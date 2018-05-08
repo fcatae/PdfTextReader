@@ -144,9 +144,9 @@ namespace PdfTextReader.Parser
                 IntenalId = count,
                 Page = page,
                 Hierarquia = hierarchy,
-                Titulo = titulo,
-                Caput = caput,
-                Corpo = body,
+                Titulo = CleanupBreaklinesAndHyphens(titulo),
+                Caput = CleanupBreaklinesAndHyphens(caput),
+                Corpo = CleanupBreaklinesAndHyphens(body),
                 Autor = autores,
                 Data = data,
                 Anexos = anexos,
@@ -178,6 +178,13 @@ namespace PdfTextReader.Parser
             string text = String.Join("\n", lines);
 
             return text;
+        }
+
+        string CleanupBreaklinesAndHyphens(string body)
+        {
+            if (body == null) return null;
+
+            return body.Replace("-\n", "").Replace("\n", " ");
         }
 
         string RemoveDataFromBody(string body, string data)
