@@ -13,9 +13,9 @@ namespace ParserFrontend.Controllers
         PdfHandler _pdfHandler;
         OutputFiles _outputFiles;
 
-        public ProcessController()
+        public ProcessController(AccessManager amgr)
         {
-            var vfs = new WebVirtualFS();
+            var vfs = amgr.GetFullAccessFileSystem();
 
             _pdfHandler = new PdfHandler(vfs);
             _outputFiles = new OutputFiles(vfs);

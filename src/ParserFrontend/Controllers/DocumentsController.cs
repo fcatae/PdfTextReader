@@ -10,14 +10,12 @@ namespace ParserFrontend.Controllers
     [Route("[controller]")]
     public class DocumentsController : Controller
     {
-        PdfHandler _pdfHandler;
         OutputFiles _outputFiles;
 
-        public DocumentsController()
+        public DocumentsController(AccessManager amgr)
         {
-            var vfs = new WebVirtualFS();
+            var vfs = amgr.GetReadOnlyFileSystem();
 
-            _pdfHandler = new PdfHandler(vfs);
             _outputFiles = new OutputFiles(vfs);
         }
 
