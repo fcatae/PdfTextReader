@@ -48,6 +48,7 @@ namespace PdfTextReader.Parser
 
                     writer.WriteElementString("Identifica", ConvertBreakline2Space(metadados.Titulo));
                     writer.WriteElementString("Ementa", conteudo.Caput);
+                    writer.WriteElementString("Artigo", "\n" + conteudo.Texto + "\n");
                     writer.WriteElementString("Texto", conteudo.Corpo);
 
                     if (conteudo.Autor.Count > 0)

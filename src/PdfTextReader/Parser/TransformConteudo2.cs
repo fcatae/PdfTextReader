@@ -38,11 +38,15 @@ namespace PdfTextReader.Parser
             //just for process results
             List<string> resultProcess = new List<string>() { null, null, null };
 
+            // Hierarquia
+            var hierarquiteTitulo = segment.Title.Select(t => t.Text).ToArray();
+
+            // Texto
+            string texto = String.Join("\n", segment.Body.Select(GenerateText));
+
 
             //Definindo Titulo e hierarquia
             int idxTitle = segment.Title.Count() - 1;
-
-            var hierarquiteTitulo = segment.Title.Select(t => t.Text).ToArray();
 
             if (idxTitle == 0)
             {
@@ -91,7 +95,7 @@ namespace PdfTextReader.Parser
             //Definindo Body
             if (caput != null && idxSigna > 0 && idxSigna < segment.Body.Count())
             {
-                body = String.Join("\n\n", startLine.Take(idxSigna - 1).Select(s => s.Text));
+                body = String.Join("\n", startLine.Take(idxSigna - 1).Select(GenerateText));
 
                 possibleData = segment.Body[idxSigna - 1].Text;
             }
@@ -100,7 +104,7 @@ namespace PdfTextReader.Parser
                 var valueToTake = idxSigna - 1;
                 if (valueToTake == 0)
                     valueToTake = 1;
-                body = String.Join("\n\n", startLine.Take(valueToTake).Select(s => s.Text));
+                body = String.Join("\n", startLine.Take(valueToTake).Select(GenerateText));
 
                 possibleData = segment.Body[idxSigna - 1].Text;
             }
@@ -108,7 +112,7 @@ namespace PdfTextReader.Parser
             {
                 if (segment.Body.Count() > 0)
                 {
-                    body = String.Join("\n\n", startLine.Take(segment.Body.Count()).Select(s => s.Text));
+                    body = String.Join("\n", startLine.Take(segment.Body.Count()).Select(GenerateText));
                     possibleData = segment.Body[segment.Body.Count() - 1].Text;
                 }
             }
@@ -146,8 +150,34 @@ namespace PdfTextReader.Parser
                 Autor = autores,
                 Data = data,
                 Anexos = anexos,
-                HierarquiaTitulo = hierarquiteTitulo
+                HierarquiaTitulo = hierarquiteTitulo,
+                Texto = texto
             };
+        }
+
+        string GenerateText(TextStructure s)
+        {
+            if(s.TextAlignment == TextAlignment.JUSTIFY)
+            {
+                if (s.MarginLeft > 8f)
+                    return $"\t{s.Text}\n";
+                else
+                    return $"{s.Text}\n";
+            }
+
+            if (s.TextAlignment == TextAlignment.LEFT || s.TextAlignment == TextAlignment.UNKNOWN)
+            {
+                PdfReaderException.Warning("s.TextAlignment == TextAlignment.LEFT || s.TextAlignment == TextAlignment.UNKNOWN");
+                return $"{s.Text}\n";
+            }
+
+            string prefix = (s.TextAlignment == TextAlignment.CENTER) ? "\t\t" : "\t\t\t\t";
+
+            var lines = s.Text.Split('\n').Select(l => prefix + l);
+
+            string text = String.Join("\n", lines);
+
+            return text;
         }
 
         string RemoveDataFromBody(string body, string data)

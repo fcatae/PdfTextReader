@@ -20,7 +20,9 @@ namespace PdfTextReader.Parser
         public string Data { get; set; }
         public string Setor { get; set; }
         public string Departamento { get; set; }
+
         public string[] HierarquiaTitulo { get; set; }
+        public string Texto { get; set; }
 
         //Just for while
         public List<Anexo> Anexos { get; set; }
