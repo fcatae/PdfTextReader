@@ -37,10 +37,11 @@ namespace PdfTextReader.Parser
                     if (metadados.IdMateria!= null)
                         writer.WriteAttributeString("idmateria", metadados.IdMateria);
 
-                    if (conteudo.Hierarquia != null)
-                        writer.WriteAttributeString("hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
+                    //if (conteudo.Hierarquia != null)
+                    //    writer.WriteAttributeString("hierarquia", ConvertBreakline2Space(conteudo.Hierarquia));
                     
-                    writer.WriteAttributeString("artSection", ConvertBreakline2Space(metadados.Grade));                    
+                    //writer.WriteAttributeString("artSection", ConvertBreakline2Space(metadados.Grade));
+                    
                     writer.WriteAttributeString("numberPage", metadados.NumeroDaPagina.ToString());
 
                     writer.WriteStartElement("body");

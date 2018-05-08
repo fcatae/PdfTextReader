@@ -182,19 +182,34 @@ namespace PdfTextReader.Parser
             return text;
         }
 
+        string CleanupHyphens(string body)
+        {
+            if (body == null) return null;
+
+            return body.Replace("-\n\n", "").Replace("-\n", "");
+        }
+
+        string CleanupBreaklines(string body)
+        {
+            if (body == null) return null;
+
+            return body.Replace("\n", " ");
+        }
+
         string CleanupBreaklinesAndHyphens(string body)
         {
             if (body == null) return null;
 
-            return body.Replace("-\n", "").Replace("\n", " ");
+            return CleanupBreaklines(CleanupHyphens(body));
         }
 
         string ReplaceBreaklinesAndHyphensWithHtml(string body)
         {
             if (body == null) return null;
 
-            var lines = body.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
-            var cleanLines = lines.Select(l => CleanupBreaklinesAndHyphens(l));
+            var cleanBody = CleanupHyphens(body);
+            var lines = cleanBody.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var cleanLines = lines.Select(l => CleanupBreaklines(l));
 
             return "<p>" + String.Join("</p><p>", cleanLines) + "</p>";
         }

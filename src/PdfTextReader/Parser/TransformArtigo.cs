@@ -45,8 +45,11 @@ namespace PdfTextReader.Parser
         {
             if (IsNullOrPeriod(article.Conteudo.Corpo))
                 return false;
-            if (ContainsExclusiveTitles(article.Conteudo.Titulo))
-                return false;
+
+            // ignora sumário
+            //if (ContainsExclusiveTitles(article.Conteudo.Titulo))
+            //    return false;
+
             return true;
         }
 

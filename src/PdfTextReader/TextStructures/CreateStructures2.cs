@@ -273,6 +273,16 @@ namespace PdfTextReader.TextStructures
             _structure.MarginLeft = lineset.Min(t => t.MarginLeft);
             _structure.HasContinuation = IsZero(lineset.Last().MarginRight);
 
+            // Very weird bug: because we do have IDMateria, the text is NOT aligned
+            if( TitleWithHiddenIdMateria.GetIdMateria(_structure.Text) != null )
+            {
+                _structure.TextAlignment = TextAlignment.CENTER;
+
+                float avgMargin = (_structure.MarginRight + _structure.MarginLeft)/ 2f;
+                _structure.MarginLeft = avgMargin;
+                _structure.MarginRight = avgMargin;
+            }
+
             return _structure;            
         }
 
