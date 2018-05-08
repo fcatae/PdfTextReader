@@ -157,21 +157,23 @@ namespace PdfTextReader.Parser
 
         string GenerateText(TextStructure s)
         {
+            string prefix = "";
+
             if(s.TextAlignment == TextAlignment.JUSTIFY)
             {
-                if (s.MarginLeft > 8f)
-                    return $"\t{s.Text}\n";
-                else
-                    return $"{s.Text}\n";
+                return s.Text;
             }
 
             if (s.TextAlignment == TextAlignment.LEFT || s.TextAlignment == TextAlignment.UNKNOWN)
             {
                 PdfReaderException.Warning("s.TextAlignment == TextAlignment.LEFT || s.TextAlignment == TextAlignment.UNKNOWN");
-                return $"{s.Text}\n";
             }
 
-            string prefix = (s.TextAlignment == TextAlignment.CENTER) ? "\t\t" : "\t\t\t\t";
+            if (s.TextAlignment == TextAlignment.CENTER)
+                prefix = "\t\t";
+
+            if (s.TextAlignment == TextAlignment.RIGHT)
+                prefix = "\t\t\t\t";
 
             var lines = s.Text.Split('\n').Select(l => prefix + l);
 
