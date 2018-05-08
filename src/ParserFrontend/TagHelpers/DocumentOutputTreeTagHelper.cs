@@ -13,9 +13,9 @@ namespace ParserFrontend.TagHelpers
 
         public string Name { get; set; }
 
-        public DocumentOutputTreeTagHelper()
+        public DocumentOutputTreeTagHelper(AccessManager amgr)
         {
-            var web = new WebVirtualFS();
+            var web = amgr.GetReadOnlyFileSystem();
             _outputFiles = new OutputFiles(web);
         }
 

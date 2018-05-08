@@ -26,7 +26,7 @@ namespace ParserFrontend
             string azureStorage = Configuration["PDFTEXTREADER_FRONTEND_STORAGE"];
 
             IVirtualFS virtualFS = (String.IsNullOrEmpty(azureStorage)) ?
-                (IVirtualFS)new WebVirtualFS() : new AzureFS(azureStorage);
+                (IVirtualFS)new WebVirtualFS(true) : new AzureFS(azureStorage);
 
             services.AddSingleton(new AccessManager(virtualFS, true));
             services.AddMvc();

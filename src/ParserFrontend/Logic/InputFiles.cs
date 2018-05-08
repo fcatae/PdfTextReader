@@ -11,9 +11,9 @@ namespace ParserFrontend.Logic
         const string PDF_EXTENSION = ".pdf";
         const string PDF_EXTENSION_PATTERN = "*.pdf";
 
-        private readonly WebVirtualFS _webFS;
+        private readonly IVirtualFS2 _webFS;
 
-        public InputFiles(WebVirtualFS webFS)
+        public InputFiles(IVirtualFS2 webFS)
         {
             this._webFS = webFS; 
         }

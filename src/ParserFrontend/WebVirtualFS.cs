@@ -7,9 +7,14 @@ using System.Threading.Tasks;
 
 namespace ParserFrontend
 {
-    public class WebVirtualFS : IVirtualFS
+    public class WebVirtualFS : IVirtualFS2
     {
         const string FILEFOLDERWWW = "wwwroot/files";
+
+        public WebVirtualFS(bool b)
+        {
+
+        }
 
         public Stream OpenReader(string virtualfile)
         {
