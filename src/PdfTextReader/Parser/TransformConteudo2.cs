@@ -42,7 +42,7 @@ namespace PdfTextReader.Parser
             var hierarquiteTitulo = segment.Title.Select(t => t.Text).ToArray();
 
             // Texto
-            string texto = String.Join("\n", segment.Body.Select(GenerateText));
+            string texto = String.Join("\n\n", segment.Body.Select(GenerateText));
 
 
             //Definindo Titulo e hierarquia
@@ -161,7 +161,7 @@ namespace PdfTextReader.Parser
 
             if(s.TextAlignment == TextAlignment.JUSTIFY)
             {
-                return s.Text;
+                return s.Text.Replace("\t", "\n\t").TrimStart('\n');
             }
 
             if (s.TextAlignment == TextAlignment.LEFT || s.TextAlignment == TextAlignment.UNKNOWN)

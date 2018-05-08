@@ -186,10 +186,21 @@ namespace PdfTextReader.TextStructures
             {
                 _structure.TextAlignment = TextAlignment.CENTER;
             }
-            
-            var textArray = lineset.Select(t => t.Text);
 
-            _structure.Text = String.Join("\n", textArray);
+            if (_structure.TextAlignment == TextAlignment.JUSTIFY)
+            {
+                var textArray = lineset.Select(t => {
+                    string prefix = (t.MarginLeft > 8f) ? "\t" : "";
+                    return prefix + t.Text;
+                    }
+                );
+                _structure.Text = String.Join("\n", textArray);
+            }
+            else
+            {
+                var textArray = lineset.Select(t => t.Text);
+                _structure.Text = String.Join("\n", textArray);
+            }
 
             _structure.MarginLeft = lineset.Min(l => l.MarginLeft);
             _structure.MarginRight = lineset.Min(l => l.MarginRight);
