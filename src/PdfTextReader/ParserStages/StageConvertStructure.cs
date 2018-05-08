@@ -28,7 +28,7 @@ namespace PdfTextReader.ParserStages
 
             var resultPipeline = pipelineText
                             .ConvertText<PreCreateStructures, TextLine2>()
-                            .ConvertText<CreateStructures2, TextStructure>()
+                            .ConvertText<CreateStructures3, TextStructure>()
                             .ConvertText<PreCreateTextSegments, TextStructureAgg>()
                             .ConvertText<AggregateStructures, TextStructure>(true)
                                 .ShowPdf<ShowStructureCentral>($"{_context.OutputFilePrefix}-show-central.pdf")

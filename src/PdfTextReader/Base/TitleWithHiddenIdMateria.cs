@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 
 namespace PdfTextReader.Base
@@ -13,7 +14,7 @@ namespace PdfTextReader.Base
         {
             if (title == null) return null;
 
-            if (title.StartsWith(IDMATERIA_SEPARATOR_START))
+            if (title.IndexOf(IDMATERIA_SEPARATOR_START) == 0 )
             {
                 var components = title.Split(IDMATERIA_SEPARATOR_END, 2, StringSplitOptions.None);
 

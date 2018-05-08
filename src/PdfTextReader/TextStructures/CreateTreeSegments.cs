@@ -75,6 +75,7 @@ namespace PdfTextReader.Parser
 
                 if (compare < 0)
                 {
+                    // Exemplo: DO1_2015_01_12, p5: "ANEXO" seguido de "Nota Tecnica" em bold.
                     PdfReaderException.Warning("invalid title order");
                     return;
                 }

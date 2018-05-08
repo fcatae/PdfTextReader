@@ -7,12 +7,12 @@ using PdfTextReader.PDFCore;
 
 namespace PdfTextReader.TextStructures
 {
-    class CreateStructures2 : IAggregateStructure<TextLine2, TextStructure>
+    class CreateStructures3 : IAggregateStructure<TextLine2, TextStructure>
     {
         const float FLOATING_TEXT_RIGHT = 10f;
         const float MAXIMUM_CENTER_DIFFERENCE = 1f;
         const float MAXIMUM_CENTER_MARGIN = 4F;
-        const float difference_margin_center_text = 1F;
+        const float difference_margin_center_text = 4F;
         float STAT_FIRST_TABSTOP = float.NaN;
 
         TextStructure _structure;
@@ -21,7 +21,7 @@ namespace PdfTextReader.TextStructures
         private readonly BasicFirstPageStats _basicStats;
         BasicFirstPageStats BasicStats => _basicStats.Stats;
 
-        public CreateStructures2(PDFCore.BasicFirstPageStats basicStats)
+        public CreateStructures3(PDFCore.BasicFirstPageStats basicStats)
         {
             this._basicStats = basicStats;
         }
@@ -187,21 +187,6 @@ namespace PdfTextReader.TextStructures
                 _structure.TextAlignment = TextAlignment.CENTER;
             }
 
-            if (_structure.TextAlignment == TextAlignment.JUSTIFY)
-            {
-                var textArray = lineset.Select(t => {
-                    string prefix = (t.MarginLeft > 8f) ? "\t" : "";
-                    return prefix + t.Text;
-                    }
-                );
-                _structure.Text = String.Join("\n", textArray);
-            }
-            else
-            {
-                var textArray = lineset.Select(t => t.Text);
-                _structure.Text = String.Join("\n", textArray);
-            }
-
             _structure.MarginLeft = lineset.Min(l => l.MarginLeft);
             _structure.MarginRight = lineset.Min(l => l.MarginRight);
 
@@ -282,6 +267,21 @@ namespace PdfTextReader.TextStructures
             //    _structure.MarginLeft = avgMargin;
             //    _structure.MarginRight = avgMargin;
             //}
+
+            if (_structure.TextAlignment == TextAlignment.JUSTIFY)
+            {
+                var textArray = lineset.Select(t => {
+                    string prefix = (t.MarginLeft > 8f) ? "\t" : "";
+                    return prefix + t.Text;
+                }
+                );
+                _structure.Text = String.Join("\n", textArray);
+            }
+            else
+            {
+                var textArray = lineset.Select(t => t.Text);
+                _structure.Text = String.Join("\n", textArray);
+            }
 
             return _structure;            
         }
