@@ -77,8 +77,8 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<RemoveBackgroundNonText>()    // 21
 
 
-                    .ParseBlock<BreakInlineElements>()        // 23
-                        .Show(Color.Yellow)
+                    //.ParseBlock<BreakInlineElements>()        // 23
+                        //.Show(Color.Yellow)
                     .ParseBlock<OrderBlocksetsWithBlockInfo>()
                     .ParseBlock<ResizeBlocksetsWithBlockInfo>()
 
