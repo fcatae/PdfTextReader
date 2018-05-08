@@ -188,13 +188,14 @@ namespace PdfTextReader.PDFCore
         bool CheckSubfonts(Block normal, Block sub)
         {
             float subX1 = sub.GetX();
-            float subH1 = sub.GetH();
+            float subH1 = sub.GetH() + 1f; // shift up just a little bit
             float subH2 = sub.GetH() + sub.GetHeight();
             float norX2 = normal.GetX() + normal.GetWidth();
             float norH1 = normal.GetH();
             float norH2 = normal.GetH() + normal.GetHeight();
 
             bool baselineSlightlyHigher = (norH1 < subH1) && (norH2 > subH1);
+
             bool fontSizeIsSmaller = (normal.FontSize > sub.FontSize);
             bool charactersAreClose = Math.Abs(subX1 - norX2) < MINIMUM_CHARACTER_DISTANCE;
             
