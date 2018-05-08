@@ -43,12 +43,23 @@ namespace PdfTextReader.Parser
                     writer.WriteAttributeString("artSection", ConvertBreakline2Space(metadados.Grade));                    
                     writer.WriteAttributeString("numberPage", metadados.NumeroDaPagina.ToString());
 
-                    //Writing Body
                     writer.WriteStartElement("body");
 
+                    // Hierarquia
+                    writer.WriteStartElement("Hierarquia");
+                    foreach(var classe in conteudo.HierarquiaTitulo)
+                    {
+                        writer.WriteElementString("Classe", classe);
+                    }
+                    
+                    writer.WriteEndElement();
+
+                    // Artigo
+                    writer.WriteElementString("Artigo", "\n" + conteudo.Texto + "\n");
+
+                    //Writing Body
                     writer.WriteElementString("Identifica", ConvertBreakline2Space(metadados.Titulo));
                     writer.WriteElementString("Ementa", conteudo.Caput);
-                    writer.WriteElementString("Artigo", "\n" + conteudo.Texto + "\n");
                     writer.WriteElementString("Texto", conteudo.Corpo);
 
                     if (conteudo.Autor.Count > 0)

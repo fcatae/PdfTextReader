@@ -39,7 +39,7 @@ namespace PdfTextReader.Parser
             List<string> resultProcess = new List<string>() { null, null, null };
 
             // Hierarquia
-            var hierarquiteTitulo = segment.Title.Select(t => t.Text).ToArray();
+            var hierarquiteTitulo = segment.Title.Select(t => CleanupBreaklinesAndHyphens(t.Text)).ToArray();
 
             // Texto
             string texto = String.Join("\n\n", segment.Body.Select(GenerateText));
