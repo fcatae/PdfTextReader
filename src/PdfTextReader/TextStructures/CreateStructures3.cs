@@ -283,6 +283,10 @@ namespace PdfTextReader.TextStructures
                 _structure.Text = String.Join("\n", textArray);
             }
 
+            if( _structure.AfterSpace < -6f )
+            {
+            }
+
             return _structure;            
         }
 

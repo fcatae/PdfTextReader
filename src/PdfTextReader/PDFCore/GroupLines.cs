@@ -10,7 +10,7 @@ namespace PdfTextReader.PDFCore
     {
         const float LARGE_SPACE_BETWEEN_WORDS = 10f;
         const float MINIMUM_CHARACTER_DISTANCE = 5f;
-        const float SAME_LINE_DISTANCE = 0.1f;
+        const float SAME_LINE_DISTANCE = 0.2f;
 
         int statSubfonts = 0;
         int statBackspace = 0;

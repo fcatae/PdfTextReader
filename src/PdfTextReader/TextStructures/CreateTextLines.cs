@@ -93,8 +93,13 @@ namespace PdfTextReader.TextStructures
                     float b = bl.FontSize;
                     float diff = last_y - bl.GetH();
                     last_tl.AfterSpace = (last_y - bl.GetH() - bl.FontSize);
-                }
 
+                    if (diff < 1f)
+                    {
+                        PdfReaderException.Warning("BlockLines in different lines - result in wrong text aligment");
+                    }
+                }
+                
                 last_tl = tl;
                 last_y = bl.GetH();
             }
