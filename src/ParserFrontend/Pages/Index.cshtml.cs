@@ -16,7 +16,7 @@ namespace ParserFrontend.Pages
 
         public IndexModel(AccessManager amgr)
         {
-            _vfs = new WebVirtualFS(false);
+            _vfs = amgr.GetReadOnlyFileSystem();
         }
 
         public void OnGet()

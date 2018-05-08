@@ -5,10 +5,11 @@ using System.IO;
 using PdfTextReader;
 using PdfTextReader.Azure.Blob;
 using PdfTextReader.Azure;
+using System.Linq;
 
 namespace ParserFrontend
 {
-    public class AzureFS : IVirtualFS
+    public class AzureFS : IVirtualFS2
     {
         AzureBlobFileSystem _azure = new AzureBlobFileSystem();
         AzureBlobFileSystem _inputFS;
@@ -31,6 +32,19 @@ namespace ParserFrontend
         public IAzureBlobFolder GetFolder(string name)
         {
             return _inputFS.GetFolder(name);
+        }
+
+        public string[] ListFileExtension(string extension)
+        {
+            var inputFolder = GetFolder(@"wasb://input");
+
+            var files = inputFolder
+                .EnumItems()
+                .Where(f => f.Name.EndsWith(extension, StringComparison.OrdinalIgnoreCase))
+                .Select(f => f.Name)
+                .ToArray();
+            
+            return files;
         }
     }
 }

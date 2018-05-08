@@ -8,6 +8,6 @@ namespace ParserFrontend
 {
     public interface IVirtualFS2 : IVirtualFS
     {
-        string[] ListFiles(string pattern);
+        string[] ListFileExtension(string extension);
     }
 }

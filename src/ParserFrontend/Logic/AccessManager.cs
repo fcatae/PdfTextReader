@@ -8,21 +8,21 @@ namespace ParserFrontend.Logic
 {
     public class AccessManager
     {
-        IVirtualFS _virtualFS;
+        IVirtualFS2 _virtualFS;
         bool _hasFullAccess;
 
-        public AccessManager(IVirtualFS virtualFS, bool hasFullAccess)
+        public AccessManager(IVirtualFS2 virtualFS, bool hasFullAccess)
         {
             _virtualFS = virtualFS;
             _hasFullAccess = hasFullAccess;
         }
 
-        public IVirtualFS GetReadOnlyFileSystem()
+        public IVirtualFS2 GetReadOnlyFileSystem()
         {
             return _virtualFS;
         }
 
-        public IVirtualFS GetFullAccessFileSystem()
+        public IVirtualFS2 GetFullAccessFileSystem()
         {
             if (!_hasFullAccess)
                 throw new InvalidOperationException("no full access");

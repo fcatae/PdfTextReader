@@ -11,11 +11,6 @@ namespace ParserFrontend
     {
         const string FILEFOLDERWWW = "wwwroot/files";
 
-        public WebVirtualFS(bool b)
-        {
-
-        }
-
         public Stream OpenReader(string virtualfile)
         {
             string filename = GetLocalFilename(virtualfile);
@@ -44,8 +39,19 @@ namespace ParserFrontend
             return new FileStream(filename, FileMode.Create);
         }
 
-        public string[] ListFiles(string pattern)
+        //public string[] ListFiles(string pattern)
+        //{
+        //    DirectoryInfo directory = new DirectoryInfo("wwwroot/files/input");
+
+        //    var files = directory.EnumerateFiles(pattern).Select(fi => fi.Name);
+
+        //    return files.ToArray();
+        //}
+
+        public string[] ListFileExtension(string extension)
         {
+            string pattern = "*" + extension;
+
             DirectoryInfo directory = new DirectoryInfo("wwwroot/files/input");
 
             var files = directory.EnumerateFiles(pattern).Select(fi => fi.Name);
