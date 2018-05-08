@@ -159,7 +159,7 @@ namespace PdfTextReader.Parser
 
         public void XMLWriterMultiple(IEnumerable<Artigo> artigos, string doc)
         {
-            int i = 1;
+            int i = 0;
             foreach(var artigo in artigos)
             {
                 string doc_i = doc + (i++);
