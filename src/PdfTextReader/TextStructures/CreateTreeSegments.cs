@@ -45,7 +45,8 @@ namespace PdfTextReader.Parser
                     _current = new TextSegment()
                     {
                         Title = mergedSegments,
-                        Body = segment.Body
+                        Body = segment.Body,
+                        OriginalTitle = segment.Title
                     };
                 }
                 else

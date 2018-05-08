@@ -7,6 +7,7 @@ namespace PdfTextReader.Base
 {
     class TextSegment
     {
+        public TextStructure[] OriginalTitle { get; set; }
         public TextStructure[] Title { get; set; }
         public TextStructure[] Body { get; set; }
 
