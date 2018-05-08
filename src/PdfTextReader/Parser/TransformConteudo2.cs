@@ -146,7 +146,7 @@ namespace PdfTextReader.Parser
                 Hierarquia = hierarchy,
                 Titulo = CleanupBreaklinesAndHyphens(titulo),
                 Caput = CleanupBreaklinesAndHyphens(caput),
-                Corpo = CleanupBreaklinesAndHyphens(body),
+                Corpo = ReplaceBreaklinesAndHyphensWithHtml(body),
                 Autor = autores,
                 Data = data,
                 Anexos = anexos,
@@ -187,6 +187,16 @@ namespace PdfTextReader.Parser
             if (body == null) return null;
 
             return body.Replace("-\n", "").Replace("\n", " ");
+        }
+
+        string ReplaceBreaklinesAndHyphensWithHtml(string body)
+        {
+            if (body == null) return null;
+
+            var lines = body.Split(new string[] { "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var cleanLines = lines.Select(l => CleanupBreaklinesAndHyphens(l));
+
+            return "<p>" + String.Join("</p><p>", cleanLines) + "</p>";
         }
 
         string RemoveDataFromBody(string body, string data)

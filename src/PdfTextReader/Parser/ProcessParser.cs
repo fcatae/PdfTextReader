@@ -55,12 +55,17 @@ namespace PdfTextReader.Parser
                     writer.WriteEndElement();
 
                     // Artigo
-                    writer.WriteElementString("Artigo", "\n" + conteudo.Texto + "\n");
+                    writer.WriteStartElement("Artigo");
+                    writer.WriteCData("\n" + conteudo.Texto + "\n");
+                    writer.WriteEndElement();
 
                     //Writing Body
                     writer.WriteElementString("Identifica", ConvertBreakline2Space(metadados.Titulo));
                     writer.WriteElementString("Ementa", conteudo.Caput);
-                    writer.WriteElementString("Texto", conteudo.Corpo);
+
+                    writer.WriteStartElement("Texto");
+                    writer.WriteCData(conteudo.Corpo);
+                    writer.WriteEndElement();
 
                     if (conteudo.Autor.Count > 0)
                     {
