@@ -50,7 +50,7 @@ namespace ParserFrontend.Logic
         }
 
         static Regex PATTERN_SIMPLE = new Regex(@"(\s*)(.*)");
-        static Regex PATTERN_PAGE_ID = new Regex(@"(\s*)(.*)(\s\(Page (\d+), ID=(\d+)\))");
+        static Regex PATTERN_PAGE_ID = new Regex(@"(\s*)(.*)(\s\(\(Page (\d+), PID=\d+:\d+, NUM=(\d+)\)\)).*");
 
         public Node Process(string text)
         {
