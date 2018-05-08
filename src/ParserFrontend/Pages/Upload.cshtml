@@ -5,22 +5,31 @@
 }
 <h2>@ViewData["Title"]</h2>
 
-<div class="upload-form">
-    <div class="row">
-        <form method="post" enctype="multipart/form-data" asp-route="Process_Upload">
-            <div class="form-group">
-                <div class="col-md-12">
-                    <p>Envie arquivos</p>
-                    <input type="file" name="CurrentFile.File" />
-                    <p>Arquivos enviados serão processados pelo PdfTextReader</p>
-                </div>
-                <div class="col-md-2">
-                    <input class="form-control" type="submit" value="Upload" />
-                </div>
+@{
+    if (Model.HasFullAccess)
+    {
+        <div class="upload-form">
+            <div class="row">
+                <form method="post" enctype="multipart/form-data" asp-route="Process_Upload">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <p>Envie arquivos</p>
+                            <input type="file" name="CurrentFile.File" />
+                            <p>Arquivos enviados serão processados pelo PdfTextReader</p>
+                        </div>
+                        <div class="col-md-2">
+                            <input class="form-control" type="submit" value="Upload" />
+                        </div>
+                    </div>
+                </form>
             </div>
-        </form>
-    </div>
-    <div class="row">
-        <img class="wait-image" src="/images/wait.gif" hidden>
-    </div>
-</div>
+            <div class="row">
+                <img class="wait-image" src="/images/wait.gif" hidden>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1>Página desabilitada</h1>
+    }
+}

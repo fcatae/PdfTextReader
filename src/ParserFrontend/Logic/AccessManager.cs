@@ -17,6 +17,8 @@ namespace ParserFrontend.Logic
             _hasFullAccess = hasFullAccess;
         }
 
+        public bool HasFullAccess => _hasFullAccess;
+
         public IVirtualFS2 GetReadOnlyFileSystem()
         {
             return _virtualFS;

@@ -25,10 +25,13 @@ namespace ParserFrontend
         {
             string azureStorage = Configuration["PDFTEXTREADER_FRONTEND_STORAGE"];
 
+            string configFullAccess = Configuration["PDFTEXTREADER_FRONTEND_FULLACCESS"];
+            bool hasFullAccess = (configFullAccess != null) && Boolean.Parse(configFullAccess);
+
             IVirtualFS2 virtualFS = (String.IsNullOrEmpty(azureStorage)) ?
                 (IVirtualFS2)new WebVirtualFS() : new AzureFS(azureStorage);
 
-            services.AddSingleton(new AccessManager(virtualFS, true));
+            services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
             services.AddMvc();
         }
 
