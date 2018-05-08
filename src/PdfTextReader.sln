@@ -16,6 +16,9 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PdfTextReader.Azure", "PdfTextReader.Azure\PdfTextReader.Azure.csproj", "{AB782AB1-C794-4789-9E96-BEB00E8E0154}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ParserFrontend", "ParserFrontend\ParserFrontend.csproj", "{E832F543-3BB9-47B0-8D8C-049A5B345671}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AB782AB1-C794-4789-9E96-BEB00E8E0154} = {AB782AB1-C794-4789-9E96-BEB00E8E0154}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QueueConsole", "QueueConsole\QueueConsole.csproj", "{A7678DC4-9482-4D37-B1DA-E799712FA27D}"
 EndProject

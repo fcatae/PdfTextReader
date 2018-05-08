@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ParserFrontend.Logic;
+using PdfTextReader;
 
 namespace ParserFrontend
 {
@@ -22,7 +23,12 @@ namespace ParserFrontend
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(new AccessManager(new WebVirtualFS(), false));
+            string azureStorage = Configuration["PDFTEXTREADER_FRONTEND_STORAGE"];
+
+            IVirtualFS virtualFS = (String.IsNullOrEmpty(azureStorage)) ?
+                (IVirtualFS)new WebVirtualFS() : new AzureFS(azureStorage);
+
+            services.AddSingleton(new AccessManager(virtualFS, true));
             services.AddMvc();
         }
 
