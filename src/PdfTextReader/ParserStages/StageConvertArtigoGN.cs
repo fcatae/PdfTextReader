@@ -24,7 +24,7 @@ namespace PdfTextReader.ParserStages
             var pipelineText = _context.GetPipelineText<TextSegment>();
 
             var conteudo = pipelineText
-                            .ConvertText<TransformConteudo, Conteudo>()
+                            .ConvertText<TransformConteudo2, Conteudo>()
                             .ToList();
 
             var createArticle = new TransformArtigo();
