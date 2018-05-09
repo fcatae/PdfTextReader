@@ -87,6 +87,9 @@ namespace PdfTextReader.PDFCore
                     .ToList();
             }
 
+            // if column is narrow (W=1 and X=2, then W <- 2)
+            int fixCount = Values.Where(v => v.W == 1 && v.X == 2).Select(v => v.W = 2).Count();
+
             var checkOddW = Values.Where(v => v.W == 1 || v.W == 5).ToList();
             if (checkOddW.Count > 0)
             {
