@@ -68,8 +68,7 @@ namespace PdfTextReader.PDFText
 
                 var clippingPath = line.GetClippingRule();
                 var cli2 = line.IsPathModifiesClippingPath();
-                if (op == 1)
-                { int a = 1; }
+                
                 if (op == 0)
                     return;
 
