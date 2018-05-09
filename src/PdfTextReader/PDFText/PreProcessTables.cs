@@ -56,8 +56,8 @@ namespace PdfTextReader.PDFText
             if (line != null)
             {
                 int op = line.GetOperation();
-                var bgcolor = ( op == 2 ) ? GetBgColor(line.GetFillColor()) : 0;
-                var fgcolor = GetColor(line.GetStrokeColor()); 
+                var bgcolor = (op == 2) ? GetBgColor(line.GetFillColor()) : 0;
+                var fgcolor = GetColor(line.GetStrokeColor());
                 float linewidth = line.GetLineWidth();
                 var path = line.GetPath();
                 var subpaths = path.GetSubpaths();
@@ -65,67 +65,76 @@ namespace PdfTextReader.PDFText
                 var ctm = line.GetCtm();
                 var dx = ctm.Get(6);
                 var dy = ctm.Get(7);
-                
+
+                var clippingPath = line.GetClippingRule();
+                var cli2 = line.IsPathModifiesClippingPath();
+                if (op == 1)
+                { int a = 1; }
                 if (op == 0)
                     return;
-                                
-                var segs = subpaths
-                                .SelectMany(p => p.GetSegments())
-                                .SelectMany(s => s.GetBasePoints())
-                                .ToArray();
 
-                int segcount = segs.Length;
-                
-                float minerr = .5f;
-
-                var sign_x = ctm.Get(0);
-                var rot_x = ctm.Get(1);
-                var zero_x = ctm.Get(2);
-                var rot_y = ctm.Get(3);
-                var sign_y = ctm.Get(4);
-                var zero_y = ctm.Get(5);
-
-                if (zero_x != 0 || zero_y != 0)
-                    throw new InvalidOperationException();
-
-                //float x1 = (float)segs.Min(s => s.x) - minerr;
-                //float x2 = (float)segs.Max(s => s.x) + minerr;
-                //float y1 = (float)segs.Min(s => sign_y * s.y) - minerr;
-                //float y2 = (float)segs.Max(s => sign_y * s.y) + minerr;
-
-                float x1 = (float)segs.Min(s => sign_x * s.x + rot_x * s.y) - minerr;
-                float x2 = (float)segs.Max(s => sign_x * s.x + rot_x * s.y) + minerr;
-                float y1 = (float)segs.Min(s => rot_y * s.x + sign_y * s.y) - minerr;
-                float y2 = (float)segs.Max(s => rot_y * s.x + sign_y * s.y) + minerr;
-
-                float translate_x = dx;
-                float translate_y = dy;
-                
-                var tableCell = new TableCell()
+                foreach (var subpath in subpaths)
                 {
-                    Op = op,
-                    X = x1 + translate_x,
-                    H = y1 + translate_y,
-                    Width = x2 - x1,
-                    Height = y2 - y1,
-                    LineWidth = linewidth,
-                    BgColor = (op == 1) ?  fgcolor : bgcolor
-                };
+                    var segs = subpath.GetSegments()
+                                    .SelectMany(s => s.GetBasePoints())
+                                    .ToArray();
+                    
+                    int segcount = segs.Length;
 
-                if (tableCell.Width < 0 || tableCell.Height < 0)
-                    PdfReaderException.AlwaysThrow("tableCell.Width < 0 || tableCell.Height < 0");
+                    if (segcount == 0)
+                        continue;
 
+                    float minerr = .5f;
 
-                if (tableCell.X >= 0 || tableCell.H >= 0)
-                {
-                    if (tableCell.Op != 0)
+                    var sign_x = ctm.Get(0);
+                    var rot_x = ctm.Get(1);
+                    var zero_x = ctm.Get(2);
+                    var rot_y = ctm.Get(3);
+                    var sign_y = ctm.Get(4);
+                    var zero_y = ctm.Get(5);
+
+                    if (zero_x != 0 || zero_y != 0)
+                        throw new InvalidOperationException();
+
+                    //float x1 = (float)segs.Min(s => s.x) - minerr;
+                    //float x2 = (float)segs.Max(s => s.x) + minerr;
+                    //float y1 = (float)segs.Min(s => sign_y * s.y) - minerr;
+                    //float y2 = (float)segs.Max(s => sign_y * s.y) + minerr;
+
+                    float x1 = (float)segs.Min(s => sign_x * s.x + rot_x * s.y) - minerr;
+                    float x2 = (float)segs.Max(s => sign_x * s.x + rot_x * s.y) + minerr;
+                    float y1 = (float)segs.Min(s => rot_y * s.x + sign_y * s.y) - minerr;
+                    float y2 = (float)segs.Max(s => rot_y * s.x + sign_y * s.y) + minerr;
+
+                    float translate_x = dx;
+                    float translate_y = dy;
+
+                    var tableCell = new TableCell()
                     {
-                        _blockSet.Add(tableCell);
+                        Op = op,
+                        X = x1 + translate_x,
+                        H = y1 + translate_y,
+                        Width = x2 - x1,
+                        Height = y2 - y1,
+                        LineWidth = linewidth,
+                        BgColor = (op == 1) ? fgcolor : bgcolor
+                    };
+
+                    if (tableCell.Width < 0 || tableCell.Height < 0)
+                        PdfReaderException.AlwaysThrow("tableCell.Width < 0 || tableCell.Height < 0");
+
+
+                    if (tableCell.X >= 0 || tableCell.H >= 0)
+                    {
+                        if (tableCell.Op != 0)
+                        {
+                            _blockSet.Add(tableCell);
+                        }
                     }
-                }
-                else
-                {
-                    // sometimes it draws a large rectangle to fill the background
+                    else
+                    {
+                        // sometimes it draws a large rectangle to fill the background
+                    }
                 }
             }
         }
