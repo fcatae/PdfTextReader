@@ -65,6 +65,8 @@ namespace PdfTextReader.ParserStages
 
                     .ParseBlock<ReplaceCharacters>()          // 9
                     .ParseBlock<GroupLines>()                 // 10
+                    .ParseBlock<DouIgnoreLongDotSequence>()     // fix
+                        .Show(Color.Yellow)
                     .ParseBlock<RemoveTableDotChar>()         // 11
 
                     .ParseBlock<FindInitialBlocksetWithBlockInfo>()  // 13(b)
@@ -80,14 +82,14 @@ namespace PdfTextReader.ParserStages
                     // REPLACE 2: Break text with image/table
 
                     .ParseBlock<BreakInlineElements>()        // 23
-                        .Show(Color.Yellow)
+                        .Show(Color.Gray)
 
                     .ParseBlock<OrderBlocksetsWithBlockInfo>()
                     .ParseBlock<ResizeBlocksetsWithBlockInfo>()
 
                     .StoreCache<FinalBlockResultData>()
 
-                        .Show(Color.Red)
+                        .Show(Color.Orange)
                         .ShowLine(Color.Black);
 
             //.PrintWarnings();
