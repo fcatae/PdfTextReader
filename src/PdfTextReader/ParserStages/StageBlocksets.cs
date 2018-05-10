@@ -51,7 +51,8 @@ namespace PdfTextReader.ParserStages
 
                     .ParseBlock<RemoveTableText>()            // 8
 
-                    //.ParseBlock<ReplaceCharacters>()          // 9
+                    // include again - to prevent backspaces
+                    .ParseBlock<ReplaceCharacters>()          // 9
 
                     .ParseBlock<GroupLines>()                 // 10
                     .ParseBlock<DouIgnoreLongDotSequence>() // fix "omisses": long sequence of dots
