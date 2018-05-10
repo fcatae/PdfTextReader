@@ -81,6 +81,10 @@ namespace PdfTextReader.ParserStages
                         .ParseBlock<BreakInlineElements>()        // 23
                         .ParseBlock<ResizeBlocksets>()            // 24
                         .ParseBlock<ResizeBlocksetMagins>()       // 25
+
+                        .ParseBlock<ResizeBlocksetsColumn>() // fix
+                        .ParseBlock<ResizeBlocksetsWithStats>() // fix
+
                         .ParseBlock<OrderBlocksets>()           // 26
 
                         .ParseBlock<OrganizePageLayout>()         // 27
