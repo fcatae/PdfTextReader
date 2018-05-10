@@ -41,12 +41,12 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<SetIdentifyTablesCompatibility>()
                 .FromCache<ProcessImageData>()
                     .ParseBlock<SetProcessImageCompatibility>()
-                //.ParseBlock<RemoveOverlapedImages2>()      // 3
+                    .ParseBlock<RemoveOverlapedImages2>()      // 3
                 .FromCache<HeaderFooterData>()
                 .FromCache<BlocksetData>()
                     .Show(Color.Gray)
                 .FromCache<ProcessPdfTextData>()
-
+                
                     .ParseBlock<RemoveImageLineFromHeaderFooter>()
                     .ParseBlock<FilterHeaderFooter>()
 
@@ -74,22 +74,22 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<AddTableSpace>()              // 15
                     .ParseBlock<RemoveTableOverImage>()       // 16
                     .ParseBlock<RemoveImageTexts>()           // 17
+                        .Show(Color.Red)
                     .ParseBlock<AddImageSpace>()              // 18
-
                     .ParseBlock<RemoveBackgroundNonText>()    // 21
 
                     // REPLACE 1: Merge text with text
                     // REPLACE 2: Break text with image/table
 
                     .ParseBlock<BreakInlineElements>()        // 23
-                        .Show(Color.Gray)
+                        //.Show(Color.Gray)
 
                     .ParseBlock<OrderBlocksetsWithBlockInfo>()
                     .ParseBlock<ResizeBlocksetsWithBlockInfo>()
 
                     .StoreCache<FinalBlockResultData>()
 
-                        .Show(Color.Orange)
+                        //.Show(Color.Orange)
                         .ShowLine(Color.Black);
 
             //.PrintWarnings();

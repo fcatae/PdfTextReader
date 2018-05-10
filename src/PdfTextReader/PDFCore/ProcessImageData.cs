@@ -28,6 +28,9 @@ namespace PdfTextReader.PDFCore
 
         public void RemoveImage(IBlock block)
         {
+            if (!(block is ImageBlock))
+                PdfReaderException.AlwaysThrow("Block is not ImageBlock");
+
             if (Images == null)
                 PdfReaderException.AlwaysThrow("Images == null");
 

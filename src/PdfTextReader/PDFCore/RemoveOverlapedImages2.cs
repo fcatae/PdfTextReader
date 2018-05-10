@@ -33,6 +33,9 @@ namespace PdfTextReader.PDFCore
 
             foreach(var image in overlappedImages.AllBlocks)
             {
+                if (!(image is ImageBlock))
+                    PdfReaderException.AlwaysThrow("RemoveOverlapedImages2 should be used only with images");
+
                 _parse.RemoveImage(image);
             }
 
