@@ -7,7 +7,7 @@ namespace PdfTextReader.Parser
 {
     class HifenUtil
     {
-        static Regex _pattern = new Regex(@"(-[mst])?(.)-\n([^ ]+( ))");
+        static Regex _pattern = new Regex(@"(-[mst])?(.)-\n([^ ]+( )?)");
 
         public static string ExtrairHifen(string texto)
         {
