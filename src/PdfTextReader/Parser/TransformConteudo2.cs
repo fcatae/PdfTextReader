@@ -186,7 +186,17 @@ namespace PdfTextReader.Parser
         {
             if (body == null) return null;
 
-            return body.Replace("-\n\n", "").Replace("-\n", "");
+            if (!body.Contains("-"))
+                return body;
+
+            // Algumas vezes, a deteccao de texto indica que a continuacao
+            // do hifen cai sobre o parágrafo seguinte. Nesse caso, aceitamos
+            // que pode ser um erro e consideramos igual a uma quebra de linha
+            string incluirQuebraParagrafo = body.Replace("-\n\n", "-\n");
+            
+            string texto = HifenUtil.ExtrairHifen(incluirQuebraParagrafo);
+
+            return texto;
         }
 
         string CleanupBreaklines(string body)
