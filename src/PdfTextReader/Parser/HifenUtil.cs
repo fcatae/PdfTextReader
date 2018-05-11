@@ -7,7 +7,7 @@ namespace PdfTextReader.Parser
 {
     class HifenUtil
     {
-        static Regex _pattern = new Regex(@"(-[mst])?(.)-\n(.)");
+        static Regex _pattern = new Regex(@"(-[mst])?(.)-\n([^ ]+( ))");
 
         public static string ExtrairHifen(string texto)
         {
@@ -20,6 +20,7 @@ namespace PdfTextReader.Parser
                 char charMesoclise = isMesoclise ? g[1].Value[1] : '\0';
                 char charAntes = g[2].Value[0];
                 char charDepois = g[3].Value[0];
+                string afterMatch = g[3].Value;
 
                 if(isMesoclise)
                 {
@@ -33,7 +34,7 @@ namespace PdfTextReader.Parser
 
                 string keepHifen = (keep) ? "-" : "";
 
-                return corpo.Replace("-\n", keepHifen);
+                return corpo.Replace("-\n", keepHifen).TrimEnd() + "\n";
             });
 
             return replace;
