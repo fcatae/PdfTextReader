@@ -8,6 +8,7 @@ namespace PdfTextReader.PDFCore
     class ReplaceCharacters : IProcessBlock
     {
         const float MINIMUM_CHARACTER_OVERLAP = .5f;
+        const float INTERSECTION_FONT_PERCENT = .8f;
 
         public BlockPage Process(BlockPage page)
         {
@@ -17,6 +18,10 @@ namespace PdfTextReader.PDFCore
             foreach (var block in page.AllBlocks)
             {
                 string ttt = block.GetText();
+
+                // ignore small fonts (eg, IDMateria)
+                if (block is BlockHidden)
+                    continue;
 
                 if (last != null)
                 {
@@ -93,7 +98,15 @@ namespace PdfTextReader.PDFCore
                                     continue;
                                 }
 
-                                PdfReaderException.Throw("Unknown character");
+                                if (idxNext >= 0)
+                                {
+                                    PdfReaderException.Warning($"Unknown character: {lastTextChar}{ch}");
+                                    continue;
+                                }
+                                else
+                                {
+                                    PdfReaderException.Throw($"Unknown character: {lastTextChar}{ch}");
+                                }
                             }
                             
                             if(isBackspace2)
@@ -172,9 +185,9 @@ namespace PdfTextReader.PDFCore
         bool HasIntersectionH(IBlock a, IBlock b)
         {
             float aH1 = a.GetH();
-            float aH2 = a.GetH() + a.GetHeight();
+            float aH2 = a.GetH() + a.GetHeight() * INTERSECTION_FONT_PERCENT;
             float bH1 = b.GetH();
-            float bH2 = b.GetH() + b.GetHeight();
+            float bH2 = b.GetH() + b.GetHeight() * INTERSECTION_FONT_PERCENT;
 
             return ((aH1 <= bH1) && (aH2 >= bH1)) || ((aH1 <= bH2) && (aH2 >= bH2));
         }
