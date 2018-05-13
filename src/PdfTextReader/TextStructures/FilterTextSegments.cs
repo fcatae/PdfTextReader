@@ -45,8 +45,14 @@ namespace PdfTextReader.Parser
 
             _lastIgnored = titles.Skip(stop).FirstOrDefault();
 
+            var titlesMovedToBody = titles.Skip(stop).ToArray();
+
+            int validatePortariaTitle = titles.Where(t => t.Text.StartsWith("PORTARIA")).Count();
+            if (validatePortariaTitle > 0)
+                PdfReaderException.Warning("validtitle inside the body");
+
             var newTitle = titles.Take(stop).ToArray();
-            var newBody = titles.Skip(stop).Concat(body).ToArray();
+            var newBody = titlesMovedToBody.Concat(body).ToArray();
 
             return new TextSegment()
             {
