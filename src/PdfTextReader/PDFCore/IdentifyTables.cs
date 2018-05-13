@@ -50,8 +50,10 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage ProcessTable(BlockPage page)
         {
+            var findFooter = page.AllBlocks.Where(b => b.GetWidth() > 500f && b.GetHeight() < 5f).OrderByDescending(b => b.GetH()).FirstOrDefault();
+            
             // try to improve processing time
-            var cellList = page.AllBlocks.Where(b => TableCell.HasDarkColor((TableCell)b)).ToList();
+            var cellList = page.AllBlocks.Where(b => TableCell.HasDarkColor((TableCell)b) && (b != findFooter)).ToList();
 
             var blockArray = new TableSet[cellList.Count];
             
@@ -165,6 +167,12 @@ namespace PdfTextReader.PDFCore
             var tables = new BlockPage();
             var lines = new BlockPage();
             var background = new BlockPage();
+
+            // add footer
+            if (findFooter == null)
+                PdfReaderException.Warning("Could not find the footer");
+            else
+                lines.Add(findFooter);
 
             foreach (var b in blockList)
             {

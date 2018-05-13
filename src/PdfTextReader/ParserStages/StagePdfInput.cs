@@ -34,6 +34,7 @@ namespace PdfTextReader.ParserStages
         void InitialCache(PipelineInputPdf.PipelineInputPdfPage page)
         {
             page.ParsePdf<PreProcessTables>()
+                    .Show(Color.Red)
                     .ParseBlock<IdentifyTables>()
                     .ParseBlock<SetIdentifyTablesCompatibility>()
                     .StoreCache<IdentifyTablesData>()
