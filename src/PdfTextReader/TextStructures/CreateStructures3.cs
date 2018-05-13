@@ -12,6 +12,7 @@ namespace PdfTextReader.TextStructures
         const float FLOATING_TEXT_RIGHT = 10f;
         const float MAXIMUM_CENTER_DIFFERENCE = 1f;
         const float MAXIMUM_CENTER_MARGIN = 4F;
+        const float VERTICAL_DISTANCE = 1F;
         const float difference_margin_center_text = 4F;
         float STAT_FIRST_TABSTOP = float.NaN;
 
@@ -62,7 +63,11 @@ namespace PdfTextReader.TextStructures
                     return false;
 
                 // same spacing as structure
-                if (!IsZero(_structure.AfterSpace - next.BeforeSpace))
+                if (!IsZeroVertical(_structure.AfterSpace - next.BeforeSpace))
+                    return false;
+
+                // bug #110: if there is a different spacing
+                if (next.AfterSpace < next.BeforeSpace - VERTICAL_DISTANCE)
                     return false;
 
                 //has margin at second line
@@ -509,7 +514,11 @@ namespace PdfTextReader.TextStructures
         }
         bool IsZero(float? value)
         {
-            return ((value > -difference_margin_center_text) && (value < difference_margin_center_text));                
+            return ((value > -difference_margin_center_text) && (value < difference_margin_center_text));
+        }
+        bool IsZeroVertical(float? value)
+        {
+            return ((value > -VERTICAL_DISTANCE) && (value < VERTICAL_DISTANCE));
         }
         bool IsZeroCenter(float? value)
         {
