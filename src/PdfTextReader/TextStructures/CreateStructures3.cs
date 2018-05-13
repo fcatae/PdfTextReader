@@ -85,6 +85,15 @@ namespace PdfTextReader.TextStructures
             if (current.AlignedCenter && (!next.AlignedCenter) && (!next.HasContinuation))
                 return false;
 
+            // special case for centralized texts
+            if(current.AlignedCenter && next.AlignedCenter)
+            {
+                if (IsUpperCaseExceptO(current.Text) && (!IsUpperCaseExceptO(next.Text)))
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
 
@@ -531,5 +540,10 @@ namespace PdfTextReader.TextStructures
             return (upper == text);
         }
 
+        bool IsUpperCaseExceptO(string text)
+        {
+            var upper = text.Replace("o","").ToUpper();
+            return (upper == text);
+        }
     }
 }
