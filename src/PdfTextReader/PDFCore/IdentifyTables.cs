@@ -178,7 +178,9 @@ namespace PdfTextReader.PDFCore
             // add background
             var dark = page.AllBlocks
                         .Where(b => !TableCell.HasDarkColor((TableCell)b))
-                        .Where(b => b.GetWidth() > MINIMUM_BACKGROUND_SIZE && b.GetHeight() > MINIMUM_BACKGROUND_SIZE)
+                        .Where(b => 
+                            (b.GetWidth() > MINIMUM_BACKGROUND_SIZE && b.GetHeight() > MINIMUM_BACKGROUND_SIZE) ||
+                            (((TableCell)b).LineWidth > MINIMUM_BACKGROUND_SIZE))
                         .Select(b => new TableSet() { b });
 
             background.AddRange(dark);
