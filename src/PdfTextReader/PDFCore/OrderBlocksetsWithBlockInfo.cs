@@ -27,7 +27,10 @@ namespace PdfTextReader.PDFCore
                 int columnId = FindColumnId(block);
 
                 if (columnId < 0)
-                    PdfReaderException.AlwaysThrow("Invalid blockset column assigned -- review stage 2 and 3");
+                {
+                    PdfReaderException.Warning("Invalid blockset column assigned -- review stage 2 and 3");
+                    return null;
+                }
 
                 return new ColumnSequence
                 {
@@ -36,6 +39,7 @@ namespace PdfTextReader.PDFCore
                     Block = block
                 };
             })
+            .Where(bl => bl != null)
             .OrderBy(block => block);
 
             var dbg = columnSequence.ToArray();

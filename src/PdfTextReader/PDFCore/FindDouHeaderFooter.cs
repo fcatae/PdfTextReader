@@ -63,7 +63,7 @@ namespace PdfTextReader.PDFCore
 
         public IBlock FindBottomLine(IEnumerable<IBlock> lines)
         {
-            return lines.OrderBy(t => t.GetH()).FirstOrDefault();
+            return lines.Where(t => t.GetWidth() > 500f).OrderBy(t => t.GetH()).FirstOrDefault();
         }
     }
 }

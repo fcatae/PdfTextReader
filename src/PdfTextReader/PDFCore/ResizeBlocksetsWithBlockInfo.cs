@@ -27,7 +27,10 @@ namespace PdfTextReader.PDFCore
                 var column = FindColumn(block);
 
                 if (column == null)
-                    PdfReaderException.AlwaysThrow("Invalid blockset column assigned -- review stage 2");
+                {
+                    PdfReaderException.Warning("Invalid blockset column assigned -- review stage 2");
+                    continue;
+                }
 
                 var bset = block as BlockSet<IBlock>;
 
