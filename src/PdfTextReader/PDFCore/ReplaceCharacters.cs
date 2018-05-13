@@ -109,8 +109,9 @@ namespace PdfTextReader.PDFCore
                                 }
                             }
                             
+                            // not sure why it hit this place
                             if(isBackspace2)
-                                PdfReaderException.Throw("It will fail the GroupLine check");
+                                PdfReaderException.Warning("It will fail the GroupLine check");
                         }
                     }
 
