@@ -53,7 +53,7 @@ namespace PdfTextReader.PDFCore
 
         public BlockPage ProcessTable(BlockPage page)
         {
-            var findFooter = page.AllBlocks.Where(b => b.GetWidth() > 500f && b.GetHeight() < 5f).OrderByDescending(b => b.GetH()).FirstOrDefault();
+            var findFooter = page.AllBlocks.Where(b => b.GetWidth() > 500f && b.GetHeight() < 5f).OrderBy(b => b.GetH()).FirstOrDefault();
 
             this._pageFooterLine = (TableCell)findFooter;
 
