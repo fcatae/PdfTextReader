@@ -84,7 +84,10 @@ namespace PdfTextReader.PDFText
                 // ensure we have a simple transformation matrix
                 if ((ctm.Get(1) != 0) || (ctm.Get(2) != 0) || (ctm.Get(3) != 0)
                     || (ctm.Get(5) != 0) || (ctm.Get(8) != 1))
-                    PdfReaderException.AlwaysThrow("ensure we have a simple transformation matrix");
+                {
+                    PdfReaderException.Warning("PreProcessImages: ensure we have a simple transformation matrix (CTM)");
+                    return;
+                }
 
                 if ( height < 0 )
                 {

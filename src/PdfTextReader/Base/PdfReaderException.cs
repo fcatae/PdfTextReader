@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -88,11 +89,13 @@ namespace PdfTextReader.Base
             }
         }
 
+        [DebuggerHidden]
         public static Exception AlwaysThrow(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             AddWarningInformation("AlwaysThrow", message);
             throw new PdfReaderException(message, $"{message} {GetAdditionalPageInformation()}");
         }
+        [DebuggerHidden]
         public static Exception AlwaysThrow(string message, IEnumerable<IBlock> debugBlocks, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             AddWarningInformation("AlwaysThrow", message);

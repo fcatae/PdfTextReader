@@ -18,6 +18,10 @@ namespace PdfTextReader.PDFCore
         public void UpdateInstance(object cache)
         {
             var instance = (ProcessPdfTextData)cache;
+
+            if (instance == null)
+                PdfReaderException.AlwaysThrow("Null cache value");
+
             this.LastResult = instance.LastResult;
         }
     }

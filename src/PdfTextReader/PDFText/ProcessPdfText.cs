@@ -28,6 +28,15 @@ namespace PdfTextReader.PDFText
                 var fontName = GetFontName(font);
                 var fontStyle = GetFontStyle(font);
 
+                var ctm = textInfo.GetTextMatrix();
+
+                if ((ctm.Get(1) != 0) && (ctm.Get(3) != 0))
+                {
+                    // sometimes ctm.Get(3) != 0, and it is normal. eg, "ISSN" -- not sure why
+                    PdfReaderException.Warning("ProcessPdfText: ensure we have a simple transformation matrix (CTM)");
+                    return;
+                }
+
                 // calculate font-size
                 float ctm_y = textInfo.GetTextMatrix().Get(4);
                 float fontSize = textInfo.GetFontSize() * ctm_y;
@@ -58,9 +67,9 @@ namespace PdfTextReader.PDFText
                         block.Text = newtext;
                     }
                 }
-
+                
                 if (block.Width <= 0 || block.Height <= 0)
-                    PdfReaderException.AlwaysThrow("block.Width <= 0 || block.Height <= 0");
+                    PdfReaderException.AlwaysThrow("block.Width <= 0 || block.Height <= 0", new IBlock[] { block });
 
                 if (block.FontSize <= 0)
                     PdfReaderException.AlwaysThrow("block.FontSize <= 0");

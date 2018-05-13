@@ -27,11 +27,8 @@ namespace PdfTextReader.ParserStages
             Pipeline pipeline = _context.GetPipeline();
 
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
-                    .StageProcess(InitialCache);
-
-            pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-stage0-input.pdf")
-                    .StageProcess(ShowColors);
+                    .StageProcess(InitialCache);
         }
 
         void InitialCache(PipelineInputPdf.PipelineInputPdfPage page)
@@ -40,21 +37,13 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<IdentifyTables>()
                     .ParseBlock<SetIdentifyTablesCompatibility>()
                     .StoreCache<IdentifyTablesData>()
+                    .Show(Color.Orange)
                 .ParsePdf<PreProcessImages>()
                     .StoreCache<ProcessImageData>()
-                .ParsePdf<ProcessPdfText>()
-                    .StoreCache<ProcessPdfTextData>();
-        }
-
-        void ShowColors(PipelineInputPdf.PipelineInputPdfPage page)
-        {
-            page
-                .FromCache<ProcessPdfTextData>()
-                    .Show(Color.Black)
-                .FromCache<ProcessImageData>()
                     .Show(Color.Yellow)
-                .FromCache<IdentifyTablesData>()
-                    .Show(Color.Orange);
+                .ParsePdf<ProcessPdfText>()
+                    .StoreCache<ProcessPdfTextData>()
+                    .Show(Color.Black);
         }
     }
 }
