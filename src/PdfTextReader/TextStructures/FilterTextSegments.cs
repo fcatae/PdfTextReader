@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PdfTextReader.Base;
+using System.Text.RegularExpressions;
 
 namespace PdfTextReader.Parser
 {
@@ -69,7 +70,9 @@ namespace PdfTextReader.Parser
         bool RemoveTitle(TextStructure title)
         {
             return IsAnexo(title.Text) || 
-                (IsNotGrade(title) && HasLowerCaseExceptO(title.Text));
+                (IsNotGrade(title) && HasLowerCaseExceptO(title.Text) ||
+                IsDataEmPautaJugamento(title.Text)
+                );
         }
 
         bool IsAnexo(string text)
@@ -87,6 +90,15 @@ namespace PdfTextReader.Parser
             string text = input.Replace("o", "");
             var upper = text.ToUpper();
             return (upper != text);
+        }
+
+        readonly Regex _data = new Regex(@"DIA (\d+) DE ((JAN|FEV|MAR|ABR|MAI|JUN|JUL|AGO|SET|OUT|NOV|DEZ)\w+) DE (\d+), ÀS (\d+:\d\d) HORAS");
+
+        bool IsDataEmPautaJugamento(string input)
+        {
+            var match = _data.Match(input);
+
+            return (match.Success);
         }
 
         int CompareStructureHieararchy(TextStructure a, TextStructure b)
