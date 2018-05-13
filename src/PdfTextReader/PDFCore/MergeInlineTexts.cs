@@ -69,7 +69,7 @@ namespace PdfTextReader.PDFCore
                     if (doesntApplyI || doesntApplyJ)
                         continue;
 
-                    if (OverlapContains(blocks[i], blocks[j]))
+                    if (HasOverlap(blocks[i], blocks[j]))
                     {   
                         var elems = BreakElements(blocks[i], blocks[j]);
 
@@ -94,46 +94,21 @@ namespace PdfTextReader.PDFCore
         IBlock[] BreakElements(IBlock a, IBlock b)
         {
             var over = GetOverlapBlock(a, b);
-            var overlapBlockset = GetOverlapBlockSet(over, (BlockSet<IBlock>)a, (BlockSet<IBlock>)b);
+            //var overlapBlockset = GetOverlapBlockSet(over, (BlockSet<IBlock>)a, (BlockSet<IBlock>)b);
 
-            if (String.IsNullOrEmpty(overlapBlockset.GetText()))
-                PdfReaderException.AlwaysThrow("overlapBlockset.GetText is null");
+            //if (String.IsNullOrEmpty(overlapBlockset.GetText()))
+            //    PdfReaderException.AlwaysThrow("overlapBlockset.GetText is null");
 
-            var new_a = GetCleanBlockSet(over, (BlockSet<IBlock>)a);
-            var new_b = GetCleanBlockSet(over, (BlockSet<IBlock>)b);
+            var new_a = MarkBlockLineWithLargeSpace(over, (BlockSet<IBlock>)a);
+            var new_b = MarkBlockLineWithLargeSpace(over, (BlockSet<IBlock>)b);
 
-            new_a.AddRange(overlapBlockset);
+            var result = new BlockSet<IBlock>[] { new_a, new_b };
 
-            return new IBlock[] { new_a, new_b };
+            // result.First(bl => bl != null).AddRange(overlapBlockset);
+
+            return result;
         }
-
-        int SelectSize(BlockSet<IBlock> blockset, float middle)
-        {
-            int k = 0;
-            foreach(var b in blockset)
-            {
-                float h = b.GetH() + b.GetHeight();
-                if (h < middle)
-                    return k;
-                k++;
-            }
-
-            return -1;
-        }
-        
-        IBlock[] CreateNewBlocks(BlockSet<IBlock> blocks, int middle)
-        {
-            int total = blocks.Count();
-
-            var blockA = new BlockSet<IBlock>();
-            var blockB = new BlockSet<IBlock>();
-
-            blockA.AddRange(blocks.Take(middle));
-            blockB.AddRange(blocks.TakeLast(total - middle));
-
-            return new IBlock[] { blockA , blockB };
-        }
-        
+                
         Block GetOverlapBlock(IBlock a, IBlock b)
         {
             float a_x1 = a.GetX();
@@ -188,6 +163,18 @@ namespace PdfTextReader.PDFCore
             return blockSet;
         }
 
+        BlockSet<IBlock> MarkBlockLineWithLargeSpace(Block overlap, BlockSet<IBlock> block1)
+        {            
+            var overlappedLines = block1.Where(b => HasOverlapY(b, overlap));
+
+            var count = overlappedLines
+                .Cast<BlockLine>()
+                .Select(bl => { bl.HasLargeSpace = true; return 1; })
+                .Count();
+
+            return block1;
+        }
+
         public static bool HasOverlapY(IBlock a, IBlock b)
         {
             //float a_x1 = a.GetX();
@@ -206,6 +193,25 @@ namespace PdfTextReader.PDFCore
 
             //return (hasIntersectionX && hasOverlapContainsY);
         }
+
+        public static bool HasOverlap(IBlock a, IBlock b)
+        {
+            float a_x1 = a.GetX();
+            float a_x2 = a.GetX() + a.GetWidth();
+            float a_y1 = a.GetH();
+            float a_y2 = a.GetH() + a.GetHeight();
+
+            float b_x1 = b.GetX();
+            float b_x2 = b.GetX() + b.GetWidth();
+            float b_y1 = b.GetH();
+            float b_y2 = b.GetH() + b.GetHeight();
+
+            bool hasIntersectionX = HasOverlap(a_x1, a_x2, b_x1, b_x2);
+            bool HasOverlapY = HasOverlap(a_y1, a_y2, b_y1, b_y2);
+
+            return (hasIntersectionX && HasOverlapY);
+        }
+
         public static bool OverlapContains(IBlock a, IBlock b)
         {
             float a_x1 = a.GetX();

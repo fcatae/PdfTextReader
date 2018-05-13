@@ -77,12 +77,13 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<AddImageSpace>()              // 18
                     .ParseBlock<RemoveBackgroundNonText>()    // 21
 
-                    // REPLACE 1: Merge text with text
-                    .ParseBlock<MergeInlineTexts>()        // new
                     // REPLACE 2: Break text with image/table
 
                     .ParseBlock<BreakInlineElements>()        // 23
                                                               //.Show(Color.Gray)
+                         // REPLACE 1: Merge text with text
+                    .ParseBlock<MergeInlineTexts>()        // new
+                        .Show(Color.Gray)
 
                     .ParseBlock<OrderBlocksetsWithBlockInfo>()
                     .ParseBlock<ResizeBlocksetsWithBlockInfo>()
