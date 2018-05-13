@@ -88,9 +88,14 @@ namespace PdfTextReader.TextStructures
             // special case for centralized texts
             if(current.AlignedCenter && next.AlignedCenter)
             {
-                if (IsUpperCaseExceptO(current.Text) && (!IsUpperCaseExceptO(next.Text)))
+                bool maybeJustified = IsZero(current.MarginRight) && IsZero(next.MarginLeft);
+
+                if( !maybeJustified )
                 {
-                    return false;
+                    if (IsUpperCaseExceptO(current.Text) && (!IsUpperCaseExceptO(next.Text)))
+                    {
+                        return false;
+                    }
                 }
             }
 
