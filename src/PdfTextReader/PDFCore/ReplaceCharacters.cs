@@ -60,7 +60,7 @@ namespace PdfTextReader.PDFCore
                                 }
                             }
                         }
-                        else
+                        else if(SameBaseline(last, block))
                         {
                             bool isBackspace2 = CheckBackspaceAgain(last, block);
                             bool isSingleChar = block.GetText().Length == 1;
@@ -208,6 +208,14 @@ namespace PdfTextReader.PDFCore
             float wordX = block.GetX() + block.GetWidth();
 
             return (wordX < lineX);
+        }
+
+        bool SameBaseline(IBlock line, IBlock block)
+        {
+            float h1 = line.GetH();
+            float h2 = block.GetH();
+
+            return (Math.Abs(h1 - h2) < 2f);
         }
     }
 }
