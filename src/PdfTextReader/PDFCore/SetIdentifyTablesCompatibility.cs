@@ -24,6 +24,7 @@ namespace PdfTextReader.PDFCore
                 if (pre.PageTables == null && pre.PageLines == null && pre.PageBackground == null)
                     PdfReaderException.AlwaysThrow("there is no data available");
 
+                data.PageFooterLine = pre.PageFooterLine;
                 data.PageTables = pre.PageTables;
                 data.PageLines = pre.PageLines;
                 data.PageBackground = pre.PageBackground;

@@ -13,6 +13,7 @@ namespace PdfTextReader.PDFCore
         public BlockPage PageTables { get; set; }
         public BlockPage PageLines { get; set; }
         public BlockPage PageBackground { get; set; }
+        public TableCell PageFooterLine { get; set; }
 
         public BlockPage LastResult { get; set; }
 
@@ -30,6 +31,7 @@ namespace PdfTextReader.PDFCore
             this.PageTables = instance.PageTables;
             this.PageLines = instance.PageLines;
             this.PageBackground = instance.PageBackground;
+            this.PageFooterLine = instance.PageFooterLine;
         }
     }
 }
