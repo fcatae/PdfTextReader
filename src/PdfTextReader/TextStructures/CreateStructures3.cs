@@ -540,9 +540,10 @@ namespace PdfTextReader.TextStructures
             return (upper == text);
         }
 
-        bool IsUpperCaseExceptO(string text)
+        bool IsUpperCaseExceptO(string input)
         {
-            var upper = text.Replace("o","").ToUpper();
+            string text = input.Replace("o", "");
+            string upper = text.ToUpper();
             return (upper == text);
         }
     }
