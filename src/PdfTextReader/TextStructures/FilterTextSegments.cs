@@ -8,7 +8,9 @@ using PdfTextReader.Base;
 namespace PdfTextReader.Parser
 {
     class FilterTextSegments : IAggregateStructure<TextSegment, TextSegment>
-    {        
+    {
+        TextStructure _lastIgnored = null;
+
         public bool Aggregate(TextSegment line)
         {
             return false;
@@ -25,14 +27,23 @@ namespace PdfTextReader.Parser
                 .TakeWhile(KeepTitle)
                 .Count();
 
-            if( total == stop )
+            if (_lastIgnored != null && CompareStructureHieararchy(titles[0], _lastIgnored) <= 0)
             {
+                stop = 0;
+            }
+
+            if ( total == stop )
+            {
+                _lastIgnored = null;
+
                 return new TextSegment()
                 {
                     Title = titles,
                     Body = body
                 };
             }
+
+            _lastIgnored = titles.Skip(stop).FirstOrDefault();
 
             var newTitle = titles.Take(stop).ToArray();
             var newBody = titles.Skip(stop).Concat(body).ToArray();
@@ -70,6 +81,64 @@ namespace PdfTextReader.Parser
             string text = input.Replace("o", "");
             var upper = text.ToUpper();
             return (upper != text);
+        }
+
+        int CompareStructureHieararchy(TextStructure a, TextStructure b)
+        {
+            // Font size
+            int compareFontSize = CompareFontSize(a.FontSize, b.FontSize);
+
+            if (compareFontSize != 0)
+                return compareFontSize;
+
+            // Boldness
+            int compareBoldness = CompareBoldness(a.FontStyle, b.FontStyle);
+
+            if (compareBoldness != 0)
+                return compareBoldness;
+
+            // Compare upper case
+            int compareUppercase = CompareUppercase(a.Text, b.Text);
+
+            return compareUppercase;
+        }
+
+        int CompareUppercase(string a, string b)
+        {
+            bool isLowerA = HasLowerCaseExceptO(a);
+            bool isLowerB = HasLowerCaseExceptO(b);
+
+            if (isLowerA == isLowerB)
+                return 0;
+
+            return (isLowerA) ? -1 : 1;
+        }
+
+        int CompareFontSize(float a, float b)
+        {
+            const float zero = 0.01f;
+
+            if (Math.Abs(a - b) < zero)
+                return 0;
+
+            if (a > b)
+                return 1;
+
+            return -1;
+        }
+
+        int CompareBoldness(string a, string b)
+        {
+            if (a == b)
+                return 0;
+
+            if (a == "Bold")
+                return 1;
+
+            if (b == "Bold")
+                return -1;
+
+            return 0;
         }
     }
 }
