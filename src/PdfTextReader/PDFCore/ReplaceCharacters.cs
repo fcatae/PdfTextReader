@@ -53,6 +53,7 @@ namespace PdfTextReader.PDFCore
                                 if (replaceText != null)
                                 {
                                     ((Block)last).Text = replaceText;
+                                    ((Block)block).Text = " ";
 
                                     // do not set last: ignore the current block
                                     continue;
