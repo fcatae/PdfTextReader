@@ -21,7 +21,7 @@ namespace PdfTextReader.TextStructures
             input.WriteLine($"Aligment: {structure.TextAlignment}");
 
             input.Write(structure.Text);
-            input.WriteLine($" ({structure.FontName}, {structure.FontSize.ToString("0.00")}, {structure.FontStyle})");
+            input.WriteLine($" ({structure.FontName}, {structure.FontSize.ToString("0.00")}, {structure.FontStyle} - {structure.HasBackColor})");
             input.WriteLine($" ({afterSpace})");
             input.WriteLine();
 

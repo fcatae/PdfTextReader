@@ -22,7 +22,7 @@ namespace PdfTextReader.Parser
             int total = titles.Length;
 
             int stop = titles
-                .TakeWhile(s => !FilterTitle(s.Text))
+                .TakeWhile(KeepTitle)
                 .Count();
 
             if( total == stop )
@@ -48,9 +48,28 @@ namespace PdfTextReader.Parser
         {
         }
 
-        bool FilterTitle(string title)
+        bool KeepTitle(TextStructure title) => !RemoveTitle(title);
+        bool RemoveTitle(TextStructure title)
         {
-            return title.Replace(" ", "").StartsWith("ANEXO");
+            return IsAnexo(title.Text) || 
+                (IsNotGrade(title) && HasLowerCaseExceptO(title.Text));
+        }
+
+        bool IsAnexo(string text)
+        {
+            return text.Replace(" ", "").StartsWith("ANEXO");
+        }
+
+        bool IsNotGrade(TextStructure title)
+        {
+            return !title.HasBackColor;
+        }
+
+        bool HasLowerCaseExceptO(string input)
+        {
+            string text = input.Replace("o", "");
+            var upper = text.ToUpper();
+            return (upper != text);
         }
     }
 }
