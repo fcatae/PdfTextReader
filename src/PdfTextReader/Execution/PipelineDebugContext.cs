@@ -1,4 +1,6 @@
-﻿using iText.Kernel.Pdf;
+﻿using iText.IO.Font.Constants;
+using iText.Kernel.Font;
+using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
 using PdfTextReader.Base;
 using System;
@@ -45,6 +47,24 @@ namespace PdfTextReader.Execution
             DrawRectangle(_currentCanvas, line.Block, color);
         }
 
+        public void ShowText(string text, TextLine line, System.Drawing.Color color)
+        {
+            int pageNumber = line.PageInfo.PageNumber;
+
+            if (pageNumber == -1)
+                PdfReaderException.AlwaysThrow("invalid page number");
+
+            if (pageNumber != _lastPageNumber)
+            {
+                var page = _pdf.GetPage(pageNumber);
+                var canvas = new PdfCanvas(page);
+
+                _currentCanvas = canvas;
+            }
+
+            DrawText(_currentCanvas, text, line.Block, color);
+        }
+
         public void ShowLine(IEnumerable<TextLine> lines, System.Drawing.Color color)
         {
             foreach(var line in lines)
@@ -67,6 +87,26 @@ namespace PdfTextReader.Execution
             canvas.Stroke();
         }
 
+        void DrawText(PdfCanvas canvas, string text, IBlock block, System.Drawing.Color color)
+        {
+            const float FONT_SIZE = 8f;
+            DrawText(canvas, block.GetX() + block.GetWidth() + FONT_SIZE, block.GetH() , text, FONT_SIZE, color);
+        }
+
+        void DrawText(PdfCanvas canvas, double x, double h, string text, float size, System.Drawing.Color color)
+        {
+            var pdfColor = GetColor(color);
+
+            canvas.SetColor(pdfColor, true);
+            //canvas.Rectangle(x, h, width, height);
+            canvas.BeginText();
+            canvas.MoveText(x, h);
+            var font = PdfFontFactory.CreateFont(StandardFonts.COURIER);
+            canvas.SetFontAndSize(font, size);
+            canvas.ShowText(text);
+            canvas.EndText();
+            //canvas.Stroke();
+        }
         iText.Kernel.Colors.DeviceRgb GetColor(System.Drawing.Color color)
         {
             return new iText.Kernel.Colors.DeviceRgb(color.R, color.G, color.B);

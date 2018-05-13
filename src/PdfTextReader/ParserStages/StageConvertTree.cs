@@ -30,7 +30,8 @@ namespace PdfTextReader.ParserStages
                             .ConvertText<FilterTextSegments, TextSegment>()
                             .ConvertText<AfterFilterTextSegments, TextSegment>()
                             .ConvertText<CreateTreeSegments, TextSegment>(true)
-                            //.ConvertText<MergeTreeSegments, TextSegment>(true)
+                                //.ConvertText<MergeTreeSegments, TextSegment>(true)
+                                .ShowPdf<ShowTitleSegment>($"{_context.OutputFilePrefix}-titles.pdf")
                                 .Log<AnalyzeSegmentTitles>($"{_context.OutputFilePrefix}-analyze-segment-titles.txt")
                                 .Log<AnalyzeTreeStructure>($"{_context.OutputFilePrefix}-tree.txt");
 

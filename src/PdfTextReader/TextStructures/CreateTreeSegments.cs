@@ -52,6 +52,7 @@ namespace PdfTextReader.Parser
                 else
                 {
                     _current = segment;
+                    _current.OriginalTitle = _current.Title;
                 }
             }
 
