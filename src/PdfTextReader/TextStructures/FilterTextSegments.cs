@@ -11,6 +11,7 @@ namespace PdfTextReader.Parser
     class FilterTextSegments : IAggregateStructure<TextSegment, TextSegment>
     {
         TextStructure _lastIgnored = null;
+        TextSegment _textSegment = null;
 
         public bool Aggregate(TextSegment line)
         {
@@ -21,6 +22,7 @@ namespace PdfTextReader.Parser
         {
             var titles = _structures[0].Title;
             var body = _structures[0].Body;
+            var textSegment = _textSegment;
 
             int total = titles.Length;
 
@@ -33,7 +35,58 @@ namespace PdfTextReader.Parser
                 stop = 0;
             }
 
+            int shouldSplit = titles.TakeWhile(b => CompareStructureHieararchy(titles[0], b) >= 0).Count();
+            if( stop == 0 && shouldSplit < total )
+            {
+                var lastLines = titles.Take(shouldSplit);
+                var newLines = titles.Skip(shouldSplit);
+
+                textSegment.Body = textSegment.Body.Concat(lastLines).ToArray();
+
+                _textSegment = Create(newLines.ToArray(), body);
+                return _textSegment;
+            }
+
             if ( total == stop )
+            {
+                _lastIgnored = null;
+
+                _textSegment = new TextSegment()
+                {
+                    Title = titles,
+                    Body = body
+                };
+                return _textSegment;
+            }
+
+            _lastIgnored = titles.Skip(stop).FirstOrDefault();
+
+            var titlesMovedToBody = titles.Skip(stop).ToArray();
+
+            int validatePortariaTitle = titles.Where(t => t.Text.StartsWith("PORTARIA")).Count();
+            if (validatePortariaTitle > 0)
+                PdfReaderException.Warning("validtitle inside the body");
+
+            var newTitle = titles.Take(stop).ToArray();
+            var newBody = titlesMovedToBody.Concat(body).ToArray();
+
+            _textSegment = new TextSegment()
+            {
+                Title = newTitle,
+                Body = newBody
+            };
+            return _textSegment;
+        }
+
+        TextSegment Create(TextStructure[] titles, TextStructure[] body)
+        {
+            int total = titles.Length;
+
+            int stop = titles
+                .TakeWhile(KeepTitle)
+                .Count();
+            
+            if (total == stop)
             {
                 _lastIgnored = null;
 
