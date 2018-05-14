@@ -73,9 +73,14 @@ namespace PdfTextReader.Parser
             return isTitle;
         }
 
+        bool CompareTitle(string a, string b)
+        {
+            return a.Replace("\n"," ").Replace(" ","") == b.Replace("\n"," ").Replace(" ", "");
+        }
+
         bool IsTitle(string line)
         {
-            return HasTitle() && (GetTitle() == line);
+            return HasTitle() && CompareTitle(GetTitle(), line);
         }
 
         string GetTitle()
