@@ -123,7 +123,7 @@ namespace PdfTextReader.Parser
         bool RemoveTitle(TextStructure title)
         {
             return IsAnexo(title.Text) || 
-                (IsNotGrade(title) && HasLowerCaseExceptO(title.Text) ||
+                (IsNotGrade(title) && HasManyLowerCase(title.Text) ||
                 IsDataEmPautaJugamento(title.Text)
                 );
         }
@@ -138,13 +138,34 @@ namespace PdfTextReader.Parser
             return !title.HasBackColor;
         }
 
-        bool HasLowerCaseExceptO(string input)
+        //bool HasLowerCaseExceptO(string input)
+        //{
+        //    string text = input.Replace("o", "");
+        //    var upper = text.ToUpper();
+        //    return (upper != text);
+        //}
+
+        bool HasManyLowerCase(string input)
         {
-            string text = input.Replace("o", "");
-            var upper = text.ToUpper();
-            return (upper != text);
+            int count = CountCaseDifference(input);
+
+            return (count > 2);
         }
 
+        int CountCaseDifference(string input)
+        {
+            string upperCase = input.ToUpper();
+            int diff = 0;
+
+            for(int i=0; i<input.Length; i++)
+            {
+                if (input[i] != upperCase[i])
+                    diff++;
+            }
+
+            return diff;
+        }
+        
         readonly Regex _data = new Regex(@"DIA (\d+) DE ((JAN|FEV|MAR|ABR|MAI|JUN|JUL|AGO|SET|OUT|NOV|DEZ)\w+) DE (\d+), ÀS (\d+:\d\d) HORAS");
 
         bool IsDataEmPautaJugamento(string input)
@@ -176,8 +197,8 @@ namespace PdfTextReader.Parser
 
         int CompareUppercase(string a, string b)
         {
-            bool isLowerA = HasLowerCaseExceptO(a);
-            bool isLowerB = HasLowerCaseExceptO(b);
+            bool isLowerA = HasManyLowerCase(a);
+            bool isLowerB = HasManyLowerCase(b);
 
             if (isLowerA == isLowerB)
                 return 0;
