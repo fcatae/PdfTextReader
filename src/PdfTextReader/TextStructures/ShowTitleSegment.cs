@@ -25,6 +25,7 @@ namespace PdfTextReader.TextStructures
             {
                 var lines = titles[i].Lines;
                 pipeline.ShowLine(lines, Color.Orange);
+                pipeline.ShowText($"N{i+1}", lines[0], Color.Orange);
             }
 
             var lastTitleLines = titles[titles.Length - 1].Lines;
