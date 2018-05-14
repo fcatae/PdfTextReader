@@ -21,6 +21,9 @@ namespace PdfTextReader
 
             using (var context = new ParserStages.StageContext(basename, inputfolder, outputfolder))
             {
+                var dbg0 = new ParserStages.StageDbgFlow(context);
+                dbg0.Process();
+
                 var stage0 = new ParserStages.StagePdfInput(context);
                 stage0.Process();
 

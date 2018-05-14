@@ -47,7 +47,7 @@ namespace PdfTextReader
             Console.WriteLine("ProcessStage");
             Console.WriteLine();
 
-            PipelineInputPdf.StopOnException();
+            // PipelineInputPdf.StopOnException();
             
             if ( page != -1 )
             {
