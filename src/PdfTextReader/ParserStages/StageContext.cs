@@ -1,4 +1,6 @@
-﻿using PdfTextReader.Execution;
+﻿using PdfTextReader.Base;
+using PdfTextReader.Configuration;
+using PdfTextReader.Execution;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,7 +21,7 @@ namespace PdfTextReader.ParserStages
         public StageContext(string basename, string inputfolder, string outputfolder)
         {
             this._factoryContext = new PipelineFactory();
-            this._pipeline = new Pipeline(_factoryContext);
+            this._pipeline = new Pipeline(_factoryContext, new ConfigurationFile());
             this.Basename = basename;
             InputFolder = inputfolder;
             OutputFolder = outputfolder;
@@ -68,6 +70,12 @@ namespace PdfTextReader.ParserStages
         public Dictionary<string,string> FileListOutput
         {
             get { return _outputFiles; }
+        }
+
+        public void Config<T>(string filename, bool optional)
+            where T: class, IExecutionConfiguration
+        {
+            _pipeline.Config<T>(filename, optional);
         }
 
         public void Dispose()

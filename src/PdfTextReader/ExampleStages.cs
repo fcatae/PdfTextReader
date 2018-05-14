@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.Base;
+using PdfTextReader.Configuration;
 using PdfTextReader.Execution;
 using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
@@ -21,6 +22,8 @@ namespace PdfTextReader
 
             using (var context = new ParserStages.StageContext(basename, inputfolder, outputfolder))
             {
+                context.Config<ParserTreeConfig>($"{outputfolder}/{basename}/{basename}-tree.config", true);
+
                 //var dbg0 = new ParserStages.StageDbgFlow(context);
                 //dbg0.Process();
 
