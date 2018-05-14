@@ -47,7 +47,7 @@ namespace PdfTextReader.ParserStages
                     .ParseBlock<RemoveSmallFonts>()           // 5
                     .ParseBlock<MergeTableText>()             // 6
 
-                    //.ParseBlock<HighlightTextTable>()         // 7
+                    .ParseBlock<HighlightTextTable>()         // 7
 
                     .ParseBlock<RemoveTableText>()            // 8
 

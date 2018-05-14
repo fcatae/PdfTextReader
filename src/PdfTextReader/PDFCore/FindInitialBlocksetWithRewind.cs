@@ -45,7 +45,14 @@ namespace PdfTextReader.PDFCore
                     if (previous < next - statGoingUp)
                     {
                         shouldBreak = true;
-                    }                   
+                    }
+
+                    bool rewind = previous < next;
+                    if ( (rewind) && ((Block)block).HasBackColor )
+                    {
+                        shouldBreak = true;
+                    }
+
                 }
 
                 // check for superscript font
