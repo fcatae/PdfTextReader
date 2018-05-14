@@ -72,7 +72,7 @@ namespace PdfTextReader.ParserStages
             get { return _outputFiles; }
         }
 
-        public void Config<T>(string filename, bool optional)
+        public void Config<T>(string filename, bool optional = false)
             where T: class, IExecutionConfiguration
         {
             _pipeline.Config<T>(filename, optional);

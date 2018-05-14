@@ -22,8 +22,6 @@ namespace PdfTextReader
 
             using (var context = new ParserStages.StageContext(basename, inputfolder, outputfolder))
             {
-                context.Config<ParserTreeConfig>($"{outputfolder}/{basename}/{basename}-tree.config", true);
-
                 //var dbg0 = new ParserStages.StageDbgFlow(context);
                 //dbg0.Process();
 
@@ -44,6 +42,7 @@ namespace PdfTextReader
 
                 var stageText2 = new ParserStages.StageConvertStructure(context);
                 stageText2.Process();
+                //stageText2.ProcessWithConfiguration($"{outputfolder}/{basename}/{basename}-tree.config");
 
                 var stageTextTree = new ParserStages.StageConvertTree(context);
                 stageTextTree.Process();

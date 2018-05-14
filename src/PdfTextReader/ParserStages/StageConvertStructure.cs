@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.Base;
+using PdfTextReader.Configuration;
 using PdfTextReader.Execution;
 using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
@@ -24,25 +25,26 @@ namespace PdfTextReader.ParserStages
 
         public void Process()
         {
-            var pipelineText = _context.GetPipelineText<TextLine>();
+            var pipelineText = _context.GetPipelineText<TextStructure>();
 
             var resultPipeline = pipelineText
-                            .ConvertText<PreCreateStructures, TextLine2>()
-                            .ConvertText<CreateStructures3, TextStructure>()
-                            .ConvertText<PreCreateTextSegments, TextStructureAgg>()
-                            .ConvertText<AggregateStructures, TextStructure>(true)
-                                .ShowPdf<ShowStructureCentral>($"{_context.OutputFilePrefix}-show-central.pdf")
-                                .Log<AnalyzeStructures>($"{_context.OutputFilePrefix}-analyze-structures.txt")
-                                .Log<AnalyzeStructuresCentral>($"{_context.OutputFilePrefix}-analyze-structures-central.txt")
-
-                            .ConvertText<CreateTextSegmentsWithConfigData, TextSegment>();
-
-                            //.ConvertText<CreateTextSegments, TextSegment>()
-                            //.ConvertText<FilterTextSegments, TextSegment>()
-                            //.ConvertText<AfterFilterTextSegments, TextSegment>();
+                                    .ConvertText<CreateTextSegments, TextSegment>()
+                                    //.ConvertText<FilterTextSegments, TextSegment>()
+                                    .ConvertText<AfterFilterTextSegments, TextSegment>();
 
             _context.SetPipelineText<TextSegment>(resultPipeline);
         }
 
+        public void ProcessWithConfiguration(string filename)
+        {
+            _context.Config<ParserTreeConfig>(filename);
+
+            var pipelineText = _context.GetPipelineText<TextStructure>();
+
+            var resultPipeline = pipelineText
+                                    .ConvertText<CreateTextSegmentsWithConfigData, TextSegment>();
+
+            _context.SetPipelineText<TextSegment>(resultPipeline);
+        }
     }
 }
