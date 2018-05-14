@@ -119,7 +119,7 @@ namespace PdfTextReader.PDFCore
             bool overlap2 = OverlapContains(b, blocks[1]);
 
             if (overlap1 || overlap2)
-                PdfReaderException.AlwaysThrow("overlap1 || overlap2");
+                PdfReaderException.Warning("overlap1 || overlap2");
 
             return blocks;
         }
