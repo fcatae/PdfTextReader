@@ -48,8 +48,8 @@ namespace PdfTextReader
             Console.WriteLine();
 
             PipelineInputPdf.StopOnException();
-
-            if( page != -1 )
+            
+            if ( page != -1 )
             {
                 basename = ExtractPage(basename, page);
             }
@@ -66,12 +66,11 @@ namespace PdfTextReader
             }
         }
 
-        static void ExtractPages(string basename, IList<int> pages)
+        static void ExtractPage(string basename, IList<int> pages)
         {
-            foreach(var p in pages)
-            {
-                ExtractPages(basename, $"{basename}-p{p}", new int[] { p });
-            }
+            string outputname = $"{basename}-pages";
+
+            ExtractPages(basename, outputname, pages);
         }
 
         static string ExtractPage(string basename, int p, bool create = true)
