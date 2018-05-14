@@ -90,7 +90,8 @@ namespace PdfTextReader.Execution
         void DrawText(PdfCanvas canvas, string text, IBlock block, System.Drawing.Color color)
         {
             const float FONT_SIZE = 8f;
-            DrawText(canvas, block.GetX() + block.GetWidth() + FONT_SIZE, block.GetH() , text, FONT_SIZE, color);
+            const float FONT_DISTANCE = 2f;
+            DrawText(canvas, block.GetX() + block.GetWidth() + FONT_DISTANCE, block.GetH() , text, FONT_SIZE, color);
         }
 
         void DrawText(PdfCanvas canvas, double x, double h, string text, float size, System.Drawing.Color color)

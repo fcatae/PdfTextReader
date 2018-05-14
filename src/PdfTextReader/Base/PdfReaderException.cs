@@ -60,11 +60,13 @@ namespace PdfTextReader.Base
             }
         }
 
+        [DebuggerHidden]
         public static void Throw(string message, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             Throw(message, null, source, sourceMethod);
         }
 
+        [DebuggerHidden]
         public static void Throw(string message, IEnumerable<IBlock> debugBlocks, [CallerFilePath]string source = null, [CallerMemberName]string sourceMethod = null)
         {
             try
