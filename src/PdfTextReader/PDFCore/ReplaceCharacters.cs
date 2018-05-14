@@ -23,6 +23,9 @@ namespace PdfTextReader.PDFCore
                 if (block is BlockHidden)
                     continue;
 
+                if (block.GetText() == "")
+                    continue;
+
                 if (last != null)
                 {
                     // are the same lines
@@ -50,10 +53,16 @@ namespace PdfTextReader.PDFCore
                                     replaceText = "\xba";
                                 }
 
+                                if (text == "a-")
+                                {
+                                    // Unicode 170 (0xaa) = º
+                                    replaceText = "\xaa";
+                                }
+                                
                                 if (replaceText != null)
                                 {
                                     ((Block)last).Text = replaceText;
-                                    ((Block)block).Text = " ";
+                                    ((Block)block).Text = "";
 
                                     // do not set last: ignore the current block
                                     continue;
@@ -93,7 +102,7 @@ namespace PdfTextReader.PDFCore
                                 {                                    
                                     string replaceText = text.Substring(0, text.Length - 1) + newChar;
                                     ((Block)last).Text = replaceText;
-                                    ((Block)block).Text = " ";
+                                    ((Block)block).Text = "";
 
                                     // do not set last: ignore the current block
                                     continue;
