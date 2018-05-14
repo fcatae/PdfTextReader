@@ -40,8 +40,9 @@ namespace PdfTextReader.PDFCore
                         if( Math.Abs(lastH - curH) < SAME_LINE_SMALL_FONTSIZE )
                         {
                             // we dont expect to have last after the current
-                            if (last_box.GetX() > box.GetX())
-                                PdfReaderException.AlwaysThrow("last_box.GetX() > box.GetX()");
+                            // add +width because sometimes it has difference (why?)
+                            if (last_box.GetX() > box.GetX() + box.GetWidth())
+                                PdfReaderException.AlwaysThrow("last_box.GetX() > box.GetX()+ box.GetWidth()");
 
                             last_box.Text += box.GetText();
                             box.Text = "";
