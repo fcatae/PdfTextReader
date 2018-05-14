@@ -36,6 +36,7 @@ namespace PdfTextReader.TextStructures
                 FontStyle = line.FontStyle,
                 FontSize = line.FontSize,
                 AfterSpace = line.AfterSpace,
+                StructureSpace = null,
                 TextAlignment = TextAlignment.JUSTIFY,
                 HasBackColor = line.HasBackColor
             };            
@@ -54,9 +55,9 @@ namespace PdfTextReader.TextStructures
             // different page or column
             if (_structure.AfterSpace == null)
                 return false;
-
+            
             // if there is next line
-            if( next.BeforeSpace != null )
+            if ( next.BeforeSpace != null )
             {
                 // too far
                 if ((float)next.BeforeSpace > (float)next.FontSize * 0.75)
@@ -70,6 +71,13 @@ namespace PdfTextReader.TextStructures
                 if (next.AfterSpace < next.BeforeSpace - VERTICAL_DISTANCE)
                     return false;
 
+                // same spacing as structure
+                if(_structure.StructureSpace != null)
+                {
+                    if (!IsZeroVertical(_structure.StructureSpace - next.BeforeSpace))
+                        return false;
+                }
+
                 //has margin at second line
                 //if (!IsZero(line.MarginLeft))
                 //{
@@ -77,10 +85,16 @@ namespace PdfTextReader.TextStructures
                 //    if (!IsZero(_structure.MarginLeft - line.MarginLeft))
                 //        return false;
                 //}
+
+                // update the current space   
+                if (_structure.StructureSpace == null)
+                {
+                    _structure.StructureSpace = next.BeforeSpace;
+                }
             }
 
-            // update the current space        
             _structure.AfterSpace = next.AfterSpace;
+
 
             if (current.AlignedCenter && (!next.AlignedCenter) && (!next.HasContinuation))
                 return false;

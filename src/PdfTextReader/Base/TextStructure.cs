@@ -16,6 +16,7 @@ namespace PdfTextReader.Base
         public float TabStop { get; set; }
         public bool HasContinuation { get; set; }
         public float? AfterSpace { get; set; }
+        public float? StructureSpace { get; set; }
         public TextAlignment TextAlignment { get; set; }
         public bool HasBackColor { get; set; }
         //For ContentType
