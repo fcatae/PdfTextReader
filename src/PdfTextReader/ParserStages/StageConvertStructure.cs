@@ -34,10 +34,12 @@ namespace PdfTextReader.ParserStages
                                 .ShowPdf<ShowStructureCentral>($"{_context.OutputFilePrefix}-show-central.pdf")
                                 .Log<AnalyzeStructures>($"{_context.OutputFilePrefix}-analyze-structures.txt")
                                 .Log<AnalyzeStructuresCentral>($"{_context.OutputFilePrefix}-analyze-structures-central.txt")
-                            .ConvertText<CreateTextSegments, TextSegment>()
-                            .ConvertText<FilterTextSegments, TextSegment>()
-                            .ConvertText<ScanRewriteTextSegments, TextSegment>()
-                            .ConvertText<AfterFilterTextSegments, TextSegment>();
+
+                            .ConvertText<CreateTextSegmentsWithConfigData, TextSegment>();
+
+                            //.ConvertText<CreateTextSegments, TextSegment>()
+                            //.ConvertText<FilterTextSegments, TextSegment>()
+                            //.ConvertText<AfterFilterTextSegments, TextSegment>();
 
             _context.SetPipelineText<TextSegment>(resultPipeline);
         }

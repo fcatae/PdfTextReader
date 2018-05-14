@@ -9,15 +9,26 @@ namespace PdfTextReader.Configuration
     class ParserTreeConfig : IExecutionConfiguration
     {
         List<string> _titles;
+        public bool IsValid { get; private set; }
 
         public void Init(string content)
         {
+            if( content == null )
+            {
+                IsValid = false;
+                return;
+            }
+
             _titles = content
                         .Split(new char[] { '\r', '\n' })
                         .Select(RemoveComment)
                         .Where(StringNotEmpty)
                         .ToList();
+
+            IsValid = true;
         }
+
+        public IList<string> Titles => _titles;
 
         bool StringNotEmpty(string line) => !String.IsNullOrWhiteSpace(line);
 
