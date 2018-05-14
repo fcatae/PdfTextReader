@@ -27,10 +27,7 @@ namespace PdfTextReader.ParserStages
             var pipelineText = _context.GetPipelineText<TextSegment>();
 
             var resultPipeline = pipelineText
-                            .ConvertText<FilterTextSegments, TextSegment>()
-                            .ConvertText<AfterFilterTextSegments, TextSegment>()
                             .ConvertText<CreateTreeSegments, TextSegment>(true)
-                                //.ConvertText<MergeTreeSegments, TextSegment>(true)
                                 .ShowPdf<ShowTitleSegment>($"{_context.OutputFilePrefix}-titles.pdf")
                                 .Log<AnalyzeSegmentTitles>($"{_context.OutputFilePrefix}-analyze-segment-titles.txt")
                                 .Log<AnalyzeTreeStructure2>($"{_context.OutputFilePrefix}-tree.txt");
