@@ -150,5 +150,11 @@ namespace ParserFunctions
 
             return $"Input={inputOk}, Output={outputOk}";
         }
+
+        [FunctionName("Echo")]
+        public static string Echo([HttpTrigger]HttpRequest request)
+        {
+            return $"Echo: query string = {request.QueryString}";
+        }
     }
 }
