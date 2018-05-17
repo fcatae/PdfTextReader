@@ -85,9 +85,12 @@ namespace QueueConsole.Queue
             await _queue.DeleteMessageAsync(message.InternalMessage);
         }
         
-        public async Task<IQueueMessage> GetMessageAsync()
+        public async Task<IQueueMessage> TryGetMessageAsync()
         {
-            var message = await _queue.GetMessageAsync(_visibilityTimeout, DefaultQueueRequestOptions, null);
+            var message = await _queue.GetMessageAsync(_visibilityTimeout, null, null);
+
+            if (message == null)
+                return null;
 
             return new AzureQueueMessage(message);
         }

@@ -12,7 +12,7 @@ namespace QueueConsole.Queue
 
         Task<IQueueMessage> PeekMessageAsync();
 
-        Task<IQueueMessage> GetMessageAsync();
+        Task<IQueueMessage> TryGetMessageAsync();
 
         Task DequeueMessageAsync(IQueueMessage message);
     }

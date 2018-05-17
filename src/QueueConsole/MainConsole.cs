@@ -10,10 +10,13 @@ namespace QueueConsole
     {
         public void Run(string queueSas)
         {
-            RunAsync(queueSas).Wait();
+            RunWriterAsync(queueSas).Wait();
+
+            Console.WriteLine("Read messages:");
+            RunReaderAsync(queueSas).Wait();
         }
 
-        public async Task RunAsync(string queueSas)
+        public async Task RunWriterAsync(string queueSas)
         {
             var azQueue = await AzureQueue.OpenAsync(queueSas);
 
@@ -26,6 +29,22 @@ namespace QueueConsole
 
                 await azQueue.AddMessageAsync(text);
             }            
+        }
+        public async Task RunReaderAsync(string queueSas)
+        {
+            var azQueue = await AzureQueue.OpenAsync(queueSas);
+
+            while (true)
+            {
+                var message = await azQueue.TryGetMessageAsync();
+
+                if (message == null)
+                    break;
+
+                Console.WriteLine($"message: {message.Content}");
+
+                await azQueue.DequeueMessageAsync(message);
+            }
         }
     }
 }
