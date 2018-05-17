@@ -260,6 +260,6 @@ paket-files/
 __pycache__/
 *.pyc
 
-src/Validator/Properties/launchSettings.json
+launchSettings.json
 /src/QueueConsole/appsettings.json
 /src/QueueConsole/appsettings.Development.json
