@@ -10,30 +10,40 @@ namespace QueueConsole.Queue
 {
     public class AzureQueue : IStorageQueue
     {
-
-        CloudStorageAccount _storageAccount;
         CloudQueueClient _queueClient;
+        string _queueName;
+
         CloudQueue _queue;
 
-        public AzureQueue(string connectionString, string queueName)
+        private AzureQueue(string connectionString, string queueName)
         {
             if (string.IsNullOrWhiteSpace(connectionString)) throw new ArgumentException("connectionString is empty");
             if (string.IsNullOrWhiteSpace(queueName)) throw new ArgumentException("queueName is empty");
 
-            try
-            {
-                _storageAccount = CloudStorageAccount.Parse(connectionString);
-            }
-            catch (Exception ex)
-            {
-                throw new Exception($"Error parsing the storage connection string {connectionString}: {ex.Message}");
-            }
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
 
-            _queueClient = _storageAccount.CreateCloudQueueClient();
-            _queue = CreateQueueAsync(queueName).GetAwaiter().GetResult();
+            _queueClient = storageAccount.CreateCloudQueueClient();
+            _queueName = queueName;
+        }
 
+        public static async Task<AzureQueue> CreateAsync(string connectionString, string queueName)
+        {
+            var queue = new AzureQueue(connectionString, queueName);
+
+            await queue.InitAsync();
+
+            return queue;
+        }
+
+        async Task InitAsync()
+        {
             if (_queue == null)
-                throw new Exception("Queue reference is null!");
+            {
+                _queue = await CreateQueueAsync(_queueName);
+
+                if (_queue == null)
+                    throw new Exception("Queue reference is null!");
+            }
         }
 
         public async Task<CloudQueueMessage> AddMessageAsync(string message)

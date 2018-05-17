@@ -18,11 +18,20 @@ namespace QueueConsole
 
             _config = new Config(args);
 
-            string INPUT_STORAGE_ACCOUNT = _config.Get("INPUT_STORAGE_ACCOUNT");
-            string QUEUE_STORAGE_ACCOUNT = _config.Get("QUEUE_STORAGE_ACCOUNT");
-            string QUEUE_NAME = _config.Get("QUEUE_NAME");
+            string INPUT_STORAGE_ACCOUNT = _config.TryGet("INPUT_STORAGE_ACCOUNT");
+            string QUEUE_STORAGE_ACCOUNT = _config.TryGet("QUEUE_STORAGE_ACCOUNT");
+            string QUEUE_NAME = _config.TryGet("QUEUE_NAME");
 
-            (new MainPdfToImage()).Run(INPUT_STORAGE_ACCOUNT, QUEUE_STORAGE_ACCOUNT, QUEUE_NAME);
+            string QUEUE_URL = _config.TryGet("QUEUE_URL");
+
+            if( !String.IsNullOrWhiteSpace(INPUT_STORAGE_ACCOUNT) )
+            {
+                (new MainPdfToImage()).Run(INPUT_STORAGE_ACCOUNT, QUEUE_STORAGE_ACCOUNT, QUEUE_NAME);
+            }
+            else
+            {
+                Console.WriteLine("Not supported");
+            }
         }
     }
 }

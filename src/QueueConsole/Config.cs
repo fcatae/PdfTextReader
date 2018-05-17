@@ -28,6 +28,12 @@ namespace QueueConsole
             return value;
         }
 
+        [DebuggerHidden]
+        public string TryGet(string configName)
+        {
+            var value = _config[configName];
+            return value;
+        }
 
         class NotConfigured : Exception
         {

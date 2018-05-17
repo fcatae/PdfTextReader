@@ -36,7 +36,7 @@ namespace QueueConsole
         {
             var itens_added = 0;
 
-            var queue = new AzureQueue(_queueStorageAccount, _queueName);
+            var queue = await AzureQueue.CreateAsync(_queueStorageAccount, _queueName);
 
             foreach (var item in itens)
             {
