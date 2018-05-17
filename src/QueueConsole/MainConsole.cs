@@ -17,7 +17,15 @@ namespace QueueConsole
         {
             var azQueue = await AzureQueue.OpenAsync(queueSas);
 
-            await azQueue.AddMessageAsync("hello world");
+            while(true)
+            {
+                string text = Console.ReadLine();
+
+                if (String.IsNullOrEmpty(text))
+                    break;
+
+                await azQueue.AddMessageAsync(text);
+            }            
         }
     }
 }
