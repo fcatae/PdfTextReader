@@ -7,16 +7,13 @@ using System.Threading.Tasks;
 namespace QueueConsole.Queue
 {
     public interface IStorageQueue
-    {        
+    {
+        Task AddMessageAsync(string message);
 
-        Task<CloudQueueMessage> AddMessageAsync(string message);
+        Task<IQueueMessage> PeekMessageAsync();
 
-        Task<CloudQueueMessage> PeekMessageAsync();
+        Task<IQueueMessage> GetMessageAsync();
 
-        Task<CloudQueueMessage> GetMessageAsync();
-
-        Task DequeueMessageAsync(CloudQueueMessage message);
-        
-
+        Task DequeueMessageAsync(IQueueMessage message);
     }
 }
