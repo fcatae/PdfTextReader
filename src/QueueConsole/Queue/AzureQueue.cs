@@ -38,7 +38,7 @@ namespace QueueConsole.Queue
 
         public static async Task<AzureQueue> CreateAsync(string connectionString, string queueName)
         {
-            var queue = await CreateAsync(connectionString, queueName);
+            var queue = await OpenAsync(connectionString, queueName);
 
             await queue.EnsureQueueCreatedAsync();
 
