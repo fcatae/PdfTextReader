@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 
@@ -17,7 +18,7 @@ namespace QueueConsole.Queue
 
         private AzureQueue(CloudQueue queue)
         {
-            if (queue != null) throw new ArgumentException("CloudQueue is empty");
+            if (queue == null) throw new ArgumentException("CloudQueue is empty");
 
             _queue = queue;
         }
@@ -30,10 +31,26 @@ namespace QueueConsole.Queue
             var storageAccount = CloudStorageAccount.Parse(connectionString);
 
             var queueClient = storageAccount.CreateCloudQueueClient();
-
+            
             var nativeQueue = queueClient.GetQueueReference(queueName);
 
             return Task.FromResult(new AzureQueue(nativeQueue));
+        }
+
+        public static Task<AzureQueue> OpenAsync(string queueUrlSas)
+        {
+            var nativeQueue = new CloudQueue(new Uri(queueUrlSas));
+            
+            return Task.FromResult(new AzureQueue(nativeQueue));
+        }
+
+        public static async Task<AzureQueue> CreateAsync(string queueUrlSas)
+        {
+            var queue = await OpenAsync(queueUrlSas);
+
+            await queue.EnsureQueueCreatedAsync();
+
+            return queue;
         }
 
         public static async Task<AzureQueue> CreateAsync(string connectionString, string queueName)

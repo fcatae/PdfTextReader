@@ -22,7 +22,7 @@ namespace QueueConsole
             string QUEUE_STORAGE_ACCOUNT = _config.TryGet("QUEUE_STORAGE_ACCOUNT");
             string QUEUE_NAME = _config.TryGet("QUEUE_NAME");
 
-            string QUEUE_URL = _config.TryGet("QUEUE_URL");
+            string QUEUE_SAS = _config.TryGet("QUEUE_SAS");
 
             if( !String.IsNullOrWhiteSpace(INPUT_STORAGE_ACCOUNT) )
             {
@@ -30,7 +30,7 @@ namespace QueueConsole
             }
             else
             {
-                Console.WriteLine("Not supported");
+                (new MainConsole()).Run(QUEUE_SAS);
             }
         }
     }
