@@ -31,15 +31,14 @@ namespace QueueConsole.Queue
 
             _queueClient = _storageAccount.CreateCloudQueueClient();
             _queue = CreateQueueAsync(queueName).GetAwaiter().GetResult();
-            
+
+            if (_queue == null)
+                throw new Exception("Queue reference is null!");
         }
 
         public async Task<CloudQueueMessage> AddMessageAsync(string message)
         {
             if (string.IsNullOrWhiteSpace(message)) throw new ArgumentException("message is null!");
-
-            if (_queue == null)
-                throw new Exception("Queue reference is null!");
 
             var cloudMessage = new CloudQueueMessage(message);
 
@@ -51,22 +50,16 @@ namespace QueueConsole.Queue
         private async Task<CloudQueue> CreateQueueAsync(string name)
         {
             if (string.IsNullOrWhiteSpace(name)) throw new ArgumentException("Name is empty!");
-            if (_queueClient == null) throw new Exception("_queueClient is null!");
 
             var queue = _queueClient.GetQueueReference(name);
 
-            try
-            {
-                await queue.CreateIfNotExistsAsync();
-            }
-            catch (Exception ex) { throw new Exception($"Error creating the queue {name} : {ex.Message}"); }
+            await queue.CreateIfNotExistsAsync();
 
             return queue;
         }
 
         public async Task DequeueMessageAsync(CloudQueueMessage message)
         {
-            if (_queue == null) throw new Exception("_queue is null!");
             if (message == null) throw new Exception("message is null!");
 
             await _queue.DeleteMessageAsync(message);
@@ -75,13 +68,11 @@ namespace QueueConsole.Queue
 
         public async Task<CloudQueueMessage> GetMessageAsync()
         {
-            if (_queue == null) throw new Exception("_queue is null!");
             return await _queue.GetMessageAsync();
         }
 
         public async Task<CloudQueueMessage> PeekMessageAsync()
         {
-            if (_queue == null) throw new Exception("_queue is null!");
             return await _queue.PeekMessageAsync();
         }
     }
