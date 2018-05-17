@@ -42,8 +42,8 @@ namespace QueueConsole
                     break;
 
                 Console.WriteLine($"message: {message.Content}");
-
-                await azQueue.DequeueMessageAsync(message);
+                
+                message.Done();
             }
         }
     }

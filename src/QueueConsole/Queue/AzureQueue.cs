@@ -92,14 +92,14 @@ namespace QueueConsole.Queue
             if (message == null)
                 return null;
 
-            return new AzureQueueMessage(message);
+            return new AzureQueueMessage(this, message);
         }
 
         public async Task<IQueueMessage> PeekMessageAsync()
         {
             var message = await _queue.PeekMessageAsync();
 
-            return new AzureQueueMessage(message);
+            return new AzureQueueMessage(this, message);
         }
     }
 }

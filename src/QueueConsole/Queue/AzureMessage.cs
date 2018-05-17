@@ -9,20 +9,33 @@ namespace QueueConsole.Queue
     public interface IQueueMessage
     {
         string Content { get; }
+        void Done();
     }
 
     public class AzureQueueMessage : IQueueMessage
     {
-        public readonly CloudQueueMessage InternalMessage;
+        private readonly CloudQueueMessage _internalMessage;
+        private readonly AzureQueue _azureQueue;
 
-        public AzureQueueMessage(CloudQueueMessage message)
+        public AzureQueueMessage(AzureQueue queue, CloudQueueMessage message)
         {
+            if (queue == null)
+                throw new ArgumentNullException(nameof(queue));
+
             if (message == null)
                 throw new ArgumentNullException(nameof(message));
 
-            InternalMessage = message;
+            _azureQueue = queue;
+            _internalMessage = message;
         }
 
-        public string Content => InternalMessage.AsString;
+        public CloudQueueMessage InternalMessage => _internalMessage;
+
+        public string Content => _internalMessage.AsString;
+
+        public void Done()
+        {
+            _azureQueue.DequeueMessageAsync(this).Wait();
+        }
     }
 }
