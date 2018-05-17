@@ -11,7 +11,7 @@ namespace QueueConsole
 
         public Config(string[] args)
         {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var env = Environment.GetEnvironmentVariable("DOTNETCORE_ENVIRONMENT");
 
             _config = new ConfigurationBuilder()
                             .AddJsonFile("appsettings.json",true,true)
