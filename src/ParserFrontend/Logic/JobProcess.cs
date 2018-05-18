@@ -23,6 +23,20 @@ namespace ParserFrontend.Logic
 
         public void Process(string name)
         {
+            bool isFullPath = (name.Contains(".pdf") || name.Contains("/"));
+
+            if(isFullPath)
+            {
+                ProcessFullPath(name);
+            }
+            else
+            {
+                ProcessBasename(name);
+            }
+        }
+
+        public void ProcessBasename(string name)
+        {
             if( _copyFiles != null )
             {
                 _copyFiles.EnsureFile($"input/{name}.pdf", name);
@@ -31,6 +45,31 @@ namespace ParserFrontend.Logic
             var fileList = _pdfHandler.Process(name, "input", "output");
 
             _outputFiles.Save(name, fileList);
+        }
+
+        public void ProcessFullPath(string path)
+        {
+            string basename = GetBaseName(path);
+
+            if (_copyFiles != null)
+            {
+                _copyFiles.EnsureFileWithPath($"input/{basename}.pdf", basename, path);
+            }
+
+            var fileList = _pdfHandler.Process(basename, "input", "output");
+
+            _outputFiles.Save(basename, fileList);
+        }
+
+        string GetBaseName(string filepath)
+        {
+            var comps = filepath.Split("/");
+            string filename = comps[comps.Length - 1];
+
+            var comps2 = filename.Split(".");
+            string basename = comps[0];
+
+            return basename;
         }
     }
 }

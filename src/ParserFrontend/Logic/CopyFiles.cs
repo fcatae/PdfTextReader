@@ -64,5 +64,32 @@ namespace ParserFrontend.Logic
 
             throw new NotImplementedException();
         }
+
+        public void EnsureFileWithPath(string filename, string basename, string sourcePath)
+        {
+            try
+            {
+                using (var file = _webFS.OpenReader(filename))
+                {
+                    // file exists!
+                }
+            }
+            catch (Exception ex)
+            {
+                // not found
+                // copy the file
+                StartCopyBasename(filename, basename, sourcePath);
+            }
+        }
+        void StartCopyBasename(string filename, string basename, string sourcePath)
+        {
+            using (var srcFile = _sourceFS.OpenReader(sourcePath))
+            {
+                using (var dstFile = _webFS.OpenWriter(filename))
+                {
+                    srcFile.CopyTo(dstFile);
+                }
+            }
+        }
     }
 }
