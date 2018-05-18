@@ -17,7 +17,26 @@ namespace ParserFrontend.Backend
             this._jobManager = jobManager;
         }
 
-        public async Task StartAsync(CancellationToken cancellationToken)
+        public Task StartAsync(CancellationToken cancellationToken)
+        {
+            var tasks = Enumerable
+                .Range(0, 4)
+                .Select(async numWorkers =>
+                {
+                    int timeout = 10000;
+                    await RunAsync(timeout, cancellationToken).ConfigureAwait(false);
+                })
+                .ToArray();
+
+            return Task.WhenAll(tasks);
+        }
+
+        public Task StopAsync(CancellationToken cancellationToken)
+        {
+            return Task.CompletedTask;
+        }
+
+        public async Task RunAsync(int timeout, CancellationToken cancellationToken)
         {
             while(!cancellationToken.IsCancellationRequested)
             {
@@ -29,13 +48,8 @@ namespace ParserFrontend.Backend
                 {
 
                 }
-                await Task.Delay(10000);
+                await Task.Delay(timeout);
             }
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            return Task.CompletedTask;
         }
     }
 }
