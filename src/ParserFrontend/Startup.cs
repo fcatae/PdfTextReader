@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ParserFrontend.Backend;
+using ParserFrontend.Configuration;
 using ParserFrontend.Logic;
 using PdfTextReader;
 using PdfTextReader.Azure.Queue;
@@ -33,14 +34,19 @@ namespace ParserFrontend
 
             string azureQueueConfig = Configuration["PDFTEXTREADER_FRONTEND_QUEUE"];
 
+            services.Configure<CopyFilesConfig>(Configuration.GetSection("CopyFiles"));
+
             IVirtualFS2 virtualFS = (String.IsNullOrEmpty(azureStorage)) ?
                 (IVirtualFS2)new WebVirtualFS() : new AzureFS(azureStorage);
 
-            if(azureQueueConfig != null)
+            services.AddSingleton<IVirtualFS2>(virtualFS);
+
+            if (azureQueueConfig != null)
             {
                 services.AddSingleton(AzureQueue.OpenAsync(azureQueueConfig).Result);
                 services.AddSingleton<JobManager>();
                 services.AddSingleton<JobProcess>();
+                services.AddSingleton<CopyFiles>();
 
                 services.AddSingleton<IHostedService, JobManagerHostedService>();
             }

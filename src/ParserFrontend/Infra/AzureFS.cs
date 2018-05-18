@@ -24,7 +24,21 @@ namespace ParserFrontend
             _inputFS.AddStorageAccount("azure", inputConnectionString);
             _inputFS.SetWorkingFolder("wasb://azure/web");
         }
-        
+
+        public AzureFS(string inputConnectionString, string container)
+        {
+            _inputFS = _azure;
+
+            if (String.IsNullOrEmpty(inputConnectionString))
+                throw new ArgumentNullException(nameof(inputConnectionString));
+
+            if (container == null)
+                throw new ArgumentNullException(nameof(container));
+
+            _inputFS.AddStorageAccount("azure", inputConnectionString);
+            _inputFS.SetWorkingFolder($"wasb://azure/{container}");
+        }
+
         public Stream OpenReader(string filename) => _inputFS.GetFile(filename).GetStreamReader();
         
         public Stream OpenWriter(string filename) => _inputFS.GetFile(filename).GetStreamWriter();
