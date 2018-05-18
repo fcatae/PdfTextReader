@@ -8,28 +8,37 @@ namespace ParserFrontend.Logic
 {
     public class JobManager
     {
+        PdfHandler _pdfHandler;
+        OutputFiles _outputFiles;
         AzureQueue _queue;
 
-        public JobManager(AzureQueue queue)
+        public JobManager(AzureQueue queue, AccessManager amgr)
         {
+            var vfs = amgr.GetFullAccessFileSystem();
+
+            _pdfHandler = new PdfHandler(vfs);
+            _outputFiles = new OutputFiles(vfs);
+
             _queue = queue;
         }
-
-        public async Task<string[]> GetAsync()
+        
+        public void Process()
         {
-            List<string> messages = new List<string>();
+            var msg = _queue.TryGetMessageAsync().Result;
 
-            for(int i=0; i<10; i++)
-            {
-                var msg = await _queue.TryGetMessageAsync();
+            if (msg == null)
+                return;
 
-                if (msg == null)
-                    break;
+            Process(msg.Content);
 
-                messages.Add(msg.Content);
-            }
+            msg.Done();
+        }
 
-            return messages.ToArray();
+        void Process(string name)
+        {
+            var fileList = _pdfHandler.Process(name, "input", "output");
+
+            _outputFiles.Save(name, fileList);
         }
     }
 }

@@ -20,6 +20,8 @@ namespace ParserFrontend.Pages
 
         public void OnGet()
         {
+            _jobMgr.Process();
+
             var queue = _jobMgr.GetAsync().Result;
 
             Message = String.Join(" | ",queue);

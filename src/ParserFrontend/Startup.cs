@@ -36,7 +36,8 @@ namespace ParserFrontend
 
             if(azureQueueConfig != null)
             {
-                services.AddSingleton<JobManager>(new JobManager(AzureQueue.OpenAsync(azureQueueConfig).Result));
+                services.AddSingleton(AzureQueue.OpenAsync(azureQueueConfig).Result);
+                services.AddSingleton<JobManager>();
             }
 
             services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
