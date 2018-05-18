@@ -21,7 +21,14 @@ namespace ParserFrontend.Backend
         {
             while(!cancellationToken.IsCancellationRequested)
             {
-                await _jobManager.MessageLoopAsync();
+                try
+                {
+                    await _jobManager.MessageLoopAsync();
+                }
+                catch
+                {
+
+                }
                 await Task.Delay(10000);
             }
         }

@@ -26,7 +26,8 @@ namespace ParserFrontend.Logic
                 if (msg == null)
                     return;
 
-                _job.Process(msg.Content);
+                try { _job.Process(msg.Content); }
+                catch { }                
 
                 msg.Done();
             }
