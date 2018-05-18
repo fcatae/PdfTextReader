@@ -67,7 +67,7 @@ namespace ParserFrontend.Logic
             string filename = comps[comps.Length - 1];
 
             var comps2 = filename.Split(".");
-            string basename = comps[0];
+            string basename = comps2[0];
 
             return basename;
         }
