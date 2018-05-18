@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using ParserFrontend.Backend;
 using ParserFrontend.Logic;
 using PdfTextReader;
 using PdfTextReader.Azure.Queue;
@@ -38,6 +40,9 @@ namespace ParserFrontend
             {
                 services.AddSingleton(AzureQueue.OpenAsync(azureQueueConfig).Result);
                 services.AddSingleton<JobManager>();
+                services.AddSingleton<JobProcess>();
+
+                services.AddSingleton<IHostedService, JobManagerHostedService>();
             }
 
             services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
