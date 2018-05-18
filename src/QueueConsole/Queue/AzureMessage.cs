@@ -4,14 +4,8 @@ using System.Text;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Queue;
 
-namespace QueueConsole.Queue
+namespace PdfTextReader.Azure.Queue
 {
-    public interface IQueueMessage
-    {
-        string Content { get; }
-        void Done();
-    }
-
     public class AzureQueueMessage : IQueueMessage
     {
         private readonly CloudQueueMessage _internalMessage;

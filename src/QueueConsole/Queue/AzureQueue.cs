@@ -7,7 +7,7 @@ using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Newtonsoft.Json;
 
-namespace QueueConsole.Queue
+namespace PdfTextReader.Azure.Queue
 {
     public class AzureQueue : IStorageQueue
     {

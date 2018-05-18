@@ -1,6 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using PdfTextReader.Azure;
-using QueueConsole.Queue;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;

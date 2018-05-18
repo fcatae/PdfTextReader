@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QueueConsole.Queue
+namespace PdfTextReader.Azure.Queue
 {
     public interface IStorageQueue
     {
