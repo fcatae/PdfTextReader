@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ParserFrontend.Logic;
 using PdfTextReader;
+using PdfTextReader.Azure.Queue;
 
 namespace ParserFrontend
 {
@@ -28,8 +29,15 @@ namespace ParserFrontend
             string configFullAccess = Configuration["PDFTEXTREADER_FRONTEND_FULLACCESS"];
             bool hasFullAccess = (configFullAccess != null) && Boolean.Parse(configFullAccess);
 
+            string azureQueueConfig = Configuration["PDFTEXTREADER_FRONTEND_QUEUE"];
+
             IVirtualFS2 virtualFS = (String.IsNullOrEmpty(azureStorage)) ?
                 (IVirtualFS2)new WebVirtualFS() : new AzureFS(azureStorage);
+
+            if(azureQueueConfig != null)
+            {
+                services.AddSingleton<JobManager>(new JobManager(AzureQueue.OpenAsync(azureQueueConfig).Result));
+            }
 
             services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
             services.AddMvc();
