@@ -26,6 +26,8 @@ namespace ParserFrontend.Logic
                 if (msg == null)
                     return;
 
+                Console.WriteLine("MessageLoopAsync: " + msg.Content);
+
                 try { _job.Process(msg.Content); }
                 catch { }                
 
