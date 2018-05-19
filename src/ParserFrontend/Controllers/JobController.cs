@@ -20,6 +20,8 @@ namespace ParserFrontend.Controllers
         [Route("{*name}")]
         public bool Start(string name)
         {
+            Console.WriteLine($"ParserFrontend: JobController [{name}]");
+
             _job.Process(name);
 
             return true;
