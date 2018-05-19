@@ -10,6 +10,7 @@ namespace ParserFrontend.Logic
     {
         AzureQueue _queue;
         JobProcess _job;
+        JobProcessHttp _jobHttp = new JobProcessHttp();
 
         public JobManager(AzureQueue queue, JobProcess job)
         {
@@ -28,8 +29,10 @@ namespace ParserFrontend.Logic
 
                 Console.WriteLine("MessageLoopAsync: " + msg.Content);
 
-                try { _job.Process(msg.Content); }
-                catch { }                
+                _jobHttp.Process(msg.Content);
+
+                //try { _job.Process(msg.Content); }
+                //catch { }                
 
                 msg.Done();
             }
