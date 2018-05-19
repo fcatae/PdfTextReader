@@ -16,7 +16,7 @@ namespace ParserFrontend.Logic
             if (_client == null)
             {
                 _client = new HttpClient();
-                _url = Environment.GetEnvironmentVariable("HTTP_HOST")?.TrimEnd('/');
+                _url = Environment.GetEnvironmentVariable("APPSETTING_WEBSITE_SITE_NAME")?.TrimEnd('/');
                 Console.WriteLine("JobProcessHttp: URL = " + _url);
             }
 
