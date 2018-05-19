@@ -9,15 +9,15 @@ namespace ParserFrontend.Logic
     public class JobProcessHttp
     {
         HttpClient _client;
-        string _url;
+        string _sitename;
 
         HttpClient GetClient()
         {
             if (_client == null)
             {
                 _client = new HttpClient();
-                _url = Environment.GetEnvironmentVariable("APPSETTING_WEBSITE_SITE_NAME")?.TrimEnd('/');
-                Console.WriteLine("JobProcessHttp: URL = " + _url);
+                _sitename = Environment.GetEnvironmentVariable("APPSETTING_WEBSITE_SITE_NAME")?.TrimEnd('/');
+                Console.WriteLine("JobProcessHttp: URL = " + _sitename);
             }
 
             return _client;
@@ -26,7 +26,7 @@ namespace ParserFrontend.Logic
         public void Process(string name)
         {
             Console.WriteLine($"JobProcessHttp: Process Start [{name}]");
-            GetClient().PostAsync($"http://{_url}/job/{name}", new StringContent("")).Wait();
+            GetClient().PostAsync($"http://{_sitename}.azurewebsites.net/job/{name}", new StringContent("")).Wait();
             Console.WriteLine($"JobProcessHttp: Process End [{name}]");
         }
     }
