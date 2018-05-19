@@ -23,6 +23,8 @@ namespace ParserFrontend.Logic
 
         public void Process(string name)
         {
+            name = name.ToLower();
+
             bool isFullPath = (name.Contains(".pdf") || name.Contains("/"));
 
             if(isFullPath)
