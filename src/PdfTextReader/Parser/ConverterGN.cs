@@ -121,16 +121,17 @@ namespace PdfTextReader.Parser
 
         XmlNode GetBodyTexto(XmlDocument doc)
         {
-            var text = doc.SelectSingleNode("xml/article/body/Texto");
+            var text = doc.SelectSingleNode("xml/article/body/Texto").InnerText.Replace("</p>","</p>\n");
+            
             var identifica = doc.SelectSingleNode("xml/article/body/Identifica");
             var assinaturas = doc.SelectSingleNode("xml/article/body/Autores")
                                 .ChildNodes
                                 .Cast<XmlNode>()
-                                .Where(x => x.Value != null)
-                                .Select(x => $"<p class='{x.Name}'>{x.Value}</p>")
+                                .Where(x => !String.IsNullOrEmpty(x.InnerText))
+                                .Select(x => $"<p class='{x.Name}'>{x.InnerText}</p>")
                                 .ToArray();
                                 
-            string newbody = $"<p class=\"identifica\">{identifica.InnerText}</p>\n{text.InnerText}\n{String.Join("\n",assinaturas)}";
+            string newbody = $"<p class=\"identifica\">{identifica.InnerText}</p>\n{text}\n{String.Join("\n",assinaturas)}";
 
             return doc.CreateCDataSection(newbody);
         }
