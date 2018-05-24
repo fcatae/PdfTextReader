@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Linq;
+using System.IO;
 
 namespace PdfTextReader.Parser
 {
@@ -47,6 +48,11 @@ namespace PdfTextReader.Parser
             xmlArticle.Attributes.Append(artEditionNumber);
 
             var xmlBody = xmlArticle.SelectSingleNode("body");
+
+            var xmlTexto = xmlBody.SelectSingleNode("Texto");
+            var bodyTexto = GetBodyTexto(doc);
+            xmlTexto.InnerXml = bodyTexto.OuterXml;
+
             var bodyHierarquia = xmlBody.SelectSingleNode("Hierarquia");
             xmlBody.RemoveChild(bodyHierarquia);
 
@@ -57,9 +63,9 @@ namespace PdfTextReader.Parser
             var xmlData = doc.CreateElement("Data");
             xmlBody.InsertAfter(xmlData, xmlIdentifica);
 
-            var xmlTexto = xmlArticle.SelectSingleNode("Texto");            
+            string output = GetPrettyXml(doc);
 
-            return doc.InnerXml;
+            return output;
         }
 
         string GenerateArticleId()
@@ -111,6 +117,40 @@ namespace PdfTextReader.Parser
         string GetEditionNumber()
         {
             return "?";
+        }
+
+        XmlNode GetBodyTexto(XmlDocument doc)
+        {
+            var text = doc.SelectSingleNode("xml/article/body/Texto");
+            var identifica = doc.SelectSingleNode("xml/article/body/Identifica");
+            var assinaturas = doc.SelectSingleNode("xml/article/body/Autores")
+                                .ChildNodes
+                                .Cast<XmlNode>()
+                                .Where(x => x.Value != null)
+                                .Select(x => $"<p class='{x.Name}'>{x.Value}</p>")
+                                .ToArray();
+                                
+            string newbody = $"<p class=\"identifica\">{identifica.InnerText}</p>\n{text.InnerText}\n{String.Join("\n",assinaturas)}";
+
+            return doc.CreateCDataSection(newbody);
+        }
+
+        string GetPrettyXml(XmlDocument doc)
+        {
+            var settings = new XmlWriterSettings()
+            {
+                OmitXmlDeclaration = true,
+                Indent = true
+            };
+
+            var stringWriter = new StringWriter();
+
+            using (XmlWriter writer = XmlWriter.Create(stringWriter, settings))
+            {
+                doc.WriteTo(writer);
+            }
+
+            return stringWriter.ToString();
         }
     }
 }
