@@ -6,6 +6,7 @@
     ViewData["Title"] = "View";
     string doc_name = @ViewBag.Name;
 }
+
 <form class="show-form" asp-route="Process_Reprocess">
     <div class="row">
         <h2 class="col-md-12">
@@ -14,7 +15,7 @@
         </h2>
     </div>
 </form>
-
+<p><a href="/documents/@doc_name/tree">Download</a></p>
 <div class="row">
     <document-output-tree name="@doc_name"></document-output-tree>
 </div>
