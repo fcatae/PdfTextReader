@@ -124,12 +124,15 @@ namespace PdfTextReader.Parser
             var text = doc.SelectSingleNode("xml/article/body/Texto").InnerText.Replace("</p>","</p>\n");
             
             var identifica = doc.SelectSingleNode("xml/article/body/Identifica");
-            var assinaturas = doc.SelectSingleNode("xml/article/body/Autores")
+            var autores = doc.SelectSingleNode("xml/article/body/Autores");
+
+            var assinaturas = (autores != null) ? autores
                                 .ChildNodes
                                 .Cast<XmlNode>()
                                 .Where(x => !String.IsNullOrEmpty(x.InnerText))
                                 .Select(x => $"<p class='{x.Name}'>{x.InnerText}</p>")
-                                .ToArray();
+                                .ToArray() :
+                                new string[] { };
                                 
             string newbody = $"<p class=\"identifica\">{identifica.InnerText}</p>\n{text}\n{String.Join("\n",assinaturas)}";
 
