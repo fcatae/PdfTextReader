@@ -59,5 +59,11 @@ namespace PdfTextReader
                 return context.FileListOutput;
             }
         }
+
+        public static string ConvertGN(string pdf, string article, string content)
+        {
+            var gn = new ConverterGN();
+            return gn.Convert(pdf, article, content);
+        }
     }
 }

@@ -54,9 +54,17 @@ namespace ParserFrontend.Controllers
         public string ShowDetailedArticle(string name, int id)
         {
             string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
+
+            return PdfTextReader.ExampleStages.ConvertGN(name, id.ToString(), artigo);
+        }
+
+        [Route("{name}/art/{id}")]
+        public string ShowArticle(string name, int id)
+        {
+            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
             return artigo;
         }
-        
+
         [Route("{name}/{act}")]
         public object Show(string name, string act)
         {
