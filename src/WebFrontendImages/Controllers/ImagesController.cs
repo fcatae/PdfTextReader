@@ -36,7 +36,6 @@ namespace WebFrontendImages.Controllers
         // http://localhost/api/images/DO1_2016_01_06/pages/1/resize?x=0&y=0&w=1&h=1
         //
         [HttpGet("{document}/pages/{page}/resize")]
-        [ResponseCache(VaryByQueryKeys = new string[] {"*"}, Duration = 80000)]
         public Task<IActionResult> ResizeAsync(string document, int page, [FromQuery]int x, [FromQuery]int y, [FromQuery]int w, [FromQuery]int h)
         {
             float tx = x / 100.0F;

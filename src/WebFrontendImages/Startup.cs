@@ -30,6 +30,7 @@ namespace WebFrontendImages
                 throw new ArgumentNullException(nameof(sourceImages));
 
             services.AddSingleton<ImageSource>(new ImageSource(sourceImages));
+            services.AddResponseCaching();
 
             services.AddMvc();
         }
@@ -41,7 +42,8 @@ namespace WebFrontendImages
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
+            app.UseResponseCaching();
             app.UseMvc();
         }
     }
