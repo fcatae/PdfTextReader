@@ -18,14 +18,19 @@ namespace WebFrontendImages.Controllers
         }
 
         [HttpGet]
+        public Task<IActionResult> GetAsync() => GetAsync("DO1_2016_01_06", 1);
+
+        // Example:
+        // http://localhost/api/images/DO1_2016_01_06/pages/1
+        //
+        [HttpGet("{document}/pages/{page}")]
         public async Task<IActionResult> GetAsync(string document, int page)
         {
-            var img = await _source.GetAsync("DO1_2016_01_06/page_1.jpg");
+            var img = await _source.GetAsync($"{document}/page_{page}.jpg");
 
             return new FileStreamResult(img, "image/jpeg");
         }
 
-        [HttpGet("{document}/pages/{page}")]
         public string GetImage(string document, int page)
         {
             return "value";
