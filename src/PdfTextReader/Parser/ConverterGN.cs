@@ -50,7 +50,7 @@ namespace PdfTextReader.Parser
             var xmlBody = xmlArticle.SelectSingleNode("body");
 
             var xmlTexto = xmlBody.SelectSingleNode("Texto");
-            var bodyTexto = GetBodyTexto(doc);
+            var bodyTexto = GetBodyTexto(pdf, doc);
             xmlTexto.InnerXml = bodyTexto.OuterXml;
 
             var bodyHierarquia = xmlBody.SelectSingleNode("Hierarquia");
@@ -119,9 +119,15 @@ namespace PdfTextReader.Parser
             return "?";
         }
 
-        XmlNode GetBodyTexto(XmlDocument doc)
+        XmlNode GetBodyTexto(string docname, XmlDocument doc)
         {
-            var text = doc.SelectSingleNode("xml/article/body/Texto").InnerText.Replace("</p>","</p>\n");
+            var text = doc.SelectSingleNode("xml/article/body/Texto")
+                .InnerText
+                //[[[IMG(page=1,50.3414,39.14461,275.953,133.7223)]]]
+                //.Replace("/api/images/DO1_2010_01_04/parser/IMG(page=1,50.3414,39.14461,275.953,133.7223)")
+                
+                .Replace("[[[", $"\n<img src='/images/{docname}/").Replace("]]]", "'>\n")
+                .Replace("</p>","</p>\n");
             
             var identifica = doc.SelectSingleNode("xml/article/body/Identifica");
             var autores = doc.SelectSingleNode("xml/article/body/Autores");
