@@ -70,5 +70,19 @@ namespace ParserFrontend.Controllers
         {
             return new { docname = name, action = act };
         }
+        
+        [Route("{name}/articles/{id}/html")]
+        public IActionResult ShowHtmlArticle(string name, int id)
+        {
+            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
+
+            string xml = PdfTextReader.ExampleStages.ConvertGN(name, id.ToString(), artigo);
+
+            var doc = new System.Xml.XmlDocument();
+            doc.LoadXml(xml);
+            var texto = doc.SelectSingleNode("xml/article/body/Texto").InnerText;
+
+            return Content(texto, "text/html");
+        }
     }
 }
