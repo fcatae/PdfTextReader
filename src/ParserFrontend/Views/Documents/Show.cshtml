@@ -7,21 +7,23 @@
     string doc_name = @ViewBag.Name;
 }
 
-<form class="show-form" asp-route="Process_Reprocess">
-    <div class="row">
-        <h2 class="col-md-12">
-            <span>@doc_name</span>
-            <button class="btn right button-reprocess">Reprocess</button>
-        </h2>
-    </div>
-</form>
+<div class="row">
+    <h2 class="col-md-12">@doc_name</h2>
+</div>
+
 <p><a href="/documents/@doc_name/tree">Download</a></p>
+
 <div class="row">
     <document-output-tree name="@doc_name"></document-output-tree>
 </div>
 
-<div class="row">
-    <div class="embed-responsive embed-responsive-16by9">
-        <iframe class="embed-responsive-item" src="/Documents/@doc_name/output"></iframe>
+<h3>Logs</h3>
+<a href="/documents/@ViewBag.Name/logs">Pdf Log</a>
+
+<form class="show-form" asp-route="Process_Reprocess">
+    <div class="row">
+        <h2 class="col-md-12">
+            <button class="btn right button-reprocess">Reprocess</button>
+        </h2>
     </div>
-</div>
+</form>

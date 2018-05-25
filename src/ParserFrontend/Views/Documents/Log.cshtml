@@ -1,0 +1,18 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "View";
+    string doc_name = @ViewBag.Name;
+}
+
+<div class="row">
+    <h2 class="col-md-12">@doc_name</h2>
+</div>
+
+<div class="row">
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="/Documents/@doc_name/output"></iframe>
+    </div>
+</div>

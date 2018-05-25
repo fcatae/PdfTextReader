@@ -109,5 +109,12 @@ namespace ParserFrontend.Controllers
 
             return View("ShowArticleHtml");
         }
+
+        [Route("{name}/logs")]
+        public IActionResult Log(string name)
+        {
+            ViewBag.Name = name;
+            return View();
+        }
     }
 }
