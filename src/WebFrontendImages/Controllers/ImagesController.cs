@@ -47,7 +47,22 @@ namespace WebFrontendImages.Controllers
 
         // TABLE(page=2,49.018,776.8651,390.361,830.812)
         [HttpGet("{document}/parser/TABLE(page={page},{docx1},{docy1},{docx2},{docy2})")]
-        public Task<IActionResult> LegacyResizeAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
+        public Task<IActionResult> LegacyResizeTableAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
+        {
+            const float A4_height = 907F;
+            const float A4_width = 822F;
+
+            float tx = docx1 / A4_width;
+            float ty = (A4_height - docy2) / A4_height;
+            float tw = (docx2 - docx1 + 2) / A4_width;
+            float th = (docy2 - docy1 + 2) / A4_height;
+
+            return InternalResizeAsync(document, page, tx, ty, tw, th);
+        }
+
+        // IMG(page=2,49.018,776.8651,390.361,830.812)
+        [HttpGet("{document}/parser/IMG(page={page},{docx1},{docy1},{docx2},{docy2})")]
+        public Task<IActionResult> LegacyResizeImageAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
         {
             const float A4_height = 907F;
             const float A4_width = 822F;
