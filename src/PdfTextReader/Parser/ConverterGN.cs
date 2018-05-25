@@ -9,7 +9,6 @@ namespace PdfTextReader.Parser
 {
     class ConverterGN
     {
-        const string INVALID_PDF_PAGE = "http://http://www.imprensanacional.gov.br";
         Jornal _jornal;
 
         public string Convert(string pdf, string article, string content)
@@ -21,36 +20,17 @@ namespace PdfTextReader.Parser
 
             var xmlArticle = doc.GetElementsByTagName("article")[0];
 
-            var artPubName = doc.CreateAttribute("pubName");
-            artPubName.Value = GetPubName(pdf);
-
-            var artArtType = doc.CreateAttribute("artType");
-            artArtType.Value = GetArtType();
-
-            var artPubDate = doc.CreateAttribute("pubDate");
-            artPubDate.Value = GetPubDate(pdf);
-
-            var artArtCategory = doc.CreateAttribute("artCategory");
-            artArtCategory.Value = GetArtCategory(doc);
-
             //var artNumberPage = doc.CreateAttribute("numberPage");
             //artNumberPage.Value = GetNumberPage(doc);
 
-            string pubdate = GetPubDate(pdf);
             string numberPage = GetNumberPage(doc);
-
-            var artPdfPage = doc.CreateAttribute("pdfPage");
-            artPdfPage.Value = GetPdfPage(pubdate, _jornal.JornalTypeId, numberPage);
-
-            var artEditionNumber = doc.CreateAttribute("editionNumber");
-            artEditionNumber.Value = GetEditionNumber();
             
-            xmlArticle.Attributes.Append(artPubName);
-            xmlArticle.Attributes.Append(artArtType);
-            xmlArticle.Attributes.Append(artPubDate);
-            xmlArticle.Attributes.Append(artArtCategory);
-            xmlArticle.Attributes.Append(artPdfPage);
-            xmlArticle.Attributes.Append(artEditionNumber);
+            AddAttribute(xmlArticle, "pubName", _jornal.PubName);
+            AddAttribute(xmlArticle, "artType", GetArtType());
+            AddAttribute(xmlArticle, "pubDate", _jornal.PubDate);
+            AddAttribute(xmlArticle, "artCategory", GetArtCategory(doc));
+            AddAttribute(xmlArticle, "pdfPage", _jornal.GetDocumentPageUrl(numberPage));
+            AddAttribute(xmlArticle, "editionNumber", _jornal.GetEditionNumber());
 
             var xmlBody = xmlArticle.SelectSingleNode("body");
 
@@ -73,29 +53,21 @@ namespace PdfTextReader.Parser
             return output;
         }
 
-        string GenerateArticleId()
+        void AddAttribute(XmlNode xmlArticle, string attributeName, string value)
         {
-            return "1";
-        }
+            if (value == null)
+                return;
 
-        string GetPubName(string pdf)
-        {
-            string[] comps = pdf.Split('_');
-            return comps[0];
-        }
+            var doc = xmlArticle.OwnerDocument;
+            var attrib = doc.CreateAttribute(attributeName);
+            attrib.Value = value;
 
-        string GetPubDate(string pdf)
-        {
-            string[] comps = pdf.Split('_');
-            string year = comps[1];
-            string month = comps[2];
-            string day = comps[3];
-            return $"{day}/{month}/{year}";
+            xmlArticle.Attributes.Append(attrib);
         }
 
         string GetArtType()
         {
-            return "?";
+            return null;
         }
 
         string GetArtCategory(XmlDocument doc)
@@ -111,22 +83,6 @@ namespace PdfTextReader.Parser
             return doc.SelectSingleNode("xml/article/@numberPage").Value;
         }
         
-        string GetPdfPage(string pubdate, string jornal, string pagina)
-        {
-            if (jornal == "" || jornal == "-1" || jornal == "0")
-                return INVALID_PDF_PAGE;
-
-            string baseUrl = "http://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp";
-            string query = $"?data={pubdate}&jornal={jornal}&pagina={pagina}";
-
-            return baseUrl + query;
-        }
-
-        string GetEditionNumber()
-        {
-            return "?";
-        }
-
         XmlNode GetBodyTexto(string docname, XmlDocument doc)
         {
             var text = doc.SelectSingleNode("xml/article/body/Texto")

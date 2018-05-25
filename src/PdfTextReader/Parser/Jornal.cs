@@ -7,15 +7,29 @@ namespace PdfTextReader.Parser
 {
     class Jornal
     {
+        const string GENERIC_PDF_PAGE = "http://www.imprensanacional.gov.br";
         const string DOCUMENTO_RECENTE_25_OUT_2017 = "2017_10_25";
 
-        int _jornalTypeId;
-
-        public string JornalTypeId => _jornalTypeId.ToString();
+        public string PubName { get; set; }
+        public string PubDate { get; set; }
+        public string DocumentUrl { get; set; }
+        
+        readonly Regex _jornalRegex = new Regex(@"(DO[123](_EXTRA)?)_(\d\d\d\d_\d\d_\d\d)");
 
         public Jornal(string pdf)
         {
-            _jornalTypeId = GetJornalIdentificador(pdf);
+            string file = pdf.ToUpper();
+
+            var match = _jornalRegex.Match(file);
+
+            if (!match.Success)
+                return;
+
+            string tipo = match.Groups[1].Value;
+            string data = match.Groups[3].Value;
+
+            PubName = tipo;
+            PubDate = data;
         }
 
         Dictionary<string, int> _entriesAntigos = new Dictionary<string, int>
@@ -41,19 +55,10 @@ namespace PdfTextReader.Parser
             { "DO3_EXTRA", 526}
         };
 
-        readonly Regex _jornalRegex = new Regex(@"(DO[123](_EXTRA)?)_(\d\d\d\d_\d\d_\d\d)");
-
-        int GetJornalIdentificador(string filename)
+        int GetJornalId()
         {
-            string file = filename.ToUpper();
-
-            var match =_jornalRegex.Match(file);
-
-            if (!match.Success)
-                return -1;
-
-            string tipo = match.Groups[1].Value;
-            string data = match.Groups[3].Value;
+            string tipo = this.PubName;
+            string data = this.PubDate;
 
             int recente = String.Compare(data, DOCUMENTO_RECENTE_25_OUT_2017);
 
@@ -61,7 +66,23 @@ namespace PdfTextReader.Parser
 
             return entrada[tipo];
         }
+        
+        public string GetDocumentPageUrl(string pagina)
+        {
+            if (String.IsNullOrEmpty(PubName) || String.IsNullOrEmpty(PubDate))
+                return null;
 
+            int jornalId = GetJornalId();
 
+            string baseUrl = "http://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp";
+            string query = $"?jornal={jornalId}&data={PubDate}&pagina={pagina}";
+
+            return baseUrl + query;
+        }
+
+        public string GetEditionNumber()
+        {
+            return null;
+        }
     }
 }
