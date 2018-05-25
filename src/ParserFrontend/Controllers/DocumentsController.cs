@@ -96,12 +96,14 @@ namespace ParserFrontend.Controllers
             var doc = new System.Xml.XmlDocument();
             doc.LoadXml(xml);
             var texto = doc.SelectSingleNode("xml/article/body/Texto").InnerText;
+            var pdfPage = doc.SelectSingleNode("xml/article/@pdfPage")?.InnerText;
 
             var html = $"<html><head><link rel='stylesheet' type='text/css' href='/css/gn.css'><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
 
             ViewBag.Name = name;
             ViewBag.Html = texto;
             ViewBag.ImageRatio = _imageRatio;
+            ViewBag.PdfPage = pdfPage ?? "";
 
             //return Content(html, "text/html");
 

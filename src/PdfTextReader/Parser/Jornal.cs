@@ -67,15 +67,22 @@ namespace PdfTextReader.Parser
             return entrada[tipo];
         }
         
+        string GetJornalDateDMY()
+        {
+            var comps = PubDate.Split('_');
+            return $"{comps[2]}/{comps[1]}/{comps[0]}";
+        }
+
         public string GetDocumentPageUrl(string pagina)
         {
             if (String.IsNullOrEmpty(PubName) || String.IsNullOrEmpty(PubDate))
                 return null;
 
             int jornalId = GetJornalId();
+            string date = GetJornalDateDMY();
 
             string baseUrl = "http://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp";
-            string query = $"?jornal={jornalId}&data={PubDate}&pagina={pagina}";
+            string query = $"?jornal={jornalId}&data={date}&pagina={pagina}";
 
             return baseUrl + query;
         }
