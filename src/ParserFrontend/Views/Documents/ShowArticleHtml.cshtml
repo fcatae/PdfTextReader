@@ -11,10 +11,9 @@
     body {
         font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
-
-    img.pdf {
-        transform: scale(0.3);
-        transform-origin: left;
+    
+    p.image {
+        text-align: center;
     }
 
     p.identifica {
@@ -42,3 +41,24 @@
     </div>
 </div>
 
+<script>
+(function() {
+    var ratio = 3;
+
+    function resizeImage(img, w, h) {
+        img.width = w;
+        img.height = h;
+    };
+
+    var imgs = document.getElementsByTagName('img');
+    for (var i = 0; i < imgs.length; i++) {
+        var img = imgs[i];
+        img.id = "img" + i;
+
+        img.onload = function () {
+            var thisImage = this;
+            resizeImage(thisImage, thisImage.width / ratio, thisImage.height / ratio);
+        }
+    }
+})();    
+</script>

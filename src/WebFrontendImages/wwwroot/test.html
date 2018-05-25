@@ -8,5 +8,26 @@
     <style>
     </style>
     <img src="/api/images/DO1_2016_01_06/pages/1/resize?x=30&y=30&w=30&h=30"/>
+    <script>
+        
+        var imgs = document.getElementsByTagName('img');
+        var ratio = 4;
+
+        function resizeImage(img, w, h) {
+            img.width = w;
+            img.height = h;
+        };
+        
+        for (var i = 0; i < imgs.length; i++) {
+            var img = imgs[i];
+
+            img.onload = function() {
+                resizeImage(img, img.width / ratio, img.height / ratio);
+            }            
+        }
+
+        
+
+    </script>
 </body>
 </html>
