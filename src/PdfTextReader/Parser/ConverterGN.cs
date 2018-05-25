@@ -9,8 +9,13 @@ namespace PdfTextReader.Parser
 {
     class ConverterGN
     {
+        const string INVALID_PDF_PAGE = "http://http://www.imprensanacional.gov.br";
+        Jornal _jornal;
+
         public string Convert(string pdf, string article, string content)
         {
+            _jornal = new Jornal(pdf);
+
             XmlDocument doc = new XmlDocument();
             doc.LoadXml("<xml>" + content + "</xml>");
 
@@ -35,7 +40,7 @@ namespace PdfTextReader.Parser
             string numberPage = GetNumberPage(doc);
 
             var artPdfPage = doc.CreateAttribute("pdfPage");
-            artPdfPage.Value = GetPdfPage(pubdate, "515", numberPage);
+            artPdfPage.Value = GetPdfPage(pubdate, _jornal.JornalTypeId, numberPage);
 
             var artEditionNumber = doc.CreateAttribute("editionNumber");
             artEditionNumber.Value = GetEditionNumber();
@@ -105,11 +110,14 @@ namespace PdfTextReader.Parser
         {
             return doc.SelectSingleNode("xml/article/@numberPage").Value;
         }
-
+        
         string GetPdfPage(string pubdate, string jornal, string pagina)
         {
+            if (jornal == "" || jornal == "-1" || jornal == "0")
+                return INVALID_PDF_PAGE;
+
             string baseUrl = "http://pesquisa.in.gov.br/imprensa/jsp/visualiza/index.jsp";
-            string query = $"?data={pubdate}&amp;jornal={jornal}&amp;pagina={pagina}";
+            string query = $"?data={pubdate}&jornal={jornal}&pagina={pagina}";
 
             return baseUrl + query;
         }
