@@ -60,22 +60,22 @@ namespace ParserFrontend.Controllers
         }
 
         [Route("{name}/articles/{id}")]
-        public IActionResult ShowDetailedArticle(string name, int id)
+        public IActionResult ShowArticle(string name, int id)
+        {
+            return RedirectToRoute("Document_ArticleDefault");
+        }
+
+        [Route("{name}/articles/{id}/default", Name="Document_ArticleDefault")]
+        public IActionResult ShowArticleDefault(string name, int id)
         {
             return ShowArticleHtml(name, id);
         }
 
-        [Route("{name}/art/{id}")]
-        public string ShowArticle(string name, int id)
+        [Route("{name}/articles/{id}/text")]
+        public string ShowArticleText(string name, int id)
         {
             string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
             return artigo;
-        }
-
-        [Route("{name}/{act}")]
-        public object Show(string name, string act)
-        {
-            return new { docname = name, action = act };
         }
 
         [Route("{name}/articles/{id}/gn4")]
@@ -83,7 +83,7 @@ namespace ParserFrontend.Controllers
         {
             string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
 
-            return Content( PdfTextReader.ExampleStages.ConvertGN(name, id.ToString(), artigo) );
+            return Content( PdfTextReader.ExampleStages.ConvertGN(name, id.ToString(), artigo), "text/xml" );
         }
 
         [Route("{name}/articles/{id}.html")]
