@@ -90,7 +90,12 @@ namespace ParserFrontend.Controllers
 
             var html = $"<html><head><link rel='stylesheet' type='text/css' href='/css/gn.css'><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
 
-            return Content(html, "text/html");
+            ViewBag.Name = name;
+            ViewBag.Html = texto;
+
+            //return Content(html, "text/html");
+
+            return View("ShowArticleHtml");
         }
     }
 }

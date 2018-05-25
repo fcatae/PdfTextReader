@@ -1,0 +1,44 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "View";
+    string doc_name = @ViewBag.Name;
+}
+
+<style>
+    body {
+        font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    }
+
+    img.pdf {
+        transform: scale(0.3);
+        transform-origin: left;
+    }
+
+    p.identifica {
+        font-size: large;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    p.subtitulo {
+        font-size: larger;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    p.data, p.assina, p.cargo {
+        margin-left: 70%;
+    }
+</style>
+
+<div class="row"></div>
+
+<div class="row">
+    <div class="col-md-offset-2 col-md-8 col-md-offset-2">
+        <article-html text="@ViewBag.Html"></article-html>
+    </div>
+</div>
+
