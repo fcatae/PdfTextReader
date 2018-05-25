@@ -1,7 +1,7 @@
 Id:
     <jornal>-<data>-a<article>-p<pagina>-<posicao>
     
-    DO1-2017-01-25-a001-p40-0
+    DO1-2017-01-25-n001-p40-0
 
 Imagem:
 
