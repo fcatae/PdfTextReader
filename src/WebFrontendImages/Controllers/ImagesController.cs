@@ -17,9 +17,6 @@ namespace WebFrontendImages.Controllers
             this._source = source;
         }
 
-        [HttpGet]
-        public Task<IActionResult> GetAsync() => ResizeAsync("DO1_2016_01_06", 1, 0, 0, 50, 50);
-
         // Example:
         // http://localhost/api/images/DO1_2016_01_06/pages/1
         //

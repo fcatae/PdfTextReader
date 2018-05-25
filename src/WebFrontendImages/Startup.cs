@@ -31,7 +31,7 @@ namespace WebFrontendImages
 
             services.AddSingleton<ImageSource>(new ImageSource(sourceImages));
             services.AddResponseCaching();
-
+            
             services.AddMvc();
         }
 
@@ -44,6 +44,7 @@ namespace WebFrontendImages
             }
 
             app.UseResponseCaching();
+            app.UseStaticFiles();
             app.UseMvc();
         }
     }
