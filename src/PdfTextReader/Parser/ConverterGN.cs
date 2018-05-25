@@ -126,7 +126,7 @@ namespace PdfTextReader.Parser
                 //[[[IMG(page=1,50.3414,39.14461,275.953,133.7223)]]]
                 //.Replace("/api/images/DO1_2010_01_04/parser/IMG(page=1,50.3414,39.14461,275.953,133.7223)")
                 
-                .Replace("[[[", $"\n<img src='/images/{docname}/").Replace("]]]", "'>\n")
+                .Replace("[[[", $"</p>\n<p><img src='/images/{docname}/").Replace("]]]", "'></p>\n<p>")
                 .Replace("</p>","</p>\n");
             
             var identifica = doc.SelectSingleNode("xml/article/body/Identifica");

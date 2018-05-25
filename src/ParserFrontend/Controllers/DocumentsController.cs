@@ -71,7 +71,7 @@ namespace ParserFrontend.Controllers
             return new { docname = name, action = act };
         }
         
-        [Route("{name}/articles/{id}/html")]
+        [Route("{name}/articles/{id}.html")]
         public IActionResult ShowHtmlArticle(string name, int id)
         {
             string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
@@ -82,7 +82,9 @@ namespace ParserFrontend.Controllers
             doc.LoadXml(xml);
             var texto = doc.SelectSingleNode("xml/article/body/Texto").InnerText;
 
-            return Content(texto, "text/html");
+            var html = $"<html><head><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
+
+            return Content(html, "text/html");
         }
     }
 }
