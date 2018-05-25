@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using WebFrontendImages.Logic;
 
 namespace WebFrontendImages
 {
@@ -23,6 +24,13 @@ namespace WebFrontendImages
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            string sourceImages = Configuration["SOURCE_IMAGES"];
+
+            if (String.IsNullOrEmpty(sourceImages))
+                throw new ArgumentNullException(nameof(sourceImages));
+
+            services.AddSingleton<ImageSource>(new ImageSource(sourceImages));
+
             services.AddMvc();
         }
 
@@ -33,7 +41,7 @@ namespace WebFrontendImages
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseMvc();
         }
     }
