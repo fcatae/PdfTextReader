@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using ParserFrontend.Logic;
 
 namespace ParserFrontend.Controllers
@@ -10,13 +11,21 @@ namespace ParserFrontend.Controllers
     [Route("[controller]")]
     public class DocumentsController : Controller
     {
-        OutputFiles _outputFiles;
+        public class Config
+        {
+            public float ImageRatio { get; set; }
+        }
 
-        public DocumentsController(AccessManager amgr)
+        OutputFiles _outputFiles;
+        float _imageRatio;
+
+        public DocumentsController(AccessManager amgr, IOptions<Config> options)
         {
             var vfs = amgr.GetReadOnlyFileSystem();
 
             _outputFiles = new OutputFiles(vfs);
+
+            _imageRatio = options.Value.ImageRatio;
         }
 
         public object Index()
@@ -92,6 +101,7 @@ namespace ParserFrontend.Controllers
 
             ViewBag.Name = name;
             ViewBag.Html = texto;
+            ViewBag.ImageRatio = _imageRatio;
 
             //return Content(html, "text/html");
 

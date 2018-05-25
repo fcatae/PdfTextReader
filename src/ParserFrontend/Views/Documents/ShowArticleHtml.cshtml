@@ -14,6 +14,8 @@
     
     p.image {
         text-align: center;
+        max-width: 100%;
+        margin: 0;
     }
 
     p.identifica {
@@ -41,24 +43,27 @@
     </div>
 </div>
 
+@if (ViewBag.ImageRatio > 0)
+{
 <script>
-(function() {
-    var ratio = 3;
+    (function() {
+        var ratio = @ViewBag.ImageRatio;
 
-    function resizeImage(img, w, h) {
-        img.width = w;
-        img.height = h;
-    };
+        function resizeImage(img, w, h) {
+            img.width = w;
+            img.height = h;
+        };
 
-    var imgs = document.getElementsByTagName('img');
-    for (var i = 0; i < imgs.length; i++) {
-        var img = imgs[i];
-        img.id = "img" + i;
+        var imgs = document.getElementsByTagName('img');
+        for (var i = 0; i < imgs.length; i++) {
+            var img = imgs[i];
+            img.id = "img" + i;
 
-        img.onload = function () {
-            var thisImage = this;
-            resizeImage(thisImage, thisImage.width / ratio, thisImage.height / ratio);
+            img.onload = function () {
+                var thisImage = this;
+                resizeImage(thisImage, thisImage.width / ratio, thisImage.height / ratio);
+            }
         }
-    }
-})();    
-</script>
+    })();    
+    </script>
+}
