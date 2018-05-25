@@ -82,7 +82,7 @@ namespace ParserFrontend.Controllers
             doc.LoadXml(xml);
             var texto = doc.SelectSingleNode("xml/article/body/Texto").InnerText;
 
-            var html = $"<html><head><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
+            var html = $"<html><head><link rel='stylesheet' type='text/css' href='/css/gn.css'><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
 
             return Content(html, "text/html");
         }

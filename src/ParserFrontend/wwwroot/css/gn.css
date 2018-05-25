@@ -1,0 +1,23 @@
+﻿body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+img.pdf {
+    width: 50%;
+}
+
+p.identifica {
+    font-size: large;
+    font-weight: bold;
+    text-align: center;
+}
+
+p.subtitulo {
+    font-size: larger;
+    font-weight: bold;
+    text-align: center;
+}
+
+p.data, p.assina, p.cargo {
+    float: right;
+}
