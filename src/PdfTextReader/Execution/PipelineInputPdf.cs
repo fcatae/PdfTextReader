@@ -358,6 +358,9 @@ namespace PdfTextReader.Execution
                 var parser = new PdfCanvasProcessor(listener);
                 parser.ProcessPageContent(_pdfPage);
 
+                // retrieve page size. where to store?
+                var pageSize = _pdfPage.GetPageSize();
+
                 var page = new PipelinePage(_pdf,  _pageNumber);
 
                 page.LastResult = listener.GetResults();
