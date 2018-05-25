@@ -3,7 +3,8 @@
 }
 
 img.pdf {
-    width: 50%;
+    transform: scale(0.3);
+    transform-origin: left;
 }
 
 p.identifica {
@@ -19,5 +20,5 @@ p.subtitulo {
 }
 
 p.data, p.assina, p.cargo {
-    float: right;
+    margin-left: 70%;
 }
