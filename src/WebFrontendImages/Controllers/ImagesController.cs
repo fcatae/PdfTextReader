@@ -24,6 +24,7 @@ namespace WebFrontendImages.Controllers
         // http://localhost/api/images/DO1_2016_01_06/pages/1
         //
         [HttpGet("{document}/pages/{page}")]
+        [ResponseCache(Duration = 80000)]
         public async Task<IActionResult> GetAsync(string document, int page)
         {
             var img = await _source.GetAsync($"{document}/page_{page}.jpg");
@@ -35,6 +36,7 @@ namespace WebFrontendImages.Controllers
         // http://localhost/api/images/DO1_2016_01_06/pages/1/resize?x=0&y=0&w=1&h=1
         //
         [HttpGet("{document}/pages/{page}/resize")]
+        [ResponseCache(VaryByQueryKeys = new string[] {"*"}, Duration = 80000)]
         public Task<IActionResult> ResizeAsync(string document, int page, [FromQuery]int x, [FromQuery]int y, [FromQuery]int w, [FromQuery]int h)
         {
             float tx = x / 100.0F;
@@ -47,6 +49,7 @@ namespace WebFrontendImages.Controllers
 
         // TABLE(page=2,49.018,776.8651,390.361,830.812)
         [HttpGet("{document}/parser/TABLE(page={page},{docx1},{docy1},{docx2},{docy2})")]
+        [ResponseCache(Duration=80000)]
         public Task<IActionResult> LegacyResizeTableAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
         {
             const float A4_height = 907F;
@@ -62,6 +65,7 @@ namespace WebFrontendImages.Controllers
 
         // IMG(page=2,49.018,776.8651,390.361,830.812)
         [HttpGet("{document}/parser/IMG(page={page},{docx1},{docy1},{docx2},{docy2})")]
+        [ResponseCache(Duration = 80000)]
         public Task<IActionResult> LegacyResizeImageAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
         {
             const float A4_height = 907F;
