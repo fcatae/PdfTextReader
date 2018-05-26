@@ -88,5 +88,20 @@ namespace ParserFrontend.Logic
                 return content;
             }
         }
+
+        public bool ExistsArtigo(string basename, int idArtigo)
+        {
+            bool exists = false;
+            try
+            {
+                using (var stream = OpenReader(basename, "artigosGN", idArtigo.ToString()))
+                {
+                    exists = true;
+                }
+            }
+            catch { }
+
+            return exists;
+        }
     }
 }

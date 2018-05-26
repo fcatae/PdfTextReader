@@ -59,57 +59,6 @@ namespace ParserFrontend.Controllers
             return _outputFiles.GetOutputTree(name).ToString();
         }
 
-        [Route("{name}/articles/{id}")]
-        public IActionResult ShowArticle(string name, int id)
-        {
-            return RedirectToRoute("Document_ArticleDefault");
-        }
-
-        [Route("{name}/articles/{id}/default", Name="Document_ArticleDefault")]
-        public IActionResult ShowArticleDefault(string name, int id)
-        {
-            return ShowArticleHtml(name, id);
-        }
-
-        [Route("{name}/articles/{id}/text")]
-        public string ShowArticleText(string name, int id)
-        {
-            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
-            return artigo;
-        }
-
-        [Route("{name}/articles/{id}/gn4")]
-        public IActionResult ShowArticleGN4(string name, int id)
-        {
-            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
-
-            return Content( PdfTextReader.ExampleStages.ConvertGN(name, id.ToString(), artigo), "text/xml" );
-        }
-
-        [Route("{name}/articles/{id}.html")]
-        public IActionResult ShowArticleHtml(string name, int id)
-        {
-            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
-
-            string xml = PdfTextReader.ExampleStages.ConvertGN(name, id.ToString(), artigo);
-
-            var doc = new System.Xml.XmlDocument();
-            doc.LoadXml(xml);
-            var texto = doc.SelectSingleNode("xml/article/body/Texto").InnerText;
-            var pdfPage = doc.SelectSingleNode("xml/article/@pdfPage")?.InnerText;
-
-            var html = $"<html><head><link rel='stylesheet' type='text/css' href='/css/gn.css'><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
-
-            ViewBag.Name = name;
-            ViewBag.Html = texto;
-            ViewBag.ImageRatio = _imageRatio;
-            ViewBag.PdfPage = pdfPage ?? "";
-
-            //return Content(html, "text/html");
-
-            return View("ShowArticleHtml");
-        }
-
         [Route("{name}/logs")]
         public IActionResult Log(string name)
         {

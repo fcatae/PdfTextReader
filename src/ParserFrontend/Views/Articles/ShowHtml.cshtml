@@ -11,7 +11,7 @@
     body {
         font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
     }
-    
+
     p.image {
         text-align: center;
         max-width: 100%;
@@ -51,9 +51,20 @@
     </div>
 </div>
 
+<div class="row">
+    <div class="col-sm-12"><hr /></div>
+    <div class="col-sm-offset-2 col-sm-1">
+        <a asp-route="Articles_Previous" asp-route-name="@ViewBag.Name" asp-route-id="@ViewBag.Id">Anterior</a>
+    </div>
+    <div class="col-sm-6"></div>
+    <div class="col-sm-1">
+        <a asp-route="Articles_Next" asp-route-name="@ViewBag.Name" asp-route-id="@ViewBag.Id">Proximo</a>
+    </div>
+</div>
+
 @if (ViewBag.ImageRatio > 0)
 {
-<script>
+    <script>
     (function() {
         var ratio = @ViewBag.ImageRatio;
 
@@ -72,6 +83,6 @@
                 resizeImage(thisImage, thisImage.width / ratio, thisImage.height / ratio);
             }
         }
-    })();    
+    })();
     </script>
 }
