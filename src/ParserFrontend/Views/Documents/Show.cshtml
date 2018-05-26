@@ -18,13 +18,22 @@
 </div>
 
 <h3>Logs</h3>
-<a href="/documents/@ViewBag.Name/logs/stage0-input">Stage0</a>
-<a href="/documents/@ViewBag.Name/logs/stage1-margins">Stage1</a>
-<a href="/documents/@ViewBag.Name/logs/stage2-blocksets">Stage2</a>
-<a href="/documents/@ViewBag.Name/logs/stage3">Stage3</a>
-<a href="/documents/@ViewBag.Name/logs/show-central">ShowCentral</a>
-<a href="/documents/@ViewBag.Name/logs/titles">Titles</a>
 
+<div class="row">
+    <h4 class="col-sm-1">Blocks</h4>
+    <div class="col-sm-1"><a class="btn btn-default" href="/documents/@doc_name/logs/stage0-input">Stage0</a></div>
+    <div class="col-sm-1"><a class="btn btn-default" href="/documents/@doc_name/logs/stage1-margins">Stage1</a></div>
+    <div class="col-sm-1"><a class="btn btn-default" href="/documents/@doc_name/logs/stage2-blocksets">Stage2</a></div>
+    <div class="col-sm-1"><a class="btn btn-primary" href="/documents/@doc_name/logs/stage3">Stage3</a></div>
+</div>
+<div class="row"><br></div>
+<div class="row">
+    <h4 class="col-sm-1">Sequential</h4>
+    <div class="col-sm-1"><a class="btn btn-default" href="/documents/@doc_name/logs/show-central">Central</a></div>
+    <div class="col-sm-1"><a class="btn btn-primary" href="/documents/@doc_name/tree">Summary</a></div>
+    <div class="col-sm-1"><a class="btn btn-primary" href="/documents/@doc_name/logs/titles">Titles</a></div>
+
+</div>
 
 <form class="show-form" asp-route="Process_Reprocess">
     <div class="row">
