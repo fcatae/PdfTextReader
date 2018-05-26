@@ -38,6 +38,8 @@ namespace PdfTextReader.ParserStages
                         .Log<AnalyzeStructuresCentral>($"{_context.OutputFilePrefix}-analyze-structures-central.txt");
 
             _context.SetPipelineText<TextStructure>(result);
+
+            _context.AddOutput("show-central", $"{_context.OutputFilePrefix}-show-central.pdf");
         }
 
         void GetLines(PipelineInputPdf.PipelineInputPdfPage page)

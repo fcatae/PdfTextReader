@@ -41,6 +41,12 @@ namespace ParserFrontend.Controllers
             return View();
         }
 
+        [Route("{name}/output/{logfile}")]
+        public IActionResult ShowLogOutput(string name, string logfile)
+        {
+            return new FileStreamResult(_outputFiles.GetLogFile(name, logfile), "application/pdf");
+        }
+
         [Route("{name}/output", Name = "Document_Output")]
         public IActionResult ShowOutput(string name)
         {
@@ -60,9 +66,18 @@ namespace ParserFrontend.Controllers
         }
 
         [Route("{name}/logs")]
-        public IActionResult Log(string name)
+        public object LogfileList(string name)
+        {
+            var fileList = _outputFiles.Load(name);
+
+            return fileList;
+        }
+
+        [Route("{name}/logs/{logname}")]
+        public IActionResult Log(string name, string logname)
         {
             ViewBag.Name = name;
+            ViewBag.LogName = logname;
             return View();
         }
     }

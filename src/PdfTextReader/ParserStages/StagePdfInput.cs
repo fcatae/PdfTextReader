@@ -29,6 +29,8 @@ namespace PdfTextReader.ParserStages
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-stage0-input.pdf")
                     .StageProcess(InitialCache);
+
+            _context.AddOutput("stage0-input", $"{_context.OutputFilePrefix}-stage0-input.pdf");
         }
 
         void InitialCache(PipelineInputPdf.PipelineInputPdfPage page)

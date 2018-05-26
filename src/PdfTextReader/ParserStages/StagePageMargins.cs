@@ -27,6 +27,8 @@ namespace PdfTextReader.ParserStages
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-stage1-margins.pdf")
                     .StageProcess(ShowColors);
+            
+            _context.AddOutput("stage1-margins", $"{_context.OutputFilePrefix}-stage1-margins.pdf");
         }
 
         void FindMargins(PipelineInputPdf.PipelineInputPdfPage page)

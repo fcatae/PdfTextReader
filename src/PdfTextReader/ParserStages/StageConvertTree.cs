@@ -34,6 +34,7 @@ namespace PdfTextReader.ParserStages
 
             _context.SetPipelineText<TextSegment>(resultPipeline);
 
+            _context.AddOutput("titles", $"{_context.OutputFilePrefix}-titles.pdf");
             _context.AddOutput("tree", $"{_context.OutputFilePrefix}-tree.txt");
         }
 

@@ -44,9 +44,31 @@ namespace ParserFrontend.Logic
             var fileList = Load(basename);
 
             if (!fileList.ContainsKey(file))
+            {
+                // plan B: if the fileList hasn't been updated yet
+                // eg, because the filelist is old
+                string staticFilename = GetStaticFilename(basename, file);
+
+                if (staticFilename != null)
+                    return staticFilename;
+
                 throw new FileNotFoundException($"basename={basename}; file={file}");
+            }
 
             return fileList[file];
+        }
+
+        string GetStaticFilename(string basename, string filename)
+        {
+            if( filename == "stage0-input" ||
+                filename == "stage1-margins" ||
+                filename == "stage2-blocksets" ||
+                filename == "show-central" ||
+                filename == "titles")
+            {
+                return $"output/{basename}/{basename}-{filename}.pdf";
+            }
+            return null;
         }
 
         Stream OpenReader(string basename, string file)
@@ -62,6 +84,12 @@ namespace ParserFrontend.Logic
             string filename = String.Format(filename_format, arg1);
 
             return _webFs.OpenReader(filename);
+        }
+
+
+        public Stream GetLogFile(string basename, string logfile)
+        {
+            return OpenReader(basename, logfile);
         }
 
         public Stream GetOutputFile(string basename)
@@ -88,7 +116,7 @@ namespace ParserFrontend.Logic
                 return content;
             }
         }
-
+        
         public bool ExistsArtigo(string basename, int idArtigo)
         {
             bool exists = false;

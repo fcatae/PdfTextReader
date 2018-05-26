@@ -27,6 +27,8 @@ namespace PdfTextReader.ParserStages
             pipeline.Input($"{_context.InputFilePrefix}.pdf")
                     .Output($"{_context.OutputFilePrefix}-stage2-blocksets.pdf")
                     .StageProcess(ShowColors);
+
+            _context.AddOutput("stage2-blocksets", $"{_context.OutputFilePrefix}-stage2-blocksets.pdf");
         }
 
         void FindBlocksets(PipelineInputPdf.PipelineInputPdfPage page)
