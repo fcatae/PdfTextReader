@@ -14,7 +14,7 @@ namespace PdfTextReader
 {
     public class ExampleStages
     {
-        public static Dictionary<string,string> RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
+        public static Dictionary<string, string> RunParserPDF(IVirtualFS virtualFS, string basename, string inputfolder, string outputfolder)
         {
             VirtualFS.ConfigureFileSystem(virtualFS);
 
@@ -64,6 +64,22 @@ namespace PdfTextReader
         {
             var gn = new ConverterGN();
             return gn.Convert(pdf, article, content);
+        }
+
+        public static string ExtractHeader(string basename)
+        {
+            var virtualFS = new VirtualFS();
+            VirtualFS.ConfigureFileSystem(virtualFS);
+
+            PdfReaderException.ContinueOnException();
+
+            using (var context = new ParserStages.StageContext(basename, "input", "output"))
+            {
+                var extract = new ParserStages.StageExtractHeaderDOU(context);
+                extract.Process();
+
+                return context.FileListOutput.ToString();
+            }
         }
     }
 }
