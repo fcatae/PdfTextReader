@@ -9,10 +9,7 @@ namespace PdfTextReader.PDFCore
 {
     class ExtractDouHeaderInfo : IProcessBlock
     {
-        public ExtractDouHeaderInfo(PageInfoStats pageInfo)
-        {
-            this._pageInfo = pageInfo;
-        }
+        PageInfoStats _pageInfoStats;
 
         const float CONSIDERED_VERY_SMALL_FONTSIZE = 0.3f;
         const float SAME_LINE_SMALL_FONTSIZE = 0.1f;
@@ -20,13 +17,16 @@ namespace PdfTextReader.PDFCore
         readonly Regex _regexJornal = new Regex(@"(.+)Nº(.+)");
         readonly Regex _regexISSN = new Regex(@"ISSN(\d+)(.)(\d+)");
         readonly Regex _regexLocalData = new Regex(@"(.*),(.*),(\d+)de(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)(.*)de(\d+)");
-        private PageInfoStats _pageInfo;
+
+        public PageInfoStats InfoStats => _pageInfoStats;
 
         public BlockPage Process(BlockPage page)
         {
-            if (_pageInfo.Header != null)
+            if (_pageInfoStats != null)
                 return page;
 
+            PageInfoStats pageInfo = new PageInfoStats();
+            
             var headerInfo = new PageInfoStats.HeaderInfo();
 
             int fieldsCompleted = 0;
@@ -68,7 +68,9 @@ namespace PdfTextReader.PDFCore
                 }
             }
 
-            _pageInfo.SetInfo(headerInfo);
+            pageInfo.SetInfo(headerInfo);
+
+            _pageInfoStats = pageInfo;
 
             return page;
         }

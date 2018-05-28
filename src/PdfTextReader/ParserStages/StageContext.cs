@@ -3,6 +3,7 @@ using PdfTextReader.Configuration;
 using PdfTextReader.Execution;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace PdfTextReader.ParserStages
@@ -76,6 +77,16 @@ namespace PdfTextReader.ParserStages
             where T: class, IExecutionConfiguration
         {
             _pipeline.Config<T>(filename, optional);
+        }
+
+        public void WriteFile(string name, string filepath, string content)
+        {
+            using (var file = VirtualFS.OpenWrite(filepath))
+            using (var writer = new StreamWriter(file))
+            {
+                writer.Write(content);
+            }
+            AddOutput(name, filepath);
         }
 
         public void Dispose()

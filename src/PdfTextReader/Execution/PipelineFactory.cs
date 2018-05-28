@@ -25,7 +25,8 @@ namespace PdfTextReader.Execution
             RegisterAssemblyComponents(builder, Assembly.GetExecutingAssembly());
 
             builder.RegisterGeneric(typeof(PipelinePageStats<>)).AsSelf();
-
+            builder.RegisterGeneric(typeof(PipelineGlobalStats<>)).AsSelf();
+            
             return builder.Build();
 
         }

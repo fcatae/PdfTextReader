@@ -26,16 +26,16 @@ namespace PdfTextReader.ParserStages
             string basename = _context.Basename;
             Pipeline pipeline = _context.GetPipeline();
 
-            pipeline.Input($"{_context.InputFilePrefix}.pdf")
-                    .StageProcess(FindHeaderInformation);
-        }
+            var page = pipeline.Input($"{_context.InputFilePrefix}.pdf")
+                    .Page(1)
+                    .ParsePdf<ProcessPdfText>()
+                    .ParseBlock<ExtractDouHeaderInfo>();
 
-        void FindHeaderInformation(PipelineInputPdf.PipelineInputPdfPage page)
-        {
-            page
-                .Global<PageInfoStats>()
-                .ParsePdf<ProcessPdfText>()
-                .ParseBlock<ExtractDouHeaderInfo>();
+            var extract = page.CreateInstance<ExtractDouHeaderInfo>();
+            var infoStats = extract.InfoStats;
+            string content = infoStats.ToString();
+
+            _context.WriteFile("header", $"{_context.OutputFilePrefix}-header.txt", content);
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -21,6 +22,14 @@ namespace PdfTextReader.PDFCore
         public void SetInfo(HeaderInfo headerInfo )
         {
             this.Header = headerInfo;
+        }
+
+        public override string ToString()
+        {
+            if (this.Header == null)
+                return "";
+
+            return JsonConvert.SerializeObject(this.Header, Formatting.Indented);
         }
     }
 }
