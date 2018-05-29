@@ -87,6 +87,7 @@ namespace PdfTextReader.Parser
                 idxStartPos = pos + 1;
 
                 FindSignatures(segmentBody, idxStartPos, idxEndPos);
+                pos++;
             }
 
             // Define the body tags
@@ -96,6 +97,10 @@ namespace PdfTextReader.Parser
                 {
                     if (line.TextAlignment == TextAlignment.CENTER)
                         line.Tag = TaggedSegmentEnum.Subtitulo;
+                    else if (line.TextStructure.Text.Contains("[[[TABLE"))
+                        line.Tag = TaggedSegmentEnum.Table;
+                    else if (line.TextStructure.Text.Contains("[[[IMG"))
+                        line.Tag = TaggedSegmentEnum.Image;
                 }
             }
 

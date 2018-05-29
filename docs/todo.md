@@ -3,12 +3,22 @@
 - Gerar ID de artigo
 - Gerar ID de imagem 
 - Gerar Imagens Resized
+- Obter informações do cabeçalho
+- write diario.txt
+- rewrite artigoGN body
+- rewrite do framework de escrita
+- rewrite segment body (usando a diferenca de espacamento)
+
+Criacao de artigos intermediarios (JSON?) + diario.txt
 Corrigir erros de assinatura e hifenização (fazer releitura do JSON)
 Reconhecedor de datas ementas e assinaturas - concentrado em um unico
-
 Adicionar \t a direita para indicar margem direita
-Obser informações do cabeção
 
+- rewrite assinatura (<i>) - caso especifico
+: testar
+
+- rewrite headers (h1, h2, h3...)
+: funciona???
 
 Portal segregado por ano
 Arvore de todos os ministerios: necessario um banco de dados

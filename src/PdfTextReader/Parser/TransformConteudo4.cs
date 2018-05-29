@@ -103,19 +103,29 @@ namespace PdfTextReader.Parser
                         className = "cargo"; break;
                     case TaggedSegmentEnum.Data:
                         className = "data"; break;
-
+                    case TaggedSegmentEnum.Image:
+                        className = "imagem"; break;
+                    case TaggedSegmentEnum.Table:
+                        className = "tabela"; break;
                     default:
                         className = "corpo";break;
                 }
 
                 string text = CleanupHyphens(b.TextStructure.Text);
+                
+                if(b.Tag == TaggedSegmentEnum.Image || b.Tag == TaggedSegmentEnum.Table)
+                {
+                    string imgPlaceholder = text.Trim('\n');
+                    //string imgname = text.Replace("[[[", "").Replace("]]]", "").Replace("\n", "");
+                    return $"<p class='{className} pdf-{classNamePos}'>{imgPlaceholder}</p>";
+                }
 
                 if(b.TextAlignment == TextAlignment.JUSTIFY && text.Contains("\t"))
                 {
-                    text = text.Replace("\n\t", $"</p>\n<p class='{className} {classNamePos}'>\t");
+                    text = text.Replace("\n\t", $"</p>\n<p class='{className} pdf-{classNamePos}'>\t");
                 }
 
-                return $"<p class='{className} {classNamePos}'>{text}</p>";
+                return $"<p class='{className} pdf-{classNamePos}'>{text}</p>";
             });
 
             return String.Join("\n", lines);

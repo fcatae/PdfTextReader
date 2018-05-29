@@ -6,7 +6,7 @@ namespace PdfTextReader.Base
 {
     enum TaggedSegmentEnum
     {
-        None, Hierarquia, Titulo, Subtitulo, Ementa, Assinatura, Cargo, Data
+        None, Hierarquia, Titulo, Subtitulo, Ementa, Assinatura, Cargo, Data, Image, Table
     };
 
     class TextTaggedSegment
