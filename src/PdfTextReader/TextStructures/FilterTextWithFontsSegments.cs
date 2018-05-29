@@ -122,6 +122,7 @@ namespace PdfTextReader.Parser
 
         Func<TextStructure, bool> KeepTitle(TextStructure[] body)
         {
+            // usa o sumario para definir o tamanho da fonte padrao 
             if(_bodyCompare == null)
             {
                 _bodyCompare = (body.Length > 0) ? body[0] : null;
