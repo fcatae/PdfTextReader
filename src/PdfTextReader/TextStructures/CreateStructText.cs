@@ -43,7 +43,8 @@ namespace PdfTextReader.TextStructures
                     //if (lastWasImage)
                     //    yield return "";
 
-                    yield return "";
+                    if (lastStructure != null)
+                        yield return "";
 
                     //if (lastStructure != null && lastStructure.TextAlignment != structure.TextAlignment)
                     //    yield return "";
@@ -72,7 +73,7 @@ namespace PdfTextReader.TextStructures
                 BodyText = text
             };
 
-            return input[0];
+            return newseg;
         }
 
         public void Init(TextSegment line)
@@ -89,8 +90,7 @@ namespace PdfTextReader.TextStructures
             }
             else if (s.TextAlignment == TextAlignment.JUSTIFY)
             {
-                return s.Text.Replace("\n", "\n\n");
-                //return s.Text.Replace("\t", "\n\t").TrimStart('\n');
+                return s.Text.Replace("\n\t", "\n\n\t");
             }
 
             if (s.TextAlignment == TextAlignment.CENTER)
@@ -99,7 +99,8 @@ namespace PdfTextReader.TextStructures
             if (s.TextAlignment == TextAlignment.RIGHT)
                 prefix = "\t\t\t\t";
 
-            var lines = s.Text.Split('\n').Select(l => prefix + l);
+            string prefixTab(string lin) => (lin != "") ? prefix + lin : lin;
+            var lines = s.Text.Split('\n').Select(prefixTab);
 
             string text = String.Join("\n", lines);
 

@@ -25,7 +25,8 @@ namespace PdfTextReader.ParserStages
             var pipelineText = _context.GetPipelineText<TextSegment>();
 
             var resultPipeline = pipelineText
-                            .ConvertText<CreateStructText, TextSegment>();
+                            .ConvertText<CreateStructText, TextSegment>(true)
+                            .Log<AnalyzeSegmentTextVersion>($"{_context.OutputFilePrefix}-text-version.txt");
 
             _context.SetPipelineText<TextSegment>(resultPipeline);
         }
