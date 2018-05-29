@@ -74,7 +74,11 @@ namespace PdfTextReader.Parser
         {
             var nodes = doc.SelectNodes("xml/article/body/Hierarquia/Classe").Cast<XmlNode>();
             var hierarquiaClasses = nodes.Select(x => x.InnerText.Replace("/", "")).ToList();
-            hierarquiaClasses.RemoveAt(hierarquiaClasses.Count - 1);
+
+            // fix old xml schemas
+            if(hierarquiaClasses.Count >= 1)
+                hierarquiaClasses.RemoveAt(hierarquiaClasses.Count - 1);
+
             return String.Join("/", hierarquiaClasses);
         }
 

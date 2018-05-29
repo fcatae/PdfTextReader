@@ -125,6 +125,11 @@ namespace PdfTextReader.Parser
                     text = text.Replace("\n\t", $"</p>\n<p class='{className} pdf-{classNamePos}'>\t");
                 }
 
+                if(b.Tag != TaggedSegmentEnum.Ementa && b.TextAlignment == TextAlignment.RIGHT)
+                {
+                    text = text.Trim('\n').Replace("\n", "<br>\n");
+                }
+
                 return $"<p class='{className} pdf-{classNamePos}'>{text}</p>";
             });
 

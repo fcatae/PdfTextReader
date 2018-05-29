@@ -68,7 +68,7 @@ namespace PdfTextReader
 
         public static string ConvertGN(string pdf, string article, string content)
         {
-            var gn = new ConverterGN();
+            var gn = new Converter2GN();
             return gn.Convert(pdf, article, content);
         }
 
