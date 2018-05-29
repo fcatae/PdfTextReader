@@ -120,6 +120,8 @@ namespace PdfTextReader.Parser
 
                     autor = new Autor();
                     autor.Assinatura = b.TextStructure.Text;
+
+                    ModificaAutorMultiplasLinhas(autor);
                 }
 
                 // ignora cargo por enquanto
@@ -134,6 +136,28 @@ namespace PdfTextReader.Parser
 
             if (autor != null)
                 yield return autor;
+        }
+
+        void ModificaAutorMultiplasLinhas(Autor autor)
+        {
+            string[] lines = autor.Assinatura.Split(new char[] { '\n' }, 2, StringSplitOptions.RemoveEmptyEntries);
+
+            if (lines.Length == 1)
+                return;
+
+            string assina = lines[0];
+            string linha2 = lines[1];
+
+            if(IsUppercase(assina) && (!IsUppercase(linha2)))
+            {
+                autor.Assinatura = assina;
+                autor.Cargo = lines[1];
+            }
+        }
+
+        bool IsUppercase(string assina)
+        {
+            return assina == assina.ToUpper();
         }
 
         string GenerateText(TextStructure s)
