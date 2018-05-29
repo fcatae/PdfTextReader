@@ -34,6 +34,11 @@ namespace PdfTextReader.ParserStages
         public string InputFilePrefix => $"{InputFolder}/{Basename}";
         public string OutputFilePrefix => $"{OutputFolder}/{Basename}/{Basename}";
         
+        public T CreateGlobalInstance<T>() where T : class
+        {
+            return _factoryContext.CreateGlobalInstance<T>();
+        }
+
         public Pipeline GetPipeline()
         {
             if (_pipeline == null)

@@ -1,4 +1,5 @@
 ﻿using PdfTextReader.Execution;
+using PdfTextReader.Parser;
 using PdfTextReader.PDFCore;
 using PdfTextReader.PDFText;
 using System;
@@ -34,6 +35,10 @@ namespace PdfTextReader.ParserStages
             var extract = page.CreateInstance<ExtractDouHeaderInfo>();
             var infoStats = extract.InfoStats;
             string content = infoStats.ToString();
+
+            var filename = _context.CreateGlobalInstance<InjectFilename>();
+            filename.Filename = _context.Basename;
+            filename.InfoStats = infoStats;
 
             _context.WriteFile("header", $"{_context.OutputFilePrefix}-header.txt", content);
         }

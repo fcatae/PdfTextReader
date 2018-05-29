@@ -11,7 +11,7 @@ namespace PdfTextReader.Parser
     {
         Jornal _jornal;
 
-        public string Convert(string pdf, string article, string content)
+        public string Convert(string pdf, string article, string content, string edition = null)
         {
             _jornal = new Jornal(pdf);
 
@@ -30,7 +30,7 @@ namespace PdfTextReader.Parser
             AddAttribute(xmlArticle, "pubDate", _jornal.PubDate);
             AddAttribute(xmlArticle, "artCategory", GetArtCategory(doc));
             AddAttribute(xmlArticle, "pdfPage", _jornal.GetDocumentPageUrl(numberPage));
-            AddAttribute(xmlArticle, "editionNumber", _jornal.GetEditionNumber());
+            AddAttribute(xmlArticle, "editionNumber", edition /*_jornal.GetEditionNumber()*/);
 
             var xmlBody = xmlArticle.SelectSingleNode("body");
 

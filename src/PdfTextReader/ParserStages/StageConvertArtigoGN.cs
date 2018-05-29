@@ -24,13 +24,18 @@ namespace PdfTextReader.ParserStages
         {
             var pipelineText = _context.GetPipelineText<TextSegment>();
 
+            var filename = _context.CreateGlobalInstance<InjectFilename>();
+            filename.Filename = _context.Basename;
+
             var artigos = pipelineText
                             .ConvertText<TransformConteudo2, Conteudo>()
                             .ConvertText<TransformArtigo2, Artigo>()
-                            .LogFiles<GenerateArtigoXml>($"{_context.OutputFolder}/{_context.Basename}/artigos/{_context.Basename}-artigo{{0}}.xml")
+                            .LogFiles<GenerateArtigoTmp>($"{_context.OutputFolder}/{_context.Basename}/artigos/{_context.Basename}-artigo{{0}}.xml")
+                            .LogFiles<GenerateArtigoGN4>($"{_context.OutputFolder}/{_context.Basename}/artigosGN4/{_context.Basename}-artigo{{0}}.xml")                            
                             .ToList();
 
             _context.AddOutput("artigosGN", $"{_context.OutputFolder}/{_context.Basename}/artigos/{_context.Basename}-artigo{{0}}.xml");
+            _context.AddOutput("artigosGN4", $"{_context.OutputFolder}/{_context.Basename}/artigosGN4/{_context.Basename}-artigo{{0}}.xml");
         }
     }
 }

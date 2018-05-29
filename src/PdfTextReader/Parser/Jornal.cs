@@ -87,9 +87,9 @@ namespace PdfTextReader.Parser
             return baseUrl + query;
         }
 
-        public string GetEditionNumber()
-        {
-            return null;
-        }
+        //public string GetEditionNumber()
+        //{
+        //    return null;
+        //}
     }
 }
