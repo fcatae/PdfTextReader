@@ -221,7 +221,7 @@ namespace PdfTextReader.Parser
                 // exception: italic = name
                 bool isItalic = b.TextStructure.FontStyle.Contains("Italic");
 
-                b.Tag = (IsUpperCase(text) || isItalic) ? TaggedSegmentEnum.Assinatura : TaggedSegmentEnum.Cargo;
+                b.Tag = (IsOneLineUpperCase(text) || isItalic) ? TaggedSegmentEnum.Assinatura : TaggedSegmentEnum.Cargo;
             }
 
             foreach (var b in bodyEnum)
@@ -238,6 +238,19 @@ namespace PdfTextReader.Parser
         {
             return text == text.ToUpper();
         }
+
+        bool IsOneLineUpperCase(string text)
+        {
+            string[] multipleLines = text.Split('\n');
+
+            foreach(var line in multipleLines)
+            {
+                if (IsUpperCase(line))
+                    return true;
+            }
+            return false;
+        }
+
 
         TextSegment ProcessExclusiveText(TextSegment segment)
         {
