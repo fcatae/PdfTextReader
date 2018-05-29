@@ -11,7 +11,7 @@ namespace PdfTextReader.TextStructures
     {
         int _id = 0;
         ProcessParser2 _procParser = new ProcessParser2();
-        ConverterGN _convert = new ConverterGN();
+        Converter2GN _convert = new Converter2GN();
         private InjectFilename _filename;
 
         public GenerateArtigoGN4(InjectFilename filename)

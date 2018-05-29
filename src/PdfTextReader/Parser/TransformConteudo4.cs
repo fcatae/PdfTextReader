@@ -24,76 +24,108 @@ namespace PdfTextReader.Parser
         public Conteudo Create(List<TextTaggedSegment> segments)
         {
             var segment = ProcessExclusiveText(segments[0].OriginalSegment);
+            var segmentBody = segments[0].Body;
 
             int page = -1;
             if (segment.Body.Count() > 0)
                 page = segment.Body[0].Lines[0].PageInfo.PageNumber;
-
-            string titulo = null;
-            string hierarchy = null;
-            string body = null;
-            string caput = null;
-            List<Autor> autores = null;
-
+                        
             // Hierarquia
             var hierarquiteTitulo = segment.Title.Select(t => CleanupBreaklinesAndHyphens(t.Text)).ToArray();
 
             // Texto
             string texto = segment.BodyText;
-
-
+            
             // Titulo
             int idxTitle = segment.Title.Count() - 1;
-            titulo = segment.Title[idxTitle].Text;
+            string titulo = (idxTitle >= 0) ? segment.Title[idxTitle].Text : "-";
 
             // Caput
-            var firstLine = segment.Body
-                                .Where(t => t.TextAlignment != TextAlignment.CENTER) // Skip the subtitles
-                                .First();
-                        
-            caput = (firstLine.TextAlignment == TextAlignment.RIGHT) ? firstLine.Text : null;
+            var firstLine = segmentBody
+                                .Where(t => t.Tag == TaggedSegmentEnum.Ementa)
+                                .FirstOrDefault();
+                                
+            string caput = firstLine?.TextStructure.Text;
 
             // Body
-            int idxEndPos = -1;
-            int idxStartPos = -1;
+            string body = ConvertBody(segmentBody);
 
-            for (int pos=segment.Body.Length-1; pos>=0; pos--)
-            {
-                var lastLine = segment.Body[pos];
-
-                // skip CENTERed text
-                while((lastLine.TextAlignment == TextAlignment.CENTER) && (pos >= 0))
-                {
-                    lastLine = segment.Body[pos--];
-                }
-
-                idxEndPos = pos + 1;
-
-                // find CENTERed text
-                while ((lastLine.TextAlignment != TextAlignment.CENTER) && (pos>=0))
-                {
-                    lastLine = segment.Body[pos--];
-                }
-
-                idxStartPos = pos + 1;
-
-                FindSignatures(segment.Body, idxStartPos, idxEndPos);
-            }
+            List<Autor> autores = ConvertAutores(segmentBody).ToList();
 
             return new Conteudo()
             {
                 IntenalId = _conteudoId++,
                 Page = page,
-                Hierarquia = hierarchy,
+                Hierarquia = null,
                 Titulo = CleanupBreaklinesAndHyphens(titulo),
                 Caput = CleanupBreaklinesAndHyphens(caput),
-                Corpo = ReplaceBreaklinesAndHyphensWithHtml(body),
+                Corpo = body,
                 Autor = autores,
                 Data = null,
                 Anexos = null,
                 HierarquiaTitulo = hierarquiteTitulo,
                 Texto = texto
             };
+        }
+
+        string ConvertBody(TextTaggedStructure[] body)
+        {
+            var lines = body.Select(b =>
+            {
+                string className = "";
+                string classNamePos = b.TextAlignment.ToString();
+
+                switch(b.Tag)
+                {
+                    case TaggedSegmentEnum.Titulo:
+                        className = "identifica"; break;
+                    case TaggedSegmentEnum.Subtitulo:
+                        className = "subtitulo"; break;
+                    case TaggedSegmentEnum.Ementa:
+                        className = "ementa"; break;
+                    case TaggedSegmentEnum.Assinatura:
+                        className = "assina"; break;
+                    case TaggedSegmentEnum.Cargo:
+                        className = "cargo"; break;
+                    case TaggedSegmentEnum.Data:
+                        className = "data"; break;
+                }
+
+                string text = CleanupHyphens(b.TextStructure.Text);
+
+                return $"<p class='{className} {classNamePos}'>{text}</p>";
+            });
+
+            return String.Join("\n", lines);
+        }
+
+        IEnumerable<Autor> ConvertAutores(TextTaggedStructure[] body)
+        {
+            Autor autor = null;
+
+            foreach(var b in body)
+            {
+                if(b.Tag == TaggedSegmentEnum.Assinatura)
+                {
+                    if (autor != null)
+                        yield return autor;
+
+                    autor = new Autor();
+                    autor.Assinatura = b.TextStructure.Text;
+                }
+
+                // ignora cargo por enquanto
+                //if(b.Tag == TaggedSegmentEnum.Cargo)
+                //{
+                //    if( autor != null)
+                //    {
+                //        autor.Cargo = 
+                //    }
+                //}
+            }
+
+            if (autor != null)
+                yield return autor;
         }
 
         string GenerateText(TextStructure s)
@@ -145,6 +177,20 @@ namespace PdfTextReader.Parser
             if (body == null) return null;
 
             return body.Replace("\n", " ");
+        }
+
+        string CleanupBreaklinesHtml(string body)
+        {
+            if (body == null) return null;
+
+            return body.Replace("\n", "<br>\n");
+        }
+
+        string CleanupBreaklinesAndHyphensHtml(string body)
+        {
+            if (body == null) return null;
+
+            return CleanupBreaklinesHtml(CleanupHyphens(body));
         }
 
         string CleanupBreaklinesAndHyphens(string body)

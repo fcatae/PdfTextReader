@@ -65,6 +65,7 @@ namespace PdfTextReader.Parser
             int idxEndPos = -1;
             int idxStartPos = -1;
 
+            // Find Signatures
             for (int pos=segmentBody.Length-1; pos>=0; pos--)
             {
                 var lastLine = segmentBody[pos];
@@ -86,6 +87,16 @@ namespace PdfTextReader.Parser
                 idxStartPos = pos + 1;
 
                 FindSignatures(segmentBody, idxStartPos, idxEndPos);
+            }
+
+            // Define the body tags
+            foreach(var line in segmentBody)
+            {
+                if( line.Tag == TaggedSegmentEnum.None )
+                {
+                    if (line.TextAlignment == TextAlignment.CENTER)
+                        line.Tag = TaggedSegmentEnum.Subtitulo;
+                }
             }
 
             return taggedSegment;
@@ -206,13 +217,19 @@ namespace PdfTextReader.Parser
             foreach(var b in bodyEnum)
             {
                 string text = b.TextStructure.Text;
-                b.Tag = (IsUpperCase(text) ) ? TaggedSegmentEnum.Assinatura : TaggedSegmentEnum.Cargo;
+
+                // exception: italic = name
+                bool isItalic = b.TextStructure.FontStyle.Contains("Italic");
+
+                b.Tag = (IsUpperCase(text) || isItalic) ? TaggedSegmentEnum.Assinatura : TaggedSegmentEnum.Cargo;
             }
 
             foreach (var b in bodyEnum)
             {
                 string text = b.TextStructure.Text;
-                if (IsDate(text))
+                bool singleLine = text.Contains("\n");
+
+                if (IsDate(text) && singleLine)
                     b.Tag = TaggedSegmentEnum.Data;
             }
         }
