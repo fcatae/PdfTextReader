@@ -105,6 +105,12 @@ namespace PdfTextReader.Execution
 
             return Log<TL>(file);
         }
+        public PipelineText<TT> LogFiles<TL>(string pattern)
+            where TL : class, ILogMultipleStructure<TT>
+        {
+            return CreateNewPipelineTextForLogging(PipelineTextLogFile<TL>(pattern, this.CurrentStream));
+        }
+
         public PipelineText<TT> ShowPdf<TL>(string filename)
             where TL : class, ILogStructurePdf<TT>
         {
@@ -176,7 +182,7 @@ namespace PdfTextReader.Execution
 
             // v2: pass pipeline context
             var loggerV2 = logger as ILogStructure2<TT>;
-            if( loggerV2 != null )
+            if (loggerV2 != null)
             {
                 loggerV2.Init(_indexTree);
             }
@@ -191,6 +197,23 @@ namespace PdfTextReader.Execution
             }
 
             logger.EndLog(file);
+        }
+
+        IEnumerable<TT> PipelineTextLogFile<TL>(string pattern, IEnumerable<TT> stream)
+            where TL : class, ILogMultipleStructure<TT>
+        {
+            TL logger = _factory.CreateGlobalInstance<TL>();
+            
+            foreach (var data in stream)
+            {
+                string id = logger.CreateId(data);
+                string filename = String.Format(pattern, id);
+
+                using (var file = VirtualFS.OpenWrite(filename))
+                logger.Log(id, file, data);
+
+                yield return data;
+            }
         }
 
         public void Dispose()

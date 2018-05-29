@@ -1,0 +1,129 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Xml;
+using PdfTextReader.Base;
+
+namespace PdfTextReader.Parser
+{
+    class ProcessParser2
+    {
+        public void XMLWriter(Artigo artigo, Stream virtualStream)
+        {
+            var settings = new XmlWriterSettings()
+            {
+                OmitXmlDeclaration = true, // omit XML declaration
+                Indent = true                
+            };
+
+            using (XmlWriter writer = XmlWriter.Create(virtualStream, settings))
+            {
+                writer.WriteStartDocument();
+                writer.WriteStartElement("article");
+
+                Conteudo conteudo = artigo.Conteudo;
+                Metadados metadados = artigo.Metadados;
+                List<Anexo> anexos = artigo.Anexos;
+
+                if (metadados.IdMateria != null)
+                    writer.WriteAttributeString("idmateria", metadados.IdMateria);
+
+                writer.WriteAttributeString("numberPage", metadados.NumeroDaPagina.ToString());
+
+                writer.WriteStartElement("body");
+
+                // Hierarquia
+                writer.WriteStartElement("Hierarquia");
+                foreach (var classe in conteudo.HierarquiaTitulo)
+                {
+                    writer.WriteElementString("Classe", classe);
+                }
+                writer.WriteEndElement();
+
+                // Artigo
+                writer.WriteStartElement("Artigo");
+                writer.WriteCData("\n" + conteudo.Texto + "\n");
+                writer.WriteEndElement();
+
+                //Writing Body
+                writer.WriteElementString("Identifica", ConvertBreakline2Space(metadados.Titulo));
+                writer.WriteElementString("Ementa", conteudo.Caput);
+
+                writer.WriteStartElement("Texto");
+                writer.WriteCData(conteudo.Corpo);
+                writer.WriteEndElement();
+
+                if (conteudo.Autor.Count > 0)
+                {
+                    writer.WriteStartElement("Autores");
+
+                    foreach (Autor autor in conteudo.Autor)
+                    {
+                        writer.WriteElementString("assina", ConvertBreakline2Space(autor.Assinatura));
+                        if (autor.Cargo != null)
+                        {
+                            writer.WriteElementString("cargo", ConvertBreakline2Space(autor.Cargo));
+                        }
+                    }
+
+                    writer.WriteEndElement();
+                }
+
+                if (conteudo.Data != null)
+                    writer.WriteElementString("Data", conteudo.Data);
+
+                writer.WriteEndElement(); // body
+
+                writer.WriteEndElement(); // article
+
+                writer.WriteEndDocument();
+
+            }
+        }
+
+        //private string ProcessName(Artigo artigo, string doc)
+        //{
+        //    string numpag = artigo.Metadados.NumeroDaPagina.ToString().PadLeft(4, '0');
+        //    string docFinalText = new DirectoryInfo(doc).Name;
+        //    string date = docFinalText.Substring(4, 10).Replace("_", "");
+        //    string globalId = docFinalText.Substring(21, docFinalText.Length - 21);
+        //    string modelNameGlobal = $"{date}-{globalId}";
+        //    string modelNameCustom = null;
+
+        //    if (numpag == initialPage)
+        //    {
+        //        modelNameCustom = $"{date}-{numpag}-{countPerPage++.ToString().PadLeft(2, '0')}";
+        //    }
+        //    else
+        //    {
+        //        initialPage = numpag;
+        //        countPerPage = 1;
+        //        modelNameCustom = $"{date}-{numpag}-{countPerPage.ToString().PadLeft(2, '0')}";
+        //    }
+
+
+        //    return doc.Replace(docFinalText, modelNameCustom);
+        //}
+
+        string ConvertBreakline2Space(string input)
+        {
+            if (input == null)
+                return null;
+
+            string output = input;
+            if (input != null && input.Length > 1)
+            {
+                output = input.Replace("\n", " ");
+                if (output.Contains(":"))
+                {
+                    output = output.Substring(0, output.Length - 1);
+                }
+                if (output.Substring(0, 1) == " ")
+                    output = output.Substring(1, output.Length - 1);
+            }
+            return output;
+        }
+    }
+}

@@ -1,5 +1,6 @@
 ﻿using PdfTextReader.Base;
 using PdfTextReader.Parser;
+using PdfTextReader.TextStructures;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,11 +27,8 @@ namespace PdfTextReader.ParserStages
             var artigos = pipelineText
                             .ConvertText<TransformConteudo2, Conteudo>()
                             .ConvertText<TransformArtigo2, Artigo>()
+                            .LogFiles<GenerateArtigoXml>($"{_context.OutputFolder}/{_context.Basename}/artigos/{_context.Basename}-artigo{{0}}.xml")
                             .ToList();
-
-            var createArticle = new TransformArtigo();
-            //var artigos = createArticle.Create(conteudo);
-            createArticle.CreateXML(artigos, $"{_context.OutputFolder}/{_context.Basename}/artigos", _context.Basename);
 
             _context.AddOutput("artigosGN", $"{_context.OutputFolder}/{_context.Basename}/artigos/{_context.Basename}-artigo{{0}}.xml");
         }

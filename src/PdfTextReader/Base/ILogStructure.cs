@@ -6,6 +6,12 @@ using System.Text;
 
 namespace PdfTextReader.Base
 {
+    interface ILogMultipleStructure<T>
+    {        
+        string CreateId(T data);
+        void Log(string id, Stream input, T data);
+    }
+
     interface ILogStructure<T>
     {
         void StartLog(TextWriter input);
