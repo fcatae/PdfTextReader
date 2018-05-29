@@ -30,8 +30,9 @@ namespace PdfTextReader.ParserStages
                             .ConvertText<CreateTreeSegments, TextSegment>(true)
                                 .ShowPdf<ShowTitleSegment>($"{_context.OutputFilePrefix}-titles.pdf")
                                 .Log<AnalyzeSegmentTitles>($"{_context.OutputFilePrefix}-analyze-segment-titles.txt")
+                                .Log<AnalyzeTreeStructureFontSize2>($"{_context.OutputFilePrefix}-tree-fontsize.txt")
                                 .Log<AnalyzeTreeStructure2>($"{_context.OutputFilePrefix}-tree.txt");
-
+            
             _context.SetPipelineText<TextSegment>(resultPipeline);
 
             _context.AddOutput("titles", $"{_context.OutputFilePrefix}-titles.pdf");

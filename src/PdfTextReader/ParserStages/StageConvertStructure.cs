@@ -29,7 +29,7 @@ namespace PdfTextReader.ParserStages
 
             var resultPipeline = pipelineText
                                     .ConvertText<CreateTextSegments, TextSegment>()
-                                    .ConvertText<FilterTextSegments, TextSegment>()
+                                    .ConvertText<FilterTextWithFontsSegments, TextSegment>()
                                     .ConvertText<AfterFilterTextSegments, TextSegment>();
 
             _context.SetPipelineText<TextSegment>(resultPipeline);
