@@ -34,7 +34,7 @@ namespace PdfTextReader.TextStructures
 
             string pdfname = _filename.Filename;
             string article = reader.ReadToEnd();
-            string edition = _filename.InfoStats.Header.JornalEdicao;
+            string edition = _filename?.InfoStats?.Header?.JornalEdicao ?? "";
             string result = _convert.Convert(pdfname, id, article, edition);
 
             using (var writer = new StreamWriter(input))
