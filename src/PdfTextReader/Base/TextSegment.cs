@@ -10,6 +10,8 @@ namespace PdfTextReader.Base
         public TextStructure[] OriginalTitle { get; set; }
         public TextStructure[] Title { get; set; }
         public TextStructure[] Body { get; set; }
+        public string TitleText { get; set; }
+        public string BodyText { get; set; }
 
         public override string ToString()
         {

@@ -44,6 +44,9 @@ namespace PdfTextReader
                 stageText2.Process();
                 //stageText2.ProcessWithConfiguration($"{outputfolder}/{basename}/{basename}-tree.config");
 
+                var stageText3 = new ParserStages.StageConvertStructText(context);
+                stageText3.Process();
+
                 var stageTextTree = new ParserStages.StageConvertTree(context);
                 stageTextTree.Process();
 
