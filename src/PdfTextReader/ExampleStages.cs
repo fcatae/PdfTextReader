@@ -25,6 +25,9 @@ namespace PdfTextReader
                 //var dbg0 = new ParserStages.StageDbgFlow(context);
                 //dbg0.Process();
 
+                var extract = new ParserStages.StageExtractHeaderDOU(context);
+                extract.Process();
+
                 var stage0 = new ParserStages.StagePdfInput(context);
                 stage0.Process();
 
