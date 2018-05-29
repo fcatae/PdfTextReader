@@ -89,9 +89,17 @@ namespace PdfTextReader.Parser
                         className = "cargo"; break;
                     case TaggedSegmentEnum.Data:
                         className = "data"; break;
+
+                    default:
+                        className = "corpo";break;
                 }
 
                 string text = CleanupHyphens(b.TextStructure.Text);
+
+                if(b.TextAlignment == TextAlignment.JUSTIFY && text.Contains("\t"))
+                {
+                    text = text.Replace("\n\t", $"</p>\n<p class='{className} {classNamePos}'>\t");
+                }
 
                 return $"<p class='{className} {classNamePos}'>{text}</p>";
             });
