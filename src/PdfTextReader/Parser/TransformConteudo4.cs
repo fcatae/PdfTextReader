@@ -11,6 +11,8 @@ namespace PdfTextReader.Parser
     class TransformConteudo4 : IAggregateStructure<TextTaggedSegment, Conteudo>
     {
         int _conteudoId = 0;
+        int _lastPage = -1;
+        int _lastInternalPid = -1;
 
         public void Init(TextTaggedSegment line)
         {
@@ -29,7 +31,14 @@ namespace PdfTextReader.Parser
             int page = -1;
             if (segment.Body.Count() > 0)
                 page = segment.Body[0].Lines[0].PageInfo.PageNumber;
-                        
+
+            if( _lastPage != page )
+            {
+                _lastPage = page;
+                _lastInternalPid = 0;
+            }
+            _lastInternalPid++;
+
             // Hierarquia
             var hierarquiteTitulo = segment.Title.Select(t => CleanupBreaklinesAndHyphens(t.Text)).ToArray();
 
@@ -52,10 +61,11 @@ namespace PdfTextReader.Parser
 
             List<Autor> autores = ConvertAutores(segmentBody).ToList();
 
-            return new Conteudo()
+            var conteudo = new Conteudo()
             {
-                IntenalId = _conteudoId++,
+                IntenalId = _conteudoId,
                 Page = page,
+                PID = $"{_conteudoId}-p{_lastPage}-{_lastInternalPid}",
                 Hierarquia = null,
                 Titulo = CleanupBreaklinesAndHyphens(titulo),
                 Caput = CleanupBreaklinesAndHyphens(caput),
@@ -66,6 +76,10 @@ namespace PdfTextReader.Parser
                 HierarquiaTitulo = hierarquiteTitulo,
                 Texto = texto
             };
+
+            _conteudoId++;
+
+            return conteudo;
         }
 
         string ConvertBody(TextTaggedStructure[] body)

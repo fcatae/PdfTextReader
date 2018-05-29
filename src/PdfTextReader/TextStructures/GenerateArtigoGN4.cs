@@ -21,7 +21,8 @@ namespace PdfTextReader.TextStructures
 
         public string CreateId(Artigo data)
         {
-            return (_id++).ToString();
+            // return (_id++).ToString();
+            return data.Conteudo.PID;
         }
 
         public void Log(string id, Stream input, Artigo data)
