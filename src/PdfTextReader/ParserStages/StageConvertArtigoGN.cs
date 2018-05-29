@@ -28,7 +28,8 @@ namespace PdfTextReader.ParserStages
             filename.Filename = _context.Basename;
 
             var artigos = pipelineText
-                            .ConvertText<TransformConteudo3, Conteudo>()
+                            .ConvertText<CreateTaggedSegments, TextTaggedSegment>()
+                            .ConvertText<TransformConteudo4, Conteudo>()
                             .ConvertText<TransformArtigo2, Artigo>()
                             .LogFiles<GenerateArtigoTmp>($"{_context.OutputFolder}/{_context.Basename}/artigos/{_context.Basename}-artigo{{0}}.xml")
                             .LogFiles<GenerateArtigoGN4>($"{_context.OutputFolder}/{_context.Basename}/artigosGN4/{_context.Basename}-artigo{{0}}.xml")                            
