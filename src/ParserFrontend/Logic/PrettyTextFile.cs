@@ -26,7 +26,7 @@ namespace ParserFrontend.Logic
         {
             int width = text.Split('\n').Max(l => l.Length);
 
-            if (width < 80)
+            if (width < 60)
                 return;
 
             _width = width;
@@ -78,6 +78,11 @@ namespace ParserFrontend.Logic
         {
             if (paras == "\n")
                 return new string[] { };
+
+            bool hasImageOrTable = paras.Contains("[[[IMG(") && paras.Contains("[[[TABLE");
+
+            if (hasImageOrTable)
+                return ProcessParagraphsCenter(paras);
 
             bool isAlignRight = paras.StartsWith("\t\t\t\t");
             bool isAlignCenter = paras.StartsWith("\t\t") && (!isAlignRight);
