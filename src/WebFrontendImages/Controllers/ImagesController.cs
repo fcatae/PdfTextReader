@@ -24,6 +24,9 @@ namespace WebFrontendImages.Controllers
         [ResponseCache(Duration = 80000)]
         public async Task<IActionResult> GetAsync(string document, int page)
         {
+            // dirty fix: documents are in upper case
+            document = document.ToUpper();
+            
             var img = await _source.GetAsync($"{document}/page_{page}.jpg");
 
             return new FileStreamResult(img, "image/jpeg");
@@ -35,6 +38,9 @@ namespace WebFrontendImages.Controllers
         [HttpGet("{document}/pages/{page}/resize")]
         public Task<IActionResult> ResizeAsync(string document, int page, [FromQuery]int x, [FromQuery]int y, [FromQuery]int w, [FromQuery]int h)
         {
+            // dirty fix: documents are in upper case
+            document = document.ToUpper();
+
             float tx = x / 100.0F;
             float ty = y / 100.0F;
             float tw = w / 100.0F;
@@ -48,6 +54,9 @@ namespace WebFrontendImages.Controllers
         [ResponseCache(Duration=80000)]
         public Task<IActionResult> LegacyResizeTableAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
         {
+            // dirty fix: documents are in upper case
+            document = document.ToUpper();
+
             const float A4_height = 907F;
             const float A4_width = 822F;
 
@@ -63,7 +72,10 @@ namespace WebFrontendImages.Controllers
         [HttpGet("{document}/parser/IMG(page={page},{docx1},{docy1},{docx2},{docy2})")]
         [ResponseCache(Duration = 80000)]
         public Task<IActionResult> LegacyResizeImageAsync(string document, int page, float docx1, float docy1, float docx2, float docy2)
-        {
+        {            
+            // dirty fix: documents are in upper case
+            document = document.ToUpper();
+
             const float A4_height = 907F;
             const float A4_width = 822F;
 
