@@ -17,7 +17,7 @@ namespace PdfTextReader
             Console.WriteLine("PDF Text Reader");
             var watch = Stopwatch.StartNew();
 
-            Program3.ProcessStage("DO1_2012_10_10", 1);
+            Program3.ProcessStage("2010_04_19_p_anvisa", 1);
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
