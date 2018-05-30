@@ -31,9 +31,16 @@ namespace ParserFrontend.Infra
             }   
         }
 
-        public void CopyTo(Stream stream)
+        public Stream DownloadStream()
         {
-            _memoryStream.CopyTo(stream);
+            if (_memoryStream == null)
+                throw new InvalidOperationException("Object disposed");
+
+            var buffer = _memoryStream.GetBuffer();
+
+            Dispose();
+
+            return new MemoryStream(buffer);
         }
 
         public void Dispose()

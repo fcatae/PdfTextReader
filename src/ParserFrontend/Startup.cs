@@ -53,13 +53,17 @@ namespace ParserFrontend
                 services.AddSingleton<IHostedService, JobManagerHostedService>();
             }
 
+            services.AddSingleton<DownloadFolder>();
+
             services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DownloadFolder download)
         {
+            download.Download("output/DO1_2017_01_02/ArtigosGN4");
+
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();
