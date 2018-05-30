@@ -119,12 +119,16 @@ namespace ParserFrontend.Controllers
 
             var html = $"<html><head><link rel='stylesheet' type='text/css' href='/css/gn.css'><meta charset='UTF-8'><title>{name}</title></head></html><body>{texto}</body>";
 
+            var categorias = artCategory.Split('/');
+
             ViewBag.Name = name;
             ViewBag.Id = id;
             ViewBag.Html = texto;
             ViewBag.ImageRatio = _imageRatio;
             ViewBag.PdfPage = pdfPage ?? "";
-            ViewBag.ArtCategory = artCategory.Split('/');
+            ViewBag.Orgao = categorias.First();
+            ViewBag.CategoriasOutras = categorias.Skip(1);
+
             return View("ShowHtml");
         }
     }
