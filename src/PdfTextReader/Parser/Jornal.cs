@@ -15,11 +15,18 @@ namespace PdfTextReader.Parser
         public string DocumentUrl { get; set; }
         
         readonly Regex _jornalRegex = new Regex(@"(DO[123](_EXTRA)?)_(\d\d\d\d_\d\d_\d\d)");
+        readonly Regex _jornalAnvisaRegex = new Regex(@"(\d\d\d\d_\d\d_\d\d)_P_ANVISA");
 
         public Jornal(string pdf)
         {
             string file = pdf.ToUpper();
 
+            InitDOU(file);
+            InitDO1Anvisa(file);
+        }
+
+        void InitDOU(string file)
+        {
             var match = _jornalRegex.Match(file);
 
             if (!match.Success)
@@ -32,12 +39,26 @@ namespace PdfTextReader.Parser
             PubDate = data;
         }
 
+        void InitDO1Anvisa(string file)
+        {
+            var match = _jornalAnvisaRegex.Match(file);
+
+            if (!match.Success)
+                return;
+
+            string tipo = "DO1_ANVISA";
+            string data = match.Groups[1].Value;
+
+            PubName = tipo;
+            PubDate = data;
+        }
+
         Dictionary<string, int> _entriesAntigos = new Dictionary<string, int>
         {
             { "DO1", 1},
             { "DO2", 2},
             { "DO3", 3},
-            // ANVISA "_p_anvisa" 1010
+            { "DO1_ANVISA", 1010 },
             { "DO1_EXTRA", 1000},
             { "DO2_EXTRA", 2000},
             { "DO3_EXTRA", 3000}
@@ -49,7 +70,7 @@ namespace PdfTextReader.Parser
             { "DO1", 515},
             { "DO2", 529},
             { "DO3", 530},
-            // ANVISA "_p_anvisa" 531?
+            { "DO1_ANVISA", 531 },
             { "DO1_EXTRA", 521},
             { "DO2_EXTRA", 525},
             { "DO3_EXTRA", 526}
