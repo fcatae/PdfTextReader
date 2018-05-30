@@ -151,6 +151,19 @@ namespace PdfTextReader.Parser
                     autor.Assinatura = b.TextStructure.Text;
 
                     ModificaAutorMultiplasLinhas(autor);
+
+                    if (b.TextStructure.FontStyle.Contains("Italic"))
+                    {
+                        var assinaturas = ObtemAssinaturasItalico(b.TextStructure.Text);
+
+                        foreach(var assina in assinaturas)
+                        {
+                            autor = new Autor();
+                            autor.Assinatura = assina;
+                            yield return autor;
+                            autor = null;
+                        }
+                    }
                 }
 
                 // ignora cargo por enquanto
@@ -182,6 +195,11 @@ namespace PdfTextReader.Parser
                 autor.Assinatura = assina;
                 autor.Cargo = lines[1];
             }
+        }
+
+        string[] ObtemAssinaturasItalico(string assinaturas)
+        {
+            return assinaturas.Split('\n');
         }
 
         bool IsUppercase(string assina)
