@@ -60,10 +60,8 @@ namespace ParserFrontend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, DownloadFolder download)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            download.Download("output/DO1_2017_01_02/ArtigosGN4");
-
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();

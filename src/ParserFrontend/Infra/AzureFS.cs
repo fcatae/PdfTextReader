@@ -67,7 +67,7 @@ namespace ParserFrontend
 
             var files = inputFolder
                 .EnumItems()
-                .Select(f => f.Path)
+                .Select(f => $"{path}/{f.Name}")
                 .ToArray();
 
             return files;

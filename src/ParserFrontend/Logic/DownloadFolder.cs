@@ -25,7 +25,7 @@ namespace ParserFrontend.Logic
                 foreach(var filename in filenames)
                 {
                     string basename = GetFilename(filename);
-                    using (var file = _vfs.OpenWriter(filename))
+                    using (var file = _vfs.OpenReader(filename))
                     {
                         zip.Add(basename, file);
                     }                        
