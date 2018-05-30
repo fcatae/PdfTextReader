@@ -36,9 +36,11 @@ namespace ParserFrontend.Infra
             if (_memoryStream == null)
                 throw new InvalidOperationException("Object disposed");
 
-            var buffer = _memoryStream.GetBuffer();
+            var download = _memoryStream;
 
             Dispose();
+
+            var buffer = download.GetBuffer();
 
             return new MemoryStream(buffer);
         }

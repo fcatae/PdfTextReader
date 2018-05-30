@@ -18,14 +18,15 @@ namespace ParserFrontend.Controllers
 
         OutputFiles _outputFiles;
         float _imageRatio;
+        private readonly DownloadFolder _downloader;
 
-        public DocumentsController(AccessManager amgr, IOptions<Config> options)
+        public DocumentsController(AccessManager amgr, DownloadFolder downloader, IOptions<Config> options)
         {
             var vfs = amgr.GetReadOnlyFileSystem();
 
-            _outputFiles = new OutputFiles(vfs);
-
-            _imageRatio = options.Value.ImageRatio;
+            this._outputFiles = new OutputFiles(vfs);
+            this._imageRatio = options.Value.ImageRatio;
+            this._downloader = downloader;
         }
 
         public object Index()
@@ -79,6 +80,22 @@ namespace ParserFrontend.Controllers
             ViewBag.Name = name;
             ViewBag.LogName = logname;
             return View();
+        }
+
+        [HttpGet("{name}/zip/artigosGN4")]
+        public IActionResult DownloadArtigosGN4(string name)
+        {
+            var stream = _downloader.Download($"output/{name}/artigosGN4");
+
+            return new FileStreamResult(stream, "application/zip");
+        }
+
+        [HttpGet("files/{name}.zip")]
+        public IActionResult FileDownloadArtigosGN4(string name)
+        {
+            var stream = _downloader.Download($"output/{name}/artigosGN4");
+
+            return new FileStreamResult(stream, "application/zip");
         }
     }
 }
