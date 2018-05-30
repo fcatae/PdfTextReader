@@ -102,6 +102,8 @@ namespace ParserFrontend.Logic
         IEnumerable<string> ProcessParagraphsRight(string paras)
         {
             return ProcessLines(paras, line => {
+                line = line.Replace("    ", " ").Replace("  ", "");
+
                 // position at 60% of width, so we fill 40%
                 string floatLine = line.PadRight((int)(.40F * _width));
 
@@ -139,7 +141,7 @@ namespace ParserFrontend.Logic
                     int lineInitialTabStop = _width - TABSTOP_WIDTH;
 
                     string lineInitial = ProcessLineJustified(lineTabStop, lineInitialTabStop);
-                    justifiedLine = lineInitial.PadLeft(_width);
+                    justifiedLine = lineInitial.PadLeft(lineInitial.Length + TABSTOP_WIDTH);
                 }
                 else
                 {
@@ -177,8 +179,8 @@ namespace ParserFrontend.Logic
             int avgRequiredSpaces = (int)requiredLength / (int)spacesCount;
 
             // too much?
-            if (avgRequiredSpaces > 10)
-                avgRequiredSpaces = 4;
+            if (avgRequiredSpaces > 2)
+                avgRequiredSpaces = 2;
 
             if (avgRequiredSpaces == 0 )
                 return line.Trim();
