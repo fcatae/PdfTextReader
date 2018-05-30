@@ -59,6 +59,17 @@ namespace ParserFrontend
             return files.ToArray();
         }
 
+        public string[] ListFolderContent(string folder)
+        {
+            string pattern = "*.*";
+
+            DirectoryInfo directory = new DirectoryInfo($"wwwroot/files/{folder}");
+
+            var files = directory.EnumerateFiles(pattern).Select(fi => $"wwwroot/files/{folder}/{fi.Name}");
+
+            return files.ToArray();
+        }
+
         string GetLocalFilename(string virtualfile)
         {
             if (virtualfile.Contains(".."))

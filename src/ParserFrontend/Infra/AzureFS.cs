@@ -60,5 +60,17 @@ namespace ParserFrontend
             
             return files;
         }
+
+        public string[] ListFolderContent(string path)
+        {
+            var inputFolder = GetFolder("wasb://" + path);
+
+            var files = inputFolder
+                .EnumItems()
+                .Select(f => f.Path)
+                .ToArray();
+
+            return files;
+        }
     }
 }

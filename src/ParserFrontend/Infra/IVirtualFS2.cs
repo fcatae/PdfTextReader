@@ -9,5 +9,6 @@ namespace ParserFrontend
     public interface IVirtualFS2 : IVirtualFS
     {
         string[] ListFileExtension(string extension);
+        string[] ListFolderContent(string folder);
     }
 }
