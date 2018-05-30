@@ -37,9 +37,27 @@ namespace ParserFrontend.Logic
             string[] sections = text.Replace("\r", "").Split("\n\n\n");
             StringBuilder stringBuilder = new StringBuilder();
 
+            bool isFirstPage = true;
+
             foreach(var sec in sections)
             {
                 SetWidth(sec);
+
+                if(isFirstPage)
+                {
+                    isFirstPage = false;
+
+                    if (sec.Contains("Sumário") && sec.Contains("..."))
+                    {
+                        var sumarioSection = ProcessSumario(sec);
+
+                        stringBuilder.AppendLine(sumarioSection);
+                        stringBuilder.AppendLine();
+                        stringBuilder.AppendLine();
+
+                        continue;
+                    }
+                }
 
                 var processedSection = Process(sec);
 
@@ -49,6 +67,43 @@ namespace ParserFrontend.Logic
             }
 
             string result = stringBuilder.ToString();
+
+            return result;
+        }
+
+        public string ProcessSumario(string text)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            string[] linhas = text.Replace("\r", "").Split("\n", StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (var line in linhas)
+            {
+                string[] componentes = line.Split(".", 2);
+
+                if(componentes.Length >= 2)
+                {
+                    int length = _width - componentes[0].Length - componentes[1].Length;
+                    string justifiedLine = componentes[0] + "".PadLeft(length, '.') + componentes[1];
+
+                    stringBuilder.AppendLine(justifiedLine);
+                }
+                else
+                {
+                    bool isRight = line.StartsWith("\t\t\t\t");
+                    bool isCentered = line.StartsWith("\t\t") && (!isRight);
+
+                    if(isCentered)
+                    {
+                        stringBuilder.AppendLine(line.TrimStart('\t').PadLeft(_width-line.Length/2));
+                    }
+                    else
+                    {
+                        stringBuilder.AppendLine(line.TrimStart('\t').PadLeft(_width));
+                    }                    
+                }
+            }
+            
+            var result = stringBuilder.ToString();
 
             return result;
         }
