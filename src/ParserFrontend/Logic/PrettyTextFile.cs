@@ -79,7 +79,7 @@ namespace ParserFrontend.Logic
             if (paras == "\n")
                 return new string[] { };
 
-            bool hasImageOrTable = paras.Contains("[[[IMG(") && paras.Contains("[[[TABLE");
+            bool hasImageOrTable = paras.Contains("[[[IMG(") || paras.Contains("[[[TABLE");
 
             if (hasImageOrTable)
                 return ProcessParagraphsCenter(paras);
