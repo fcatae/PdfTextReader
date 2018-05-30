@@ -15,7 +15,7 @@ namespace ParserFrontend.Infra
         public ZipCompression()
         {
             _memoryStream = new MemoryStream();
-            _zipArchive = new ZipArchive(_memoryStream, ZipArchiveMode.Create);
+            _zipArchive = new ZipArchive(_memoryStream, ZipArchiveMode.Create, true);
         }
 
         public void Add(string filename, Stream stream)
@@ -33,16 +33,14 @@ namespace ParserFrontend.Infra
 
         public Stream DownloadStream()
         {
-            if (_memoryStream == null)
+            if (_zipArchive == null)
                 throw new InvalidOperationException("Object disposed");
-
-            var download = _memoryStream;
 
             Dispose();
 
-            var buffer = download.GetBuffer();
+            _memoryStream.Seek(0, SeekOrigin.Begin);
 
-            return new MemoryStream(buffer);
+            return _memoryStream;
         }
 
         public void Dispose()
@@ -51,9 +49,7 @@ namespace ParserFrontend.Infra
             {
                 _zipArchive.Dispose();
                 _zipArchive = null;
-            }
-
-            _memoryStream = null;            
+            }       
         }
     }
 }
