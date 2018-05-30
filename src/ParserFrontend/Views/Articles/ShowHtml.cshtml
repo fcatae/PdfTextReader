@@ -47,6 +47,14 @@
     <div class="col-sm-1"><a href="./text">Text</a></div>
     <div class="col-sm-1"><a href="./gn4">GNXML</a></div>
     <div class="col-sm-12"><hr /></div>
+    <div class="col-sm-offset-2 col-sm-8">
+        @{ foreach (var category in ViewBag.ArtCategory)
+            {
+                <p style="text-align: right; font-size: smaller">@category</p>
+            }
+        }
+    </div>
+    <div class="col-sm-12"><hr /></div>
 </div>
 
 <div class="row">

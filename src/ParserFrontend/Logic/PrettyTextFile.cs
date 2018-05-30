@@ -94,7 +94,7 @@ namespace ParserFrontend.Logic
 
                     if(isCentered)
                     {
-                        stringBuilder.AppendLine(line.TrimStart('\t').PadLeft(_width-line.Length/2));
+                        stringBuilder.AppendLine(line.TrimStart('\t').PadLeft((_width-line.Length)/2));
                     }
                     else
                     {
