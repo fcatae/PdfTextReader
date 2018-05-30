@@ -65,7 +65,7 @@ namespace ParserFrontend
 
             DirectoryInfo directory = new DirectoryInfo($"wwwroot/files/{folder}");
 
-            var files = directory.EnumerateFiles(pattern).Select(fi => $"wwwroot/files/{folder}/{fi.Name}");
+            var files = directory.EnumerateFiles(pattern).Select(fi => $"{folder}/{fi.Name}");
 
             return files.ToArray();
         }
