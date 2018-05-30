@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Xml;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using ParserFrontend.Logic;
@@ -18,14 +19,17 @@ namespace ParserFrontend.Controllers
 
         OutputFiles _outputFiles;
         float _imageRatio;
+        private PrettyTextFile _prettifier;
 
-        public ArticlesController(AccessManager amgr, IOptions<Config> options)
+        public ArticlesController(AccessManager amgr, PrettyTextFile prettifier, IOptions<Config> options)
         {
             var vfs = amgr.GetReadOnlyFileSystem();
 
             _outputFiles = new OutputFiles(vfs);
 
             _imageRatio = options.Value.ImageRatio;
+
+            this._prettifier = prettifier;
         }
 
         public object Index()
@@ -72,6 +76,24 @@ namespace ParserFrontend.Controllers
         {
             string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
             return artigo;
+        }
+
+        [Route("{id}/formatted")]
+        public string ShowFormattedText(string name, int id)
+        {
+            string artigo = _outputFiles.GetOutputArtigo(name, id).ToString();
+
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(artigo);
+
+            string titulo = doc.SelectSingleNode("article/body/Identifica").InnerText;
+            string texto = doc.SelectSingleNode("article/body/Artigo").InnerText;
+
+            _prettifier.SetWidth(texto);
+
+            string pretty = _prettifier.Process(texto);
+
+            return $"{titulo}{"".PadRight(titulo.Length,'=')}\r\n\r\n{pretty}";
         }
 
         [Route("{id}/gn4")]
