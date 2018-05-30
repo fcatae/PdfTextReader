@@ -28,6 +28,25 @@ namespace ParserFrontend.Logic
             _width = width;
         }
 
+        public string ProcessCustomizedSections(string text)
+        {
+            string[] sections = text.Replace("\r", "").Split("\n\n\n");
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach(var sec in sections)
+            {
+                SetWidth(sec);
+
+                var processedSection = Process(sec);
+
+                stringBuilder.AppendLine(processedSection);
+                stringBuilder.AppendLine();
+                stringBuilder.AppendLine();
+            }
+
+            return stringBuilder.ToString();
+        }
+
         public string Process(string text)
         {
             StringBuilder stringBuilder = new StringBuilder();
