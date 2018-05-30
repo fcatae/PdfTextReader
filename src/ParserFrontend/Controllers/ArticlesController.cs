@@ -93,7 +93,7 @@ namespace ParserFrontend.Controllers
 
             string pretty = _prettifier.Process(texto);
 
-            return $"{titulo}\n{"".PadRight(titulo.Length,'=')}\n\n{pretty}".Replace("\n","\r\n");
+            return $"{titulo}\r\n{"".PadRight(titulo.Length,'=')}\r\n\r\n{pretty}";
         }
 
         [Route("{id}/gn4")]
