@@ -60,11 +60,16 @@ namespace ParserFrontend.Logic
 
         string GetStaticFilename(string basename, string filename)
         {
+            if( filename == "text-version" )
+            {
+                return $"output/{basename}/{basename}-{filename}.txt";
+            }
             if( filename == "stage0-input" ||
                 filename == "stage1-margins" ||
                 filename == "stage2-blocksets" ||
                 filename == "show-central" ||
-                filename == "titles")
+                filename == "titles" 
+                )
             {
                 return $"output/{basename}/{basename}-{filename}.pdf";
             }
@@ -90,6 +95,15 @@ namespace ParserFrontend.Logic
         public Stream GetLogFile(string basename, string logfile)
         {
             return OpenReader(basename, logfile);
+        }
+
+        public string GetLogFileString(string basename, string logfile)
+        {
+            using(var stream = OpenReader(basename, logfile))
+            using (var reader = new StreamReader(stream))
+            {
+                return reader.ReadToEnd();
+            }                
         }
 
         public Stream GetOutputFile(string basename)

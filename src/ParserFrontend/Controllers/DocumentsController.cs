@@ -66,6 +66,12 @@ namespace ParserFrontend.Controllers
             return _outputFiles.GetOutputTree(name).ToString();
         }
 
+        [Route("{name}/text")]
+        public string ShowText(string name)
+        {
+            return _outputFiles.GetLogFileString(name, "text-version");
+        }
+        
         [Route("{name}/logs")]
         public object LogfileList(string name)
         {
@@ -90,7 +96,7 @@ namespace ParserFrontend.Controllers
             return new FileStreamResult(stream, "application/zip");
         }
 
-        [HttpGet("files/{name}.zip")]
+        [HttpGet("files/{name}-art.zip")]
         public IActionResult FileDownloadArtigosGN4(string name)
         {
             var stream = _downloader.Download($"output/{name}/artigosGN4");
