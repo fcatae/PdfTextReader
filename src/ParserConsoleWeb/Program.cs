@@ -23,6 +23,8 @@ namespace ParserConsoleWeb
 
             string basename = GetBasename(inputFile);
 
+            Console.WriteLine($"Baseline = {basename}");
+
             pdf.Process(basename);
         }
 
@@ -30,7 +32,12 @@ namespace ParserConsoleWeb
         {
             string[] components = filename.Split("/");
 
-            return components[components.Length-1];
+            string basename = components[components.Length-1];
+
+            if (basename.ToLower().EndsWith(".pdf"))
+                return basename.Substring(0, basename.Length - 4);
+
+            return basename;
         }
     }
 }
