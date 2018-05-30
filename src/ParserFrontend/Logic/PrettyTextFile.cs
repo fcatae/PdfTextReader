@@ -25,6 +25,10 @@ namespace ParserFrontend.Logic
         public void SetWidth(string text)
         {
             int width = text.Split('\n').Max(l => l.Length);
+
+            if (width < 80)
+                return;
+
             _width = width;
         }
 
@@ -44,7 +48,9 @@ namespace ParserFrontend.Logic
                 stringBuilder.AppendLine();
             }
 
-            return stringBuilder.ToString();
+            string result = stringBuilder.ToString();
+
+            return result;
         }
 
         public string Process(string text)
@@ -162,8 +168,16 @@ namespace ParserFrontend.Logic
 
             if (spacesCount == 0 || requiredLength <= 0)
                 return line.Trim();
-
+            
             int avgRequiredSpaces = (int)requiredLength / (int)spacesCount;
+
+            // too much?
+            if (avgRequiredSpaces > 10)
+                avgRequiredSpaces = 4;
+
+            if (avgRequiredSpaces == 0 )
+                return line.Trim();
+
             int additionalSpaces = requiredLength - (avgRequiredSpaces * spacesCount);
             int initialAvgSpaces = spacesCount - additionalSpaces;
 
@@ -190,9 +204,6 @@ namespace ParserFrontend.Logic
             }
 
             string result = justifiedLine.ToString();
-
-            if (result.Length != line_width)
-                throw new InvalidOperationException();
 
             return result;
         }
