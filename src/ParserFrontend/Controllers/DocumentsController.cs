@@ -79,7 +79,7 @@ namespace ParserFrontend.Controllers
         {
             string originalText = _outputFiles.GetLogFileString(name, "text-version");
 
-            _prettifier.SetWidth(originalText);
+            //_prettifier.SetWidth(originalText);
             string prettyText = _prettifier.Process(originalText);
 
             return prettyText;

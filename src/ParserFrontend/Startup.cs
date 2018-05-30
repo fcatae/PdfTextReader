@@ -54,13 +54,14 @@ namespace ParserFrontend
             }
 
             services.AddSingleton<DownloadFolder>();
+            services.AddTransient<PrettyTextFile>();
 
             services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
             services.AddMvc();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, PrettyTextFile prettifier)
         {
             if (env.IsDevelopment())
             {

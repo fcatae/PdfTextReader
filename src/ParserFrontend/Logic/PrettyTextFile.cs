@@ -139,13 +139,13 @@ namespace ParserFrontend.Logic
             int wordCount = words.Length;
             int wordLength = words.Sum(w => w.Length);
             int spacesCount = words.Length - 1;
-            int requiredLentgh = line_width - wordLength;
+            int requiredLength = line_width - wordLength;
 
-            if (spacesCount == 0)
+            if (spacesCount == 0 || requiredLength <= 0)
                 return line.Trim();
 
-            int avgRequiredSpaces = (int)requiredLentgh / (int)spacesCount;
-            int additionalSpaces = requiredLentgh - (avgRequiredSpaces * spacesCount);
+            int avgRequiredSpaces = (int)requiredLength / (int)spacesCount;
+            int additionalSpaces = requiredLength - (avgRequiredSpaces * spacesCount);
             int initialAvgSpaces = spacesCount - additionalSpaces;
 
             var justifiedLine = new StringBuilder();
