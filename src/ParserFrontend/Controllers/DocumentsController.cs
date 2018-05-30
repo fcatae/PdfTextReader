@@ -19,14 +19,16 @@ namespace ParserFrontend.Controllers
         OutputFiles _outputFiles;
         float _imageRatio;
         private readonly DownloadFolder _downloader;
+        private readonly PrettyTextFile _prettifier;
 
-        public DocumentsController(AccessManager amgr, DownloadFolder downloader, IOptions<Config> options)
+        public DocumentsController(AccessManager amgr, DownloadFolder downloader, IOptions<Config> options, PrettyTextFile prettifier)
         {
             var vfs = amgr.GetReadOnlyFileSystem();
 
             this._outputFiles = new OutputFiles(vfs);
             this._imageRatio = options.Value.ImageRatio;
             this._downloader = downloader;
+            this._prettifier = prettifier;
         }
 
         public object Index()
@@ -66,10 +68,21 @@ namespace ParserFrontend.Controllers
             return _outputFiles.GetOutputTree(name).ToString();
         }
 
-        [Route("{name}/text")]
+        [HttpGet("{name}/text")]
         public string ShowText(string name)
         {
             return _outputFiles.GetLogFileString(name, "text-version");
+        }
+
+        [HttpGet("{name}/formatted")]
+        public string ShowFormattedText(string name)
+        {
+            string originalText = _outputFiles.GetLogFileString(name, "text-version");
+
+            _prettifier.SetWidth(originalText);
+            string prettyText = _prettifier.Process(originalText);
+
+            return prettyText;
         }
         
         [Route("{name}/logs")]

@@ -31,7 +31,7 @@ namespace ParserFrontend.Logic
         public string Process(string text)
         {
             StringBuilder stringBuilder = new StringBuilder();
-            string[] paragraphs = text.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
+            string[] paragraphs = text.Replace("\r", "").Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
 
             var processedParagraphs = paragraphs.Select(ProcessParagraphs).ToArray();
 
@@ -51,6 +51,9 @@ namespace ParserFrontend.Logic
 
         IEnumerable<string> ProcessParagraphs(string paras)
         {
+            if (paras == "\n")
+                return new string[] { };
+
             bool isAlignRight = paras.StartsWith("\t\t\t\t");
             bool isAlignCenter = paras.StartsWith("\t\t") && (!isAlignRight);
             
@@ -137,6 +140,10 @@ namespace ParserFrontend.Logic
             int wordLength = words.Sum(w => w.Length);
             int spacesCount = words.Length - 1;
             int requiredLentgh = line_width - wordLength;
+
+            if (spacesCount == 0)
+                return line.Trim();
+
             int avgRequiredSpaces = (int)requiredLentgh / (int)spacesCount;
             int additionalSpaces = requiredLentgh - (avgRequiredSpaces * spacesCount);
             int initialAvgSpaces = spacesCount - additionalSpaces;
