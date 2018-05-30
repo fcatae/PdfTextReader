@@ -21,7 +21,16 @@ namespace ParserConsoleWeb
 
             var pdf = new PdfProcessor(azureFS);
 
-            pdf.Process(inputFile);
+            string basename = GetBasename(inputFile);
+
+            pdf.Process(basename);
+        }
+
+        static string GetBasename(string filename)
+        {
+            string[] components = filename.Split("/");
+
+            return components[components.Length-1];
         }
     }
 }
