@@ -1,0 +1,80 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = $"{ViewBag.Year}: {ViewBag.Name}";    
+}
+
+<style>
+    text.month-name,
+    text.calendar-heatmap-legend-text,
+    text.day-initial {
+        font-size: 10px;
+        fill: inherit;
+        font-family: Helvetica, arial, 'Open Sans', sans-serif;
+    }
+
+    rect.day-cell:hover {
+        stroke: #555555;
+        stroke-width: 1px;
+    }
+
+    .day-cell-tooltip {
+        position: absolute;
+        z-index: 9999;
+        padding: 5px 9px;
+        color: #bbbbbb;
+        font-size: 12px;
+        background: rgba(0, 0, 0, 0.85);
+        border-radius: 3px;
+        text-align: center;
+    }
+
+        .day-cell-tooltip > span {
+            font-family: Helvetica, arial, 'Open Sans', sans-serif
+        }
+
+    .calendar-heatmap {
+        box-sizing: initial;
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.min.js" charset="utf-8"></script>
+<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+<script src="/lib/calendar-heatmap/calendar-heatmap.js"></script>
+
+<h2>@ViewBag.Year: @ViewBag.Name</h2>
+
+<div class="row">
+    <div class="col-sm-offset-2 col-sm-2">
+        <div style="height: 200px">
+            <div class="calendar-2017" style="height: 200px"></div>
+            <script type="text/javascript">
+
+                var now = new Date('2017-01-01');
+                var yearAgo = new Date('2016-01-01');
+
+                var chartData = d3.timeDays(yearAgo, now).map(function (dateElement) {
+                    return {
+                        date: dateElement,
+                        count: (dateElement.getDay() !== 0 && dateElement.getDay() !== 6) ? Math.floor(Math.random() * 2) : 0
+                    };
+                });
+
+                var heatmap = calendarHeatmap()
+                    .data(chartData)
+                    .startDate(yearAgo)
+                    .selector('.calendar-2017')
+                    .tooltipEnabled(true)
+                    .legendEnabled(false)
+                    .colorRange(['#f4f7f7', '#79a859'])
+                    .onClick(function (data) {
+                        console.log('data', data);
+                    });
+                heatmap();  // render the chart
+
+            </script>
+        </div>
+    </div>
+</div>
