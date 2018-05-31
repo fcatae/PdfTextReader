@@ -1,0 +1,47 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+@{
+    ViewData["Title"] = "Lista de Arquivos";
+}
+<h2>Arquivos Disponíveis</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <h3>Seção 1</h3>
+        @{
+            foreach (var filename in ViewBag.DO1)
+            {
+                <p><a asp-route="Document_Show" asp-route-name="@filename">@filename</a></p>
+            }
+        }
+    </div>
+    <div class="col-md-3">
+        <h3>Seção 1</h3>
+        @{
+            foreach (var filename in ViewBag.DO2)
+            {
+                <p><a asp-route="Document_Show" asp-route-name="@filename">@filename</a></p>
+            }
+        }
+    </div>
+    <div class="col-md-3">
+        <h3>Seção 1</h3>
+        @{
+            foreach (var filename in ViewBag.DO3)
+            {
+                <p><a asp-route="Document_Show" asp-route-name="@filename">@filename</a></p>
+            }
+        }
+    </div>
+    <div class="col-md-3">
+        <h3>Seção 1</h3>
+        @{
+            foreach (var filename in ViewBag.Outros)
+            {
+                <p><a asp-route="Document_Show" asp-route-name="@filename">@filename</a></p>
+            }
+        }
+    </div>
+</div>
