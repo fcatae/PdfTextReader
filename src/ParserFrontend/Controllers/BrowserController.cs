@@ -32,12 +32,23 @@ namespace ParserFrontend.Controllers
 
             ViewBag.Name = dict[tipo];
             ViewBag.Year = year;
+            ViewBag.RedirectDocumentUrl = Url.RouteUrl("Browser_RedirectDocument", new { tipo = tipo });
 
             var availableDates = EnumAvailableDates(year, tipo);
 
             ViewBag.AvailableDatesHtml = String.Join(",", availableDates.Select(d => $"{{ date: '{d}', count: 1 }}"));
 
             return View();
+        }
+
+        [HttpGet("{tipo}/show/document", Name = "Browser_RedirectDocument")]
+        public IActionResult ShowDocument(string tipo)
+        {
+            string date = Request.QueryString.Value?.Substring(1)?.Replace("-", "_");
+
+            string document = $"{tipo}_{date}";
+
+            return RedirectToRoute("Document_Show", new { name = document });
         }
 
         string[] EnumAvailableDates(int year, string tipo)

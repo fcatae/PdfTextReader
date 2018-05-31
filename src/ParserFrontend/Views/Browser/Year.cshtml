@@ -64,7 +64,8 @@
                     .legendEnabled(false)
                     .colorRange(['#f4f7f7', '#79a859'])
                     .onClick(function (data) {
-                        console.log('data', data);
+                        var d = data.date.toISOString().slice(0, 10);
+                        window.location = "@ViewBag.RedirectDocumentUrl?" + d;
                     });
                 heatmap();  // render the chart
 
