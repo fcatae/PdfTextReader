@@ -15,7 +15,7 @@ namespace ParserFrontend.Controllers
             return View();
         }
 
-        [HttpGet("{year}/{tipo}", Name="Browser_YearTipo")]
+        [HttpGet("{tipo}/{year}", Name="Browser_YearTipo")]
         public IActionResult Year(int year, string tipo)
         {
             var dict = new Dictionary<string, string> { { "DO1", "Seção 1" }, { "DO2", "Seção 2" }, { "DO3", "Seção 3" } };
