@@ -1,7 +1,7 @@
 function calendarHeatmap() {
   // defaults
-  var width = 750;
-  var height = 210;
+  var width = 800;
+  var height = 110;
   var legendWidth = 150;
   var selector = 'body';
   var SQUARE_LENGTH = 11;
@@ -40,6 +40,21 @@ function calendarHeatmap() {
 
     data.forEach(function (element, index) {
         var key= moment(element.date).format( 'YYYY-MM-DD' );
+        var counter= counterMap[key] || 0;
+        counterMap[key]= counter + element.count;
+    });
+
+    return chart;
+  };
+
+  chart.rawdata = function (value) {
+    if (!arguments.length) { return data; }
+    data = value;
+
+    counterMap= {};
+
+    data.forEach(function (element, index) {
+        var key= element.date;
         var counter= counterMap[key] || 0;
         counterMap[key]= counter + element.count;
     });
@@ -160,10 +175,15 @@ function calendarHeatmap() {
 
       if (chart.tooltipEnabled()) {
         (v === 3 ? enterSelection : enterSelection.merge(dayRects)).on('mouseover', function(d, i) {
+
+          var count = countForDate(d);
+          if(count == 0)
+            return;
+
           tooltip = d3.select(chart.selector())
             .append('div')
             .attr('class', 'day-cell-tooltip')
-            .html(tooltipHTMLForDate(d))
+            .html(tooltipHTMLForDateSimple(d))
             .style('left', function () { return Math.floor(i / 7) * SQUARE_LENGTH + 'px'; })
             .style('top', function () {
               return formatWeekday(d.getDay()) * (SQUARE_LENGTH + SQUARE_PADDING) + MONTH_LABEL_PADDING * 2 + 'px';
@@ -253,11 +273,17 @@ function calendarHeatmap() {
     }
 
     function tooltipHTMLForDate(d) {
-      var dateStr = moment(d).format('DD/MM/YYYY');
-      var count = countForDate(d);
-      return '<span><strong>' + (count ? count : locale.No) + ' ' + pluralizedTooltipUnit(count) + '</strong> ' + locale.on + ' ' + dateStr + '</span>';
-    }
+        var dateStr = moment(d).format('DD/MM/YYYY');
+        var count = countForDate(d);
+        return '<span><strong>' + (count ? count : locale.No) + ' ' + pluralizedTooltipUnit(count) + '</strong> ' + locale.on + ' ' + dateStr + '</span>';
+      }
 
+      function tooltipHTMLForDateSimple(d) {
+        var dateStr = moment(d).format('DD/MM/YYYY');
+        var count = countForDate(d);
+        return '<span>' + dateStr + '</span>';
+      }
+    
     function countForDate(d) {
         var key= moment(d).format( 'YYYY-MM-DD' );
         return counterMap[key] || 0;

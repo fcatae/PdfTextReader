@@ -49,23 +49,17 @@
 <div class="row">
     <div class="col-sm-offset-2 col-sm-2">
         <div style="height: 200px">
-            <div class="calendar-2017" style="height: 200px"></div>
+            <div class="container calendar-2017" ></div>
             <script type="text/javascript">
 
-                var now = new Date('2017-01-01');
-                var yearAgo = new Date('2016-01-01');
+                var currentYear = new Date('@ViewBag.Year-01-01');
 
-                var chartData = d3.timeDays(yearAgo, now).map(function (dateElement) {
-                    return {
-                        date: dateElement,
-                        count: (dateElement.getDay() !== 0 && dateElement.getDay() !== 6) ? Math.floor(Math.random() * 2) : 0
-                    };
-                });
+                var chartData = [@Html.Raw(ViewBag.AvailableDatesHtml)];
 
                 var heatmap = calendarHeatmap()
-                    .data(chartData)
-                    .startDate(yearAgo)
-                    .selector('.calendar-2017')
+                    .rawdata(chartData)
+                    .startDate(currentYear)
+                    .selector('.container.calendar-2017')
                     .tooltipEnabled(true)
                     .legendEnabled(false)
                     .colorRange(['#f4f7f7', '#79a859'])
