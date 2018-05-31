@@ -3,7 +3,25 @@
 }
 
 @{
-    ViewData["Title"] = $"{ViewBag.Year}: {ViewBag.Name}";    
+    ViewData["Title"] = $"{ViewBag.Year}: {ViewBag.Name}";
+
+    string HtmlEnableButtonSecao(string name)
+    {
+        return (name == ViewBag.Tipo) ? "btn-primary" : "";
+    }
+
+    string GetYearBefore()
+    {
+        int yearBefore = (int)ViewBag.Year - 1;
+
+        return (yearBefore < 2002) ? "" : yearBefore.ToString();
+    }
+
+    string GetYearAfter()
+    {
+        int yearAfter = (int)ViewBag.Year + 1;
+        return (yearAfter > 2017) ? "" : yearAfter.ToString();
+    }
 }
 
 <style>
@@ -44,8 +62,11 @@
 <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 <script src="/lib/calendar-heatmap/calendar-heatmap.js"></script>
 
-<h2>@ViewBag.Year: @ViewBag.Name</h2>
-
+<div class="row">
+    <h2 class="col-sm-offset-2 col-sm-1"><a asp-route="Browser_YearTipo" asp-route-year="@GetYearBefore()" asp-route-tipo="@ViewBag.Tipo">@GetYearBefore()</a></h2>
+    <h2 class="col-sm-6 text-center">@ViewBag.Year</h2>
+    <h2 class="col-sm-2"><a asp-route="Browser_YearTipo" asp-route-year="@GetYearAfter()" asp-route-tipo="@ViewBag.Tipo">@GetYearAfter()</a></h2>
+</div>
 <div class="row">
     <div class="col-sm-offset-2 col-sm-2">
         <div style="height: 200px">
@@ -72,4 +93,11 @@
             </script>
         </div>
     </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-6 col-sm-1"></div>
+    <div class="col-sm-1"><a class="btn btn-default @HtmlEnableButtonSecao("DO1")" asp-route="Browser_YearTipo" asp-route-year="@ViewBag.Year" asp-route-tipo="DO1">Seção 1</a></div>
+    <div class="col-sm-1"><a class="btn btn-default @HtmlEnableButtonSecao("DO2")" asp-route="Browser_YearTipo" asp-route-year="@ViewBag.Year" asp-route-tipo="DO2">Seção 2</a></div>
+    <div class="col-sm-1"><a class="btn btn-default @HtmlEnableButtonSecao("DO3")" asp-route="Browser_YearTipo" asp-route-year="@ViewBag.Year" asp-route-tipo="DO3">Seção 3</a></div>
 </div>

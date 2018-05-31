@@ -32,6 +32,7 @@ namespace ParserFrontend.Controllers
 
             ViewBag.Name = dict[tipo];
             ViewBag.Year = year;
+            ViewBag.Tipo = tipo;
             ViewBag.RedirectDocumentUrl = Url.RouteUrl("Browser_RedirectDocument", new { tipo = tipo });
 
             var availableDates = EnumAvailableDates(year, tipo);
