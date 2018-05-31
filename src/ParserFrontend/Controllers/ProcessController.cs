@@ -31,6 +31,14 @@ namespace ParserFrontend.Controllers
             return this.RedirectToRoute("Document_Show", new { name = name });
         }
 
+        [HttpPost("{name}/delete", Name = "Process_Delete")]
+        public IActionResult Delete(string name, [FromServices]DeleteFiles deleteFiles)
+        {
+            deleteFiles.Delete(name);
+
+            return this.RedirectToPage("/Index");
+        }
+
         [HttpPost("", Name = "Process_Upload")]
         public IActionResult Upload()
         {

@@ -41,7 +41,7 @@ namespace ParserFrontend
 
         public void Delete(string virtualfile)
         {
-            string filename = GetLocalFilename(virtualfile);
+            string filename = GetLocalFilename(virtualfile) + ".pdf";
 
             File.Delete(filename);
         }

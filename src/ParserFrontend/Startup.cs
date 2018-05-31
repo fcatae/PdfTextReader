@@ -55,6 +55,7 @@ namespace ParserFrontend
 
             services.AddSingleton<DownloadFolder>();
             services.AddTransient<PrettyTextFile>();
+            services.AddSingleton<DeleteFiles>();
 
             services.AddSingleton(new AccessManager(virtualFS, hasFullAccess));
             services.AddMvc();
