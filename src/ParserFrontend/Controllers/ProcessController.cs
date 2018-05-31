@@ -12,18 +12,30 @@ namespace ParserFrontend.Controllers
     {
         PdfHandler _pdfHandler;
         OutputFiles _outputFiles;
+        DeleteFiles _deleteFiles;
 
-        public ProcessController(AccessManager amgr)
+        public ProcessController(AccessManager amgr, DeleteFiles deleteFiles)
         {
             var vfs = amgr.GetFullAccessFileSystem();
 
             _pdfHandler = new PdfHandler(vfs);
             _outputFiles = new OutputFiles(vfs);
+            _deleteFiles = deleteFiles;
         }
-        
+
+        [HttpPost("{name}/clean")]
+        public IActionResult CleanOutput(string name)
+        {
+            _deleteFiles.DeleteOutput(name);
+
+            return Ok();
+        }
+
         [HttpPost("{name}/reprocess", Name = "Process_Reprocess")]
         public IActionResult Reprocess(string name)
         {
+            _deleteFiles.DeleteOutput(name);
+
             var fileList = _pdfHandler.Process(name, "input", "output");
 
             _outputFiles.Save(name, fileList);
@@ -32,9 +44,9 @@ namespace ParserFrontend.Controllers
         }
 
         [HttpPost("{name}/delete", Name = "Process_Delete")]
-        public IActionResult Delete(string name, [FromServices]DeleteFiles deleteFiles)
+        public IActionResult Delete(string name)
         {
-            deleteFiles.DestroyAll(name);
+            _deleteFiles.DestroyAll(name);
 
             return this.RedirectToPage("/Index");
         }

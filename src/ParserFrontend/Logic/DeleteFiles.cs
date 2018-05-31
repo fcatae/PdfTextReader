@@ -15,7 +15,7 @@ namespace ParserFrontend.Logic
             this._webFS = amgr.GetFullAccessFileSystem(); 
         }
         
-        public void Delete(string name)
+        public void DeleteOutput(string name)
         {
             if (name.Trim().Length < 3)
                 throw new InvalidOperationException();
