@@ -19,7 +19,7 @@ namespace ParserFrontend.Controllers
             this._inputFiles = new InputFiles(vfs);
         }
 
-        [HttpGet("")]
+        [HttpGet("", Name ="Browser_Index")]
         public IActionResult Index()
         {
             return View();
