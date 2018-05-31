@@ -28,6 +28,11 @@ namespace PdfTextReader.Azure.Blob
 
         string IAzureBlobFile.Uri => Uri.ToString();
 
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
+
         public Stream GetStreamReader()
         {
             throw new NotImplementedException();

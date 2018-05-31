@@ -7,6 +7,7 @@ namespace PdfTextReader.Azure
 {
     public interface IAzureBlobFile : IAzureBlob
     {
+        void Delete();
         Stream GetStreamWriter();
         Stream GetStreamReader();
         string Extension { get; }

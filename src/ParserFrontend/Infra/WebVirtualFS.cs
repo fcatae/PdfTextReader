@@ -39,6 +39,13 @@ namespace ParserFrontend
             return new FileStream(filename, FileMode.Create);
         }
 
+        public void Delete(string virtualfile)
+        {
+            string filename = GetLocalFilename(virtualfile);
+
+            File.Delete(filename);
+        }
+
         //public string[] ListFiles(string pattern)
         //{
         //    DirectoryInfo directory = new DirectoryInfo("wwwroot/files/input");

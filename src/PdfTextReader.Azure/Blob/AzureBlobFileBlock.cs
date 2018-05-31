@@ -32,5 +32,7 @@ namespace PdfTextReader.Azure.Blob
         public Stream GetStreamWriter() => _blob.OpenWriteAsync().Result;
 
         public Stream GetStreamReader() => _blob.OpenReadAsync().Result;
+
+        public void Delete() => _blob.DeleteIfExistsAsync().Wait();
     }
 }

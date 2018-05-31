@@ -10,5 +10,6 @@ namespace ParserFrontend
     {
         string[] ListFileExtension(string extension);
         string[] ListFolderContent(string folder);
+        void Delete(string filename);
     }
 }

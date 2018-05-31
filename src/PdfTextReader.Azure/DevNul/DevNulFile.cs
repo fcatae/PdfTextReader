@@ -41,5 +41,9 @@ namespace PdfTextReader.Azure.DevNul
         {
             return AlwaysCreateNewStream();
         }
+
+        public void Delete()
+        {
+        }
     }
 }

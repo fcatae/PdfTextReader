@@ -43,6 +43,8 @@ namespace ParserFrontend
         
         public Stream OpenWriter(string filename) => _inputFS.GetFile(filename).GetStreamWriter();
 
+        public void Delete(string filename) => _inputFS.GetFile(filename).Delete();
+
         public IAzureBlobFolder GetFolder(string name)
         {
             return _inputFS.GetFolder(name);
