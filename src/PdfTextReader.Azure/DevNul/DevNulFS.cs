@@ -31,6 +31,10 @@ namespace PdfTextReader.Azure.DevNul
 
         public Uri Uri => throw new NotImplementedException();
 
+        public void Delete()
+        {
+        }
+
         public IEnumerable<IAzureBlob> EnumItems()
         {
             return new IAzureBlob[0];

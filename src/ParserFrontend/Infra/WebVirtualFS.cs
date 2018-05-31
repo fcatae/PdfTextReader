@@ -46,6 +46,13 @@ namespace ParserFrontend
             File.Delete(filename);
         }
 
+        public void DeleteFolder(string virtualfile)
+        {
+            string foldername = GetLocalFilename(virtualfile);
+
+            Directory.Delete(foldername, true);
+        }
+
         //public string[] ListFiles(string pattern)
         //{
         //    DirectoryInfo directory = new DirectoryInfo("wwwroot/files/input");

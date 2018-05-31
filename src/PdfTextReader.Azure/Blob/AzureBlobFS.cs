@@ -139,5 +139,10 @@ namespace PdfTextReader.Azure.Blob
                     throw new InvalidOperationException($"Path '{path}' conflicts with the existing path '{existingPath}' in AzureBlobFS");
             }
         }
+
+        public void Delete()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

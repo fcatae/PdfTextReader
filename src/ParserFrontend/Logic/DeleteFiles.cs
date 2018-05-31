@@ -17,7 +17,19 @@ namespace ParserFrontend.Logic
         
         public void Delete(string name)
         {
-            _webFS.Delete("input/" + name);
+            if (name.Trim().Length < 3)
+                throw new InvalidOperationException();
+
+            _webFS.DeleteFolder("output/" + name);
+        }
+
+        public void DestroyAll(string name)
+        {
+            if (name.Trim().Length < 3)
+                throw new InvalidOperationException();
+
+            _webFS.Delete("input/" + name + ".pdf");
+            _webFS.DeleteFolder("output/" + name);
         }
     }
 }

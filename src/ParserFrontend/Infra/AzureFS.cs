@@ -45,6 +45,8 @@ namespace ParserFrontend
 
         public void Delete(string filename) => _inputFS.GetFile(filename).Delete();
 
+        public void DeleteFolder(string folder) => GetFolder(folder).Delete();
+
         public IAzureBlobFolder GetFolder(string name)
         {
             return _inputFS.GetFolder(name);

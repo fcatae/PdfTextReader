@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace PdfTextReader.Azure.Blob
 {
@@ -177,7 +178,40 @@ namespace PdfTextReader.Azure.Blob
                     options: null,
                     operationContext: null).Result;
         }
-        
+
+        public void Delete()
+        {
+            const int numberItems = 10;
+            BlobContinuationToken token = null;
+
+            do
+            {
+                var segment = ListBlobsFlat(token, numberItems);
+
+                var tasks = segment.Results
+                    .Select(blob => blob as CloudBlockBlob)
+                    .Where(blob => blob != null)
+                    .Select(blob => blob.DeleteIfExistsAsync())
+                    .ToArray();
+
+                Task.WaitAll(tasks);
+
+                token = segment.ContinuationToken;
+
+            } while (token != null);
+        }
+
+        private BlobResultSegment ListBlobsFlat(BlobContinuationToken token, int maxResults)
+        {
+            return _folder.ListBlobsSegmentedAsync(
+                    useFlatBlobListing: true,
+                    blobListingDetails: BlobListingDetails.None,
+                    maxResults: maxResults,
+                    currentToken: token,
+                    options: null,
+                    operationContext: null).Result;
+        }
+
         string MakeRelativePath(Uri childFolderUri)
         {
             string fullpath = childFolderUri.AbsolutePath;

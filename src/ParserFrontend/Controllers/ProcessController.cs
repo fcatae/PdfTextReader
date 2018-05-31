@@ -34,7 +34,7 @@ namespace ParserFrontend.Controllers
         [HttpPost("{name}/delete", Name = "Process_Delete")]
         public IActionResult Delete(string name, [FromServices]DeleteFiles deleteFiles)
         {
-            deleteFiles.Delete(name);
+            deleteFiles.DestroyAll(name);
 
             return this.RedirectToPage("/Index");
         }
