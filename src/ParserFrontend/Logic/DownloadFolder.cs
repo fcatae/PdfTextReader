@@ -73,6 +73,9 @@ namespace ParserFrontend.Logic
                                 int idxP = newbasename.IndexOf("-p");
                                 newbasename = newbasename.Substring(0, idxP);
 
+                                // add XML extension
+                                newbasename = newbasename + ".xml";
+
                                 zip.Add(newbasename, newstream);
                             }
                         }
