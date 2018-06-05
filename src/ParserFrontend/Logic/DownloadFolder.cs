@@ -20,7 +20,7 @@ namespace ParserFrontend.Logic
         Regex _quickFix = new Regex(@"pubDate=""(\d\d\d\d)_(\d\d)_(\d\d)");
         string QuickFix(string input)
         {
-            return _quickFix.Replace(input, @"pubDate=""{3}/{2}/{1}");
+            return _quickFix.Replace(input, @"pubDate=""$3/$2/$1");
         }
 
         public Stream DownloadQuickFix(string path)
@@ -31,10 +31,15 @@ namespace ParserFrontend.Logic
             {
                 foreach (var filename in filenames)
                 {
+                    // HACK 1: ignore article 0
+                    if (filename.Contains("-artigo0-"))
+                        continue;
+                    
                     string basename = GetFilename(filename);
                     using (var file = _vfs.OpenReader(filename))
                     using (var txtFile = new StreamReader(file))
                     {
+                        // HACK 2: convert date YYYY_MM_DD to DD/MM/YYYY
                         var text = txtFile.ReadToEnd();
                         var newtext = QuickFix(text);
                         var newstream = new MemoryStream();
