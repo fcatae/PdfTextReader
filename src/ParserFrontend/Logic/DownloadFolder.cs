@@ -18,9 +18,22 @@ namespace ParserFrontend.Logic
         }
 
         Regex _quickFix = new Regex(@"pubDate=""(\d\d\d\d)_(\d\d)_(\d\d)");
+        Regex _quickFix2 = new Regex(@"<Identifica>(\S+)");
+
         string QuickFix(string input)
         {
             return _quickFix.Replace(input, @"pubDate=""$3/$2/$1");
+        }
+        string QuickFix2(string input)
+        {
+            var identificaMatch = _quickFix2.Match(input);
+            string identName = identificaMatch.Success ? identificaMatch.Groups[1].Value : "Ato";
+            string artType = $"artType=\"{identName}\"";
+            string artName = $"name=\"{identName}\"";
+
+            return input.Replace("<Identifica>", "<Identifica><![CDATA[")
+                        .Replace("</Identifica>", "]]></Identifica>")                        
+                        .Replace("pubDate", $"{artName} {artType} pubDate");
         }
 
         public Stream DownloadQuickFix(string path)
@@ -41,7 +54,8 @@ namespace ParserFrontend.Logic
                     {
                         // HACK 2: convert date YYYY_MM_DD to DD/MM/YYYY
                         var text = txtFile.ReadToEnd();
-                        var newtext = QuickFix(text);
+                        var newtext = QuickFix2( QuickFix(text) );
+
                         using (var newstream = new MemoryStream())
                         {
                             using (var memwrite = new StreamWriter(newstream))
@@ -49,7 +63,17 @@ namespace ParserFrontend.Logic
                                 memwrite.Write(newtext);
                                 memwrite.Flush();
                                 newstream.Seek(0, SeekOrigin.Begin);
-                                zip.Add(basename, newstream);
+
+                                // HACK3: remove "article" from name
+                                string newbasename = basename
+                                    .Replace("-artigo", "")
+                                    .Replace("DO","")
+                                    .Replace("_", "");
+
+                                int idxP = newbasename.IndexOf("-p");
+                                newbasename = newbasename.Substring(0, idxP);
+
+                                zip.Add(newbasename, newstream);
                             }
                         }
                     }
