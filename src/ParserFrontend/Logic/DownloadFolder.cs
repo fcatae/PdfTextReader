@@ -47,9 +47,10 @@ namespace ParserFrontend.Logic
                             using (var memwrite = new StreamWriter(newstream))
                             {
                                 memwrite.Write(newtext);
+                                memwrite.Flush();
+                                newstream.Seek(0, SeekOrigin.Begin);
+                                zip.Add(basename, newstream);
                             }
-                            newstream.Seek(0, SeekOrigin.Begin);
-                            zip.Add(basename, newstream);
                         }
                     }
                 }
