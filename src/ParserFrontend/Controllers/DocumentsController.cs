@@ -104,7 +104,7 @@ namespace ParserFrontend.Controllers
         [HttpGet("{name}/zip/artigosGN4")]
         public IActionResult DownloadArtigosGN4(string name)
         {
-            var stream = _downloader.DownloadQuickFix($"output/{name}/artigosGN4");
+            var stream = _downloader.Download2($"output/{name}/artigosGN4");
 
             return new FileStreamResult(stream, "application/zip");
         }

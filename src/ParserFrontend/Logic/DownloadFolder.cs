@@ -42,11 +42,15 @@ namespace ParserFrontend.Logic
                         // HACK 2: convert date YYYY_MM_DD to DD/MM/YYYY
                         var text = txtFile.ReadToEnd();
                         var newtext = QuickFix(text);
-                        var newstream = new MemoryStream();
-                        var memwrite = new StreamWriter(newstream);
-                        memwrite.Write(newtext);
-                        newstream.Seek(0, SeekOrigin.Begin);
-                        zip.Add(basename, newstream);
+                        using (var newstream = new MemoryStream())
+                        {
+                            using (var memwrite = new StreamWriter(newstream))
+                            {
+                                memwrite.Write(newtext);
+                            }
+                            newstream.Seek(0, SeekOrigin.Begin);
+                            zip.Add(basename, newstream);
+                        }
                     }
                 }
 
