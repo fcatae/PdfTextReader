@@ -29,7 +29,18 @@ namespace ParserFrontend.Controllers
 
             return View();
         }
-        
+
+        [HttpGet("filtro")]
+        public IActionResult IndexFiltro()
+        {
+            ViewBag.DO1 = EnumAvailableFiles(d => d.StartsWith("DO1_"));
+            ViewBag.DO2 = EnumAvailableFiles(d => d.StartsWith("DO2_"));
+            ViewBag.DO3 = EnumAvailableFiles(d => d.StartsWith("DO3_"));
+            ViewBag.Outros = EnumAvailableFiles(d => (!d.StartsWith("DO1_")) && (!d.StartsWith("DO2_")) && (!d.StartsWith("DO3_")));
+
+            return View();
+        }
+
         string[] EnumAvailableFiles(Func<string,bool> filter)
         {
             return _inputFiles

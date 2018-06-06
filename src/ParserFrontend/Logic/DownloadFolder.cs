@@ -19,6 +19,7 @@ namespace ParserFrontend.Logic
 
         Regex _quickFix = new Regex(@"pubDate=""(\d\d\d\d)_(\d\d)_(\d\d)");
         Regex _quickFix2 = new Regex(@"<Identifica>(\S+)");
+        Regex _quickFixIdentifica = new Regex(@"<Identifica>(.*)</Identifica>");
 
         string QuickFix(string input)
         {
@@ -36,7 +37,7 @@ namespace ParserFrontend.Logic
                         .Replace("pubDate", $"{artName} {artType} pubDate");
         }
 
-        public Stream DownloadQuickFix(string path)
+        public Stream DownloadQuickFix(string path, bool filtroTipoArtigo = false)
         {
             var filenames = _vfs.ListFolderContent(path);
 
@@ -52,8 +53,13 @@ namespace ParserFrontend.Logic
                     using (var file = _vfs.OpenReader(filename))
                     using (var txtFile = new StreamReader(file))
                     {
-                        // HACK 2: convert date YYYY_MM_DD to DD/MM/YYYY
                         var text = txtFile.ReadToEnd();
+
+                        // HACK 4: filtrar por tipo de artigo
+                        if (filtroTipoArtigo && FiltrarTipoArtigo(text))
+                            continue;
+
+                        // HACK 2: convert date YYYY_MM_DD to DD/MM/YYYY
                         var newtext = QuickFix2( QuickFix(text) );
 
                         using (var newstream = new MemoryStream())
@@ -84,6 +90,21 @@ namespace ParserFrontend.Logic
 
                 return zip.DownloadStream();
             }
+        }
+
+        bool FiltrarTipoArtigo(string text)
+        {
+            var regIdent = _quickFixIdentifica.Match(text);
+            if (!regIdent.Success)
+                return true;
+            string input = regIdent.Groups[1].Value;
+
+            if(input.Contains("No ") || input.Contains("N°") || input.Contains("Nº"))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public Stream Download2(string path)

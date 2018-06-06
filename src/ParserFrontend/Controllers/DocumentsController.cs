@@ -116,5 +116,13 @@ namespace ParserFrontend.Controllers
 
             return new FileStreamResult(stream, "application/zip");
         }
+
+        [HttpGet("files/{name}-art-filtro.zip", Name = "Document_DownloadGN_Filtro")]
+        public IActionResult FileDownloadArtigosGN4_Filtro(string name)
+        {
+            var stream = _downloader.DownloadQuickFix($"output/{name}/artigosGN4", filtroTipoArtigo: true);
+
+            return new FileStreamResult(stream, "application/zip");
+        }
     }
 }
